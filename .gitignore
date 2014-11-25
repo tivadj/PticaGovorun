@@ -1,0 +1,10 @@
+*.log
+*.asv
+*.user
+*.sdf
+*.opensdf
+*.suo
+*.psess
+*.ipch
+build/
+output/

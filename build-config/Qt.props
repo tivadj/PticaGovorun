@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+
+  
+  <PropertyGroup Label="UserMacros">
+    <!--used QtDirMy name because QtDir is used for Qt Generator-->
+    <QtDirMy Condition="'$(QtDirMy)' == ''">E:\Programs\Qt5.3.1\5.3\msvc2013_64_opengl\</QtDirMy>
+    <QtLibSuffix Condition="'$(Configuration)' == 'Debug'">d</QtLibSuffix>
+    <QtLibSuffix Condition="'$(Configuration)' != 'Debug'"></QtLibSuffix>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IncludePath>$(QtDirMy)include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(QtDirMy)include\QtCore;$(IncludePath)</IncludePath>
+    <IncludePath>$(QtDirMy)include\QtWidgets;$(IncludePath)</IncludePath>
+    <IncludePath>$(QtDirMy)include\QtGUI;$(IncludePath)</IncludePath>
+    <IncludePath>$(QtDirMy)include\QtXml;$(IncludePath)</IncludePath>
+    <IncludePath>$(QtDirMy)include\QtOpenGL;$(IncludePath)</IncludePath>
+
+    <!--Qt generated headers-->
+    <IncludePath>$(ProjectDir)GeneratedFiles;$(IncludePath)</IncludePath>
+    <!--Qt generated code-->
+    <IncludePath>$(ProjectDir)$(Configuration);$(IncludePath)</IncludePath>
+    <LibraryPath>$(QtDirMy)lib\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>Qt5Core$(QtLibSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Qt5Widgets$(QtLibSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Qt5Gui$(QtLibSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Qt5OpenGL$(QtLibSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Qt5Xml$(QtLibSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <Target Name="QtDeploy" AfterTargets="Build">
+    <Message Text="QtDirMy=$(QtDirMy)" />
+    <Copy SourceFiles="$(QtDirMy)Bin\Qt5Core$(QtLibSuffix).dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
+    <Copy SourceFiles="$(QtDirMy)Bin\Qt5Widgets$(QtLibSuffix).dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
+    <Copy SourceFiles="$(QtDirMy)Bin\Qt5Gui$(QtLibSuffix).dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
+    <Copy SourceFiles="$(QtDirMy)Bin\Qt5OpenGL$(QtLibSuffix).dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
+    <Copy SourceFiles="$(QtDirMy)Bin\Qt5Xml$(QtLibSuffix).dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
+    <MakeDir Directories="$(OutDir)platforms" />
+    <Copy SourceFiles="$(QtDirMy)plugins\platforms\QWindows.dll" DestinationFolder="$(OutDir)platforms" SkipUnchangedFiles="True"/>
+  </Target>
+
+</Project>

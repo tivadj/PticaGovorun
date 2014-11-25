@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+
+  <PropertyGroup Label="UserMacros">
+    <PticaGovorunDir>$(SolutionDir)..\</PticaGovorunDir>
+    <OutDir>$(PticaGovorunDir)build\$(PlatformTarget)\$(Configuration)\</OutDir>
+    <IntDir>$(OutDir)$(ProjectName)_obj\</IntDir>
+
+    <LibSuffix Condition="'$(Configuration)' == 'Debug'">d</LibSuffix>
+    <LibSuffix Condition="'$(Configuration)' != 'Debug'"></LibSuffix>
+  </PropertyGroup>
+
+  <!--Suffixes should be added for dll/libs (except executables) -->
+  <PropertyGroup Label="UserMacros" Condition="'$(ConfigurationType)' == 'DynamicLibrary' OR '$(ConfigurationType)' == 'StaticLibrary'">
+
+    <TargetName>$(ProjectName)$(LibSuffix)</TargetName>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>_USE_MATH_DEFINES;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+
+      <!--Assigns extra intermediate variables in algorithms for debugging; validation logic. Code is not critical for runtime.-->
+      <PreprocessorDefinitions>PG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+</Project>
