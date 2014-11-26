@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+
+  <PropertyGroup Label="UserMacros">
+    <LibSndFileDir>$(PticaGovorunDir)ThirdParty\libsndfile\</LibSndFileDir>
+    <!--<LibSndFileFilename>libsndfile-1_$(PlatformShortName)</LibSndFileFilename>-->
+    <LibSndFileFullPath>$(LibSndFileDir)bin\$(PlatformShortName)\libsndfile-1.dll</LibSndFileFullPath>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <IncludePath>$(LibSndFileDir)include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibSndFileDir)lib\$(PlatformShortName);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  
+  <ItemDefinitionGroup />
+  
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>libsndfile-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <!--<AdditionalOptions Condition="'$(ConfigurationType)' == 'DynamicLibrary'">/ASSEMBLYLINKRESOURCE:"$(LibSndFileFullPath)" %(AdditionalOptions)</AdditionalOptions>-->
+      <AssemblyLinkResource Condition="'$(ConfigurationType)' == 'DynamicLibrary'">$(LibSndFileFullPath); %(AssemblyLinkResource)</AssemblyLinkResource>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+
+  <!--<ItemGroup>
+    <Text Include="$(LibSndFileFullPath)">
+      <DeploymentContent>true</DeploymentContent>
+    </Text>
+  </ItemGroup>-->
+
+  <Target Name="MyLibSndCopyBinaries" AfterTargets="Build">
+    <Copy SourceFiles="$(LibSndFileFullPath)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
+  </Target>
+</Project>
