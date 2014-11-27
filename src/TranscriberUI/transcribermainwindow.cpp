@@ -1,5 +1,8 @@
+#include <sstream>
 #include "transcribermainwindow.h"
 #include "ui_transcribermainwindow.h"
+#include <QDebug>
+#include <QMouseEvent>
 
 TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -9,12 +12,15 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
 
     QObject::connect(ui->pushButtonLoadFileName, SIGNAL(clicked()), this, SLOT(pushButtonLoad_Clicked()));
     QObject::connect(ui->lineEditFileName, SIGNAL(editingFinished()), this, SLOT(lineEditFileName_editingFinished()));
+    QObject::connect(ui->horizontalScrollBarSamples, SIGNAL(valueChanged(int)), this, SLOT(horizontalScrollBarSamples_valueChanged(int)));
 
 	//
     transcriberModel_ = std::make_shared<TranscriberViewModel>();
 
     QObject::connect(transcriberModel_.get(), SIGNAL(nextNotification(const QString&)), this, SLOT(transcriberModel_nextNotification(const QString&)));
 	QObject::connect(transcriberModel_.get(), SIGNAL(audioSamplesChanged()), this, SLOT(transcriberModel_audioSamplesChanged()));
+	QObject::connect(transcriberModel_.get(), SIGNAL(docOffsetXChanged()), this, SLOT(transcriberModel_docOffsetXChanged()));
+	QObject::connect(transcriberModel_.get(), SIGNAL(lastMouseDocPosXChanged(float)), this, SLOT(transcriberModel_lastMouseDocPosXChanged(float)));
 
 	//
 	ui->widgetSamples->setModel(transcriberModel_);
@@ -36,10 +42,42 @@ void TranscriberMainWindow::transcriberModel_nextNotification(const QString& mes
 	ui->textEditLogger->insertPlainText(message);
 }
 
+// called on:
+// audioSamples changed
+// docOffsetX changed
 void TranscriberMainWindow::transcriberModel_audioSamplesChanged()
 {
 	ui->widgetSamples->update();
+
+	updateSamplesSlider();
 }
+
+void TranscriberMainWindow::transcriberModel_docOffsetXChanged()
+{
+	ui->widgetSamples->update();
+
+	updateSamplesSlider();
+}
+
+void TranscriberMainWindow::updateSamplesSlider()
+{
+	ui->horizontalScrollBarSamples->setMinimum(0);
+
+	//
+	int docWidth = transcriberModel_->docWidthPix();
+	//int pageStep = (int)(ui->widgetSamples->width() / transcriberModel_->pixelsPerSample());
+	int pageStep = ui->widgetSamples->width();
+
+	int slideMax = docWidth;
+	slideMax -= pageStep/2;
+	ui->horizontalScrollBarSamples->setMaximum(slideMax);
+
+	//const int stepsPerScreen = 10; // need x of steps to pass the page
+	//ui->horizontalScrollBarSamples->setSingleStep(pageStep / stepsPerScreen);
+	ui->horizontalScrollBarSamples->setSingleStep(100);
+	ui->horizontalScrollBarSamples->setPageStep(pageStep);
+}
+
 
 void TranscriberMainWindow::pushButtonLoad_Clicked()
 {
@@ -50,3 +88,32 @@ void TranscriberMainWindow::lineEditFileName_editingFinished()
 {
     transcriberModel_->setAudioFilePath(ui->lineEditFileName->text());
 }
+
+
+void TranscriberMainWindow::horizontalScrollBarSamples_valueChanged(int value)
+{
+    //qDebug() <<value <<" bar.value="  <<ui->horizontalScrollBarSamples->value();
+    transcriberModel_->setDocOffsetX(value);
+}
+
+void TranscriberMainWindow::transcriberModel_lastMouseDocPosXChanged(float mouseDocPosX)
+{
+	{
+		std::stringstream msg;
+		msg.precision(2);
+		msg << std::fixed;
+		msg << mouseDocPosX;
+		ui->lineEditCurDocPosX->setText(QString::fromStdString(msg.str()));
+
+		float sampleInd = transcriberModel_->docPosXToSampleInd(mouseDocPosX);
+
+		msg.str("");
+		//std::stringstream msg;
+		//msg.precision(2);
+		//msg << std::fixed;
+		//msg.str("");
+		msg << sampleInd;
+		ui->lineEditCurSampleInd->setText(QString::fromStdString(msg.str()));
+	}
+}
+

@@ -23,6 +23,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PticaGovorunSimpleConsoleCl
 		{C982AA15-B1EB-431F-978D-84E5BEAB37E2} = {C982AA15-B1EB-431F-978D-84E5BEAB37E2}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{489A3C98-752D-4ADF-A059-00B02D9D5A77}"
+	ProjectSection(SolutionItems) = preProject
+		Performance1.psess = Performance1.psess
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -55,7 +60,8 @@ Global
 		{C982AA15-B1EB-431F-978D-84E5BEAB37E2}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{C982AA15-B1EB-431F-978D-84E5BEAB37E2}.Release|Win32.ActiveCfg = Release|Win32
 		{C982AA15-B1EB-431F-978D-84E5BEAB37E2}.Release|Win32.Build.0 = Release|Win32
-		{C982AA15-B1EB-431F-978D-84E5BEAB37E2}.Release|x64.ActiveCfg = Release|Win32
+		{C982AA15-B1EB-431F-978D-84E5BEAB37E2}.Release|x64.ActiveCfg = Release|x64
+		{C982AA15-B1EB-431F-978D-84E5BEAB37E2}.Release|x64.Build.0 = Release|x64
 		{1893D07B-F318-4E79-BFDE-55FFBD085424}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{1893D07B-F318-4E79-BFDE-55FFBD085424}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{1893D07B-F318-4E79-BFDE-55FFBD085424}.Debug|Win32.ActiveCfg = Debug|Win32
@@ -66,9 +72,13 @@ Global
 		{1893D07B-F318-4E79-BFDE-55FFBD085424}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{1893D07B-F318-4E79-BFDE-55FFBD085424}.Release|Win32.ActiveCfg = Release|Win32
 		{1893D07B-F318-4E79-BFDE-55FFBD085424}.Release|Win32.Build.0 = Release|Win32
-		{1893D07B-F318-4E79-BFDE-55FFBD085424}.Release|x64.ActiveCfg = Release|Win32
+		{1893D07B-F318-4E79-BFDE-55FFBD085424}.Release|x64.ActiveCfg = Release|x64
+		{1893D07B-F318-4E79-BFDE-55FFBD085424}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

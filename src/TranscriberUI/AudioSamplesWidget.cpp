@@ -22,7 +22,8 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
     painter.setBrush(Qt::white);
     //painter.setBackgroundMode(Qt::OpaqueMode);
 	//painter.setBackground(QBrush(QColor(255, 255, 0), Qt::SolidPattern));
-    painter.drawRect(5,5,width()-5, height()-5);
+	const int p = 15;
+	painter.drawRect(p,p,width()-2*p, height()-2*p);
 
 	//
 
@@ -43,25 +44,42 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 	const float XNull = -1;
 	float prevX = XNull;
 	float prevY = XNull;
-	for (size_t sampleInd = 0; sampleInd < audioSamples.size(); ++sampleInd)
+
+	// find first sample to draw
+	int firstSampleInd = (int)transcriberModel_->firstVisibleSampleInd();
+	firstSampleInd = std::max(0, firstSampleInd); // make it >=0
+
+	for (size_t sampleInd = firstSampleInd; sampleInd < audioSamples.size(); ++sampleInd)
 	{
+		// passed beside the right side of the viewport
 		if (prevX > width())
 			return;
 
-		short sampleValue = audioSamples[sampleInd];
-		
-		float x = sampleInd * pixelsPerSample;
+		float xPix = transcriberModel_->sampleIndToDocPosX(sampleInd);
+		xPix -= transcriberModel_->docOffsetX(); // compensate for docOffsetX
 
+		// the optimization to avoid drawing lines from previous sample to
+		// the current sample, when both are squeezed in the same pixel
+		if (prevX != XNull && prevX == xPix)
+			continue;
+
+		short sampleValue = audioSamples[sampleInd];
 		float sampleYPerc = sampleValue / (float)std::numeric_limits<short>::max();
 		float y = canvasHeightHalf - canvasHeightHalf * sampleYPerc * 0.8f;
 
 		if (prevX != XNull)
 		{
-			painter.drawLine(QPointF(prevX, prevY), QPointF(x, y));
+			painter.drawLine(QPointF(prevX, prevY), QPointF(xPix, y));
 		}
 
-		prevX = x;
+		prevX = xPix;
 		prevY = y;
 	}
 
+}
+
+void AudioSamplesWidget::mousePressEvent(QMouseEvent* me)
+{
+	const QPointF& pos = me->localPos();
+	transcriberModel_->setLastMousePressPos(pos);
 }

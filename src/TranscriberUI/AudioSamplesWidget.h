@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <QWidget>
+#include <QMouseEvent>
 #include "TranscriberViewModel.h"
 
 class AudioSamplesWidget : public QWidget
@@ -13,13 +14,16 @@ public:
 
 	void setModel(std::shared_ptr<TranscriberViewModel> transcriberModel);
 
-signals:
+
+public:
+	signals:
 
 public slots:
 
 protected:
 
 	void paintEvent(QPaintEvent*) override;
+	void mousePressEvent(QMouseEvent*) override;
 private:
 	std::shared_ptr<TranscriberViewModel> transcriberModel_;
 };

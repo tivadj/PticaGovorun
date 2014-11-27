@@ -19,12 +19,17 @@ public:
 
     void updateUI();
 
+private:
+	void updateSamplesSlider();
+
 private slots:
 	void pushButtonLoad_Clicked();
 	void transcriberModel_nextNotification(const QString& message);
 	void transcriberModel_audioSamplesChanged();
+	void transcriberModel_docOffsetXChanged();
 	void lineEditFileName_editingFinished();
-
+    void horizontalScrollBarSamples_valueChanged(int value);
+	void transcriberModel_lastMouseDocPosXChanged(float mouseDocPosX);
 private:
     Ui::TranscriberMainWindow *ui;
     std::shared_ptr<TranscriberViewModel> transcriberModel_;
