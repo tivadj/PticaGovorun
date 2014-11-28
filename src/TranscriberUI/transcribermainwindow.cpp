@@ -13,6 +13,9 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
     QObject::connect(ui->pushButtonLoadFileName, SIGNAL(clicked()), this, SLOT(pushButtonLoad_Clicked()));
     QObject::connect(ui->lineEditFileName, SIGNAL(editingFinished()), this, SLOT(lineEditFileName_editingFinished()));
     QObject::connect(ui->horizontalScrollBarSamples, SIGNAL(valueChanged(int)), this, SLOT(horizontalScrollBarSamples_valueChanged(int)));
+	QObject::connect(ui->pushButtonPlay, SIGNAL(clicked()), this, SLOT(pushButtonPlay_Clicked()));
+	QObject::connect(ui->pushButtonPause, SIGNAL(clicked()), this, SLOT(pushButtonPause_Clicked()));
+	
 
 	//
     transcriberModel_ = std::make_shared<TranscriberViewModel>();
@@ -84,6 +87,16 @@ void TranscriberMainWindow::pushButtonLoad_Clicked()
     transcriberModel_->loadAudioFile();
 }
 
+void TranscriberMainWindow::pushButtonPlay_Clicked()
+{
+    transcriberModel_->soundPlayerPlay();
+}
+
+void TranscriberMainWindow::pushButtonPause_Clicked()
+{
+	transcriberModel_->soundPlayerPause();
+}
+
 void TranscriberMainWindow::lineEditFileName_editingFinished()
 {
     transcriberModel_->setAudioFilePath(ui->lineEditFileName->text());
@@ -116,4 +129,3 @@ void TranscriberMainWindow::transcriberModel_lastMouseDocPosXChanged(float mouse
 		ui->lineEditCurSampleInd->setText(QString::fromStdString(msg.str()));
 	}
 }
-

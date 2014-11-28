@@ -41,6 +41,8 @@ public:
     QLineEdit *lineEditCurSampleInd;
     QLabel *label;
     QLabel *label_2;
+    QPushButton *pushButtonPlay;
+    QPushButton *pushButtonPause;
     QWidget *widgetSamplesMain;
     QVBoxLayout *verticalLayout_3;
     QScrollBar *horizontalScrollBarSamples;
@@ -71,11 +73,11 @@ public:
         widgetUpperPanel->setMinimumSize(QSize(0, 50));
         pushButtonLoadFileName = new QPushButton(widgetUpperPanel);
         pushButtonLoadFileName->setObjectName(QStringLiteral("pushButtonLoadFileName"));
-        pushButtonLoadFileName->setGeometry(QRect(10, 10, 75, 23));
+        pushButtonLoadFileName->setGeometry(QRect(10, 0, 75, 23));
         pushButtonLoadFileName->setDefault(true);
         lineEditFileName = new QLineEdit(widgetUpperPanel);
         lineEditFileName->setObjectName(QStringLiteral("lineEditFileName"));
-        lineEditFileName->setGeometry(QRect(90, 10, 391, 20));
+        lineEditFileName->setGeometry(QRect(90, 0, 391, 20));
         lineEditCurDocPosX = new QLineEdit(widgetUpperPanel);
         lineEditCurDocPosX->setObjectName(QStringLiteral("lineEditCurDocPosX"));
         lineEditCurDocPosX->setGeometry(QRect(670, 0, 81, 20));
@@ -88,6 +90,14 @@ public:
         label_2 = new QLabel(widgetUpperPanel);
         label_2->setObjectName(QStringLiteral("label_2"));
         label_2->setGeometry(QRect(610, 20, 51, 20));
+        pushButtonPlay = new QPushButton(widgetUpperPanel);
+        pushButtonPlay->setObjectName(QStringLiteral("pushButtonPlay"));
+        pushButtonPlay->setGeometry(QRect(10, 30, 75, 23));
+        pushButtonPlay->setDefault(true);
+        pushButtonPause = new QPushButton(widgetUpperPanel);
+        pushButtonPause->setObjectName(QStringLiteral("pushButtonPause"));
+        pushButtonPause->setGeometry(QRect(90, 30, 75, 23));
+        pushButtonPause->setDefault(true);
 
         verticalLayout_2->addWidget(widgetUpperPanel);
 
@@ -163,6 +173,8 @@ public:
         lineEditCurSampleInd->setText(QApplication::translate("TranscriberMainWindow", "###", 0));
         label->setText(QApplication::translate("TranscriberMainWindow", "DocPosX", 0));
         label_2->setText(QApplication::translate("TranscriberMainWindow", "SampleInd", 0));
+        pushButtonPlay->setText(QApplication::translate("TranscriberMainWindow", "Play", 0));
+        pushButtonPause->setText(QApplication::translate("TranscriberMainWindow", "Pause", 0));
         textEditLogger->setHtml(QApplication::translate("TranscriberMainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"

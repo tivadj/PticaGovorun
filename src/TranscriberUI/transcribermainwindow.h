@@ -24,6 +24,8 @@ private:
 
 private slots:
 	void pushButtonLoad_Clicked();
+	void pushButtonPlay_Clicked();
+	void pushButtonPause_Clicked();
 	void transcriberModel_nextNotification(const QString& message);
 	void transcriberModel_audioSamplesChanged();
 	void transcriberModel_docOffsetXChanged();

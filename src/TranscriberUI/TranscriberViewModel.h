@@ -3,6 +3,7 @@
 #include <vector>
 #include <QObject>
 //#include "array_view.hpp"
+#include <SFML/Audio.hpp>
 
 // The document is a graph for samples plus padding to the left and right.
 // The samples graph is painted with current 'scale'.
@@ -19,6 +20,10 @@ public:
     TranscriberViewModel();
 
     void loadAudioFile();
+
+	void togglePlayPause();
+	void soundPlayerPlay();
+	void soundPlayerPause();
 
     QString audioFilePath() const;
     void setAudioFilePath(const QString& filePath);
@@ -55,6 +60,10 @@ private:
 	// number of pixels to the left/right of samples graph
 	// together with the samples graph is treated as the document
 	float docPaddingPix_ = 100;
+	float lastMousePressDocPosX_;
+	
+	sf::SoundBuffer soundBuffer_;
+	sf::Sound soundObj_;
 public:
 	float scale_;
 };

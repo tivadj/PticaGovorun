@@ -1,6 +1,8 @@
 #include <sstream>
 #include <QStandardPaths>
 #include <QPointF>
+#include <QDebug>
+#include <QApplication>
 #include "PticaGovorunBackend/SoundUtils.h"
 #include "TranscriberViewModel.h"
 
@@ -9,6 +11,8 @@ TranscriberViewModel::TranscriberViewModel()
     QString fileName = QString::fromStdWString(L"PticaGovorun/2011-04-pynzenyk-q_11.wav");
     audioFilePathAbs_ = QStandardPaths::locate(QStandardPaths::DocumentsLocation, fileName, QStandardPaths::LocateFile);
 }
+
+const int SampleRate = 22050;
 
 void TranscriberViewModel::loadAudioFile()
 {
@@ -26,7 +30,6 @@ void TranscriberViewModel::loadAudioFile()
 	docOffsetX_ = 0;
 
 	const float diagWidth = 1000;
-	const int SampleRate = 22050;
 	float seg3sec = SampleRate * 1.5f;
 	scale_ = diagWidth / seg3sec;
 
@@ -35,6 +38,67 @@ void TranscriberViewModel::loadAudioFile()
 	std::stringstream msg;
 	msg << "Loaded: SamplesCount=" << audioSamples_.size();
 	emit nextNotification(QString::fromStdString(msg.str()));
+}
+
+void TranscriberViewModel::togglePlayPause()
+{
+}
+
+//void TranscriberViewModel::soundPlayerPlay()
+//{
+//	int sampleInd = (int)docPosXToSampleInd(lastMousePressDocPosX_);
+//
+//	if (sampleInd >= 0 && sampleInd < audioSamples_.size())
+//	{
+//		int len = audioSamples_.size() - sampleInd;
+//		bool loadSamplesOp = soundBuffer_.loadFromSamples(&audioSamples_[sampleInd], len, 1, SampleRate);
+//		if (!loadSamplesOp)
+//			return;
+//
+//		soundObj_.setBuffer(soundBuffer_);
+//		soundObj_.play();
+//	}
+//}
+void TranscriberViewModel::soundPlayerPlay()
+{
+	// stop player
+	while (soundObj_.getStatus() != sf::SoundSource::Stopped)
+		soundObj_.stop();
+
+	int sampleInd = (int)docPosXToSampleInd(lastMousePressDocPosX_);
+
+	if (sampleInd >= 0 && sampleInd < audioSamples_.size())
+	{
+		const int packSize = 100;
+		int i = sampleInd;
+		while (true)
+		{
+			int endSample = i + packSize;
+			endSample = std::min(endSample, (int)audioSamples_.size());
+			//int len = audioSamples_.size() - endSample;
+			int len = endSample - i;
+			if (len <= 0)
+				break;
+			bool loadSamplesOp = soundBuffer_.loadFromSamples(&audioSamples_[i], len, 1, SampleRate);
+			if (!loadSamplesOp)
+				return;
+
+			i = endSample;
+
+			soundObj_.setBuffer(soundBuffer_);
+			qDebug() << "push";
+			soundObj_.play();
+
+			while (soundObj_.getStatus() == sf::SoundSource::Playing)
+				QApplication::processEvents();
+		}		
+	}
+}
+
+void TranscriberViewModel::soundPlayerPause()
+{
+	qDebug() << "Pause";
+	soundObj_.pause();
 }
 
 QString TranscriberViewModel::audioFilePath() const
@@ -99,5 +163,6 @@ const std::vector<short>& TranscriberViewModel::audioSamples() const
 void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos)
 {
 	float lastMousePressDocPosX = docOffsetX_ + localPos.x();
+	lastMousePressDocPosX_ = lastMousePressDocPosX;
 	emit lastMouseDocPosXChanged(lastMousePressDocPosX);
 }
