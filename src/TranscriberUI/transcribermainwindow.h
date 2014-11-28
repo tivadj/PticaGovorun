@@ -18,7 +18,6 @@ public:
     ~TranscriberMainWindow();
 
     void updateUI();
-
 private:
 	void updateSamplesSlider();
 
@@ -26,16 +25,17 @@ private slots:
 	void pushButtonLoad_Clicked();
 	void pushButtonPlay_Clicked();
 	void pushButtonPause_Clicked();
+	void lineEditFileName_editingFinished();
+	void horizontalScrollBarSamples_valueChanged(int value);
+	void transcriberModel_audioSamplesLoaded();
 	void transcriberModel_nextNotification(const QString& message);
 	void transcriberModel_audioSamplesChanged();
 	void transcriberModel_docOffsetXChanged();
-	void lineEditFileName_editingFinished();
-    void horizontalScrollBarSamples_valueChanged(int value);
 	void transcriberModel_lastMouseDocPosXChanged(float mouseDocPosX);
+	void transcriberModel_currentFrameIndChanged();
 private:
     Ui::TranscriberMainWindow *ui;
     std::shared_ptr<TranscriberViewModel> transcriberModel_;
-
 };
 
 #endif // TRANSCRIBERMAINWINDOW_H

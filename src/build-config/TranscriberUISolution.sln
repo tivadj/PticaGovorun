@@ -12,9 +12,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build-config", "build-confi
 	ProjectSection(SolutionItems) = preProject
 		array_view.props = array_view.props
 		LibSndFile.props = LibSndFile.props
+		PortAudio.props = PortAudio.props
 		PticaGovorunCommon.props = PticaGovorunCommon.props
 		Qt.props = Qt.props
-		SFML.props = SFML.props
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PticaGovorunBackend", "..\PticaGovorunBackend\PticaGovorunBackend.vcxproj", "{C982AA15-B1EB-431F-978D-84E5BEAB37E2}"

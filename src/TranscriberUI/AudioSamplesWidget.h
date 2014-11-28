@@ -21,9 +21,9 @@ public:
 public slots:
 
 protected:
-
 	void paintEvent(QPaintEvent*) override;
 	void mousePressEvent(QMouseEvent*) override;
+	void keyPressEvent(QKeyEvent*) override;
 private:
 	std::shared_ptr<TranscriberViewModel> transcriberModel_;
 };

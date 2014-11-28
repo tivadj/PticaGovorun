@@ -68,7 +68,7 @@
     <Import Project="..\build-config\Qt.props" />
     <Import Project="..\build-config\LibSndFile.props" />
     <Import Project="..\build-config\array_view.props" />
-    <Import Project="..\build-config\SFML.props" />
+    <Import Project="..\build-config\PortAudio.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
@@ -76,7 +76,7 @@
     <Import Project="..\build-config\Qt.props" />
     <Import Project="..\build-config\LibSndFile.props" />
     <Import Project="..\build-config\array_view.props" />
-    <Import Project="..\build-config\SFML.props" />
+    <Import Project="..\build-config\PortAudio.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
@@ -84,7 +84,7 @@
     <Import Project="..\build-config\Qt.props" />
     <Import Project="..\build-config\LibSndFile.props" />
     <Import Project="..\build-config\array_view.props" />
-    <Import Project="..\build-config\SFML.props" />
+    <Import Project="..\build-config\PortAudio.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
@@ -92,7 +92,7 @@
     <Import Project="..\build-config\Qt.props" />
     <Import Project="..\build-config\LibSndFile.props" />
     <Import Project="..\build-config\array_view.props" />
-    <Import Project="..\build-config\SFML.props" />
+    <Import Project="..\build-config\PortAudio.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>

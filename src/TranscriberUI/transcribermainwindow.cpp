@@ -20,10 +20,12 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
 	//
     transcriberModel_ = std::make_shared<TranscriberViewModel>();
 
+	QObject::connect(transcriberModel_.get(), SIGNAL(audioSamplesLoaded()), this, SLOT(transcriberModel_audioSamplesLoaded()));
     QObject::connect(transcriberModel_.get(), SIGNAL(nextNotification(const QString&)), this, SLOT(transcriberModel_nextNotification(const QString&)));
 	QObject::connect(transcriberModel_.get(), SIGNAL(audioSamplesChanged()), this, SLOT(transcriberModel_audioSamplesChanged()));
 	QObject::connect(transcriberModel_.get(), SIGNAL(docOffsetXChanged()), this, SLOT(transcriberModel_docOffsetXChanged()));
 	QObject::connect(transcriberModel_.get(), SIGNAL(lastMouseDocPosXChanged(float)), this, SLOT(transcriberModel_lastMouseDocPosXChanged(float)));
+	QObject::connect(transcriberModel_.get(), SIGNAL(currentFrameIndChanged()), this, SLOT(transcriberModel_currentFrameIndChanged()));
 
 	//
 	ui->widgetSamples->setModel(transcriberModel_);
@@ -38,6 +40,11 @@ TranscriberMainWindow::~TranscriberMainWindow()
 void TranscriberMainWindow::updateUI()
 {
     ui->lineEditFileName->setText(transcriberModel_->audioFilePath());
+}
+
+void TranscriberMainWindow::transcriberModel_audioSamplesLoaded()
+{
+	ui->widgetSamples->setFocus(Qt::OtherFocusReason);
 }
 
 void TranscriberMainWindow::transcriberModel_nextNotification(const QString& message)
@@ -128,4 +135,9 @@ void TranscriberMainWindow::transcriberModel_lastMouseDocPosXChanged(float mouse
 		msg << sampleInd;
 		ui->lineEditCurSampleInd->setText(QString::fromStdString(msg.str()));
 	}
+}
+
+void TranscriberMainWindow::transcriberModel_currentFrameIndChanged()
+{
+	ui->widgetSamples->update();
 }

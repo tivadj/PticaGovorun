@@ -1,9 +1,11 @@
 #ifndef TRANSCRIBERVIEWMODEL_H
 #define TRANSCRIBERVIEWMODEL_H
 #include <vector>
+#include <atomic>
 #include <QObject>
 //#include "array_view.hpp"
-#include <SFML/Audio.hpp>
+#include <portaudio.h>
+#include <atomic>
 
 // The document is a graph for samples plus padding to the left and right.
 // The samples graph is painted with current 'scale'.
@@ -11,11 +13,14 @@ class TranscriberViewModel : public QObject
 {
     Q_OBJECT
 public:
-signals:
+signals :
+	// Occurs when audio samples where successfully loaded from a file.
+	void audioSamplesLoaded();
     void nextNotification(const QString& message);
     void audioSamplesChanged();
 	void docOffsetXChanged();
 	void lastMouseDocPosXChanged(float mouseDocPosX);
+	void currentFrameIndChanged();
 public:
     TranscriberViewModel();
 
@@ -43,7 +48,7 @@ public:
 	// Returns first visible sample which is at docOffsetX position.
 	float firstVisibleSampleInd() const;
 	float docPosXToSampleInd(float docPosX) const;
-	float sampleIndToDocPosX(int sampleInd) const;
+	float sampleIndToDocPosX(long sampleInd) const;
 	//const arv::array_view<short> audioSamples222() const
 	//{
 	//  return arv::array_view<short>(audioSamples_);
@@ -52,6 +57,8 @@ public:
 	const std::vector<short>& audioSamples() const;
 
 	void setLastMousePressPos(const QPointF& localPos);
+	long currentFrameInd() const;
+	void setCurrentFrameInd(long value);
 private:
 	std::vector<short> audioSamples_;
     QString audioFilePathAbs_;
@@ -60,10 +67,18 @@ private:
 	// number of pixels to the left/right of samples graph
 	// together with the samples graph is treated as the document
 	float docPaddingPix_ = 100;
-	float lastMousePressDocPosX_;
+	long currentFrameInd_ = -1;
+
+	struct SoundPlayerData
+	{
+		TranscriberViewModel* transcriberViewModel;
+		long FrameIndToPlay;
+		PaStream *stream;
+		std::atomic<bool> allowPlaying;
+	};
+	SoundPlayerData soundPlayerData_;
+	std::atomic<bool> isPlaying_;
 	
-	sf::SoundBuffer soundBuffer_;
-	sf::Sound soundObj_;
 public:
 	float scale_;
 };

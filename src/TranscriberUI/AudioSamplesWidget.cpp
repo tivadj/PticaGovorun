@@ -1,9 +1,11 @@
 #include "AudioSamplesWidget.h"
 #include <QPainter>
 #include <QBrush>
+#include <QDebug>
 AudioSamplesWidget::AudioSamplesWidget(QWidget *parent) :
     QWidget(parent)
 {
+	setFocusPolicy(Qt::WheelFocus);
 }
 
 void AudioSamplesWidget::setModel(std::shared_ptr<TranscriberViewModel> transcriberModel)
@@ -13,6 +15,7 @@ void AudioSamplesWidget::setModel(std::shared_ptr<TranscriberViewModel> transcri
 
 void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 {
+	//qDebug() << "paintEvent";
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
@@ -34,8 +37,6 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 	if (audioSamples.empty())
 		return;
 
-	float pixelsPerSample = transcriberModel_->scale_;
-
 	float canvasHeightHalf = height() / 2.0f;
 
 	QColor sampleColor(0, 0, 0);
@@ -53,7 +54,7 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 	{
 		// passed beside the right side of the viewport
 		if (prevX > width())
-			return;
+			break;
 
 		float xPix = transcriberModel_->sampleIndToDocPosX(sampleInd);
 		xPix -= transcriberModel_->docOffsetX(); // compensate for docOffsetX
@@ -76,10 +77,25 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 		prevY = y;
 	}
 
+	// draw current frame
+	unsigned long currentFrameInd = transcriberModel_->currentFrameInd();
+	float curFrameDocX = transcriberModel_->sampleIndToDocPosX(currentFrameInd);
+	curFrameDocX -= transcriberModel_->docOffsetX();
+	painter.drawLine(curFrameDocX, 0, curFrameDocX, height());
 }
 
 void AudioSamplesWidget::mousePressEvent(QMouseEvent* me)
 {
 	const QPointF& pos = me->localPos();
 	transcriberModel_->setLastMousePressPos(pos);
+}
+
+void AudioSamplesWidget::keyPressEvent(QKeyEvent* ke)
+{
+	if (ke->key() == Qt::Key_C)
+		transcriberModel_->soundPlayerPlay();
+	else if (ke->key() == Qt::Key_Space)
+		transcriberModel_->soundPlayerPause();
+	else
+		QWidget::keyPressEvent(ke);
 }
