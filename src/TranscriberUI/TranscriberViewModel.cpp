@@ -64,10 +64,6 @@ void TranscriberViewModel::soundPlayerPlay()
 	data.FrameIndToPlay = frameInd;
 
 	//
-	PaError err = Pa_Initialize();
-	if (err != paNoError)
-		return;
-
 	PaDeviceIndex deviceIndex = Pa_GetDefaultOutputDevice(); /* default output device */
 	if (deviceIndex == paNoDevice) {
 		qDebug() <<"Error: No default output device";
@@ -118,10 +114,12 @@ void TranscriberViewModel::soundPlayerPlay()
 		return paContinue;
 	};
 
+	// choose the buffer so the current frame is redrawn each N pixels
 	//int FRAMES_PER_BUFFER = 8;
-	int FRAMES_PER_BUFFER = int(1 / scale_) + 1;
+	static const int CurSampleJumpLatencyPix = 2; // N pixels
+	int FRAMES_PER_BUFFER = int(CurSampleJumpLatencyPix / scale_);
 	PaStream *stream;
-	err = Pa_OpenStream(
+	PaError err = Pa_OpenStream(
 		&stream,
 		nullptr, /* no input */
 		&outputParameters,
@@ -151,11 +149,6 @@ void TranscriberViewModel::soundPlayerPlay()
 			return;
 		}
 
-		qDebug() << "Pa_Terminate";
-
-		err = Pa_Terminate();
-		if (err != paNoError)
-			qDebug() << "Pa_Terminate failed";
 		data.transcriberViewModel->isPlaying_ = false;
 	};
 
@@ -230,11 +223,6 @@ float TranscriberViewModel::docWidthPix() const
     return audioSamples_.size() * scale_ + 2 * docPaddingPix_;
 }
 
-float TranscriberViewModel::firstVisibleSampleInd() const
-{
-	return docPosXToSampleInd(docOffsetX_);
-}
-
 float TranscriberViewModel::docPosXToSampleInd(float docPosX) const
 {
 	return (docPosX - docPaddingPix_) / scale_;
@@ -270,7 +258,10 @@ void TranscriberViewModel::setCurrentFrameInd(long value)
 {
 	if (currentFrameInd_ != value)
 	{
+		long oldValue = currentFrameInd_;
+
 		currentFrameInd_ = value;
-		emit currentFrameIndChanged();
+
+		emit currentFrameIndChanged(oldValue);
 	}
 }

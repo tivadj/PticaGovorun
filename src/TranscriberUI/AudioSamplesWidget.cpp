@@ -6,6 +6,13 @@ AudioSamplesWidget::AudioSamplesWidget(QWidget *parent) :
     QWidget(parent)
 {
 	setFocusPolicy(Qt::WheelFocus);
+
+	// set the background
+	//setBackgroundRole(QPalette::HighlightedText); // doesn't work
+	setAutoFillBackground(true);
+	QPalette pal = palette();
+	pal.setColor(QPalette::Window, QColor(255, 255, 255)); // set white background
+	setPalette(pal);    
 }
 
 void AudioSamplesWidget::setModel(std::shared_ptr<TranscriberViewModel> transcriberModel)
@@ -15,7 +22,7 @@ void AudioSamplesWidget::setModel(std::shared_ptr<TranscriberViewModel> transcri
 
 void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 {
-	//qDebug() << "paintEvent";
+	//qDebug() << "paintEvent" <<pe->rect();
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
@@ -37,7 +44,11 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 	if (audioSamples.empty())
 		return;
 
-	float canvasHeightHalf = height() / 2.0f;
+	float canvasHeight = height();
+	float canvasHeightHalf = canvasHeight / 2.0f;
+
+	// determine first left visible sample
+	
 
 	QColor sampleColor(0, 0, 0);
 	painter.setPen(sampleColor);
@@ -46,14 +57,17 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 	float prevX = XNull;
 	float prevY = XNull;
 
-	// find first sample to draw
-	int firstSampleInd = (int)transcriberModel_->firstVisibleSampleInd();
-	firstSampleInd = std::max(0, firstSampleInd); // make it >=0
+	float viewportRight = std::min(width(), pe->rect().right());
 
-	for (size_t sampleInd = firstSampleInd; sampleInd < audioSamples.size(); ++sampleInd)
+	// determine first left visible sample
+	float viewportLeft = std::max(0, pe->rect().left());
+	long firstVisibleSampleInd = transcriberModel_->docPosXToSampleInd(transcriberModel_->docOffsetX() + viewportLeft);
+	firstVisibleSampleInd = std::max(0L, firstVisibleSampleInd); // make it >=0
+
+	for (size_t sampleInd = firstVisibleSampleInd; sampleInd < audioSamples.size(); ++sampleInd)
 	{
 		// passed beside the right side of the viewport
-		if (prevX > width())
+		if (prevX > viewportRight)
 			break;
 
 		float xPix = transcriberModel_->sampleIndToDocPosX(sampleInd);
@@ -77,11 +91,11 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 		prevY = y;
 	}
 
-	// draw current frame
+	// draw current frame adornment
 	unsigned long currentFrameInd = transcriberModel_->currentFrameInd();
 	float curFrameDocX = transcriberModel_->sampleIndToDocPosX(currentFrameInd);
 	curFrameDocX -= transcriberModel_->docOffsetX();
-	painter.drawLine(curFrameDocX, 0, curFrameDocX, height());
+	painter.drawLine(curFrameDocX, 0, curFrameDocX, canvasHeight);
 }
 
 void AudioSamplesWidget::mousePressEvent(QMouseEvent* me)

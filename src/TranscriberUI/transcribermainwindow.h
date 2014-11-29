@@ -14,6 +14,8 @@ class TranscriberMainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+	static const long FrameIndNull = -1;
+
     explicit TranscriberMainWindow(QWidget *parent = 0);
     ~TranscriberMainWindow();
 
@@ -32,7 +34,7 @@ private slots:
 	void transcriberModel_audioSamplesChanged();
 	void transcriberModel_docOffsetXChanged();
 	void transcriberModel_lastMouseDocPosXChanged(float mouseDocPosX);
-	void transcriberModel_currentFrameIndChanged();
+	void transcriberModel_currentFrameIndChanged(long oldValue);
 private:
     Ui::TranscriberMainWindow *ui;
     std::shared_ptr<TranscriberViewModel> transcriberModel_;

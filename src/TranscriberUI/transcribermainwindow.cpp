@@ -15,7 +15,6 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
     QObject::connect(ui->horizontalScrollBarSamples, SIGNAL(valueChanged(int)), this, SLOT(horizontalScrollBarSamples_valueChanged(int)));
 	QObject::connect(ui->pushButtonPlay, SIGNAL(clicked()), this, SLOT(pushButtonPlay_Clicked()));
 	QObject::connect(ui->pushButtonPause, SIGNAL(clicked()), this, SLOT(pushButtonPause_Clicked()));
-	
 
 	//
     transcriberModel_ = std::make_shared<TranscriberViewModel>();
@@ -25,7 +24,7 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
 	QObject::connect(transcriberModel_.get(), SIGNAL(audioSamplesChanged()), this, SLOT(transcriberModel_audioSamplesChanged()));
 	QObject::connect(transcriberModel_.get(), SIGNAL(docOffsetXChanged()), this, SLOT(transcriberModel_docOffsetXChanged()));
 	QObject::connect(transcriberModel_.get(), SIGNAL(lastMouseDocPosXChanged(float)), this, SLOT(transcriberModel_lastMouseDocPosXChanged(float)));
-	QObject::connect(transcriberModel_.get(), SIGNAL(currentFrameIndChanged()), this, SLOT(transcriberModel_currentFrameIndChanged()));
+	QObject::connect(transcriberModel_.get(), SIGNAL(currentFrameIndChanged(long)), this, SLOT(transcriberModel_currentFrameIndChanged(long)));
 
 	//
 	ui->widgetSamples->setModel(transcriberModel_);
@@ -91,7 +90,10 @@ void TranscriberMainWindow::updateSamplesSlider()
 
 void TranscriberMainWindow::pushButtonLoad_Clicked()
 {
+	qDebug() << "pushButtonLoad_Clicked";
     transcriberModel_->loadAudioFile();
+	//ui->widgetSamples->update(10, 10, 20, 100);
+	//ui->widgetSamples->repaint(10, 10, 20, 100);
 }
 
 void TranscriberMainWindow::pushButtonPlay_Clicked()
@@ -137,7 +139,35 @@ void TranscriberMainWindow::transcriberModel_lastMouseDocPosXChanged(float mouse
 	}
 }
 
-void TranscriberMainWindow::transcriberModel_currentFrameIndChanged()
+void TranscriberMainWindow::transcriberModel_currentFrameIndChanged(long oldCurFrameInd)
 {
-	ui->widgetSamples->update();
+	QRect updateRect = ui->widgetSamples->rect();
+	if (oldCurFrameInd == TranscriberMainWindow::FrameIndNull)
+		ui->widgetSamples->update(updateRect);
+
+	long newCurFrameInd = transcriberModel_->currentFrameInd();
+	if (newCurFrameInd == TranscriberMainWindow::FrameIndNull)
+		ui->widgetSamples->update(updateRect);
+
+	// update only invalidated rect
+
+	auto minFrameInd = std::min(oldCurFrameInd, newCurFrameInd);
+	auto maxFrameInd = std::max(oldCurFrameInd, newCurFrameInd);
+
+	auto minX = transcriberModel_->sampleIndToDocPosX(minFrameInd);
+	minX -= transcriberModel_->docOffsetX();
+
+	auto maxX = transcriberModel_->sampleIndToDocPosX(maxFrameInd);
+	maxX -= transcriberModel_->docOffsetX();
+
+	const static int VerticalMarkerWidth = 3;
+	updateRect.setLeft(minX - VerticalMarkerWidth);
+	updateRect.setRight(maxX + VerticalMarkerWidth);
+
+	// QWidget::paint is more responsive and the moving cursor may not flicker
+	// but if drawing is slow, the UI may stop responding at all
+	// QWidget::update may not be in time to interactively update the UI (the cursor may flicker)
+	// but the UI will be responsive under intensive drawing
+	//ui->widgetSamples->update(updateRect);
+	ui->widgetSamples->repaint(updateRect);
 }

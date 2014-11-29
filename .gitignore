@@ -1,10 +1,21 @@
+# This app specific
+build/
+build-*Desktop_Qt*/
+output/
+TmpLib1/
+array_view.props
+
 *.log
 *.asv
-*.user
+
+# Visual Studio specific
+*.suo
 *.sdf
 *.opensdf
-*.suo
+*.user
 *.psess
 *.ipch
-build/
-output/
+
+# Qt specific
+GeneratedFiles/
+

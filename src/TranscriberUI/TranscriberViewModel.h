@@ -20,7 +20,9 @@ signals :
     void audioSamplesChanged();
 	void docOffsetXChanged();
 	void lastMouseDocPosXChanged(float mouseDocPosX);
-	void currentFrameIndChanged();
+
+	// Occurs when current frame cursor changes.
+	void currentFrameIndChanged(long oldValue);
 public:
     TranscriberViewModel();
 
@@ -46,7 +48,6 @@ public:
     float docWidthPix() const;
 	
 	// Returns first visible sample which is at docOffsetX position.
-	float firstVisibleSampleInd() const;
 	float docPosXToSampleInd(float docPosX) const;
 	float sampleIndToDocPosX(long sampleInd) const;
 	//const arv::array_view<short> audioSamples222() const
