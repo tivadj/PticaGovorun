@@ -6,6 +6,8 @@
 #include "PticaGovorunBackend/SoundUtils.h"
 #include "TranscriberViewModel.h"
 
+static const decltype(paComplete) SoundPlayerCompleteOrAbortTechnique = paComplete; // paComplete or paAbort
+
 TranscriberViewModel::TranscriberViewModel()
 {
     QString fileName = QString::fromStdWString(L"PticaGovorun/2011-04-pynzenyk-q_11.wav");
@@ -77,7 +79,7 @@ void TranscriberViewModel::soundPlayerPlay()
 	outputParameters.suggestedLatency = Pa_GetDeviceInfo(deviceIndex)->defaultLowOutputLatency;
 	outputParameters.hostApiSpecificStreamInfo = nullptr;
 
-	auto patestCallback = [](const void *inputBuffer, void *outputBuffer,
+	auto patestCallbackAbort = [](const void *inputBuffer, void *outputBuffer,
 		unsigned long framesPerBuffer,
 		const PaStreamCallbackTimeInfo* timeInfo,
 		PaStreamCallbackFlags statusFlags,
@@ -114,6 +116,70 @@ void TranscriberViewModel::soundPlayerPlay()
 		return paContinue;
 	};
 
+	auto patestCallbackComplete = [](const void *inputBuffer, void *outputBuffer,
+		unsigned long framesPerBuffer,
+		const PaStreamCallbackTimeInfo* timeInfo,
+		PaStreamCallbackFlags statusFlags,
+		void *userData) -> int
+	{
+		//qDebug() << "patestCallback";
+
+		short *out = (short*)outputBuffer;
+
+		SoundPlayerData& data = *(SoundPlayerData*)userData;
+		if (!data.allowPlaying)
+		{
+			// reset the buffer
+			static const int NumChannels = 2; // Stereo=2, Mono=1
+			static const int FrameSize = sizeof(decltype(*out)) * NumChannels;
+			std::memset(out, 0, FrameSize * framesPerBuffer);
+			return paComplete;
+		}
+
+		TranscriberViewModel& transcriberViewModel = *data.transcriberViewModel;
+
+		long sampleInd = data.FrameIndToPlay;
+		long sampleEnd = std::min((long)transcriberViewModel.audioSamples_.size(), sampleInd + (long)framesPerBuffer);
+		int availableFramesCount = sampleEnd - sampleInd;
+
+		// updates current frame
+		transcriberViewModel.setCurrentFrameInd(sampleInd);
+
+		// populate samples buffer
+
+		for (unsigned long i = 0; i<availableFramesCount; i++)
+		{
+			short sampleValue = transcriberViewModel.audioSamples_[sampleInd + i];
+			*out++ = sampleValue;  // left
+			*out++ = sampleValue;  // right
+		}
+
+		// trailing bytes are zero
+		for (unsigned long i = availableFramesCount; i<framesPerBuffer; i++)
+		{
+			short sampleValue = transcriberViewModel.audioSamples_[sampleInd + i];
+			*out++ = 0;  // left
+			*out++ = 0;  // right
+		}
+
+		// set the frame to play on the next request of audio samples
+		data.FrameIndToPlay = sampleEnd;
+		
+		if (availableFramesCount < framesPerBuffer) // the last buffer
+			return paComplete;
+
+		return paContinue;
+	};
+
+	typedef int(*PaStreamCallbackFun)(
+		const void *input, void *output,
+		unsigned long frameCount,
+		const PaStreamCallbackTimeInfo* timeInfo,
+		PaStreamCallbackFlags statusFlags,
+		void *userData);
+
+	auto patestCallback = (SoundPlayerCompleteOrAbortTechnique == paComplete) ? (PaStreamCallbackFun)patestCallbackComplete : (PaStreamCallbackFun)patestCallbackAbort;
+
 	// choose the buffer so the current frame is redrawn each N pixels
 	//int FRAMES_PER_BUFFER = 8;
 	static const int CurSampleJumpLatencyPix = 2; // N pixels
@@ -135,18 +201,23 @@ void TranscriberViewModel::soundPlayerPlay()
 
 	auto StreamFinished = [](void* userData) -> void
 	{
-		// stream is closed when audio data finishes or
-		// when the client stops the stream
 		qDebug() << "StreamFinished";
 		SoundPlayerData& data = *(SoundPlayerData*)userData;
 
-		qDebug() << "Closing stream";
-		PaStream* stream = data.stream;
-		PaError err = Pa_CloseStream(stream);
-		if (err != paNoError)
+		// stream is closed when the client stops the stream
+		// when data finishes and paAbort    is used, the client must close the stream
+		// when data finishes and paComplete is used, the stream is closed automatically
+
+		if (SoundPlayerCompleteOrAbortTechnique == paAbort)
 		{
-			qDebug() << "Error in Pa_CloseStream: " << Pa_GetErrorText(err);
-			return;
+			qDebug() << "Closing stream";
+			PaStream* stream = data.stream;
+			PaError err = Pa_CloseStream(stream);
+			if (err != paNoError)
+			{
+				qDebug() << "Error in Pa_CloseStream: " << Pa_GetErrorText(err);
+				return;
+			}
 		}
 
 		data.transcriberViewModel->isPlaying_ = false;

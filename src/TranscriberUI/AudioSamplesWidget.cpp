@@ -108,6 +108,8 @@ void AudioSamplesWidget::keyPressEvent(QKeyEvent* ke)
 {
 	if (ke->key() == Qt::Key_C)
 		transcriberModel_->soundPlayerPlay();
+	else if (ke->key() == Qt::Key_F)
+		transcriberModel_->togglePlayPause();
 	else if (ke->key() == Qt::Key_Space)
 		transcriberModel_->soundPlayerPause();
 	else
