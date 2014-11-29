@@ -2,6 +2,7 @@
 #include <QStandardPaths>
 #include <QPointF>
 #include <QDebug>
+#include <QDir>
 #include <QApplication>
 #include "PticaGovorunBackend/SoundUtils.h"
 #include "TranscriberViewModel.h"
@@ -39,6 +40,11 @@ void TranscriberViewModel::loadAudioFile()
 	std::stringstream msg;
 	msg << "Loaded: SamplesCount=" << audioSamples_.size();
 	emit nextNotification(QString::fromStdString(msg.str()));
+
+	//
+	loadAudioMarkupFromXml();
+
+	//
 
 	setCurrentFrameInd(0);
 
@@ -255,6 +261,19 @@ void TranscriberViewModel::soundPlayerPause()
 	// note, stream is closed in the Pa_SetStreamFinishedCallback
 }
 
+void TranscriberViewModel::loadAudioMarkupFromXml()
+{
+	QFileInfo audioFileInfoObj(audioFilePath());
+	QString audioMarkupFileName = audioFileInfoObj.completeBaseName() + ".xml";
+
+	QDir absDir = audioFileInfoObj.absoluteDir();
+	QString audioMarkupPathAbs = absDir.absoluteFilePath(audioMarkupFileName);
+	
+	//
+	frameIndMarkers_.clear();
+	PticaGovorun::loadAudioMarkupFromXml(audioMarkupPathAbs.toStdWString(), frameIndMarkers_);
+}
+
 QString TranscriberViewModel::audioFilePath() const
 {
     return audioFilePathAbs_;
@@ -307,6 +326,11 @@ float TranscriberViewModel::sampleIndToDocPosX(long sampleInd) const
 const std::vector<short>& TranscriberViewModel::audioSamples() const
 {
 	return audioSamples_;
+}
+
+const std::vector<PticaGovorun::TimePointMarker>& TranscriberViewModel::frameIndMarkers() const
+{
+	return frameIndMarkers_;
 }
 
 void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos)

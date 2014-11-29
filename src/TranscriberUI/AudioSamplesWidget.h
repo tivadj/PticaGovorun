@@ -25,6 +25,8 @@ protected:
 	void mousePressEvent(QMouseEvent*) override;
 	void keyPressEvent(QKeyEvent*) override;
 private:
+	void drawFrameIndMarkers(QPainter& painter, int markerHeight, float visibleDocLeft, float visibleDocRight);
+private:
 	std::shared_ptr<TranscriberViewModel> transcriberModel_;
 };
 

@@ -61,15 +61,13 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 
 	// determine first left visible sample
 	float viewportLeft = std::max(0, pe->rect().left());
-	long firstVisibleSampleInd = transcriberModel_->docPosXToSampleInd(transcriberModel_->docOffsetX() + viewportLeft);
+	float visibleDocLeft = transcriberModel_->docOffsetX() + viewportLeft;
+	float visibleDocRight = transcriberModel_->docOffsetX() + viewportRight;
+	long firstVisibleSampleInd = transcriberModel_->docPosXToSampleInd(visibleDocLeft);
 	firstVisibleSampleInd = std::max(0L, firstVisibleSampleInd); // make it >=0
 
 	for (size_t sampleInd = firstVisibleSampleInd; sampleInd < audioSamples.size(); ++sampleInd)
 	{
-		// passed beside the right side of the viewport
-		if (prevX > viewportRight)
-			break;
-
 		float xPix = transcriberModel_->sampleIndToDocPosX(sampleInd);
 		xPix -= transcriberModel_->docOffsetX(); // compensate for docOffsetX
 
@@ -77,6 +75,10 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 		// the current sample, when both are squeezed in the same pixel
 		if (prevX != XNull && prevX == xPix)
 			continue;
+
+		// passed beside the right side of the viewport
+		if (xPix > viewportRight)
+			break;
 
 		short sampleValue = audioSamples[sampleInd];
 		float sampleYPerc = sampleValue / (float)std::numeric_limits<short>::max();
@@ -91,11 +93,38 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 		prevY = y;
 	}
 
+	QColor markerColor(0, 255, 0);
+	painter.setPen(markerColor);
+	drawFrameIndMarkers(painter, canvasHeight, visibleDocLeft, visibleDocRight);
+
 	// draw current frame adornment
-	unsigned long currentFrameInd = transcriberModel_->currentFrameInd();
+
+	QColor curMarkerColor(0, 0, 0);
+	painter.setPen(curMarkerColor);
+	
+	long currentFrameInd = transcriberModel_->currentFrameInd();
 	float curFrameDocX = transcriberModel_->sampleIndToDocPosX(currentFrameInd);
 	curFrameDocX -= transcriberModel_->docOffsetX();
 	painter.drawLine(curFrameDocX, 0, curFrameDocX, canvasHeight);
+}
+
+void AudioSamplesWidget::drawFrameIndMarkers(QPainter& painter, int markerHeight, float visibleDocLeft, float visibleDocRight)
+{
+	auto docOffsetX = transcriberModel_->docOffsetX();
+
+	for (const PticaGovorun::TimePointMarker& marker : transcriberModel_->frameIndMarkers())
+	{
+		long frameInd = marker.SampleInd;
+		float frameDocX = transcriberModel_->sampleIndToDocPosX(frameInd);
+		
+		// repaint only markers from invalidated region
+		if (frameDocX < visibleDocLeft) continue;
+		if (frameDocX > visibleDocRight) break;
+
+		auto x = frameDocX - docOffsetX;
+
+		painter.drawLine(x, 0, x, markerHeight);
+	}
 }
 
 void AudioSamplesWidget::mousePressEvent(QMouseEvent* me)

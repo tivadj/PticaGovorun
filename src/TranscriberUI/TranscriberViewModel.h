@@ -6,6 +6,7 @@
 //#include "array_view.hpp"
 #include <portaudio.h>
 #include <atomic>
+#include "XmlAudioMarkup.h"
 
 // The document is a graph for samples plus padding to the left and right.
 // The samples graph is painted with current 'scale'.
@@ -31,8 +32,8 @@ public:
 	void togglePlayPause();
 	void soundPlayerPlay();
 	void soundPlayerPause();
-
-    QString audioFilePath() const;
+	void loadAudioMarkupFromXml();
+	QString audioFilePath() const;
     void setAudioFilePath(const QString& filePath);
 
 	// Number of pixels per one sample in X direction. Used to construct a samples graph.
@@ -57,6 +58,8 @@ public:
 	//}
 	const std::vector<short>& audioSamples() const;
 
+	const std::vector<PticaGovorun::TimePointMarker>& frameIndMarkers() const;
+
 	void setLastMousePressPos(const QPointF& localPos);
 	long currentFrameInd() const;
 	void setCurrentFrameInd(long value);
@@ -69,6 +72,7 @@ private:
 	// together with the samples graph is treated as the document
 	float docPaddingPix_ = 100;
 	long currentFrameInd_ = -1;
+	std::vector<PticaGovorun::TimePointMarker> frameIndMarkers_;
 
 	struct SoundPlayerData
 	{
