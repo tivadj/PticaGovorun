@@ -14,8 +14,6 @@ class TranscriberMainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-	static const long FrameIndNull = -1;
-
     explicit TranscriberMainWindow(QWidget *parent = 0);
     ~TranscriberMainWindow();
 

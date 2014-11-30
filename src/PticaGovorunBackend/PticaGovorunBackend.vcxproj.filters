@@ -27,6 +27,12 @@
     <ClInclude Include="XmlAudioMarkup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PticaGovorunCore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClnUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

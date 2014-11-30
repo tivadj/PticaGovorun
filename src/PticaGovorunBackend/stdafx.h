@@ -11,12 +11,5 @@
 // Windows Header Files:
 #include <windows.h>
 
-#if defined PGAPI_EXPORTS
-#define PG_EXPORTS __declspec(dllexport)
-#else
-//#define PG_EXPORTS __declspec(dllimport)
-#define PG_EXPORTS
-#endif
-
-
+#include "PticaGovorunCore.h"
 // TODO: reference additional headers your program requires here

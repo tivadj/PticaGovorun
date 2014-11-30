@@ -136,11 +136,11 @@ void AudioSamplesWidget::mousePressEvent(QMouseEvent* me)
 void AudioSamplesWidget::keyPressEvent(QKeyEvent* ke)
 {
 	if (ke->key() == Qt::Key_C)
-		transcriberModel_->soundPlayerPlay();
-	else if (ke->key() == Qt::Key_F)
-		transcriberModel_->togglePlayPause();
+		transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::CurrentCursor);
+	else if (ke->key() == Qt::Key_X)
+		transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::SegmentBegin);
 	else if (ke->key() == Qt::Key_Space)
-		transcriberModel_->soundPlayerPause();
+		transcriberModel_->soundPlayerTogglePlayPause();
 	else
 		QWidget::keyPressEvent(ke);
 }

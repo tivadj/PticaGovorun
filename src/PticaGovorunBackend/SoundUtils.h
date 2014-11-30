@@ -7,8 +7,8 @@
 #include <sndfile.h> // SF_VIRTUAL_IO
 
 namespace PticaGovorun {
-	//typedef long PGFrameInd;
-	//static const PGFrameInd PGFrameIndNull = -1;
+	typedef long PGFrameInd;
+	static const PGFrameInd PGFrameIndNull = -1;
 
 class SoundUtils
 {

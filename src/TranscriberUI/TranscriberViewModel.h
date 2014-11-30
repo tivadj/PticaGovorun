@@ -8,6 +8,16 @@
 #include <atomic>
 #include "XmlAudioMarkup.h"
 
+// Specifies which frame to choose as a starting one when playing an audio segment between two markers.
+enum class SegmentStartFrameToPlayChoice
+{
+	// Starts playing from the current cursor.
+	CurrentCursor,
+
+	// Starts playing from the left marker of the segment.
+	SegmentBegin
+};
+
 // The document is a graph for samples plus padding to the left and right.
 // The samples graph is painted with current 'scale'.
 class TranscriberViewModel : public QObject
@@ -29,9 +39,18 @@ public:
 
     void loadAudioFile();
 
-	void togglePlayPause();
-	void soundPlayerPlay();
+	// Plays the current segment of audio.
+	// restoreCurFrameInd=true, if current frame must be restored when playing finishes.
+	void soundPlayerPlay(long startPlayingFrameInd, long finishPlayingFrameInd, bool restoreCurFrameInd);
+	std::tuple<long, long> getFrameRangeToPlay(long curFrameInd, SegmentStartFrameToPlayChoice startFrameChoice);
+	void soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice startFrameChoice);
 	void soundPlayerPause();
+	void soundPlayerPlay();
+	// Plays from the current frame index to the next frame marker or the end of audio, what will occur earlier.
+	void soundPlayerTogglePlayPause();
+
+	//
+
 	void loadAudioMarkupFromXml();
 	QString audioFilePath() const;
     void setAudioFilePath(const QString& filePath);
@@ -64,6 +83,10 @@ public:
 	long currentFrameInd() const;
 	void setCurrentFrameInd(long value);
 private:
+	// returns the index in the closest to the left time point marker in markers collection
+	// returns -1 if there is no markers to the left of 'frameInd' or audio samples were not loaded.
+	int findLeftCloseMarkerInd(long frameInd);
+private:
 	std::vector<short> audioSamples_;
     QString audioFilePathAbs_;
 	float docOffsetX_ = 0;
@@ -74,10 +97,23 @@ private:
 	long currentFrameInd_ = -1;
 	std::vector<PticaGovorun::TimePointMarker> frameIndMarkers_;
 
+	// Represents internal audio player's data.
+	// The range (StartPlayingFrameInd;FinishPlayingFrameInd) of frames is played.
 	struct SoundPlayerData
 	{
 		TranscriberViewModel* transcriberViewModel;
-		long FrameIndToPlay;
+		long CurPlayingFrameInd;
+
+#if PG_DEBUG
+		// used to restore cursor to initial position
+		long StartPlayingFrameInd; // is not changed when playing
+#endif
+
+		// used to determine when to stop playing
+		long FinishPlayingFrameInd; // is not changed when playing
+
+		// PticaGovorun::PGFrameIndNull if CurFrameInd should not be restored
+		long RestoreCurrentFrameInd; // CurFrameInd to restore when playing finishes
 		PaStream *stream;
 		std::atomic<bool> allowPlaying;
 	};

@@ -3,6 +3,7 @@
 #include "ui_transcribermainwindow.h"
 #include <QDebug>
 #include <QMouseEvent>
+#include "SoundUtils.h"
 
 TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -142,11 +143,11 @@ void TranscriberMainWindow::transcriberModel_lastMouseDocPosXChanged(float mouse
 void TranscriberMainWindow::transcriberModel_currentFrameIndChanged(long oldCurFrameInd)
 {
 	QRect updateRect = ui->widgetSamples->rect();
-	if (oldCurFrameInd == TranscriberMainWindow::FrameIndNull)
+	if (oldCurFrameInd == PticaGovorun::PGFrameIndNull)
 		ui->widgetSamples->update(updateRect);
 
 	long newCurFrameInd = transcriberModel_->currentFrameInd();
-	if (newCurFrameInd == TranscriberMainWindow::FrameIndNull)
+	if (newCurFrameInd == PticaGovorun::PGFrameIndNull)
 		ui->widgetSamples->update(updateRect);
 
 	// update only invalidated rect

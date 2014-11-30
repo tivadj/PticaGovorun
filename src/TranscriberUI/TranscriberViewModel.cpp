@@ -6,6 +6,8 @@
 #include <QApplication>
 #include "PticaGovorunBackend/SoundUtils.h"
 #include "TranscriberViewModel.h"
+#include "PticaGovorunCore.h"
+#include "ClnUtils.h"
 
 static const decltype(paComplete) SoundPlayerCompleteOrAbortTechnique = paComplete; // paComplete or paAbort
 
@@ -51,30 +53,21 @@ void TranscriberViewModel::loadAudioFile()
 	emit audioSamplesLoaded();
 }
 
-void TranscriberViewModel::togglePlayPause()
+void TranscriberViewModel::soundPlayerPlay(long startPlayingFrameInd, long finishPlayingFrameInd, bool restoreCurFrameInd)
 {
-	qDebug() << "togglePlayPause{ isPlaying=" <<isPlaying_;
-	if (isPlaying_)
-		soundPlayerPause();
-	else
-		soundPlayerPlay();
-	qDebug() << "togglePlayPause} isPlaying=" << isPlaying_;
-}
-
-void TranscriberViewModel::soundPlayerPlay()
-{
-	auto frameInd = currentFrameInd();
-	if (frameInd == -1)
-		return;
-
 	SoundPlayerData& data = soundPlayerData_;
 	data.transcriberViewModel = this;
-	data.FrameIndToPlay = frameInd;
+#if PG_DEBUG
+	data.StartPlayingFrameInd = startPlayingFrameInd;
+#endif
+	data.FinishPlayingFrameInd = finishPlayingFrameInd;
+	data.CurPlayingFrameInd = startPlayingFrameInd;
+	data.RestoreCurrentFrameInd = restoreCurFrameInd ? currentFrameInd() : PticaGovorun::PGFrameIndNull;
 
 	//
 	PaDeviceIndex deviceIndex = Pa_GetDefaultOutputDevice(); /* default output device */
 	if (deviceIndex == paNoDevice) {
-		qDebug() <<"Error: No default output device";
+		qDebug() << "Error: No default output device";
 		return;
 	}
 
@@ -98,7 +91,7 @@ void TranscriberViewModel::soundPlayerPlay()
 
 		TranscriberViewModel& transcriberViewModel = *data.transcriberViewModel;
 
-		long sampleInd = data.FrameIndToPlay;
+		long sampleInd = data.CurPlayingFrameInd;
 		long sampleEnd = std::min((long)transcriberViewModel.audioSamples_.size(), sampleInd + (long)framesPerBuffer);
 		int availableFramesCount = sampleEnd - sampleInd;
 		if (availableFramesCount < framesPerBuffer) // the last buffer
@@ -118,7 +111,7 @@ void TranscriberViewModel::soundPlayerPlay()
 		}
 
 		// set the frame to play on the next request of audio samples
-		data.FrameIndToPlay = sampleEnd;
+		data.CurPlayingFrameInd = sampleEnd;
 		return paContinue;
 	};
 
@@ -144,11 +137,11 @@ void TranscriberViewModel::soundPlayerPlay()
 
 		TranscriberViewModel& transcriberViewModel = *data.transcriberViewModel;
 
-		long sampleInd = data.FrameIndToPlay;
-		long sampleEnd = std::min((long)transcriberViewModel.audioSamples_.size(), sampleInd + (long)framesPerBuffer);
+		long sampleInd = data.CurPlayingFrameInd;
+		long sampleEnd = std::min(data.FinishPlayingFrameInd, sampleInd + (long)framesPerBuffer);
 		int availableFramesCount = sampleEnd - sampleInd;
 
-		// updates current frame
+		// updates current frame in UI
 		transcriberViewModel.setCurrentFrameInd(sampleInd);
 
 		// populate samples buffer
@@ -163,14 +156,13 @@ void TranscriberViewModel::soundPlayerPlay()
 		// trailing bytes are zero
 		for (unsigned long i = availableFramesCount; i<framesPerBuffer; i++)
 		{
-			short sampleValue = transcriberViewModel.audioSamples_[sampleInd + i];
 			*out++ = 0;  // left
 			*out++ = 0;  // right
 		}
 
 		// set the frame to play on the next request of audio samples
-		data.FrameIndToPlay = sampleEnd;
-		
+		data.CurPlayingFrameInd = sampleEnd;
+
 		if (availableFramesCount < framesPerBuffer) // the last buffer
 			return paComplete;
 
@@ -226,13 +218,17 @@ void TranscriberViewModel::soundPlayerPlay()
 			}
 		}
 
+		// updates current frame in UI
+		if (data.RestoreCurrentFrameInd != PticaGovorun::PGFrameIndNull)
+			data.transcriberViewModel->setCurrentFrameInd(data.RestoreCurrentFrameInd);
+
 		data.transcriberViewModel->isPlaying_ = false;
 	};
 
 	err = Pa_SetStreamFinishedCallback(stream, StreamFinished);
 	if (err != paNoError)
 		return;
-	
+
 	// play
 
 	soundPlayerData_.allowPlaying = true;
@@ -241,11 +237,76 @@ void TranscriberViewModel::soundPlayerPlay()
 	err = Pa_StartStream(stream);
 	if (err != paNoError)
 		return;
+}
 
-	// Play for %d seconds
-	//Pa_Sleep(1000);
+std::tuple<long, long> TranscriberViewModel::getFrameRangeToPlay(long curFrameInd, SegmentStartFrameToPlayChoice startFrameChoice)
+{
+	PG_Assert(!audioSamples_.empty() && "Audio samples must be loaded");
+
+	if (frameIndMarkers_.empty())
+	{
+		// play from the start of audio
+		// play to the end of audio
+		return std::make_tuple<long,long>(0,audioSamples_.size() - 1);
+	}
+	
+	long startPlayFrameInd = -1;
+	long endPlayFrameInd = -1;
+
+	int leftMarkerInd = findLeftCloseMarkerInd(curFrameInd);
+	if (leftMarkerInd == -1)
+	{
+		// current frameInd is before the first marker
+
+		if (startFrameChoice == SegmentStartFrameToPlayChoice::CurrentCursor)
+			startPlayFrameInd = curFrameInd;
+		else if (startFrameChoice == SegmentStartFrameToPlayChoice::SegmentBegin)
+			startPlayFrameInd = 0;
+
+		// play to the closest right marker which is the first in the markers collection
+		endPlayFrameInd = frameIndMarkers_[0].SampleInd;
+	}
+	else
+	{
+		if (startFrameChoice == SegmentStartFrameToPlayChoice::CurrentCursor)
+			startPlayFrameInd = curFrameInd;
+		else if (startFrameChoice == SegmentStartFrameToPlayChoice::SegmentBegin)
+			startPlayFrameInd = frameIndMarkers_[leftMarkerInd].SampleInd;
+
+		long rightMarkerInd = leftMarkerInd + 1;
+		if (rightMarkerInd >= frameIndMarkers_.size())
+		{
+			// the last segment is requested to play; play to the end of audio
+			endPlayFrameInd = audioSamples_.size() - 1;
+		}
+		else
+		{
+			// play to the frameInd of the closest right marker
+			endPlayFrameInd = frameIndMarkers_[rightMarkerInd].SampleInd;
+		}
+	}
+	
+	PG_Assert(startPlayFrameInd != -1 && "Must be valid frameInd");
+	PG_Assert(endPlayFrameInd != -1 && "Must be valid frameInd");
+	PG_Assert(startPlayFrameInd < endPlayFrameInd && "Must be valid range of frames");
+
+	//return std::make_tuple<long,long>(startPlayFrameInd, endPlayFrameInd); // TODO: error C2664: 'std::tuple<long,long> std::make_tuple<long,long>(long &&,long &&)' : cannot convert argument 1 from 'long' to 'long &&'
+	return std::tuple<long,long>(startPlayFrameInd, endPlayFrameInd);
+}
+
+void TranscriberViewModel::soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice startFrameChoice)
+{
+	if (audioSamples_.empty())
+		return;
+
+	auto curFrameInd = currentFrameInd();
+	if (curFrameInd < 0)
+		curFrameInd = 0;
 
 
+	// determine the frameInd to which to play audio
+	auto frameRangeToPlay = getFrameRangeToPlay(curFrameInd, startFrameChoice);
+	soundPlayerPlay(std::get<0>(frameRangeToPlay), std::get<1>(frameRangeToPlay), true);
 }
 
 void TranscriberViewModel::soundPlayerPause()
@@ -259,6 +320,28 @@ void TranscriberViewModel::soundPlayerPause()
 		return;
 
 	// note, stream is closed in the Pa_SetStreamFinishedCallback
+}
+
+void TranscriberViewModel::soundPlayerPlay()
+{
+	if (audioSamples_.empty())
+		return;
+
+	auto curFrameInd = currentFrameInd();
+	if (curFrameInd == PticaGovorun::PGFrameIndNull)
+		return;
+
+	soundPlayerPlay(curFrameInd, audioSamples_.size() - 1, false);
+}
+
+void TranscriberViewModel::soundPlayerTogglePlayPause()
+{
+	qDebug() << "soundPlayerTogglePlayPause{ isPlaying=" << isPlaying_;
+	if (isPlaying_)
+		soundPlayerPause();
+	else
+		soundPlayerPlay();
+	qDebug() << "soundPlayerTogglePlayPause} isPlaying=" << isPlaying_;
 }
 
 void TranscriberViewModel::loadAudioMarkupFromXml()
@@ -333,6 +416,26 @@ const std::vector<PticaGovorun::TimePointMarker>& TranscriberViewModel::frameInd
 	return frameIndMarkers_;
 }
 
+int TranscriberViewModel::findLeftCloseMarkerInd(long frameInd)
+{
+	if (frameIndMarkers_.empty())
+		return -1;
+
+	// before the first marker?
+	if (frameInd < frameIndMarkers_[0].SampleInd)
+		return -1;
+
+	// after the last marker?
+	int lastFrameInd = frameIndMarkers_.size() - 1;
+	if (frameInd >= frameIndMarkers_[lastFrameInd].SampleInd)
+		return lastFrameInd;
+
+	auto markerFrameIndSelector = [](const PticaGovorun::TimePointMarker& m) { return m.SampleInd; };
+	auto hitMarkerIt = PticaGovorun::binarySearch(std::begin(frameIndMarkers_), std::end(frameIndMarkers_), frameInd, markerFrameIndSelector);
+	int hitMarkerInd = std::distance(std::begin(frameIndMarkers_), hitMarkerIt);
+	return hitMarkerInd;
+}
+
 void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos)
 {
 	float lastMousePressDocPosX = docOffsetX_ + localPos.x();
@@ -360,3 +463,4 @@ void TranscriberViewModel::setCurrentFrameInd(long value)
 		emit currentFrameIndChanged(oldValue);
 	}
 }
+
