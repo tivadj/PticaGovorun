@@ -24,6 +24,10 @@ struct TimePointMarker
 	bool IsManual;
 
 	QString TranscripText;
+
+	// recognition results
+	QString RecogSegmentText;
+	QString RecogSegmentWords;
 };
 
 PG_EXPORTS std::tuple<bool,const char*> loadAudioMarkupFromXml(const std::wstring& audioFilePathAbs, std::vector<TimePointMarker>& syncPoints);

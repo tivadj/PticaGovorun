@@ -26,6 +26,7 @@ protected:
 	void keyPressEvent(QKeyEvent*) override;
 private:
 	void drawFrameIndMarkers(QPainter& painter, int markerHeight, float visibleDocLeft, float visibleDocRight);
+	void drawMarkerRecognizedText(QPainter& painter, const PticaGovorun::TimePointMarker& marker, float frameDocX);
 private:
 	std::shared_ptr<TranscriberViewModel> transcriberModel_;
 };

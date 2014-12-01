@@ -2,11 +2,12 @@
 #define TRANSCRIBERVIEWMODEL_H
 #include <vector>
 #include <atomic>
+#include <memory>
 #include <QObject>
 //#include "array_view.hpp"
 #include <portaudio.h>
-#include <atomic>
 #include "XmlAudioMarkup.h"
+#include "JuliusToolNativeWrapper.h"
 
 // Specifies which frame to choose as a starting one when playing an audio segment between two markers.
 enum class SegmentStartFrameToPlayChoice
@@ -42,7 +43,9 @@ public:
 	// Plays the current segment of audio.
 	// restoreCurFrameInd=true, if current frame must be restored when playing finishes.
 	void soundPlayerPlay(long startPlayingFrameInd, long finishPlayingFrameInd, bool restoreCurFrameInd);
-	std::tuple<long, long> getFrameRangeToPlay(long curFrameInd, SegmentStartFrameToPlayChoice startFrameChoice);
+	// outLeftMarkerInd (may be null): returns the index of current segment's left marker.
+	std::tuple<long, long> getFrameRangeToPlay(long curFrameInd, SegmentStartFrameToPlayChoice startFrameChoice, int* outLeftMarkerInd = nullptr);
+
 	void soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice startFrameChoice);
 	void soundPlayerPause();
 	void soundPlayerPlay();
@@ -82,6 +85,7 @@ public:
 	void setLastMousePressPos(const QPointF& localPos);
 	long currentFrameInd() const;
 	void setCurrentFrameInd(long value);
+	void recognizeCurrentSegment();
 private:
 	// returns the index in the closest to the left time point marker in markers collection
 	// returns -1 if there is no markers to the left of 'frameInd' or audio samples were not loaded.
@@ -119,6 +123,9 @@ private:
 	};
 	SoundPlayerData soundPlayerData_;
 	std::atomic<bool> isPlaying_;
+
+	// recognition
+	std::unique_ptr<PticaGovorun::JuliusToolWrapper> recognizer_;
 	
 public:
 	float scale_;

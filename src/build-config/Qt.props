@@ -42,6 +42,9 @@
     <Copy SourceFiles="$(QtDirMy)Bin\Qt5Gui$(QtLibSuffix).dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
     <Copy SourceFiles="$(QtDirMy)Bin\Qt5OpenGL$(QtLibSuffix).dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
     <Copy SourceFiles="$(QtDirMy)Bin\Qt5Xml$(QtLibSuffix).dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
+    <Copy SourceFiles="$(QtDirMy)Bin\icuin52.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
+    <Copy SourceFiles="$(QtDirMy)Bin\icuuc52.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
+    <Copy SourceFiles="$(QtDirMy)Bin\icudt52.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
     <MakeDir Directories="$(OutDir)platforms" />
     <Copy SourceFiles="$(QtDirMy)plugins\platforms\QWindows.dll" DestinationFolder="$(OutDir)platforms" SkipUnchangedFiles="True"/>
   </Target>

@@ -52,7 +52,7 @@ std::tuple<bool,std::string> readAllSamples(const string& fileName, vector<short
     return make_tuple(true, string());
 }
 
-std::tuple<bool,std::string> writeAllSamplesWav(short* sampleData, int sampleCount, const std::string& fileName, int sampleRate)
+std::tuple<bool,std::string> writeAllSamplesWav(const short* sampleData, int sampleCount, const std::string& fileName, int sampleRate)
 {
     SF_INFO sfInfo;
     memset(&sfInfo, 0, sizeof(sfInfo));

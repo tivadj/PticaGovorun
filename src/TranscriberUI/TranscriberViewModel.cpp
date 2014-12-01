@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QApplication>
+#include <QTextCodec>
 #include "PticaGovorunBackend/SoundUtils.h"
 #include "TranscriberViewModel.h"
 #include "PticaGovorunCore.h"
@@ -222,6 +223,10 @@ void TranscriberViewModel::soundPlayerPlay(long startPlayingFrameInd, long finis
 		if (data.RestoreCurrentFrameInd != PticaGovorun::PGFrameIndNull)
 			data.transcriberViewModel->setCurrentFrameInd(data.RestoreCurrentFrameInd);
 
+		// parts of UI are not painted when cursor moves
+		// redraw entire UI when playing completes
+		emit data.transcriberViewModel->audioSamplesLoaded();
+
 		data.transcriberViewModel->isPlaying_ = false;
 	};
 
@@ -239,7 +244,7 @@ void TranscriberViewModel::soundPlayerPlay(long startPlayingFrameInd, long finis
 		return;
 }
 
-std::tuple<long, long> TranscriberViewModel::getFrameRangeToPlay(long curFrameInd, SegmentStartFrameToPlayChoice startFrameChoice)
+std::tuple<long, long> TranscriberViewModel::getFrameRangeToPlay(long curFrameInd, SegmentStartFrameToPlayChoice startFrameChoice, int* outLeftMarkerInd)
 {
 	PG_Assert(!audioSamples_.empty() && "Audio samples must be loaded");
 
@@ -247,6 +252,8 @@ std::tuple<long, long> TranscriberViewModel::getFrameRangeToPlay(long curFrameIn
 	{
 		// play from the start of audio
 		// play to the end of audio
+		if (outLeftMarkerInd != nullptr)
+			*outLeftMarkerInd = -1;
 		return std::make_tuple<long,long>(0,audioSamples_.size() - 1);
 	}
 	
@@ -254,6 +261,10 @@ std::tuple<long, long> TranscriberViewModel::getFrameRangeToPlay(long curFrameIn
 	long endPlayFrameInd = -1;
 
 	int leftMarkerInd = findLeftCloseMarkerInd(curFrameInd);
+
+	if (outLeftMarkerInd != nullptr)
+		*outLeftMarkerInd = leftMarkerInd;
+
 	if (leftMarkerInd == -1)
 	{
 		// current frameInd is before the first marker
@@ -464,3 +475,80 @@ void TranscriberViewModel::setCurrentFrameInd(long value)
 	}
 }
 
+void TranscriberViewModel::recognizeCurrentSegment()
+{
+	int outLeftMarkerInd;
+	auto curSeg = getFrameRangeToPlay(currentFrameInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
+	if (outLeftMarkerInd == -1) // not marker to associate recognized text with
+		return;
+
+	using namespace PticaGovorun;
+
+	std::string recogName = "shrekky";
+
+	// initialize the recognizer lazily
+	if (recognizer_ == nullptr)
+	{
+		RecognizerSettings rs;
+		if (recogName == "shrekky")
+		{
+			rs.FrameSize = 400;
+			rs.FrameShift = 160;
+			rs.SampleRate = SampleRate;
+			rs.UseWsp = true;
+
+			rs.DictionaryFilePath = R"path("C:\devb\PticaGovorunProj\data\shrekky\shrekkyDic.voca")path";
+			rs.LanguageModelFilePath = R"path("C:\devb\PticaGovorunProj\data\shrekky\shrekkyLM.blm")path";
+			rs.AcousticModelFilePath = R"path("C:\devb\PticaGovorunProj\data\shrekky\shrekkyAM.bam")path";
+
+			rs.LogFile = recogName + "-LogFile.txt";
+			rs.FileListFileName = recogName + "-FileList.txt";
+			rs.TempSoundFile = recogName + "-TmpAudioFile.wav";
+			rs.CfgFileName = recogName + "-Config.txt";
+			rs.CfgHeaderFileName = recogName + "-ConfigHeader.txt";
+		}
+
+		std::tuple<bool, std::string, std::unique_ptr<JuliusToolWrapper>> newRecogOp =
+			createJuliusRecognizer(rs);
+		if (!std::get<0>(newRecogOp))
+		{
+			auto err = std::get<1>(newRecogOp);
+			emit nextNotification(QString::fromStdString(err));
+			return;
+		}
+
+		recognizer_ = std::move(std::get<2>(newRecogOp));
+	}
+
+	if (recognizer_ == nullptr)
+		return;
+
+	long curSegBeg = std::get<0>(curSeg);
+	long curSegEnd = std::get<1>(curSeg);
+	auto len = curSegEnd - curSegBeg;
+	JuiliusRecognitionResult recogResult;
+	auto recogOp = recognizer_->recognize(LastFrameSample::MostLikely, &audioSamples_[curSegBeg], len, recogResult);
+	if (!std::get<0>(recogOp))
+	{
+		auto err = std::get<1>(recogOp);
+		emit nextNotification(QString::fromStdString(err));
+		return;
+	}
+
+	//
+	PticaGovorun::TimePointMarker& leftMarker = frameIndMarkers_[outLeftMarkerInd];
+	
+	std::wstringstream recogText;
+	for (const std::wstring& word : recogResult.TextPass1)
+	{
+		recogText << word << " ";
+	}
+	leftMarker.RecogSegmentText = QString::fromStdWString(recogText.str());
+
+	recogText.str(L"");
+	for (const std::wstring& word : recogResult.WordSeq)
+	{
+		recogText << word << " ";
+	}
+	leftMarker.RecogSegmentWords = QString::fromStdWString(recogText.str());
+}

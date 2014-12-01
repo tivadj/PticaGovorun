@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
 
   <PropertyGroup Label="UserMacros">
-    <PticaGovorunDir>$(SolutionDir)..\..\</PticaGovorunDir>
+    <PticaGovorunDir>C:\devb\PticaGovorunProj\srcrep\</PticaGovorunDir>
     <OutDir>$(PticaGovorunDir)build\$(PlatformTarget)\$(Configuration)\</OutDir>
     <IntDir>$(OutDir)$(ProjectName)_obj\</IntDir>
 

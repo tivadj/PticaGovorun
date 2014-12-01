@@ -15,9 +15,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build-config", "build-confi
 		PortAudio.props = PortAudio.props
 		PticaGovorunCommon.props = PticaGovorunCommon.props
 		Qt.props = Qt.props
+		zlib.props = zlib.props
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PticaGovorunBackend", "..\PticaGovorunBackend\PticaGovorunBackend.vcxproj", "{C982AA15-B1EB-431F-978D-84E5BEAB37E2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4F9DC42E-E874-4885-819E-5C901F4E6079} = {4F9DC42E-E874-4885-819E-5C901F4E6079}
+		{C8E5508A-BEF2-4010-B99F-09C14CF5B89D} = {C8E5508A-BEF2-4010-B99F-09C14CF5B89D}
+		{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F} = {0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PticaGovorunSimpleConsoleClient", "..\PticaGovorunSimpleConsoleClient\PticaGovorunSimpleConsoleClient.vcxproj", "{1893D07B-F318-4E79-BFDE-55FFBD085424}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -28,6 +34,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Performance1.psess = Performance1.psess
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libjulius", "..\..\ThirdParty\julius4\msvc\libjulius\libjulius.vcxproj", "{4F9DC42E-E874-4885-819E-5C901F4E6079}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "julius", "..\..\ThirdParty\julius4\msvc\julius\julius.vcxproj", "{C8E5508A-BEF2-4010-B99F-09C14CF5B89D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsent", "..\..\ThirdParty\julius4\msvc\libsent\libsent.vcxproj", "{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,11 +87,44 @@ Global
 		{1893D07B-F318-4E79-BFDE-55FFBD085424}.Release|Win32.Build.0 = Release|Win32
 		{1893D07B-F318-4E79-BFDE-55FFBD085424}.Release|x64.ActiveCfg = Release|x64
 		{1893D07B-F318-4E79-BFDE-55FFBD085424}.Release|x64.Build.0 = Release|x64
+		{4F9DC42E-E874-4885-819E-5C901F4E6079}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{4F9DC42E-E874-4885-819E-5C901F4E6079}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{4F9DC42E-E874-4885-819E-5C901F4E6079}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4F9DC42E-E874-4885-819E-5C901F4E6079}.Debug|Win32.Build.0 = Debug|Win32
+		{4F9DC42E-E874-4885-819E-5C901F4E6079}.Debug|x64.ActiveCfg = Debug|x64
+		{4F9DC42E-E874-4885-819E-5C901F4E6079}.Debug|x64.Build.0 = Debug|x64
+		{4F9DC42E-E874-4885-819E-5C901F4E6079}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{4F9DC42E-E874-4885-819E-5C901F4E6079}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{4F9DC42E-E874-4885-819E-5C901F4E6079}.Release|Win32.ActiveCfg = Release|Win32
+		{4F9DC42E-E874-4885-819E-5C901F4E6079}.Release|Win32.Build.0 = Release|Win32
+		{4F9DC42E-E874-4885-819E-5C901F4E6079}.Release|x64.ActiveCfg = Release|x64
+		{4F9DC42E-E874-4885-819E-5C901F4E6079}.Release|x64.Build.0 = Release|x64
+		{C8E5508A-BEF2-4010-B99F-09C14CF5B89D}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{C8E5508A-BEF2-4010-B99F-09C14CF5B89D}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{C8E5508A-BEF2-4010-B99F-09C14CF5B89D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C8E5508A-BEF2-4010-B99F-09C14CF5B89D}.Debug|Win32.Build.0 = Debug|Win32
+		{C8E5508A-BEF2-4010-B99F-09C14CF5B89D}.Debug|x64.ActiveCfg = Debug|x64
+		{C8E5508A-BEF2-4010-B99F-09C14CF5B89D}.Debug|x64.Build.0 = Debug|x64
+		{C8E5508A-BEF2-4010-B99F-09C14CF5B89D}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{C8E5508A-BEF2-4010-B99F-09C14CF5B89D}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{C8E5508A-BEF2-4010-B99F-09C14CF5B89D}.Release|Win32.ActiveCfg = Release|Win32
+		{C8E5508A-BEF2-4010-B99F-09C14CF5B89D}.Release|Win32.Build.0 = Release|Win32
+		{C8E5508A-BEF2-4010-B99F-09C14CF5B89D}.Release|x64.ActiveCfg = Release|x64
+		{C8E5508A-BEF2-4010-B99F-09C14CF5B89D}.Release|x64.Build.0 = Release|x64
+		{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}.Debug|Win32.Build.0 = Debug|Win32
+		{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}.Debug|x64.ActiveCfg = Debug|x64
+		{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}.Debug|x64.Build.0 = Debug|x64
+		{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}.Release|Win32.ActiveCfg = Release|Win32
+		{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}.Release|Win32.Build.0 = Release|Win32
+		{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}.Release|x64.ActiveCfg = Release|x64
+		{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

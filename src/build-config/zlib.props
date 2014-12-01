@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+
+  <!--NOTE: ZLib is available in Release configuration only-->
+  
+  <PropertyGroup Label="UserMacros">
+    <ZlibDir>$(PticaGovorunDir)ThirdParty\zlib-1.2.7\</ZlibDir>
+    <ZlibFilename>zlibwapi_$(PlatformShortName)</ZlibFilename>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IncludePath>$(ZlibDir);$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir)..\Release\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>ZLIB_WINAPI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(ZlibFilename).lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <Target Name="MyZlibCopyBinaries" AfterTargets="Build">
+    <Copy SourceFiles="$(OutDir)..\Release\$(ZlibFilename).dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
+  </Target>
+
+</Project>

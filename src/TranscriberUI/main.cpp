@@ -1,10 +1,14 @@
-#include "transcribermainwindow.h"
 #include <QApplication>
 #include <QDebug>
+#include <QDir>
 #include <portaudio.h>
+#include "transcribermainwindow.h"
 
 int main(int argc, char *argv[])
 {
+	auto cd = QDir::currentPath();
+	qDebug() << "CD=" << cd;
+
 	PaError err = Pa_Initialize();
 	if (err != paNoError)
 	{

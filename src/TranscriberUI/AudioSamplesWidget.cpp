@@ -112,8 +112,13 @@ void AudioSamplesWidget::drawFrameIndMarkers(QPainter& painter, int markerHeight
 {
 	auto docOffsetX = transcriberModel_->docOffsetX();
 
-	for (const PticaGovorun::TimePointMarker& marker : transcriberModel_->frameIndMarkers())
+	int visibleMarkerInd = -1;
+
+	const auto& markers = transcriberModel_->frameIndMarkers();
+	for (size_t markerInd = 0; markerInd < markers.size(); ++markerInd)
 	{
+		const PticaGovorun::TimePointMarker& marker = markers[markerInd];
+
 		long frameInd = marker.SampleInd;
 		float frameDocX = transcriberModel_->sampleIndToDocPosX(frameInd);
 		
@@ -121,9 +126,45 @@ void AudioSamplesWidget::drawFrameIndMarkers(QPainter& painter, int markerHeight
 		if (frameDocX < visibleDocLeft) continue;
 		if (frameDocX > visibleDocRight) break;
 
+		visibleMarkerInd++;
+
+		// draw marker
+
 		auto x = frameDocX - docOffsetX;
 
 		painter.drawLine(x, 0, x, markerHeight);
+
+		// draw speech recognition results
+
+		// the recognized text from the previous invisible marker may still be visible 
+		if (visibleMarkerInd == 0 && markerInd >= 1)
+		{
+			const auto& prevMarker = markers[markerInd - 1];
+			float prevFrameDocX = transcriberModel_->sampleIndToDocPosX(prevMarker.SampleInd);
+			drawMarkerRecognizedText(painter, prevMarker, prevFrameDocX);
+		}
+		drawMarkerRecognizedText(painter, marker, frameDocX);
+	}
+}
+
+void AudioSamplesWidget::drawMarkerRecognizedText(QPainter& painter, const PticaGovorun::TimePointMarker& marker, float frameDocX)
+{
+	auto docOffsetX = transcriberModel_->docOffsetX();
+	auto x = frameDocX - docOffsetX;
+
+	static const int TextHeight = 16;
+
+	if (!marker.TranscripText.isEmpty())
+	{
+		painter.drawText(x, TextHeight, marker.TranscripText);
+	}
+	if (!marker.RecogSegmentText.isEmpty())
+	{
+		painter.drawText(x, TextHeight*2, marker.RecogSegmentText);
+	}
+	if (!marker.RecogSegmentWords.isEmpty())
+	{
+		painter.drawText(x, TextHeight * 3, marker.RecogSegmentWords);
 	}
 }
 
@@ -141,6 +182,9 @@ void AudioSamplesWidget::keyPressEvent(QKeyEvent* ke)
 		transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::SegmentBegin);
 	else if (ke->key() == Qt::Key_Space)
 		transcriberModel_->soundPlayerTogglePlayPause();
+
+	else if (ke->key() == Qt::Key_R)
+		transcriberModel_->recognizeCurrentSegment();
 	else
 		QWidget::keyPressEvent(ke);
 }
