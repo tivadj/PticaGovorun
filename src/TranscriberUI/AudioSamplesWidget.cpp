@@ -93,6 +93,13 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 		prevY = y;
 	}
 
+
+	QColor phonemeColor(0, 0, 0);
+	painter.setPen(phonemeColor);
+	drawPhonemesAndPhonemeMarkers(painter, canvasHeight, visibleDocLeft, visibleDocRight);
+
+	// draw markers
+
 	QColor markerColor(0, 255, 0);
 	painter.setPen(markerColor);
 	drawFrameIndMarkers(painter, canvasHeight, visibleDocLeft, visibleDocRight);
@@ -165,6 +172,122 @@ void AudioSamplesWidget::drawMarkerRecognizedText(QPainter& painter, const Ptica
 	if (!marker.RecogSegmentWords.isEmpty())
 	{
 		painter.drawText(x, TextHeight * 3, marker.RecogSegmentWords);
+	}
+}
+
+void AudioSamplesWidget::drawPhonemesAndPhonemeMarkers(QPainter& painter, int markerHeight, float visibleDocLeft, float visibleDocRight)
+{
+	int leftMarkerInd = -1;
+	std::tuple<long,long> seg = transcriberModel_->getFrameRangeToPlay(transcriberModel_->currentFrameInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &leftMarkerInd);
+	if (leftMarkerInd == -1)
+		return;
+	
+	int segBegSample = std::get<0>(seg);
+	int segEndSample = std::get<1>(seg);
+
+	const int PhoneRowHeight = 10; // height of each phone's delimiter cell
+	
+	// number of vertical phone rows
+	// TODO: evaluate dynamically based on FrameWidth and FrameHeight so that each phone cell do not overlap with neighbour cell in next column
+	const int PhoneRowsCount = 4;
+
+	int phonemesBottomLine = height();
+
+	// paint optimization, prevent drawing the phone ruler when audio plays
+	if (!transcriberModel_->soundPlayerIsPlaying())
+		drawShiftedFramesRuler(painter, phonemesBottomLine, segBegSample, segEndSample, PhoneRowHeight, PhoneRowsCount);
+
+	const auto& markers = transcriberModel_->frameIndMarkers();
+	const PticaGovorun::TimePointMarker& marker = markers[leftMarkerInd];
+	int phoneTextY = phonemesBottomLine - PhoneRowHeight*(PhoneRowsCount + 1); // +1 to jump to the upper line
+	drawPhoneMarkersAndNames(painter, marker, markerHeight, markerHeight*0.75, phoneTextY);
+}
+
+void AudioSamplesWidget::drawShiftedFramesRuler(QPainter& painter, int phonemesBottomLine, int ruleBegSample, int rulerEndSample, int phoneRowHeight, int phoneRowsCount)
+{
+	int curY = phonemesBottomLine;
+	int phonemeRowsAccum = 0;
+
+	float docOffsetX = transcriberModel_->docOffsetX();
+
+	for (long leftSideSampleInd = ruleBegSample; leftSideSampleInd < rulerEndSample; leftSideSampleInd += FrameShift)
+	{
+		long rightSideSampleInd = leftSideSampleInd + FrameSize;
+
+		//
+
+		float leftSideDocX = transcriberModel_->sampleIndToDocPosX(leftSideSampleInd);
+		float rightSideDocX = transcriberModel_->sampleIndToDocPosX(rightSideSampleInd);
+
+		int x1 = leftSideDocX - docOffsetX;
+		int x2 = rightSideDocX - docOffsetX;
+
+		painter.drawLine(x1, curY - phoneRowHeight / 2, x2, curY - phoneRowHeight / 2); // horizontal line
+		painter.drawLine(x1, curY - phoneRowHeight, x1, curY); // left vertical line
+		painter.drawLine(x2, curY - phoneRowHeight, x2, curY); // left vertical line
+
+		curY -= phoneRowHeight;
+		phonemeRowsAccum++;
+
+		if (phonemeRowsAccum >= phoneRowsCount)
+		{
+			phonemeRowsAccum = 0;
+			curY = phonemesBottomLine;
+		}
+	}
+}
+
+void AudioSamplesWidget::drawPhoneMarkersAndNames(QPainter& painter, const PticaGovorun::TimePointMarker& marker, int markerBottomY, int maxPhoneMarkerHeight, int phoneTextY)
+{
+	if (marker.AlignedPhonemeSeq.empty())
+		return;
+
+	float docOffsetX = transcriberModel_->docOffsetX();
+
+	int i = 0;
+	for (const PticaGovorun::AlignedPhoneme& phone : marker.AlignedPhonemeSeq)
+	{
+		// align to the start of the segment
+		long leftSampleInd = marker.SampleInd + phone.BegSample;
+		long rightSampleInd = marker.SampleInd + phone.EndSample;
+
+		float begSampleDocX = transcriberModel_->sampleIndToDocPosX(leftSampleInd);
+		float endSampleDocX = transcriberModel_->sampleIndToDocPosX(rightSampleInd);
+
+		// map to the current viewport
+		int x1 = begSampleDocX - docOffsetX;
+		int x2 = endSampleDocX - docOffsetX;
+
+		// to ease the neighbour phones discrimination neighbour phones have markers of different color and height
+		QColor markerColor(0, 255, 0);
+		int choice = i % 3;
+		float scaleFromMax = -1;
+		if (choice == 0)
+		{
+			markerColor = QColor(255, 0, 0);
+			scaleFromMax = 1;
+		}
+		else if (choice == 1)
+		{
+			markerColor = QColor(0, 0, 255);
+			scaleFromMax = 0.8;
+		}
+		else if (choice == 2)
+		{
+			markerColor = QColor(0, 0, 0); // black
+			scaleFromMax = 0.6;
+		}
+		painter.setPen(markerColor);
+
+		painter.drawLine(x1, markerBottomY-maxPhoneMarkerHeight*scaleFromMax, x1, markerBottomY); // left vertical line
+		painter.drawLine(x2, markerBottomY-maxPhoneMarkerHeight*scaleFromMax, x2, markerBottomY); // right vertical line
+
+		// phone name
+
+		const int TextPad = 2; // pixels, prevent phone marker and phone name overlapping 
+		painter.drawText(x1 + TextPad, phoneTextY, QString::fromStdString(phone.Name));
+
+		i++;
 	}
 }
 

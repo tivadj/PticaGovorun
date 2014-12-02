@@ -18,8 +18,6 @@ TranscriberViewModel::TranscriberViewModel()
     audioFilePathAbs_ = QStandardPaths::locate(QStandardPaths::DocumentsLocation, fileName, QStandardPaths::LocateFile);
 }
 
-const int SampleRate = 22050;
-
 void TranscriberViewModel::loadAudioFile()
 {
 	audioSamples_.clear();
@@ -37,6 +35,11 @@ void TranscriberViewModel::loadAudioFile()
 	const float diagWidth = 1000;
 	float seg3sec = SampleRate * 1.5f;
 	scale_ = diagWidth / seg3sec;
+
+	// scale
+	// 0.0302 for word analysis
+	// *2 for phone analysis
+	scale_ *= 2;
 
 	emit audioSamplesChanged();
 
@@ -355,6 +358,11 @@ void TranscriberViewModel::soundPlayerTogglePlayPause()
 	qDebug() << "soundPlayerTogglePlayPause} isPlaying=" << isPlaying_;
 }
 
+bool TranscriberViewModel::soundPlayerIsPlaying() const
+{
+	return isPlaying_;
+}
+
 void TranscriberViewModel::loadAudioMarkupFromXml()
 {
 	QFileInfo audioFileInfoObj(audioFilePath());
@@ -492,8 +500,8 @@ void TranscriberViewModel::recognizeCurrentSegment()
 		RecognizerSettings rs;
 		if (recogName == "shrekky")
 		{
-			rs.FrameSize = 400;
-			rs.FrameShift = 160;
+			rs.FrameSize = FrameSize;
+			rs.FrameShift = FrameShift;
 			rs.SampleRate = SampleRate;
 			rs.UseWsp = true;
 
@@ -535,6 +543,18 @@ void TranscriberViewModel::recognizeCurrentSegment()
 		return;
 	}
 
+	if (!recogResult.AlignmentErrorMessage.empty())
+		emit nextNotification(QString::fromStdString(recogResult.AlignmentErrorMessage));
+
+#if PG_DEBUG
+	long markerOffset = frameIndMarkers_[outLeftMarkerInd].SampleInd;
+	for (const PticaGovorun::AlignedPhoneme& phone : recogResult.AlignedPhonemeSeq)
+	{
+		qDebug() << "[" << phone.BegFrame << "," << phone.EndFrameIncl << "] [" 
+			<< markerOffset + phone.BegSample << "," << markerOffset + phone.EndSample << "]";
+	}
+#endif
+
 	//
 	PticaGovorun::TimePointMarker& leftMarker = frameIndMarkers_[outLeftMarkerInd];
 	
@@ -551,4 +571,6 @@ void TranscriberViewModel::recognizeCurrentSegment()
 		recogText << word << " ";
 	}
 	leftMarker.RecogSegmentWords = QString::fromStdWString(recogText.str());
+
+	leftMarker.AlignedPhonemeSeq = recogResult.AlignedPhonemeSeq;
 }

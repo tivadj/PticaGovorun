@@ -36,6 +36,9 @@
     <ClInclude Include="JuliusToolNativeWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SpeechProcessing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

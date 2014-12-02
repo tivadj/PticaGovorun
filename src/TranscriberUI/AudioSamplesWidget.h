@@ -27,6 +27,15 @@ protected:
 private:
 	void drawFrameIndMarkers(QPainter& painter, int markerHeight, float visibleDocLeft, float visibleDocRight);
 	void drawMarkerRecognizedText(QPainter& painter, const PticaGovorun::TimePointMarker& marker, float frameDocX);
+	void drawPhonemesAndPhonemeMarkers(QPainter& painter, int markerHeight, float visibleDocLeft, float visibleDocRight);
+
+	// Draw the delimiter cells to show range of phones.
+	// The phones are constructed when audio is split into windows by speech recognition library.
+	// Window has width FrameSize. Window 'shifts' on top of audio samples with interval FrameShift.
+	// The ruler is drawn above the 'phonemesBottomLine' in X interval (BegSample; EndSample)
+	void drawShiftedFramesRuler(QPainter& painter, int phonemesBottomLine, int rulerBegSample, int rulerEndSample, int phoneRowHeight, int phoneRowsCount);
+
+	void drawPhoneMarkersAndNames(QPainter& painter, const PticaGovorun::TimePointMarker& marker, int markerBottomY, int maxPhoneMarkerHeight, int phoneTextY);
 private:
 	std::shared_ptr<TranscriberViewModel> transcriberModel_;
 };

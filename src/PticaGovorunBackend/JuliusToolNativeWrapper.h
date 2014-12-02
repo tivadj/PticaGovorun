@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <QTextCodec>
+#include "SpeechProcessing.h"
 
 namespace PticaGovorun {
 
@@ -41,25 +42,6 @@ struct RecognizerSettings
 
 	// temporary files
 	std::string TempSoundFile;
-};
-
-enum class LastFrameSample
-{
-	BeginOfTheNextFrame,
-	EndOfLastFrame,
-	MostLikely
-};
-
-struct AlignedPhoneme
-{
-	std::string Name;
-	float AvgScore;
-	int BegFrame;
-	int EndFrameIncl;
-
-	// 
-	int BegSample;
-	int EndSample;
 };
 
 struct JuiliusRecognitionResult

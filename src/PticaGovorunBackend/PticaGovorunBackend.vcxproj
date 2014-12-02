@@ -175,6 +175,7 @@
     <ClInclude Include="JuliusToolNativeWrapper.h" />
     <ClInclude Include="PticaGovorunCore.h" />
     <ClInclude Include="SoundUtils.h" />
+    <ClInclude Include="SpeechProcessing.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="XmlAudioMarkup.h" />

@@ -8,6 +8,11 @@
 #include <portaudio.h>
 #include "XmlAudioMarkup.h"
 #include "JuliusToolNativeWrapper.h"
+#include "SpeechProcessing.h"
+
+const int SampleRate = 22050;
+const int FrameSize = 400;
+const int FrameShift = 160;
 
 // Specifies which frame to choose as a starting one when playing an audio segment between two markers.
 enum class SegmentStartFrameToPlayChoice
@@ -51,6 +56,7 @@ public:
 	void soundPlayerPlay();
 	// Plays from the current frame index to the next frame marker or the end of audio, what will occur earlier.
 	void soundPlayerTogglePlayPause();
+	bool soundPlayerIsPlaying() const;
 
 	//
 
@@ -86,7 +92,7 @@ public:
 	long currentFrameInd() const;
 	void setCurrentFrameInd(long value);
 	void recognizeCurrentSegment();
-private:
+
 	// returns the index in the closest to the left time point marker in markers collection
 	// returns -1 if there is no markers to the left of 'frameInd' or audio samples were not loaded.
 	int findLeftCloseMarkerInd(long frameInd);
