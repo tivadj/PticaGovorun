@@ -2,6 +2,16 @@
 
 namespace PticaGovorun {
 
+template <typename T>
+struct NoDeleteFunctor
+{
+	void operator()(T* pObj) const
+	{
+		// no op
+	}
+};
+
+
 // Performs the binary search to find the item with greatest associated item.FrameInd less than pivotFrameInd.
 // The collection must be in ascending order.
 // Numerical associated value is selected using frameIndSelector.

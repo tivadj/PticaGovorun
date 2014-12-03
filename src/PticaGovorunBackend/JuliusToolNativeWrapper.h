@@ -5,6 +5,7 @@
 #include <string>
 #include <QTextCodec>
 #include "SpeechProcessing.h"
+#include "ClnUtils.h"
 
 namespace PticaGovorun {
 
@@ -56,22 +57,46 @@ struct JuiliusRecognitionResult
 	std::vector<AlignedPhoneme> AlignedPhonemeSeq;
 };
 
+struct PhoneDistributionPart
+{
+	int OffsetFrameIndex;
+
+	std::vector<float> LogProbs;
+};
+
+struct PhoneAlignmentInfo
+{
+	std::vector<AlignedPhoneme> AlignInfo;
+
+	std::vector<PhoneDistributionPart> PhoneDistributions;
+
+	int UsedFrameSize;
+
+	int UsedFrameShift;
+
+	float AlignmentScore;
+};
+
 class PG_EXPORTS JuliusToolWrapper
 {
-	friend PG_EXPORTS auto createJuliusRecognizer(const RecognizerSettings& recognizerSettings)->std::tuple < bool, std::string, std::unique_ptr<JuliusToolWrapper> >;
+	friend PG_EXPORTS auto createJuliusRecognizer(const RecognizerSettings& recognizerSettings, std::unique_ptr<QTextCodec, NoDeleteFunctor<QTextCodec>> textCodec)->std::tuple < bool, std::string, std::unique_ptr<JuliusToolWrapper> >;
 
 	std::mutex pInitializingMutex_;
-	QTextCodec* pTextCodec = nullptr;
-private:
+	std::unique_ptr<QTextCodec, NoDeleteFunctor<QTextCodec>> textCodec_ = nullptr;
 	RecognizerSettings recognizerSettings_;
 public:
 	explicit JuliusToolWrapper(const RecognizerSettings& recognizerSettings);
 	~JuliusToolWrapper();
 
+	// Translates the audio into ukrainian text.
 	std::tuple<bool, std::string> recognize(LastFrameSample takeSample, const short* audioSamples, int audioSamplesCount, JuiliusRecognitionResult& result);
+
+	void alignPhones(const short* audioSamples, int audioSamplesCount, const std::vector<std::string>& speechPhones, const AlignmentParams& paramsInfo, int tailSize, PhoneAlignmentInfo& alignmentResult);
+
+	const RecognizerSettings& settings() const;
 };
 
-PG_EXPORTS auto createJuliusRecognizer(const RecognizerSettings& recognizerSettings)->std::tuple < bool, std::string, std::unique_ptr<JuliusToolWrapper> > ;
+PG_EXPORTS auto createJuliusRecognizer(const RecognizerSettings& recognizerSettings, std::unique_ptr<QTextCodec, NoDeleteFunctor<QTextCodec>> textCodec)->std::tuple < bool, std::string, std::unique_ptr<JuliusToolWrapper> >;
 
 void JuliusClearCache();
 

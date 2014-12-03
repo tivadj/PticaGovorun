@@ -308,6 +308,9 @@ void AudioSamplesWidget::keyPressEvent(QKeyEvent* ke)
 
 	else if (ke->key() == Qt::Key_R)
 		transcriberModel_->recognizeCurrentSegment();
+
+	else if (ke->key() == Qt::Key_A)
+		transcriberModel_->alignPhonesForCurrentSegment();
 	else
 		QWidget::keyPressEvent(ke);
 }

@@ -483,13 +483,8 @@ void TranscriberViewModel::setCurrentFrameInd(long value)
 	}
 }
 
-void TranscriberViewModel::recognizeCurrentSegment()
+void TranscriberViewModel::ensureRecognizerIsCreated()
 {
-	int outLeftMarkerInd;
-	auto curSeg = getFrameRangeToPlay(currentFrameInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
-	if (outLeftMarkerInd == -1) // not marker to associate recognized text with
-		return;
-
 	using namespace PticaGovorun;
 
 	std::string recogName = "shrekky";
@@ -505,9 +500,9 @@ void TranscriberViewModel::recognizeCurrentSegment()
 			rs.SampleRate = SampleRate;
 			rs.UseWsp = true;
 
-			rs.DictionaryFilePath = R"path("C:\devb\PticaGovorunProj\data\shrekky\shrekkyDic.voca")path";
-			rs.LanguageModelFilePath = R"path("C:\devb\PticaGovorunProj\data\shrekky\shrekkyLM.blm")path";
-			rs.AcousticModelFilePath = R"path("C:\devb\PticaGovorunProj\data\shrekky\shrekkyAM.bam")path";
+			rs.DictionaryFilePath = R"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyDic.voca)path";
+			rs.LanguageModelFilePath = R"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyLM.blm)path";
+			rs.AcousticModelFilePath = R"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyAM.bam)path";
 
 			rs.LogFile = recogName + "-LogFile.txt";
 			rs.FileListFileName = recogName + "-FileList.txt";
@@ -516,8 +511,16 @@ void TranscriberViewModel::recognizeCurrentSegment()
 			rs.CfgHeaderFileName = recogName + "-ConfigHeader.txt";
 		}
 
+		{
+			QTextCodec* p1 = QTextCodec::codecForName(PGEncodingStr);
+			auto pUni=std::unique_ptr<QTextCodec, NoDeleteFunctor<QTextCodec>>(p1);
+		}
+
+		QTextCodec* pTextCodec = QTextCodec::codecForName(PGEncodingStr);
+		auto textCodec = std::unique_ptr<QTextCodec, NoDeleteFunctor<QTextCodec>>(pTextCodec);
+
 		std::tuple<bool, std::string, std::unique_ptr<JuliusToolWrapper>> newRecogOp =
-			createJuliusRecognizer(rs);
+			createJuliusRecognizer(rs, std::move(textCodec));
 		if (!std::get<0>(newRecogOp))
 		{
 			auto err = std::get<1>(newRecogOp);
@@ -527,15 +530,25 @@ void TranscriberViewModel::recognizeCurrentSegment()
 
 		recognizer_ = std::move(std::get<2>(newRecogOp));
 	}
+}
+
+void TranscriberViewModel::recognizeCurrentSegment()
+{
+	ensureRecognizerIsCreated();
 
 	if (recognizer_ == nullptr)
+		return;
+
+	int outLeftMarkerInd;
+	auto curSeg = getFrameRangeToPlay(currentFrameInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
+	if (outLeftMarkerInd == -1) // not marker to associate recognized text with
 		return;
 
 	long curSegBeg = std::get<0>(curSeg);
 	long curSegEnd = std::get<1>(curSeg);
 	auto len = curSegEnd - curSegBeg;
-	JuiliusRecognitionResult recogResult;
-	auto recogOp = recognizer_->recognize(LastFrameSample::MostLikely, &audioSamples_[curSegBeg], len, recogResult);
+	PticaGovorun::JuiliusRecognitionResult recogResult;
+	auto recogOp = recognizer_->recognize(PticaGovorun::LastFrameSample::MostLikely, &audioSamples_[curSegBeg], len, recogResult);
 	if (!std::get<0>(recogOp))
 	{
 		auto err = std::get<1>(recogOp);
@@ -573,4 +586,68 @@ void TranscriberViewModel::recognizeCurrentSegment()
 	leftMarker.RecogSegmentWords = QString::fromStdWString(recogText.str());
 
 	leftMarker.AlignedPhonemeSeq = recogResult.AlignedPhonemeSeq;
+}
+
+void TranscriberViewModel::ensureWordToPhoneListVocabularyLoaded()
+{
+	// TODO: vocabulary is recognizer dependent
+	if (!wordToPhoneListDict_.empty())
+		return;
+
+	QString dicPath = QString::fromStdString(recognizer_->settings().DictionaryFilePath);
+	QTextCodec* pTextCodec = QTextCodec::codecForName(PGEncodingStr);
+	PG_Assert(pTextCodec != nullptr && "Can't load text encoding");
+
+	PticaGovorun::loadWordToPhoneListVocabulary(dicPath.toStdWString(), wordToPhoneListDict_, *pTextCodec);
+}
+
+void TranscriberViewModel::alignPhonesForCurrentSegment()
+{
+	using namespace PticaGovorun;
+	ensureRecognizerIsCreated();
+
+	if (recognizer_ == nullptr)
+		return;
+
+	ensureWordToPhoneListVocabularyLoaded();
+
+	int outLeftMarkerInd;
+	auto curSeg = getFrameRangeToPlay(currentFrameInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
+	if (outLeftMarkerInd == -1) // not marker to associate recognized text with
+		return;
+
+	long curSegBeg = std::get<0>(curSeg);
+	long curSegEnd = std::get<1>(curSeg);
+	auto len = curSegEnd - curSegBeg;
+
+	// convert
+	const auto& leftMarker = frameIndMarkers_[outLeftMarkerInd];
+	if (leftMarker.TranscripText.isEmpty())
+		return;
+
+	auto wordToPhoneListFun = [this](const std::wstring& word, std::vector<std::string>& wordPhones)->void
+	{
+		const auto& wordDict = wordToPhoneListDict_;
+
+		auto it = wordDict.find(word);
+		if (it == std::end(wordDict))
+			return;
+
+		const std::vector<std::string>& dictWordPhones = it->second;
+		std::copy(std::begin(dictWordPhones), std::end(dictWordPhones), std::back_inserter(wordPhones));
+	};
+
+	std::vector<std::string> speechPhones;
+	convertTextToPhoneList(leftMarker.TranscripText.toStdWString(), wordToPhoneListFun, speechPhones);
+	if (speechPhones.empty())
+		return;
+
+	PticaGovorun::AlignmentParams alignmentParams;
+	alignmentParams.FrameSize = recognizer_->settings().FrameSize;
+	alignmentParams.FrameShift = recognizer_->settings().FrameShift;
+	alignmentParams.TakeSample = LastFrameSample::MostLikely;
+
+	int phoneStateDistrributionTailSize = 5;
+	PticaGovorun::PhoneAlignmentInfo alignmentResult;
+	recognizer_->alignPhones(&audioSamples_[curSegBeg], len, speechPhones, alignmentParams, phoneStateDistrributionTailSize, alignmentResult);
 }

@@ -10,9 +10,12 @@
 #include "JuliusToolNativeWrapper.h"
 #include "SpeechProcessing.h"
 
-const int SampleRate = 22050;
-const int FrameSize = 400;
-const int FrameShift = 160;
+// we work with Julius in 'Windows-1251' encoding
+static const char* PGEncodingStr = "windows-1251";
+
+static const int SampleRate = 22050;
+static const int FrameSize = 400;
+static const int FrameShift = 160;
 
 // Specifies which frame to choose as a starting one when playing an audio segment between two markers.
 enum class SegmentStartFrameToPlayChoice
@@ -91,11 +94,17 @@ public:
 	void setLastMousePressPos(const QPointF& localPos);
 	long currentFrameInd() const;
 	void setCurrentFrameInd(long value);
-	void recognizeCurrentSegment();
 
 	// returns the index in the closest to the left time point marker in markers collection
 	// returns -1 if there is no markers to the left of 'frameInd' or audio samples were not loaded.
 	int findLeftCloseMarkerInd(long frameInd);
+
+	//
+	void ensureRecognizerIsCreated();
+	void recognizeCurrentSegment();
+	void ensureWordToPhoneListVocabularyLoaded();
+	void alignPhonesForCurrentSegment();
+
 private:
 	std::vector<short> audioSamples_;
     QString audioFilePathAbs_;
@@ -132,6 +141,7 @@ private:
 
 	// recognition
 	std::unique_ptr<PticaGovorun::JuliusToolWrapper> recognizer_;
+	std::map<std::wstring, std::vector<std::string>> wordToPhoneListDict_;
 	
 public:
 	float scale_;

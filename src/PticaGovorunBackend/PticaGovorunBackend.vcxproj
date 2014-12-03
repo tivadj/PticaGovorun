@@ -173,6 +173,7 @@
   <ItemGroup>
     <ClInclude Include="ClnUtils.h" />
     <ClInclude Include="JuliusToolNativeWrapper.h" />
+    <ClInclude Include="PhoneAlignment.h" />
     <ClInclude Include="PticaGovorunCore.h" />
     <ClInclude Include="SoundUtils.h" />
     <ClInclude Include="SpeechProcessing.h" />
@@ -196,8 +197,10 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="JuliusToolNativeWrapper.cpp" />
+    <ClCompile Include="PhoneAlignment.cpp" />
     <ClCompile Include="PticaGovorunBackend.cpp" />
     <ClCompile Include="SoundUtils.cpp" />
+    <ClCompile Include="SpeechProcessing.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

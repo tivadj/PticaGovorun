@@ -1,9 +1,15 @@
 #pragma once
 
 #include <vector>
+#include <string>
+#include <functional>
+#include <tuple>
 #include <QObject>
+#include "PticaGovorunCore.h"
 
 namespace PticaGovorun {
+
+static const char* PGPhoneSilence = "sil";
 
 enum class LastFrameSample
 {
@@ -24,6 +30,13 @@ struct AlignedPhoneme
 	int EndSample;
 };
 
+struct AlignmentParams
+{
+	int FrameSize;
+	int FrameShift;
+	LastFrameSample TakeSample;
+};
+
 struct TimePointMarker
 {
 	long SampleInd;
@@ -40,5 +53,7 @@ struct TimePointMarker
 	QString RecogSegmentWords;
 	std::vector<AlignedPhoneme> AlignedPhonemeSeq;
 };
+
+PG_EXPORTS std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> void> wordToPhoneListFun, std::vector<std::string>& speechPhones);
 
 }
