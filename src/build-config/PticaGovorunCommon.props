@@ -27,8 +27,7 @@
 
   <ItemDefinitionGroup>
     <ClCompile>
-      <!--_CRT_SECURE_NO_WARNINGS: strtok-->
-      <PreprocessorDefinitions>_USE_MATH_DEFINES;NOMINMAX;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_USE_MATH_DEFINES;NOMINMAX;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
       <!--Assigns extra intermediate variables in algorithms for debugging; validation logic. Code is not critical for runtime.-->
       <PreprocessorDefinitions>PG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
