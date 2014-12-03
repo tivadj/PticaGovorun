@@ -1,4 +1,6 @@
 #include <sstream>
+#include <hash_map>
+#include <ctime>
 #include <QStandardPaths>
 #include <QPointF>
 #include <QDebug>
@@ -598,7 +600,24 @@ void TranscriberViewModel::ensureWordToPhoneListVocabularyLoaded()
 	QTextCodec* pTextCodec = QTextCodec::codecForName(PGEncodingStr);
 	PG_Assert(pTextCodec != nullptr && "Can't load text encoding");
 
+	clock_t start1 = std::clock();
 	PticaGovorun::loadWordToPhoneListVocabulary(dicPath.toStdWString(), wordToPhoneListDict_, *pTextCodec);
+	double elapsedTime1 = static_cast<double>(clock() - start1) / CLOCKS_PER_SEC;
+	emit nextNotification("stage1");
+
+	std::map<std::wstring, std::vector<std::string>> wordToPhoneListDictMap2;;
+	std::hash_map<std::wstring, std::vector<std::string>> wordToPhoneListDict2;
+	clock_t start2 = std::clock();
+	//PticaGovorun::loadWordToPhoneListVocabularyRegexMap(dicPath.toStdWString(), wordToPhoneListDictMap2, *pTextCodec);
+	//PticaGovorun::loadWordToPhoneListVocabularyHashMap(dicPath.toStdWString(), wordToPhoneListDict2, *pTextCodec);
+	PticaGovorun::loadWordToPhoneListVocabularyStrtok(dicPath.toStdWString(), wordToPhoneListDictMap2, *pTextCodec);
+	double elapsedTime2 = static_cast<double>(clock() - start2) / CLOCKS_PER_SEC;
+	
+	std::wstringstream buf;
+	buf << L"stage2(" << wordToPhoneListDictMap2.size() << L") " << elapsedTime1 << " " << elapsedTime2;
+	emit nextNotification(QString::fromStdWString(buf.str()));
+
+	int z = 0;
 }
 
 void TranscriberViewModel::alignPhonesForCurrentSegment()
@@ -610,6 +629,7 @@ void TranscriberViewModel::alignPhonesForCurrentSegment()
 		return;
 
 	ensureWordToPhoneListVocabularyLoaded();
+	return;
 
 	int outLeftMarkerInd;
 	auto curSeg = getFrameRangeToPlay(currentFrameInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);

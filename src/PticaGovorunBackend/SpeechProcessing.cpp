@@ -7,7 +7,7 @@ namespace PticaGovorun {
 std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> void> wordToPhoneListFun, std::vector<std::string>& speechPhones)
 {
 	std::wsmatch matchRes;
-	std::wregex r(LR"regex(\w+)regex"); // match words
+	static std::wregex r(LR"regex(\w+)regex"); // match words
 
 	// iterate through words
 
