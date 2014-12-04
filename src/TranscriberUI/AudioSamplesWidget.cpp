@@ -191,9 +191,10 @@ void AudioSamplesWidget::drawPhonemesAndPhonemeMarkers(QPainter& painter, int ma
 
 	const int PhoneRowHeight = 10; // height of each phone's delimiter cell
 	
-	// number of vertical phone rows
-	// TODO: evaluate dynamically based on FrameWidth and FrameHeight so that each phone cell do not overlap with neighbour cell in next column
-	const int PhoneRowsCount = 4;
+	// make the number of phone rows so that each phone cell do not overlap with neighbour cell in the next column
+	const int CellGapXPix = 10; // (in pixels) the width of the empty space between neighbour phone cells in one row
+	float pixPerSample = transcriberModel_->pixelsPerSample();
+	int PhoneRowsCount = 1 + (FrameSize * pixPerSample + CellGapXPix) / (FrameShift * pixPerSample);
 
 	int phonemesBottomLine = height();
 
@@ -201,11 +202,15 @@ void AudioSamplesWidget::drawPhonemesAndPhonemeMarkers(QPainter& painter, int ma
 	if (!transcriberModel_->soundPlayerIsPlaying())
 		drawShiftedFramesRuler(painter, phonemesBottomLine, extendedSegBegSample, extendedSegEndSample, PhoneRowHeight, PhoneRowsCount);
 
+	// recognized phones
+
 	const auto& markers = transcriberModel_->frameIndMarkers();
 	const PticaGovorun::TimePointMarker& marker = markers[leftMarkerInd];
 	int phoneNameY = phonemesBottomLine - PhoneRowHeight*(PhoneRowsCount + 1); // +1 to jump to the upper line
 	long phonesOffsetX = marker.SampleInd - transcriberModel_->silencePadAudioFramesCount();
 	drawPhoneMarkersAndNames(painter, phonesOffsetX, marker.RecogAlignedPhonemeSeq, markerHeight, markerHeight*0.3, phoneNameY);
+
+	// transcription text phones
 
 	int transcripTextMarkerBottomY = markerHeight*0.69;
 	int transcripTextPhoneNameY = transcripTextMarkerBottomY + 16; // +height of text
@@ -246,7 +251,7 @@ void AudioSamplesWidget::drawShiftedFramesRuler(QPainter& painter, int phonemesB
 	}
 }
 
-void AudioSamplesWidget::drawPhoneMarkersAndNames(QPainter& painter, long phonesOffsetX, const std::vector<PticaGovorun::AlignedPhoneme>& markerPhones, int markerBottomY, int maxPhoneMarkerHeight, int phoneTextY)
+void AudioSamplesWidget::drawPhoneMarkersAndNames(QPainter& painter, long phonesOffsetSampleInd, const std::vector<PticaGovorun::AlignedPhoneme>& markerPhones, int markerBottomY, int maxPhoneMarkerHeight, int phoneTextY)
 {
 	if (markerPhones.empty())
 		return;
@@ -257,8 +262,8 @@ void AudioSamplesWidget::drawPhoneMarkersAndNames(QPainter& painter, long phones
 	for (const PticaGovorun::AlignedPhoneme& phone : markerPhones)
 	{
 		// align to the start of the segment
-		long leftSampleInd = phonesOffsetX + phone.BegSample;
-		long rightSampleInd = phonesOffsetX + phone.EndSample;
+		long leftSampleInd = phonesOffsetSampleInd + phone.BegSample;
+		long rightSampleInd = phonesOffsetSampleInd + phone.EndSample;
 
 		float begSampleDocX = transcriberModel_->sampleIndToDocPosX(leftSampleInd);
 		float endSampleDocX = transcriberModel_->sampleIndToDocPosX(rightSampleInd);
@@ -283,18 +288,21 @@ void AudioSamplesWidget::drawPhoneMarkersAndNames(QPainter& painter, long phones
 		}
 		else if (choice == 2)
 		{
-			markerColor = QColor(0, 0, 0); // black
+			markerColor = QColor(0, 255, 0);
 			scaleFromMax = 0.6;
 		}
 		painter.setPen(markerColor);
 
-		painter.drawLine(x1, markerBottomY-maxPhoneMarkerHeight*scaleFromMax, x1, markerBottomY); // left vertical line
-		painter.drawLine(x2, markerBottomY-maxPhoneMarkerHeight*scaleFromMax, x2, markerBottomY); // right vertical line
+		int yTop = markerBottomY - maxPhoneMarkerHeight*scaleFromMax;
+		painter.drawLine(x1, yTop, x1, markerBottomY); // left vertical line
+		painter.drawLine(x2, yTop, x2, markerBottomY); // right vertical line
+		painter.drawLine(x1, yTop, x2, yTop); // horiz line connects two vertical lines
 
 		// phone name
 
 		const int TextPad = 2; // pixels, prevent phone marker and phone name overlapping 
-		painter.drawText(x1 + TextPad, phoneTextY, QString::fromStdString(phone.Name));
+		//painter.drawText(x1 + TextPad, phoneTextY, QString::fromStdString(phone.Name)); // name to the right of the left vertical line
+		painter.drawText((x1 + x2) / 2 - TextPad, markerBottomY - maxPhoneMarkerHeight - TextPad, QString::fromStdString(phone.Name)); // name above the horizontal line
 
 		i++;
 	}

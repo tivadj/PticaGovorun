@@ -35,8 +35,8 @@ private:
 	// The ruler is drawn above the 'phonemesBottomLine' in X interval (BegSample; EndSample)
 	void drawShiftedFramesRuler(QPainter& painter, int phonemesBottomLine, int rulerBegSample, int rulerEndSample, int phoneRowHeight, int phoneRowsCount);
 
-	// phonesOffsetX the origin from which all phones are calculated.
-	void drawPhoneMarkersAndNames(QPainter& painter, long phonesOffsetX, const std::vector<PticaGovorun::AlignedPhoneme>& markerPhones, int markerBottomY, int maxPhoneMarkerHeight, int phoneTextY);
+	// phonesOffsetSampleInd the origin from which all phones are calculated.
+	void drawPhoneMarkersAndNames(QPainter& painter, long phonesOffsetSampleInd, const std::vector<PticaGovorun::AlignedPhoneme>& markerPhones, int markerBottomY, int maxPhoneMarkerHeight, int phoneTextY);
 private:
 	std::shared_ptr<TranscriberViewModel> transcriberModel_;
 };

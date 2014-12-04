@@ -15,7 +15,9 @@ static const char* PGEncodingStr = "windows-1251";
 
 static const int SampleRate = 22050;
 static const int FrameSize = 400;
-static const int FrameShift = 160;
+//static const int FrameShift = 160;
+static const int FrameShift = 80;
+static const PticaGovorun::LastFrameSample FrameToSamplePicker = PticaGovorun::LastFrameSample::BeginOfTheNextFrame;
 
 // Specifies which frame to choose as a starting one when playing an audio segment between two markers.
 enum class SegmentStartFrameToPlayChoice
@@ -150,7 +152,7 @@ private:
 	
 	// number of padding silence samples to the left and right of audio segment
 	// The silence prefix/suffix for audio is equal across all recognizers.
-	size_t silencePadAudioFramesCount_ = 500; // pad with couple of windows of FrameSize
+	size_t silencePadAudioFramesCount_ = 1500; // pad with couple of windows of FrameSize
 
 public:
 	float scale_;

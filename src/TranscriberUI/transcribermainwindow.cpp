@@ -172,11 +172,11 @@ void TranscriberMainWindow::transcriberModel_currentFrameIndChanged(long oldCurF
 	updateRect.setLeft(minX - VerticalMarkerWidth);
 	updateRect.setRight(maxX + VerticalMarkerWidth);
 
-	// QWidget::paint is more responsive and the moving cursor may not flicker
+	// QWidget::repaint is more responsive and the moving cursor may not flicker
 	// but if drawing is slow, the UI may stop responding at all
 	// QWidget::update may not be in time to interactively update the UI (the cursor may flicker)
 	// but the UI will be responsive under intensive drawing
-	//ui->widgetSamples->update(updateRect);
-	ui->widgetSamples->repaint(updateRect);
+	ui->widgetSamples->update(updateRect);
+	//ui->widgetSamples->repaint(updateRect); // NOTE: may hang in paint routines on audio playing
 }
 

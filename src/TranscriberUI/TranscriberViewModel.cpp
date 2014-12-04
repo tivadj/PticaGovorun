@@ -502,7 +502,7 @@ void TranscriberViewModel::ensureRecognizerIsCreated()
 			rs.FrameSize = FrameSize;
 			rs.FrameShift = FrameShift;
 			rs.SampleRate = SampleRate;
-			rs.UseWsp = true;
+			rs.UseWsp = false;
 
 			rs.DictionaryFilePath =    R"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyDic.voca)path";
 			rs.LanguageModelFilePath = R"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyLM.blm)path";
@@ -569,7 +569,7 @@ void TranscriberViewModel::recognizeCurrentSegment()
 	PticaGovorun::padSilence(&audioSamples_[curSegBeg], len, silencePadAudioFramesCount_, audioSegmentBuffer_);
 
 	PticaGovorun::JuiliusRecognitionResult recogResult;
-	auto recogOp = recognizer_->recognize(PticaGovorun::LastFrameSample::MostLikely, audioSegmentBuffer_.data(), audioSegmentBuffer_.size(), recogResult);
+	auto recogOp = recognizer_->recognize(FrameToSamplePicker, audioSegmentBuffer_.data(), audioSegmentBuffer_.size(), recogResult);
 	if (!std::get<0>(recogOp))
 	{
 		auto err = std::get<1>(recogOp);
@@ -672,7 +672,7 @@ void TranscriberViewModel::alignPhonesForCurrentSegment()
 	PticaGovorun::AlignmentParams alignmentParams;
 	alignmentParams.FrameSize = recognizer_->settings().FrameSize;
 	alignmentParams.FrameShift = recognizer_->settings().FrameShift;
-	alignmentParams.TakeSample = LastFrameSample::MostLikely;
+	alignmentParams.TakeSample = FrameToSamplePicker;
 
 	int phoneStateDistrributionTailSize = 5;
 	PticaGovorun::PhoneAlignmentInfo alignmentResult;
