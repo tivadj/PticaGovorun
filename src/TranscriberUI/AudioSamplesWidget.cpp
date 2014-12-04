@@ -205,7 +205,11 @@ void AudioSamplesWidget::drawPhonemesAndPhonemeMarkers(QPainter& painter, int ma
 	const PticaGovorun::TimePointMarker& marker = markers[leftMarkerInd];
 	int phoneNameY = phonemesBottomLine - PhoneRowHeight*(PhoneRowsCount + 1); // +1 to jump to the upper line
 	long phonesOffsetX = marker.SampleInd - transcriberModel_->silencePadAudioFramesCount();
-	drawPhoneMarkersAndNames(painter, phonesOffsetX, marker.RecogAlignedPhonemeSeq, markerHeight, markerHeight*0.75, phoneNameY);
+	drawPhoneMarkersAndNames(painter, phonesOffsetX, marker.RecogAlignedPhonemeSeq, markerHeight, markerHeight*0.3, phoneNameY);
+
+	int transcripTextMarkerBottomY = markerHeight*0.69;
+	int transcripTextPhoneNameY = transcripTextMarkerBottomY + 16; // +height of text
+	drawPhoneMarkersAndNames(painter, phonesOffsetX, marker.TranscripTextPhones.AlignInfo, transcripTextMarkerBottomY, markerHeight*0.3, transcripTextPhoneNameY);
 }
 
 void AudioSamplesWidget::drawShiftedFramesRuler(QPainter& painter, int phonemesBottomLine, int ruleBegSample, int rulerEndSample, int phoneRowHeight, int phoneRowsCount)
