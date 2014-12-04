@@ -18,6 +18,8 @@ TranscriberViewModel::TranscriberViewModel()
 {
     QString fileName = QString::fromStdWString(L"PticaGovorun/2011-04-pynzenyk-q_11.wav");
     audioFilePathAbs_ = QStandardPaths::locate(QStandardPaths::DocumentsLocation, fileName, QStandardPaths::LocateFile);
+
+	curRecognizerName_ = "shrekky";
 }
 
 void TranscriberViewModel::loadAudioFile()
@@ -489,7 +491,7 @@ void TranscriberViewModel::ensureRecognizerIsCreated()
 {
 	using namespace PticaGovorun;
 
-	std::string recogName = "shrekky";
+	std::string recogName = curRecognizerName_.toStdString();
 
 	// initialize the recognizer lazily
 	if (recognizer_ == nullptr)
@@ -502,7 +504,7 @@ void TranscriberViewModel::ensureRecognizerIsCreated()
 			rs.SampleRate = SampleRate;
 			rs.UseWsp = true;
 
-			rs.DictionaryFilePath = R"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyDic.voca)path";
+			rs.DictionaryFilePath =    R"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyDic.voca)path";
 			rs.LanguageModelFilePath = R"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyLM.blm)path";
 			rs.AcousticModelFilePath = R"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyAM.bam)path";
 
@@ -512,10 +514,23 @@ void TranscriberViewModel::ensureRecognizerIsCreated()
 			rs.CfgFileName = recogName + "-Config.txt";
 			rs.CfgHeaderFileName = recogName + "-ConfigHeader.txt";
 		}
-
+		else if (recogName == "persian")
 		{
-			QTextCodec* p1 = QTextCodec::codecForName(PGEncodingStr);
-			auto pUni=std::unique_ptr<QTextCodec, NoDeleteFunctor<QTextCodec>>(p1);
+			rs.FrameSize = FrameSize;
+			rs.FrameShift = FrameShift;
+			rs.SampleRate = SampleRate;
+			rs.UseWsp = false; //?
+
+			rs.DictionaryFilePath =    R"path(C:\progs\cygwin\home\mmore\voxforge_p111-117\lexicon\voxforge_lexicon)path";
+			rs.LanguageModelFilePath = R"path(C:\progs\cygwin\home\mmore\voxforge_p111-117\auto\persian.ArpaLM.bi.bin)path";
+			rs.AcousticModelFilePath = R"path(C:\progs\cygwin\home\mmore\voxforge_p111-117\auto\acoustic_model_files\hmmdefs)path";
+			rs.TiedListFilePath =      R"path(C:\progs\cygwin\home\mmore\voxforge_p111-117\auto\acoustic_model_files\tiedlist)path";
+
+			rs.LogFile = recogName + "-LogFile.txt";
+			rs.FileListFileName = recogName + "-FileList.txt";
+			rs.TempSoundFile = recogName + "-TmpAudioFile.wav";
+			rs.CfgFileName = recogName + "-Config.txt";
+			rs.CfgHeaderFileName = recogName + "-ConfigHeader.txt";
 		}
 
 		QTextCodec* pTextCodec = QTextCodec::codecForName(PGEncodingStr);
@@ -669,4 +684,14 @@ void TranscriberViewModel::alignPhonesForCurrentSegment()
 size_t TranscriberViewModel::silencePadAudioFramesCount() const
 {
 	return silencePadAudioFramesCount_;
+}
+
+QString TranscriberViewModel::recognizerName() const
+{
+	return curRecognizerName_;
+}
+
+void TranscriberViewModel::setRecognizerName(const QString& filePath)
+{
+	curRecognizerName_ = filePath;
 }

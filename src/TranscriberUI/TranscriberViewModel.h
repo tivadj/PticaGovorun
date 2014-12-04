@@ -105,6 +105,8 @@ public:
 	void ensureWordToPhoneListVocabularyLoaded();
 	void alignPhonesForCurrentSegment();
 	size_t silencePadAudioFramesCount() const;
+	QString recognizerName() const;
+	void setRecognizerName(const QString& filePath);
 
 private:
 	std::vector<short> audioSamples_;
@@ -141,6 +143,7 @@ private:
 	std::atomic<bool> isPlaying_;
 
 	// recognition
+	QString curRecognizerName_;
 	std::unique_ptr<PticaGovorun::JuliusToolWrapper> recognizer_;
 	std::map<std::wstring, std::vector<std::string>> wordToPhoneListDict_;
 	std::vector<short> audioSegmentBuffer_; // the buffer to keep the padded audio segments

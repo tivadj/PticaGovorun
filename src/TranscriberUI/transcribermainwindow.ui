@@ -142,6 +142,19 @@
         <bool>true</bool>
        </property>
       </widget>
+      <widget class="QLineEdit" name="lineEditRecognizerName">
+       <property name="geometry">
+        <rect>
+         <x>540</x>
+         <y>0</y>
+         <width>71</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>recog name</string>
+       </property>
+      </widget>
      </widget>
     </item>
     <item>

@@ -13,6 +13,7 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
 
     QObject::connect(ui->pushButtonLoadFileName, SIGNAL(clicked()), this, SLOT(pushButtonLoad_Clicked()));
     QObject::connect(ui->lineEditFileName, SIGNAL(editingFinished()), this, SLOT(lineEditFileName_editingFinished()));
+	QObject::connect(ui->lineEditRecognizerName, SIGNAL(editingFinished()), this, SLOT(lineEditRecognizerName_editingFinished()));
     QObject::connect(ui->horizontalScrollBarSamples, SIGNAL(valueChanged(int)), this, SLOT(horizontalScrollBarSamples_valueChanged(int)));
 	QObject::connect(ui->pushButtonPlay, SIGNAL(clicked()), this, SLOT(pushButtonPlay_Clicked()));
 	QObject::connect(ui->pushButtonPause, SIGNAL(clicked()), this, SLOT(pushButtonPause_Clicked()));
@@ -40,6 +41,7 @@ TranscriberMainWindow::~TranscriberMainWindow()
 void TranscriberMainWindow::updateUI()
 {
     ui->lineEditFileName->setText(transcriberModel_->audioFilePath());
+	ui->lineEditRecognizerName->setText(transcriberModel_->recognizerName());
 }
 
 void TranscriberMainWindow::transcriberModel_audioSamplesLoaded()
@@ -112,6 +114,11 @@ void TranscriberMainWindow::lineEditFileName_editingFinished()
     transcriberModel_->setAudioFilePath(ui->lineEditFileName->text());
 }
 
+void TranscriberMainWindow::lineEditRecognizerName_editingFinished()
+{
+    transcriberModel_->setAudioFilePath(ui->lineEditFileName->text());
+}
+
 
 void TranscriberMainWindow::horizontalScrollBarSamples_valueChanged(int value)
 {
@@ -172,3 +179,4 @@ void TranscriberMainWindow::transcriberModel_currentFrameIndChanged(long oldCurF
 	//ui->widgetSamples->update(updateRect);
 	ui->widgetSamples->repaint(updateRect);
 }
+

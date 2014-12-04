@@ -26,6 +26,7 @@ private slots:
 	void pushButtonPlay_Clicked();
 	void pushButtonPause_Clicked();
 	void lineEditFileName_editingFinished();
+	void lineEditRecognizerName_editingFinished();
 	void horizontalScrollBarSamples_valueChanged(int value);
 	void transcriberModel_audioSamplesLoaded();
 	void transcriberModel_nextNotification(const QString& message);
