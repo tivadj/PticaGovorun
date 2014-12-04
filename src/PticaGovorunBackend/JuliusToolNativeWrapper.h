@@ -57,26 +57,6 @@ struct JuiliusRecognitionResult
 	std::vector<AlignedPhoneme> AlignedPhonemeSeq;
 };
 
-struct PhoneDistributionPart
-{
-	int OffsetFrameIndex;
-
-	std::vector<float> LogProbs;
-};
-
-struct PhoneAlignmentInfo
-{
-	std::vector<AlignedPhoneme> AlignInfo;
-
-	std::vector<PhoneDistributionPart> PhoneDistributions;
-
-	int UsedFrameSize;
-
-	int UsedFrameShift;
-
-	float AlignmentScore;
-};
-
 class PG_EXPORTS JuliusToolWrapper
 {
 	friend PG_EXPORTS auto createJuliusRecognizer(const RecognizerSettings& recognizerSettings, std::unique_ptr<QTextCodec, NoDeleteFunctor<QTextCodec>> textCodec)->std::tuple < bool, std::string, std::unique_ptr<JuliusToolWrapper> >;

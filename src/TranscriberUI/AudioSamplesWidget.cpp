@@ -98,7 +98,7 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 	painter.setPen(phonemeColor);
 	drawPhonemesAndPhonemeMarkers(painter, canvasHeight, visibleDocLeft, visibleDocRight);
 
-	// draw markers
+	// draw phrase markers
 
 	QColor markerColor(0, 255, 0);
 	painter.setPen(markerColor);
@@ -185,6 +185,10 @@ void AudioSamplesWidget::drawPhonemesAndPhonemeMarkers(QPainter& painter, int ma
 	int segBegSample = std::get<0>(seg);
 	int segEndSample = std::get<1>(seg);
 
+	// extend the segment with silence
+	long extendedSegBegSample = segBegSample - transcriberModel_->silencePadAudioFramesCount();
+	long extendedSegEndSample = segEndSample + transcriberModel_->silencePadAudioFramesCount();
+
 	const int PhoneRowHeight = 10; // height of each phone's delimiter cell
 	
 	// number of vertical phone rows
@@ -195,12 +199,13 @@ void AudioSamplesWidget::drawPhonemesAndPhonemeMarkers(QPainter& painter, int ma
 
 	// paint optimization, prevent drawing the phone ruler when audio plays
 	if (!transcriberModel_->soundPlayerIsPlaying())
-		drawShiftedFramesRuler(painter, phonemesBottomLine, segBegSample, segEndSample, PhoneRowHeight, PhoneRowsCount);
+		drawShiftedFramesRuler(painter, phonemesBottomLine, extendedSegBegSample, extendedSegEndSample, PhoneRowHeight, PhoneRowsCount);
 
 	const auto& markers = transcriberModel_->frameIndMarkers();
 	const PticaGovorun::TimePointMarker& marker = markers[leftMarkerInd];
-	int phoneTextY = phonemesBottomLine - PhoneRowHeight*(PhoneRowsCount + 1); // +1 to jump to the upper line
-	drawPhoneMarkersAndNames(painter, marker, markerHeight, markerHeight*0.75, phoneTextY);
+	int phoneNameY = phonemesBottomLine - PhoneRowHeight*(PhoneRowsCount + 1); // +1 to jump to the upper line
+	long phonesOffsetX = marker.SampleInd - transcriberModel_->silencePadAudioFramesCount();
+	drawPhoneMarkersAndNames(painter, phonesOffsetX, marker.RecogAlignedPhonemeSeq, markerHeight, markerHeight*0.75, phoneNameY);
 }
 
 void AudioSamplesWidget::drawShiftedFramesRuler(QPainter& painter, int phonemesBottomLine, int ruleBegSample, int rulerEndSample, int phoneRowHeight, int phoneRowsCount)
@@ -237,19 +242,19 @@ void AudioSamplesWidget::drawShiftedFramesRuler(QPainter& painter, int phonemesB
 	}
 }
 
-void AudioSamplesWidget::drawPhoneMarkersAndNames(QPainter& painter, const PticaGovorun::TimePointMarker& marker, int markerBottomY, int maxPhoneMarkerHeight, int phoneTextY)
+void AudioSamplesWidget::drawPhoneMarkersAndNames(QPainter& painter, long phonesOffsetX, const std::vector<PticaGovorun::AlignedPhoneme>& markerPhones, int markerBottomY, int maxPhoneMarkerHeight, int phoneTextY)
 {
-	if (marker.AlignedPhonemeSeq.empty())
+	if (markerPhones.empty())
 		return;
 
 	float docOffsetX = transcriberModel_->docOffsetX();
 
 	int i = 0;
-	for (const PticaGovorun::AlignedPhoneme& phone : marker.AlignedPhonemeSeq)
+	for (const PticaGovorun::AlignedPhoneme& phone : markerPhones)
 	{
 		// align to the start of the segment
-		long leftSampleInd = marker.SampleInd + phone.BegSample;
-		long rightSampleInd = marker.SampleInd + phone.EndSample;
+		long leftSampleInd = phonesOffsetX + phone.BegSample;
+		long rightSampleInd = phonesOffsetX + phone.EndSample;
 
 		float begSampleDocX = transcriberModel_->sampleIndToDocPosX(leftSampleInd);
 		float endSampleDocX = transcriberModel_->sampleIndToDocPosX(rightSampleInd);

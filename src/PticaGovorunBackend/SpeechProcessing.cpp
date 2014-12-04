@@ -17,6 +17,9 @@ std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, 
 	std::vector<std::string> wordPhones;
 	wordPhones.reserve(word.capacity());
 
+	// insert the starting silence phone
+	speechPhones.push_back(PGPhoneSilence);
+
 	auto wordBeg = std::cbegin(text);
 	while (std::regex_search(wordBeg, std::cend(text), matchRes, r))
 	{
@@ -35,13 +38,29 @@ std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, 
 		wordBeg = wordSlice.second;
 	}
 
-	if (!speechPhones.empty())
-	{
-		// remove last silence phone
-		speechPhones.pop_back();
-	}
+	// there is a silence phone after the last word, keep it
 
 	return std::make_tuple(true, L"");
 }
 
+	void padSilence(const short* audioFrames, int audioFramesCount, int silenceFramesCount, std::vector<short>& paddedAudio)
+	{
+		PG_Assert(audioFrames != nullptr);
+		PG_Assert(audioFramesCount >= 0);
+		PG_Assert(silenceFramesCount >= 0);
+
+		paddedAudio.resize(audioFramesCount + 2 * silenceFramesCount);
+
+		static const auto FrameSize = sizeof(short);
+		int tmp = sizeof(decltype(paddedAudio[0]));
+		
+		// silence before the audio
+		std::memset(paddedAudio.data(), 0, silenceFramesCount * FrameSize);
+
+		// audio
+		std::memcpy(paddedAudio.data() + silenceFramesCount, audioFrames, audioFramesCount * FrameSize);
+
+		// silence after the audio
+		std::memset(paddedAudio.data() + silenceFramesCount + audioFramesCount, 0, silenceFramesCount * FrameSize);
+	}
 }

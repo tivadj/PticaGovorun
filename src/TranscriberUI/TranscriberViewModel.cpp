@@ -549,8 +549,12 @@ void TranscriberViewModel::recognizeCurrentSegment()
 	long curSegBeg = std::get<0>(curSeg);
 	long curSegEnd = std::get<1>(curSeg);
 	auto len = curSegEnd - curSegBeg;
+
+	// pad the audio with silince
+	PticaGovorun::padSilence(&audioSamples_[curSegBeg], len, silencePadAudioFramesCount_, audioSegmentBuffer_);
+
 	PticaGovorun::JuiliusRecognitionResult recogResult;
-	auto recogOp = recognizer_->recognize(PticaGovorun::LastFrameSample::MostLikely, &audioSamples_[curSegBeg], len, recogResult);
+	auto recogOp = recognizer_->recognize(PticaGovorun::LastFrameSample::MostLikely, audioSegmentBuffer_.data(), audioSegmentBuffer_.size(), recogResult);
 	if (!std::get<0>(recogOp))
 	{
 		auto err = std::get<1>(recogOp);
@@ -587,7 +591,7 @@ void TranscriberViewModel::recognizeCurrentSegment()
 	}
 	leftMarker.RecogSegmentWords = QString::fromStdWString(recogText.str());
 
-	leftMarker.AlignedPhonemeSeq = recogResult.AlignedPhonemeSeq;
+	leftMarker.RecogAlignedPhonemeSeq = recogResult.AlignedPhonemeSeq;
 }
 
 void TranscriberViewModel::ensureWordToPhoneListVocabularyLoaded()
@@ -626,7 +630,7 @@ void TranscriberViewModel::alignPhonesForCurrentSegment()
 	auto len = curSegEnd - curSegBeg;
 
 	// convert
-	const auto& leftMarker = frameIndMarkers_[outLeftMarkerInd];
+	auto& leftMarker = frameIndMarkers_[outLeftMarkerInd];
 	if (leftMarker.TranscripText.isEmpty())
 		return;
 
@@ -647,6 +651,9 @@ void TranscriberViewModel::alignPhonesForCurrentSegment()
 	if (speechPhones.empty())
 		return;
 
+	// pad the audio with silince
+	padSilence(&audioSamples_[curSegBeg], len, silencePadAudioFramesCount_, audioSegmentBuffer_);
+
 	PticaGovorun::AlignmentParams alignmentParams;
 	alignmentParams.FrameSize = recognizer_->settings().FrameSize;
 	alignmentParams.FrameShift = recognizer_->settings().FrameShift;
@@ -654,5 +661,12 @@ void TranscriberViewModel::alignPhonesForCurrentSegment()
 
 	int phoneStateDistrributionTailSize = 5;
 	PticaGovorun::PhoneAlignmentInfo alignmentResult;
-	recognizer_->alignPhones(&audioSamples_[curSegBeg], len, speechPhones, alignmentParams, phoneStateDistrributionTailSize, alignmentResult);
+	recognizer_->alignPhones(audioSegmentBuffer_.data(), audioSegmentBuffer_.size(), speechPhones, alignmentParams, phoneStateDistrributionTailSize, alignmentResult);
+
+	leftMarker.TranscripTextPhones = alignmentResult;
+}
+
+size_t TranscriberViewModel::silencePadAudioFramesCount() const
+{
+	return silencePadAudioFramesCount_;
 }

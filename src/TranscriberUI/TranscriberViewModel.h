@@ -104,6 +104,7 @@ public:
 	void recognizeCurrentSegment();
 	void ensureWordToPhoneListVocabularyLoaded();
 	void alignPhonesForCurrentSegment();
+	size_t silencePadAudioFramesCount() const;
 
 private:
 	std::vector<short> audioSamples_;
@@ -142,7 +143,12 @@ private:
 	// recognition
 	std::unique_ptr<PticaGovorun::JuliusToolWrapper> recognizer_;
 	std::map<std::wstring, std::vector<std::string>> wordToPhoneListDict_;
+	std::vector<short> audioSegmentBuffer_; // the buffer to keep the padded audio segments
 	
+	// number of padding silence samples to the left and right of audio segment
+	// The silence prefix/suffix for audio is equal across all recognizers.
+	size_t silencePadAudioFramesCount_ = 500; // pad with couple of windows of FrameSize
+
 public:
 	float scale_;
 };
