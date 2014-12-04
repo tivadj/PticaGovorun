@@ -81,4 +81,6 @@ PG_EXPORTS std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstr
 // Result (padded audio) has a size=initial audio size + 2*silenceFramesCount.
 PG_EXPORTS void padSilence(const short* audioFrames, int audioFramesCount, int silenceFramesCount, std::vector<short>& paddedAudio);
 
+// Merges a sequence of phone-states (such as j2,j3,j4,o2,o3...) into monophone sequence (such as j,o...)
+void mergeSamePhoneStates(const std::vector<AlignedPhoneme>& phoneStates, std::vector<AlignedPhoneme>& monoPhones);
 }

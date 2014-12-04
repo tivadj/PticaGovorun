@@ -71,6 +71,7 @@ public:
 	// Translates the audio into ukrainian text.
 	std::tuple<bool, std::string> recognize(LastFrameSample takeSample, const short* audioSamples, int audioSamplesCount, JuiliusRecognitionResult& result);
 
+	// Aligns ground truth phones according to given audio.
 	void alignPhones(const short* audioSamples, int audioSamplesCount, const std::vector<std::string>& speechPhones, const AlignmentParams& paramsInfo, int tailSize, PhoneAlignmentInfo& alignmentResult);
 
 	const RecognizerSettings& settings() const;

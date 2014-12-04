@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SpeechProcessing.h"
 #include <regex>
+#include <cctype> // std::isalpha
 
 namespace PticaGovorun {
 
@@ -63,4 +64,76 @@ std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, 
 		// silence after the audio
 		std::memset(paddedAudio.data() + silenceFramesCount + audioFramesCount, 0, silenceFramesCount * FrameSize);
 	}
+
+	void mergeSamePhoneStates(const std::vector<AlignedPhoneme>& phoneStates, std::vector<AlignedPhoneme>& monoPhones)
+	{
+		const char* UnkStateName = "?";
+
+		for (size_t mergeStateInd = 0; mergeStateInd < phoneStates.size();)
+		{
+			const auto& stateToMerge = phoneStates[mergeStateInd];
+			auto stateName = stateToMerge.Name;
+			if (stateName == UnkStateName)
+			{
+				// unknown phone will not be merged
+				monoPhones.push_back(stateToMerge);
+				++mergeStateInd;
+				continue;
+			}
+
+			auto phoneNameFromStateName = [](const std::string& stateName, std::string& resultPhoneName) -> bool
+			{
+				// phone name is a prefix before the numbers
+				size_t nonCharInd = 0;
+				for (; nonCharInd < stateName.size(); ++nonCharInd)
+					if (!std::isalpha(stateName[nonCharInd])) // stop on first number
+						break;
+
+				if (nonCharInd == 0) // weid phone name starts with number; do not merge it
+					return false;
+
+				resultPhoneName = std::string(stateName.data(), stateName.data() + nonCharInd);
+				return true;
+			};
+
+			std::string phoneName;
+			if (!phoneNameFromStateName(stateName, phoneName))
+			{
+				monoPhones.push_back(stateToMerge);
+				++mergeStateInd;
+				continue;
+			}
+
+			// do merging
+
+			auto mergePhone = stateToMerge;
+			mergePhone.Name = phoneName; // update phone name instead of state name
+
+			// merge this phone with next phones of the same name
+			size_t nextStateInd = mergeStateInd + 1;
+			for (; nextStateInd < phoneStates.size(); nextStateInd++)
+			{
+				// stop merging if stuck into unknown phone
+				std::string neighStateName = phoneStates[nextStateInd].Name;
+				if (neighStateName == UnkStateName)
+					break;
+
+				std::string neighPhoneName;
+				// stop merging if phone name can't be extracted
+				if (!phoneNameFromStateName(neighStateName, neighPhoneName))
+					break;
+
+				// stop merging if different phones
+				if (phoneName != neighPhoneName)
+					break;
+
+				// merge
+				mergePhone.EndFrameIncl = phoneStates[nextStateInd].EndFrameIncl;
+				mergePhone.EndSample = phoneStates[nextStateInd].EndSample;
+			}
+			monoPhones.push_back(mergePhone);
+			mergeStateInd = nextStateInd;
+		}
+	}
 }
+

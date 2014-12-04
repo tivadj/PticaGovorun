@@ -630,7 +630,11 @@ void JuliusToolWrapper::alignPhones(const short* audioSamples, int audioSamplesC
 
 		alignInfo[i] = align;
 	}
-	result.AlignInfo = alignInfo;
+
+	std::vector<AlignedPhoneme> monoPhones;
+	mergeSamePhoneStates(alignInfo, monoPhones);
+
+	result.AlignInfo = monoPhones;
 
 	auto stateDistribsMng = std::vector<PhoneDistributionPart>(stateDistribs.size());
 	for (size_t i = 0; i<stateDistribs.size(); ++i)
