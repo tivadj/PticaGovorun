@@ -15,8 +15,8 @@ static const char* PGEncodingStr = "windows-1251";
 
 static const int SampleRate = 22050;
 static const int FrameSize = 400;
-//static const int FrameShift = 160;
-static const int FrameShift = 80;
+static const int FrameShift = 160;
+//static const int FrameShift = 80;
 static const PticaGovorun::LastFrameSample FrameToSamplePicker = PticaGovorun::LastFrameSample::BeginOfTheNextFrame;
 
 // Specifies which frame to choose as a starting one when playing an audio segment between two markers.
@@ -45,6 +45,9 @@ signals :
 
 	// Occurs when current frame cursor changes.
 	void currentFrameIndChanged(long oldValue);
+
+	// Occurs when current marker selection changed.
+	void currentMarkerIndChanged();
 public:
     TranscriberViewModel();
 
@@ -58,7 +61,10 @@ public:
 
 	void soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice startFrameChoice);
 	void soundPlayerPause();
+
+	// Plays from current cursor to the end of the audio.
 	void soundPlayerPlay();
+
 	// Plays from the current frame index to the next frame marker or the end of audio, what will occur earlier.
 	void soundPlayerTogglePlayPause();
 	bool soundPlayerIsPlaying() const;
@@ -89,19 +95,55 @@ public:
 	//  return arv::array_view<short>(audioSamples_);
 	//	return arv::array_view<short>(std::begin(audioSamples_), std::end(audioSamples_));
 	//}
-	const std::vector<short>& audioSamples() const;
 
-	const std::vector<PticaGovorun::TimePointMarker>& frameIndMarkers() const;
+public: // frames (samples)
+	const std::vector<short>& audioSamples() const;
 
 	void setLastMousePressPos(const QPointF& localPos);
 	long currentFrameInd() const;
 	void setCurrentFrameInd(long value);
+private:
+	void setCurrentFrameIndInternal(long value, bool updateCurrentMarkerInd);
+	
+	// markers
+private:
+	// Helper structure to store marker and its index in original markers collection.
+	struct MarkerRefToOrigin
+	{
+		const PticaGovorun::TimePointMarker& Marker;
+		int MarkerInd; // marker index in original 'frameIndMarkers_' collection.
+	};
+
+	// Some routines require only subset of markers (only phone level or only word level).
+	// This temporary collection may store subset of markers.
+	std::vector<MarkerRefToOrigin> markersOfInterestCache_;
+
+	std::vector<PticaGovorun::TimePointMarker> frameIndMarkers_; // stores markers of all level (word, phone)
+	int currentMarkerInd_ = -1;
+
+	// Level of detail for newly created markers.
+	PticaGovorun::MarkerLevelOfDetail templateMarkerLevelOfDetail_ = PticaGovorun::MarkerLevelOfDetail::Word;
+
+public:
+
+	const std::vector<PticaGovorun::TimePointMarker>& frameIndMarkers() const;
+	void collectMarkersOfInterest(std::vector<MarkerRefToOrigin>& markersOfInterest, bool processPhoneMarkers);
+	void insertNewMarkerAtCursor();
+	void selectMarkerClosestToCurrentCursor();
+	int currentMarkerInd() const;
+	void setCurrentMarkerTranscriptText(const QString& text);
+
+	void setTemplateMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail);
+
+private:
+	void setCurrentMarkerIndInternal(int markerInd, bool updateCurrentFrameInd);
 
 	// returns the index in the closest to the left time point marker in markers collection
 	// returns -1 if there is no markers to the left of 'frameInd' or audio samples were not loaded.
-	int findLeftCloseMarkerInd(long frameInd);
+	int findLeftCloseMarkerInd(const std::vector<MarkerRefToOrigin>& markers, long frameInd);
 
-	//
+public:	// recongizer
+
 	void ensureRecognizerIsCreated();
 	void recognizeCurrentSegment();
 	void ensureWordToPhoneListVocabularyLoaded();
@@ -109,7 +151,6 @@ public:
 	size_t silencePadAudioFramesCount() const;
 	QString recognizerName() const;
 	void setRecognizerName(const QString& filePath);
-
 private:
 	std::vector<short> audioSamples_;
     QString audioFilePathAbs_;
@@ -119,7 +160,6 @@ private:
 	// together with the samples graph is treated as the document
 	float docPaddingPix_ = 100;
 	long currentFrameInd_ = -1;
-	std::vector<PticaGovorun::TimePointMarker> frameIndMarkers_;
 
 	// Represents internal audio player's data.
 	// The range (StartPlayingFrameInd;FinishPlayingFrameInd) of frames is played.

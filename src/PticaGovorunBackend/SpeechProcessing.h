@@ -10,6 +10,7 @@
 namespace PticaGovorun {
 
 static const char* PGPhoneSilence = "sil";
+static const char* PGShortPause = "sp";
 
 enum class LastFrameSample
 {
@@ -57,14 +58,32 @@ struct PhoneAlignmentInfo
 	float AlignmentScore;
 };
 
+enum class MarkerLevelOfDetail
+{
+	// Seaparates words or sentences in audio. Audio player stops on a marker with such level of detail.
+	Word,
+
+	// Separates phones. The number of samples per phone is so small, that there is no sense to play audio of the single phone.
+	// Audio player do not stop if hits such markers.
+	Phone
+};
+
 struct TimePointMarker
 {
+	// Uniquely identifies the marker. For example, when two markers have the same sample index.
+	int id = -1;
+
 	long SampleInd;
 
 	// Whether marker was added by user (manual=true). Automatic markers (manual=false) can be freely
 	// removed from model without user's concern. For example, when audio is reanalyzed, old automatic markers
 	// may be replaced with new ones.
 	bool IsManual;
+
+	// Separates phones in audio.
+	MarkerLevelOfDetail LevelOfDetail = MarkerLevelOfDetail::Word;
+
+	// bool StopsAudioPlayer;
 
 	QString TranscripText;
 	PhoneAlignmentInfo TranscripTextPhones; // splits transcripted text into phones and align them onto audio
@@ -75,7 +94,8 @@ struct TimePointMarker
 	std::vector<AlignedPhoneme> RecogAlignedPhonemeSeq;
 };
 
-PG_EXPORTS std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> void> wordToPhoneListFun, std::vector<std::string>& speechPhones);
+// insertShortPause=true to insert sp phone between words.
+PG_EXPORTS std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> void> wordToPhoneListFun, bool insertShortPause, std::vector<std::string>& speechPhones);
 
 // Appends silience frames before and after the given audio.
 // Result (padded audio) has a size=initial audio size + 2*silenceFramesCount.

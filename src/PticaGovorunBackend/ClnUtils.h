@@ -17,8 +17,8 @@ struct NoDeleteFunctor
 // Numerical associated value is selected using frameIndSelector.
 // T = long
 // frameIndSelector :: *RandIt -> T  = the predicate to extract FrameInd from given item.
-template <typename RandIt, typename ItemPred>
-auto binarySearch(const RandIt& begin, const RandIt& end, long frameIndValue, ItemPred frameIndSelector) -> RandIt
+template <typename RandIt, typename ItemSelector>
+auto binarySearch(const RandIt& begin, const RandIt& end, long frameIndValue, ItemSelector frameIndSelector) -> RandIt
 {
 	// the search finishes when (begin;end) are the two consecutive items; the result is the lesser value
 	if (end - begin == 1)

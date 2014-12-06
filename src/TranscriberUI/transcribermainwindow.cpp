@@ -17,6 +17,8 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
     QObject::connect(ui->horizontalScrollBarSamples, SIGNAL(valueChanged(int)), this, SLOT(horizontalScrollBarSamples_valueChanged(int)));
 	QObject::connect(ui->pushButtonPlay, SIGNAL(clicked()), this, SLOT(pushButtonPlay_Clicked()));
 	QObject::connect(ui->pushButtonPause, SIGNAL(clicked()), this, SLOT(pushButtonPause_Clicked()));
+	QObject::connect(ui->radioButtonWordLevel, SIGNAL(toggled(bool)), this, SLOT(radioButtonWordLevel_toggled(bool)));
+	QObject::connect(ui->lineEditMarkerText, SIGNAL(editingFinished()), this, SLOT(lineEditMarkerText_editingFinished()));
 
 	//
     transcriberModel_ = std::make_shared<TranscriberViewModel>();
@@ -27,6 +29,7 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
 	QObject::connect(transcriberModel_.get(), SIGNAL(docOffsetXChanged()), this, SLOT(transcriberModel_docOffsetXChanged()));
 	QObject::connect(transcriberModel_.get(), SIGNAL(lastMouseDocPosXChanged(float)), this, SLOT(transcriberModel_lastMouseDocPosXChanged(float)));
 	QObject::connect(transcriberModel_.get(), SIGNAL(currentFrameIndChanged(long)), this, SLOT(transcriberModel_currentFrameIndChanged(long)));
+	QObject::connect(transcriberModel_.get(), SIGNAL(currentMarkerIndChanged()), this, SLOT(transcriberModel_currentMarkerIndChanged()));
 
 	//
 	ui->widgetSamples->setModel(transcriberModel_);
@@ -109,6 +112,11 @@ void TranscriberMainWindow::pushButtonPause_Clicked()
 	transcriberModel_->soundPlayerPause();
 }
 
+void TranscriberMainWindow::radioButtonWordLevel_toggled(bool checked)
+{
+	transcriberModel_->setTemplateMarkerLevelOfDetail(checked ? PticaGovorun::MarkerLevelOfDetail::Word : PticaGovorun::MarkerLevelOfDetail::Phone);
+}
+
 void TranscriberMainWindow::lineEditFileName_editingFinished()
 {
     transcriberModel_->setAudioFilePath(ui->lineEditFileName->text());
@@ -180,3 +188,35 @@ void TranscriberMainWindow::transcriberModel_currentFrameIndChanged(long oldCurF
 	//ui->widgetSamples->repaint(updateRect); // NOTE: may hang in paint routines on audio playing
 }
 
+void TranscriberMainWindow::transcriberModel_currentMarkerIndChanged()
+{
+	PticaGovorun::MarkerLevelOfDetail uiMarkerLevel = PticaGovorun::MarkerLevelOfDetail::Word;
+	QString uiMarkerIdStr = "###";
+	QString uiMarkerTranscriptStr = "";
+
+	int markerInd = transcriberModel_->currentMarkerInd();
+	if (markerInd != -1)
+	{
+		const auto& marker = transcriberModel_->frameIndMarkers()[markerInd];
+		uiMarkerIdStr = QString("%1").arg(marker.id);
+		uiMarkerLevel = marker.LevelOfDetail;
+
+		uiMarkerTranscriptStr = marker.TranscripText;
+	}
+
+	// update ui
+
+	ui->labelMarkerId->setText(uiMarkerIdStr);
+
+	if (uiMarkerLevel == PticaGovorun::MarkerLevelOfDetail::Word)
+		ui->radioButtonWordLevel->setChecked(true);
+	else if (uiMarkerLevel == PticaGovorun::MarkerLevelOfDetail::Phone)
+		ui->radioButtonPhoneLevel->setChecked(true);
+
+	ui->lineEditMarkerText->setText(uiMarkerTranscriptStr);
+}
+
+void TranscriberMainWindow::lineEditMarkerText_editingFinished()
+{
+	transcriberModel_->setCurrentMarkerTranscriptText(ui->lineEditMarkerText->text());
+}

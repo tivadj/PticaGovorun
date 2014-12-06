@@ -5,7 +5,7 @@
 
 namespace PticaGovorun {
 
-std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> void> wordToPhoneListFun, std::vector<std::string>& speechPhones)
+	std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> void> wordToPhoneListFun, bool insertShortPause, std::vector<std::string>& speechPhones)
 {
 	std::wsmatch matchRes;
 	static std::wregex r(LR"regex(\w+)regex"); // match words
@@ -34,12 +34,20 @@ std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, 
 		std::copy(std::begin(wordPhones), std::end(wordPhones), std::back_inserter(speechPhones));
 
 		// insert the silence phone between words
-		speechPhones.push_back(PGPhoneSilence);
+		if (insertShortPause)
+			speechPhones.push_back(PGShortPause);
 
 		wordBeg = wordSlice.second;
 	}
 
-	// there is a silence phone after the last word, keep it
+	// remove last short pause phone
+	if (insertShortPause)
+	{
+		speechPhones.pop_back();
+	}
+
+	// set the last pohone to be a silence phone
+	speechPhones.push_back(PGPhoneSilence);
 
 	return std::make_tuple(true, L"");
 }

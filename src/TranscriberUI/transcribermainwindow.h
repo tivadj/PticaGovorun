@@ -25,6 +25,7 @@ private slots:
 	void pushButtonLoad_Clicked();
 	void pushButtonPlay_Clicked();
 	void pushButtonPause_Clicked();
+	void radioButtonWordLevel_toggled(bool checked);
 	void lineEditFileName_editingFinished();
 	void lineEditRecognizerName_editingFinished();
 	void horizontalScrollBarSamples_valueChanged(int value);
@@ -34,6 +35,8 @@ private slots:
 	void transcriberModel_docOffsetXChanged();
 	void transcriberModel_lastMouseDocPosXChanged(float mouseDocPosX);
 	void transcriberModel_currentFrameIndChanged(long oldValue);
+	void transcriberModel_currentMarkerIndChanged();
+	void lineEditMarkerText_editingFinished();
 private:
     Ui::TranscriberMainWindow *ui;
     std::shared_ptr<TranscriberViewModel> transcriberModel_;

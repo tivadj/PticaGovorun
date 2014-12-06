@@ -100,8 +100,6 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 
 	// draw phrase markers
 
-	QColor markerColor(0, 255, 0);
-	painter.setPen(markerColor);
 	drawFrameIndMarkers(painter, canvasHeight, visibleDocLeft, visibleDocRight);
 
 	// draw current frame adornment
@@ -115,12 +113,18 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 	painter.drawLine(curFrameDocX, 0, curFrameDocX, canvasHeight);
 }
 
-void AudioSamplesWidget::drawFrameIndMarkers(QPainter& painter, int markerHeight, float visibleDocLeft, float visibleDocRight)
+void AudioSamplesWidget::drawFrameIndMarkers(QPainter& painter, int markerHeightMax, float visibleDocLeft, float visibleDocRight)
 {
 	auto docOffsetX = transcriberModel_->docOffsetX();
 
 	int visibleMarkerInd = -1;
 
+	QColor wordMarkerColor(0, 255, 0); // green
+	QColor phoneMarkerColor(255, 127, 39); // orange
+	int markerCenterY = markerHeightMax / 2;
+	int markerHalfHeightMax = markerHeightMax / 2;
+	
+	//
 	const auto& markers = transcriberModel_->frameIndMarkers();
 	for (size_t markerInd = 0; markerInd < markers.size(); ++markerInd)
 	{
@@ -139,7 +143,19 @@ void AudioSamplesWidget::drawFrameIndMarkers(QPainter& painter, int markerHeight
 
 		auto x = frameDocX - docOffsetX;
 
-		painter.drawLine(x, 0, x, markerHeight);
+		int markerHalfHeight = markerHalfHeightMax;
+		if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Word)
+		{
+			painter.setPen(wordMarkerColor);
+			markerHalfHeight = markerHalfHeightMax;
+		}
+		else if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Phone)
+		{
+			painter.setPen(phoneMarkerColor);
+			markerHalfHeight = markerHalfHeightMax * 0.6;
+		}
+
+		painter.drawLine(x, markerCenterY - markerHalfHeight, x, markerCenterY + markerHalfHeight);
 
 		// draw speech recognition results
 
@@ -328,6 +344,12 @@ void AudioSamplesWidget::keyPressEvent(QKeyEvent* ke)
 
 	else if (ke->key() == Qt::Key_A)
 		transcriberModel_->alignPhonesForCurrentSegment();
+
+	else if (ke->key() == Qt::Key_Insert)
+		transcriberModel_->insertNewMarkerAtCursor();
+	else if (ke->key() == Qt::Key_T)
+		transcriberModel_->selectMarkerClosestToCurrentCursor();
+
 	else
 		QWidget::keyPressEvent(ke);
 }
