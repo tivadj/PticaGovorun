@@ -3,6 +3,7 @@
 #include <vector>
 #include <atomic>
 #include <memory>
+#include <hash_set>
 #include <QObject>
 //#include "array_view.hpp"
 #include <portaudio.h>
@@ -68,10 +69,12 @@ public:
 	// Plays from the current frame index to the next frame marker or the end of audio, what will occur earlier.
 	void soundPlayerTogglePlayPause();
 	bool soundPlayerIsPlaying() const;
-
+	QString audioMarkupFilePathAbs() const;
 	//
 
 	void loadAudioMarkupFromXml();
+	void saveAudioMarkupToXml();
+
 	QString audioFilePath() const;
     void setAudioFilePath(const QString& filePath);
 
@@ -120,6 +123,7 @@ private:
 
 	std::vector<PticaGovorun::TimePointMarker> frameIndMarkers_; // stores markers of all level (word, phone)
 	int currentMarkerInd_ = -1;
+	std::hash_set<int> usedMarkerIds_; // stores ids of all markers; used to generate new free marker id
 
 	// Level of detail for newly created markers.
 	PticaGovorun::MarkerLevelOfDetail templateMarkerLevelOfDetail_ = PticaGovorun::MarkerLevelOfDetail::Word;
@@ -129,11 +133,13 @@ public:
 	const std::vector<PticaGovorun::TimePointMarker>& frameIndMarkers() const;
 	void collectMarkersOfInterest(std::vector<MarkerRefToOrigin>& markersOfInterest, bool processPhoneMarkers);
 	void insertNewMarkerAtCursor();
+	void deleteCurrentMarker();
 	void selectMarkerClosestToCurrentCursor();
 	int currentMarkerInd() const;
 	void setCurrentMarkerTranscriptText(const QString& text);
 
 	void setTemplateMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail);
+	PticaGovorun::MarkerLevelOfDetail templateMarkerLevelOfDetail() const;
 
 private:
 	void setCurrentMarkerIndInternal(int markerInd, bool updateCurrentFrameInd);
@@ -141,6 +147,8 @@ private:
 	// returns the index in the closest to the left time point marker in markers collection
 	// returns -1 if there is no markers to the left of 'frameInd' or audio samples were not loaded.
 	int findLeftCloseMarkerInd(const std::vector<MarkerRefToOrigin>& markers, long frameInd);
+
+	int generateMarkerId();
 
 public:	// recongizer
 

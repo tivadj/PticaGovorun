@@ -71,7 +71,7 @@ enum class MarkerLevelOfDetail
 struct TimePointMarker
 {
 	// Uniquely identifies the marker. For example, when two markers have the same sample index.
-	int id = -1;
+	int Id = -1;
 
 	long SampleInd;
 

@@ -12,6 +12,7 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     QObject::connect(ui->pushButtonLoadFileName, SIGNAL(clicked()), this, SLOT(pushButtonLoad_Clicked()));
+	QObject::connect(ui->pushButtonSaveAudioAnnot, SIGNAL(clicked()), this, SLOT(pushButtonSaveAudioAnnot_Clicked()));
     QObject::connect(ui->lineEditFileName, SIGNAL(editingFinished()), this, SLOT(lineEditFileName_editingFinished()));
 	QObject::connect(ui->lineEditRecognizerName, SIGNAL(editingFinished()), this, SLOT(lineEditRecognizerName_editingFinished()));
     QObject::connect(ui->horizontalScrollBarSamples, SIGNAL(valueChanged(int)), this, SLOT(horizontalScrollBarSamples_valueChanged(int)));
@@ -102,6 +103,11 @@ void TranscriberMainWindow::pushButtonLoad_Clicked()
 	//ui->widgetSamples->repaint(10, 10, 20, 100);
 }
 
+void TranscriberMainWindow::pushButtonSaveAudioAnnot_Clicked()
+{
+	transcriberModel_->saveAudioMarkupToXml();
+}
+
 void TranscriberMainWindow::pushButtonPlay_Clicked()
 {
     transcriberModel_->soundPlayerPlay();
@@ -190,7 +196,7 @@ void TranscriberMainWindow::transcriberModel_currentFrameIndChanged(long oldCurF
 
 void TranscriberMainWindow::transcriberModel_currentMarkerIndChanged()
 {
-	PticaGovorun::MarkerLevelOfDetail uiMarkerLevel = PticaGovorun::MarkerLevelOfDetail::Word;
+	PticaGovorun::MarkerLevelOfDetail uiMarkerLevel = transcriberModel_->templateMarkerLevelOfDetail();
 	QString uiMarkerIdStr = "###";
 	QString uiMarkerTranscriptStr = "";
 
@@ -198,7 +204,7 @@ void TranscriberMainWindow::transcriberModel_currentMarkerIndChanged()
 	if (markerInd != -1)
 	{
 		const auto& marker = transcriberModel_->frameIndMarkers()[markerInd];
-		uiMarkerIdStr = QString("%1").arg(marker.id);
+		uiMarkerIdStr = QString("%1").arg(marker.Id);
 		uiMarkerLevel = marker.LevelOfDetail;
 
 		uiMarkerTranscriptStr = marker.TranscripText;

@@ -10,15 +10,8 @@
 
 namespace PticaGovorun {
 
-class XmlAudioMarkup
-{
-public:
-	XmlAudioMarkup();
-	~XmlAudioMarkup();
-};
-
-
-PG_EXPORTS std::tuple<bool,const char*> loadAudioMarkupFromXml(const std::wstring& audioFilePathAbs, std::vector<TimePointMarker>& syncPoints);
+PG_EXPORTS std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioFilePathAbs, std::vector<TimePointMarker>& syncPoints);
+PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const std::vector<TimePointMarker>& syncPoints, const std::wstring& audioFilePathAbs);
 
 // Loads dictionary of word -> (phone list) from text file.
 // File usually has 'voca' extension.

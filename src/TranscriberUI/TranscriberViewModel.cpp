@@ -55,6 +55,11 @@ void TranscriberViewModel::loadAudioFile()
 	//
 	loadAudioMarkupFromXml();
 
+	// initialize markers id cache
+	usedMarkerIds_.clear(); // clear cache of used marker ids
+	for (const auto& m : frameIndMarkers_)
+		usedMarkerIds_.insert(m.Id);
+
 	//
 
 	setCurrentFrameInd(0);
@@ -373,17 +378,30 @@ bool TranscriberViewModel::soundPlayerIsPlaying() const
 	return isPlaying_;
 }
 
-void TranscriberViewModel::loadAudioMarkupFromXml()
+QString TranscriberViewModel::audioMarkupFilePathAbs() const
 {
 	QFileInfo audioFileInfoObj(audioFilePath());
 	QString audioMarkupFileName = audioFileInfoObj.completeBaseName() + ".xml";
 
 	QDir absDir = audioFileInfoObj.absoluteDir();
 	QString audioMarkupPathAbs = absDir.absoluteFilePath(audioMarkupFileName);
+	return audioMarkupPathAbs;
+}
+
+void TranscriberViewModel::loadAudioMarkupFromXml()
+{
+	QString audioMarkupPathAbs = audioMarkupFilePathAbs();
 	
 	//
 	frameIndMarkers_.clear();
 	PticaGovorun::loadAudioMarkupFromXml(audioMarkupPathAbs.toStdWString(), frameIndMarkers_);
+}
+
+void TranscriberViewModel::saveAudioMarkupToXml()
+{
+	QString audioMarkupPathAbs = audioMarkupFilePathAbs();
+	
+	PticaGovorun::saveAudioMarkupToXml(frameIndMarkers_, audioMarkupPathAbs.toStdWString());
 }
 
 QString TranscriberViewModel::audioFilePath() const
@@ -482,9 +500,38 @@ int TranscriberViewModel::findLeftCloseMarkerInd(const std::vector<MarkerRefToOr
 	return hitMarkerInd;
 }
 
+int TranscriberViewModel::generateMarkerId()
+{
+	// generate random id
+	int result;
+	while (true)
+	{
+		result = rand() % (frameIndMarkers_.size() * 2);
+		if (usedMarkerIds_.find(result) == std::end(usedMarkerIds_))
+			break;
+	}
+	usedMarkerIds_.insert(result);
+
+#if PG_DEBUG
+	// ensure generated id doesn't collide with id of other markers
+	for (size_t i = 0; i < frameIndMarkers_.size(); ++i)
+	{
+		const auto& marker = frameIndMarkers_[i];
+		PG_Assert(marker.Id != result && "Generated marker id which collides with id of another marker");
+	}
+#endif
+
+	return result;
+}
+
 void TranscriberViewModel::setTemplateMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail)
 {
 	templateMarkerLevelOfDetail_ = levelOfDetail;
+}
+
+PticaGovorun::MarkerLevelOfDetail TranscriberViewModel::templateMarkerLevelOfDetail() const
+{
+	return templateMarkerLevelOfDetail_;
 }
 
 void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos)
@@ -545,7 +592,7 @@ void TranscriberViewModel::insertNewMarkerAtCursor()
 		newMarkerInd = leftMarkerInd + 1; // next to the left marker
 
 	PticaGovorun::TimePointMarker newMarker;
-	newMarker.id = rand() % 400;
+	newMarker.Id = generateMarkerId();
 	newMarker.SampleInd = curFrameInd;
 	newMarker.IsManual = true;
 	newMarker.LevelOfDetail = templateMarkerLevelOfDetail_;
@@ -554,6 +601,17 @@ void TranscriberViewModel::insertNewMarkerAtCursor()
 	setCurrentMarkerIndInternal(newMarkerInd, true);
 
 	emit audioSamplesChanged();
+}
+
+void TranscriberViewModel::deleteCurrentMarker()
+{
+	int markerInd = currentMarkerInd();
+	if (markerInd == -1)
+		return;
+
+	frameIndMarkers_.erase(frameIndMarkers_.cbegin() + markerInd);
+
+	setCurrentMarkerIndInternal(-1, false);
 }
 
 void TranscriberViewModel::selectMarkerClosestToCurrentCursor()

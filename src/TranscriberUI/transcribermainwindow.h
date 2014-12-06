@@ -23,6 +23,7 @@ private:
 
 private slots:
 	void pushButtonLoad_Clicked();
+	void pushButtonSaveAudioAnnot_Clicked();
 	void pushButtonPlay_Clicked();
 	void pushButtonPause_Clicked();
 	void radioButtonWordLevel_toggled(bool checked);

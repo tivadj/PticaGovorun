@@ -4,27 +4,31 @@
 #include <regex>
 #include <cstring> // strtok
 #include <string.h> // strtok
+#include <cstdlib>
+#include <hash_set>
 #include <QFile>
 #include <QString>
 #include <QDomDocument>
 #include <QStringList>
+#include <QTextStream>
 #include "XmlAudioMarkup.h"
 
 namespace PticaGovorun {
 
-XmlAudioMarkup::XmlAudioMarkup()
-{
+namespace {
+	static const char* XmlDocName = "audioAnnotation";
+	static const char* MarkerName = "syncPoint";
+	static const char* MarkerIdName = "id";
+	static const char* MarkerSampleIndName = "sampleInd";
+	static const char* MarkerTranscripTextName = "transcripText";
+	static const char* MarkerLevelOfDetailName = "levelOfDetail";
+	static const char* MarkerLevelOfDetailWordName = "word";
+	static const char* MarkerLevelOfDetailPhoneName = "phone";
 }
 
-
-XmlAudioMarkup::~XmlAudioMarkup()
+std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMarkupFilePathAbs, std::vector<TimePointMarker>& syncPoints)
 {
-}
-
-
-std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioFilePathAbs, std::vector<TimePointMarker>& syncPoints)
-{
-	QFile file(QString::fromStdWString(audioFilePathAbs));
+	QFile file(QString::fromStdWString(audioMarkupFilePathAbs));
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 		return std::make_tuple(false, "Can't open file");
 
@@ -38,7 +42,7 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioFi
 	//qDebug() << docElem.tagName();
 
 	//
-
+	std::hash_set<int> usedIds;
 	QDomNodeList nodeList = docElem.childNodes();
 	for (int i = 0; i<nodeList.count(); ++i)
 	{
@@ -46,22 +50,92 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioFi
 		QDomElement e = n.toElement();
 		if (e.isNull())
 			continue;
-		if (e.tagName() == "syncPoint")
+		if (e.tagName() == MarkerName)
 		{
 			bool parseIntOp;
-			int sampleInd = e.attribute("sampleInd").toInt(&parseIntOp);
+			
+			int markerId = e.attribute(MarkerIdName, "").toInt(&parseIntOp);
+			if (!parseIntOp)
+			{
+				// generate random id
+				while (true)
+				{
+					markerId = rand() % 400;
+					if (usedIds.find(markerId) == std::end(usedIds))
+						break;
+				}
+				usedIds.insert(markerId);
+				
+				//return std::make_tuple(false, "Xml audio markup error: expected syncPoint.id of integer type");
+			}
+
+			int sampleInd = e.attribute(MarkerSampleIndName, "").toInt(&parseIntOp);
 			if (!parseIntOp)
 				return std::make_tuple(false, "Xml audio markup error: expected syncPoint.sampleInd of integer type");
 			
-			QString transcripText = e.attribute("transcripText", "");
+			QString transcripText = e.attribute(MarkerTranscripTextName, "");
+
+			QString levelOfDetailStr = e.attribute(MarkerLevelOfDetailName, MarkerLevelOfDetailWordName);
+
+			MarkerLevelOfDetail levelOfDetail = MarkerLevelOfDetail::Word;
+			if (levelOfDetailStr == MarkerLevelOfDetailWordName)
+				levelOfDetail = MarkerLevelOfDetail::Word;
+			else if (levelOfDetailStr == MarkerLevelOfDetailPhoneName)
+				levelOfDetail = MarkerLevelOfDetail::Phone;
+
+			//
+			PG_Assert(markerId != -1);
 
 			TimePointMarker syncPoint;
+			syncPoint.Id = markerId;
 			syncPoint.SampleInd = sampleInd;
 			syncPoint.TranscripText = transcripText;
+			syncPoint.LevelOfDetail = levelOfDetail;
+
+			// UI specific
 			syncPoint.IsManual = true;
 			syncPoints.push_back(syncPoint);
 		}
 	}
+
+	return std::make_tuple(true, nullptr);
+}
+
+PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const std::vector<TimePointMarker>& syncPoints, const std::wstring& audioMarkupFilePathAbs)
+{
+	QFile file(QString::fromStdWString(audioMarkupFilePathAbs));
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+		return std::make_tuple(false, "Can't open file for writing");
+
+	QDomDocument xml;
+	QDomNode node(xml.createProcessingInstruction("xml", R"pre(version="1.0" encoding="utf-8")pre"));
+	xml.insertBefore(node, xml.firstChild());
+
+	QDomElement docElem = xml.createElement(XmlDocName);
+	xml.appendChild(docElem);
+	
+	for (const TimePointMarker& marker : syncPoints)
+	{
+		QDomElement syncPointNode = xml.createElement(MarkerName);
+		syncPointNode.setAttribute(MarkerIdName, marker.Id);
+		syncPointNode.setAttribute(MarkerSampleIndName, marker.SampleInd);
+
+		if (!marker.TranscripText.isEmpty())
+			syncPointNode.setAttribute(MarkerTranscripTextName, marker.TranscripText);
+		
+		QString levelOfDetailStr = "error";
+		if (marker.LevelOfDetail == MarkerLevelOfDetail::Word)
+			levelOfDetailStr = MarkerLevelOfDetailWordName;
+		else if (marker.LevelOfDetail == MarkerLevelOfDetail::Phone)
+			levelOfDetailStr = MarkerLevelOfDetailPhoneName;
+		syncPointNode.setAttribute(MarkerLevelOfDetailName, levelOfDetailStr);
+
+		docElem.appendChild(syncPointNode);
+	}
+
+	QTextStream textStream(&file);
+	int indent = 3;
+	xml.save(textStream, indent);
 
 	return std::make_tuple(true, nullptr);
 }

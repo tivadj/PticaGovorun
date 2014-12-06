@@ -347,6 +347,8 @@ void AudioSamplesWidget::keyPressEvent(QKeyEvent* ke)
 
 	else if (ke->key() == Qt::Key_Insert)
 		transcriberModel_->insertNewMarkerAtCursor();
+	else if (ke->key() == Qt::Key_Delete)
+		transcriberModel_->deleteCurrentMarker();
 	else if (ke->key() == Qt::Key_T)
 		transcriberModel_->selectMarkerClosestToCurrentCursor();
 
