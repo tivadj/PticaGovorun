@@ -23,6 +23,8 @@ public slots:
 protected:
 	void paintEvent(QPaintEvent*) override;
 	void mousePressEvent(QMouseEvent*) override;
+	void mouseReleaseEvent(QMouseEvent*) override;
+	void mouseMoveEvent(QMouseEvent*) override;
 	void keyPressEvent(QKeyEvent*) override;
 private:
 	void drawFrameIndMarkers(QPainter& painter, int markerHeight, float visibleDocLeft, float visibleDocRight);

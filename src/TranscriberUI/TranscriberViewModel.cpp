@@ -278,7 +278,10 @@ std::tuple<long, long> TranscriberViewModel::getFrameRangeToPlay(long curFrameIn
 	long startPlayFrameInd = -1;
 	long endPlayFrameInd = -1;
 
-	int leftMarkerInd = findLeftCloseMarkerInd(markers, curFrameInd);
+	int leftMarkerInd = -1;
+	int rightMarkerInd = -1;
+	bool foundSegOp = findSegmentMarkerInds(markers, curFrameInd, leftMarkerInd, rightMarkerInd, true);
+	PG_Assert(foundSegOp && "The segment to play must be found");
 
 	if (outLeftMarkerInd != nullptr)
 		*outLeftMarkerInd = leftMarkerInd;
@@ -293,7 +296,7 @@ std::tuple<long, long> TranscriberViewModel::getFrameRangeToPlay(long curFrameIn
 			startPlayFrameInd = 0;
 
 		// play to the closest right marker which is the first in the markers collection
-		endPlayFrameInd = markers[0].Marker.SampleInd;
+		endPlayFrameInd = markers[rightMarkerInd].Marker.SampleInd;
 	}
 	else
 	{
@@ -302,8 +305,7 @@ std::tuple<long, long> TranscriberViewModel::getFrameRangeToPlay(long curFrameIn
 		else if (startFrameChoice == SegmentStartFrameToPlayChoice::SegmentBegin)
 			startPlayFrameInd = markers[leftMarkerInd].Marker.SampleInd;
 
-		long rightMarkerInd = leftMarkerInd + 1;
-		if (rightMarkerInd >= markers.size())
+		if (rightMarkerInd == -1)
 		{
 			// the last segment is requested to play; play to the end of audio
 			endPlayFrameInd = audioSamples_.size() - 1;
@@ -480,24 +482,42 @@ void TranscriberViewModel::collectMarkersOfInterest(std::vector<MarkerRefToOrigi
 	}
 }
 
-int TranscriberViewModel::findLeftCloseMarkerInd(const std::vector<MarkerRefToOrigin>& markers, long frameInd)
+bool TranscriberViewModel::findSegmentMarkerInds(const std::vector<MarkerRefToOrigin>& markers, long frameInd, int& leftMarkerInd, int& rightMarkerInd, bool acceptOutOfRangeFrameInd)
 {
 	if (markers.empty())
-		return -1;
+		return false;
+
+	int lastMarkerInd = markers.size() - 1;
+	long lastFrameInd = markers[lastMarkerInd].Marker.SampleInd;
+	if (!acceptOutOfRangeFrameInd && (frameInd < 0 || frameInd >= lastFrameInd)) // out of range of samples
+		return false;
 
 	// before the first marker?
 	if (frameInd < markers[0].Marker.SampleInd)
-		return -1;
+	{
+		leftMarkerInd = -1;
+		rightMarkerInd = 0;
+		return true;
+	}
 
 	// after the last marker?
-	int lastFrameInd = markers.size() - 1;
-	if (frameInd >= markers[lastFrameInd].Marker.SampleInd)
-		return lastFrameInd;
+	if (frameInd >= markers[lastMarkerInd].Marker.SampleInd)
+	{
+		leftMarkerInd = lastMarkerInd;
+		rightMarkerInd = -1;
+		return true;
+	}
 
 	auto markerFrameIndSelector = [](const MarkerRefToOrigin& m) { return m.Marker.SampleInd; };
 	auto hitMarkerIt = PticaGovorun::binarySearch(std::begin(markers), std::end(markers), frameInd, markerFrameIndSelector);
 	int hitMarkerInd = std::distance(std::begin(markers), hitMarkerIt);
-	return hitMarkerInd;
+	
+	leftMarkerInd = hitMarkerInd;
+	rightMarkerInd = hitMarkerInd + 1;
+	
+	PG_Assert(leftMarkerInd >= 0 && "Marker index is out of range");
+	PG_Assert(rightMarkerInd < markers.size() && "Marker index is out of range");
+	return true;
 }
 
 int TranscriberViewModel::generateMarkerId()
@@ -524,6 +544,30 @@ int TranscriberViewModel::generateMarkerId()
 	return result;
 }
 
+void TranscriberViewModel::insertNewMarkerSafe(int newMarkerInd, const PticaGovorun::TimePointMarker& newMarker)
+{
+	const auto insPosIt = frameIndMarkers_.cbegin() + newMarkerInd;
+
+#if PG_DEBUG
+	// ensure all markers are sorted by FrameInd
+	// compare to the right marker
+	if (insPosIt != std::cend(frameIndMarkers_))
+	{
+		int rightFrameInd = insPosIt->SampleInd;
+		PG_Assert(newMarker.SampleInd <= rightFrameInd && "New marker is out of FrameInd order");
+	}
+	// compare to the left marker
+	if (insPosIt != std::cbegin(frameIndMarkers_))
+	{
+		auto leftMarkerIt = insPosIt - 1;
+		int leftFrameInd = leftMarkerIt->SampleInd;
+		PG_Assert(leftFrameInd <= newMarker.SampleInd && "New marker is out of FrameInd order");
+	}
+#endif
+
+	frameIndMarkers_.insert(insPosIt, newMarker);
+}
+
 void TranscriberViewModel::setTemplateMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail)
 {
 	templateMarkerLevelOfDetail_ = levelOfDetail;
@@ -534,15 +578,67 @@ PticaGovorun::MarkerLevelOfDetail TranscriberViewModel::templateMarkerLevelOfDet
 	return templateMarkerLevelOfDetail_;
 }
 
+void TranscriberViewModel::dragMarkerStart(const QPointF& localPos, int markerInd)
+{
+	qDebug() << "dragMarkerStart";
+	draggingMarkerInd_ = markerInd;
+	isDraggingMarker_ = true;
+	draggingLastViewportPos_ = localPos;
+}
+
+void TranscriberViewModel::dragMarkerStop()
+{
+	if (isDraggingMarker_)
+	{
+		qDebug() << "dragMarkerStop";
+		draggingMarkerInd_ = -1;
+		isDraggingMarker_ = false;
+	}
+}
+
+void TranscriberViewModel::dragMarkerContinue(const QPointF& localPos)
+{
+	if (isDraggingMarker_ && draggingLastViewportPos_ != localPos)
+	{
+		qDebug() << "dragMarkerContinue";
+
+		float mouseMoveDocPosX = docOffsetX_ + localPos.x();
+		long frameInd = (long)docPosXToSampleInd(mouseMoveDocPosX);
+
+		frameIndMarkers_[draggingMarkerInd_].SampleInd = frameInd;
+		draggingLastViewportPos_ = localPos;
+
+		// redraw current marker
+		emit audioSamplesChanged();
+	}
+}
+
 void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos)
 {
 	float lastMousePressDocPosX = docOffsetX_ + localPos.x();
-
 	emit lastMouseDocPosXChanged(lastMousePressDocPosX);
 
-	//
+	// choose between dragging the marker or setting the cursor
+
 	auto curFrameInd = (long)docPosXToSampleInd(lastMousePressDocPosX);
-	setCurrentFrameIndInternal(curFrameInd, true);
+
+	long distToMarker = -1;
+	int closestMarkerInd = getClosestMarkerInd(curFrameInd, true, &distToMarker);
+
+	float distToMarkerPix = distToMarker * scale_;
+	
+	const long AcceptDragDelta = 5; // pix
+	if (closestMarkerInd != -1 && distToMarkerPix < AcceptDragDelta)
+	{
+		dragMarkerStart(localPos, closestMarkerInd);
+		// do not change cursor
+	}
+	else
+	{
+		// click on empty space in document
+		// update cursor
+		setCurrentFrameIndInternal(curFrameInd, true);
+	}
 }
 
 long TranscriberViewModel::currentFrameInd() const
@@ -583,10 +679,12 @@ void TranscriberViewModel::insertNewMarkerAtCursor()
 	std::vector<MarkerRefToOrigin>& markers = markersOfInterestCache_;
 	markers.clear();
 	collectMarkersOfInterest(markers, true);
-	int leftMarkerInd = findLeftCloseMarkerInd(markers, curFrameInd);
-
+	int leftMarkerInd;
+	int rightMarkerInd;
+	
 	int newMarkerInd = -1;
-	if (leftMarkerInd == -1) // insert the first marker
+	bool findSegOp = findSegmentMarkerInds(markers, curFrameInd, leftMarkerInd, rightMarkerInd, true);
+	if (!findSegOp || leftMarkerInd == -1) // insert the first marker
 		newMarkerInd = 0;
 	else
 		newMarkerInd = leftMarkerInd + 1; // next to the left marker
@@ -596,7 +694,7 @@ void TranscriberViewModel::insertNewMarkerAtCursor()
 	newMarker.SampleInd = curFrameInd;
 	newMarker.IsManual = true;
 	newMarker.LevelOfDetail = templateMarkerLevelOfDetail_;
-	frameIndMarkers_.insert(frameIndMarkers_.cbegin() + newMarkerInd, newMarker);
+	insertNewMarkerSafe(newMarkerInd, newMarker);
 
 	setCurrentMarkerIndInternal(newMarkerInd, true);
 
@@ -614,46 +712,70 @@ void TranscriberViewModel::deleteCurrentMarker()
 	setCurrentMarkerIndInternal(-1, false);
 }
 
-void TranscriberViewModel::selectMarkerClosestToCurrentCursor()
+int TranscriberViewModel::getClosestMarkerInd(long frameInd, bool processPhoneMarkers, long* distFrames)
 {
-	long curFrameInd = currentFrameInd();
+	*distFrames = -1;
 
 	std::vector<MarkerRefToOrigin>& markers = markersOfInterestCache_;
 	markers.clear();
-	collectMarkersOfInterest(markers, true);
-	int leftMarkerInd = findLeftCloseMarkerInd(markers, curFrameInd);
+	collectMarkersOfInterest(markers, processPhoneMarkers);
+	int leftMarkerInd = -1;
+	int rightMarkerInd = -1;
+	if (!findSegmentMarkerInds(markers, frameInd, leftMarkerInd, rightMarkerInd, true))
+	{
+		// there is no closest marker
+		return -1;
+	}
 	
 	int closestMarkerInd = -1;
+	
 	if (leftMarkerInd == -1)
 	{
-		if (frameIndMarkers_.empty())
-		{
-			// there is no closest marker
-			setCurrentMarkerIndInternal(-1, false);
-			return;
-		}
-		closestMarkerInd = 0;
+		// current cursor is before the first marker
+		closestMarkerInd = rightMarkerInd;
+		*distFrames = frameIndMarkers_[rightMarkerInd].SampleInd - frameInd;
 	}
-	int rightMarkerInd = leftMarkerInd + 1;
-	if (rightMarkerInd >= frameIndMarkers_.size())
+	if (rightMarkerInd == -1)
 	{
 		// current cursor is to the right of the last marker
 		closestMarkerInd = leftMarkerInd;
+		*distFrames = frameInd - frameIndMarkers_[leftMarkerInd].SampleInd;
 	}
 
 	if (closestMarkerInd == -1)
 	{
 		// there are two candidate (left and right) markers to select, select closest
-		long distLeft = curFrameInd - frameIndMarkers_[leftMarkerInd].SampleInd;
+
+		long distLeft = frameInd - frameIndMarkers_[leftMarkerInd].SampleInd;
 		PG_Assert(distLeft >= 0 && "Error calculating the distance from the current cursor to the left marker");
 
-		long distRight = frameIndMarkers_[rightMarkerInd].SampleInd - curFrameInd;
+		long distRight = frameIndMarkers_[rightMarkerInd].SampleInd - frameInd;
 		PG_Assert(distRight >= 0 && "Error calculating the distance from the current cursor to the right marker");
 
-		closestMarkerInd = distLeft < distRight ? leftMarkerInd : rightMarkerInd;
+		if (distLeft < distRight)
+		{
+			closestMarkerInd = leftMarkerInd;
+			*distFrames = distLeft;
+		}
+		else
+		{
+			closestMarkerInd = rightMarkerInd;
+			*distFrames = distRight;
+		}
 	}
 	
 	PG_Assert(closestMarkerInd != -1 && "Error calculating the closest marker");
+	PG_Assert(*distFrames >= 0 && "Error calculating the distance to the closest marker");
+
+	return closestMarkerInd;
+}
+
+void TranscriberViewModel::selectMarkerClosestToCurrentCursor()
+{
+	long curFrameInd = currentFrameInd();
+
+	long distToClosestMarker = -1;
+	int closestMarkerInd = getClosestMarkerInd(curFrameInd, true, &distToClosestMarker);
 
 	setCurrentMarkerIndInternal(closestMarkerInd, true);
 }

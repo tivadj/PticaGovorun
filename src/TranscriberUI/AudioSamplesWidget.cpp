@@ -330,6 +330,17 @@ void AudioSamplesWidget::mousePressEvent(QMouseEvent* me)
 	transcriberModel_->setLastMousePressPos(pos);
 }
 
+void AudioSamplesWidget::mouseReleaseEvent(QMouseEvent*)
+{
+	transcriberModel_->dragMarkerStop();
+}
+
+void AudioSamplesWidget::mouseMoveEvent(QMouseEvent* me)
+{
+	const QPointF& pos = me->localPos();
+	transcriberModel_->dragMarkerContinue(pos);
+}
+
 void AudioSamplesWidget::keyPressEvent(QKeyEvent* ke)
 {
 	if (ke->key() == Qt::Key_C)

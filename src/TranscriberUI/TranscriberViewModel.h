@@ -5,6 +5,7 @@
 #include <memory>
 #include <hash_set>
 #include <QObject>
+#include <QPointF>
 //#include "array_view.hpp"
 #include <portaudio.h>
 #include "XmlAudioMarkup.h"
@@ -127,6 +128,9 @@ private:
 
 	// Level of detail for newly created markers.
 	PticaGovorun::MarkerLevelOfDetail templateMarkerLevelOfDetail_ = PticaGovorun::MarkerLevelOfDetail::Word;
+	QPointF draggingLastViewportPos_; // used to avoid frequent repaints when mouse pos doesn't change
+	bool isDraggingMarker_ = false;
+	int draggingMarkerInd_ = -1;
 
 public:
 
@@ -134,6 +138,8 @@ public:
 	void collectMarkersOfInterest(std::vector<MarkerRefToOrigin>& markersOfInterest, bool processPhoneMarkers);
 	void insertNewMarkerAtCursor();
 	void deleteCurrentMarker();
+	// dist=number of frames between frameInd and the closest marker.
+	int getClosestMarkerInd(long frameInd, bool processPhoneMarkers, long* dist);
 	void selectMarkerClosestToCurrentCursor();
 	int currentMarkerInd() const;
 	void setCurrentMarkerTranscriptText(const QString& text);
@@ -141,15 +147,22 @@ public:
 	void setTemplateMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail);
 	PticaGovorun::MarkerLevelOfDetail templateMarkerLevelOfDetail() const;
 
+	void dragMarkerStart(const QPointF& localPos, int markerInd);
+	void dragMarkerStop();
+	void dragMarkerContinue(const QPointF& localPos);
 private:
 	void setCurrentMarkerIndInternal(int markerInd, bool updateCurrentFrameInd);
 
-	// returns the index in the closest to the left time point marker in markers collection
-	// returns -1 if there is no markers to the left of 'frameInd' or audio samples were not loaded.
-	int findLeftCloseMarkerInd(const std::vector<MarkerRefToOrigin>& markers, long frameInd);
-
+	// returns the closest segment which contains given frameInd. The segment is described by two indices in
+	// the original collection of markers.
+	// returns false if such segment can't be determined.
+	// leftMarkerInd=-1 for the frames before the first marker, and rightMarkerInd=-1 for the frames after the last marker.
+	// acceptOutOfRangeFrameInd = true to return the first or the last segment for negative frameInd or frameInd larger than max frameInd.
+	bool findSegmentMarkerInds(const std::vector<MarkerRefToOrigin>& markers, long frameInd, int& leftMarkerInd, int& rightMarkerInd, bool acceptOutOfRangeFrameInd);
 	int generateMarkerId();
 
+	// Ensures that all markers are sorted ascending by FrameInd.
+	void insertNewMarkerSafe(int markerInd, const PticaGovorun::TimePointMarker& marker);
 public:	// recongizer
 
 	void ensureRecognizerIsCreated();
