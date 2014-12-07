@@ -20,6 +20,7 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
 	QObject::connect(ui->pushButtonPause, SIGNAL(clicked()), this, SLOT(pushButtonPause_Clicked()));
 	QObject::connect(ui->radioButtonWordLevel, SIGNAL(toggled(bool)), this, SLOT(radioButtonWordLevel_toggled(bool)));
 	QObject::connect(ui->lineEditMarkerText, SIGNAL(editingFinished()), this, SLOT(lineEditMarkerText_editingFinished()));
+	QObject::connect(ui->checkBoxCurMarkerStopOnPlayback, SIGNAL(toggled(bool)), this, SLOT(checkBoxCurMarkerStopOnPlayback_toggled(bool)));
 
 	//
     transcriberModel_ = std::make_shared<TranscriberViewModel>();
@@ -142,23 +143,21 @@ void TranscriberMainWindow::horizontalScrollBarSamples_valueChanged(int value)
 
 void TranscriberMainWindow::transcriberModel_lastMouseDocPosXChanged(float mouseDocPosX)
 {
-	{
-		std::stringstream msg;
-		msg.precision(2);
-		msg << std::fixed;
-		msg << mouseDocPosX;
-		ui->lineEditCurDocPosX->setText(QString::fromStdString(msg.str()));
+	float sampleInd = transcriberModel_->docPosXToSampleInd(mouseDocPosX);
+	UpdateDocPosXAndFrameInd(mouseDocPosX, sampleInd);
+}
 
-		float sampleInd = transcriberModel_->docPosXToSampleInd(mouseDocPosX);
+void TranscriberMainWindow::UpdateDocPosXAndFrameInd(float mouseDocPosX, float sampleInd)
+{
+	std::stringstream msg;
+	msg.precision(2);
+	msg << std::fixed;
+	msg << mouseDocPosX;
+	ui->lineEditCurDocPosX->setText(QString::fromStdString(msg.str()));
 
-		msg.str("");
-		//std::stringstream msg;
-		//msg.precision(2);
-		//msg << std::fixed;
-		//msg.str("");
-		msg << sampleInd;
-		ui->lineEditCurSampleInd->setText(QString::fromStdString(msg.str()));
-	}
+	msg.str("");
+	msg << sampleInd;
+	ui->lineEditCurSampleInd->setText(QString::fromStdString(msg.str()));
 }
 
 void TranscriberMainWindow::transcriberModel_currentFrameIndChanged(long oldCurFrameInd)
@@ -170,6 +169,10 @@ void TranscriberMainWindow::transcriberModel_currentFrameIndChanged(long oldCurF
 	long newCurFrameInd = transcriberModel_->currentFrameInd();
 	if (newCurFrameInd == PticaGovorun::PGFrameIndNull)
 		ui->widgetSamples->update(updateRect);
+
+	//
+	float newCursorDocPosX = transcriberModel_->sampleIndToDocPosX(newCurFrameInd);
+	UpdateDocPosXAndFrameInd(newCursorDocPosX, newCurFrameInd);
 
 	// update only invalidated rect
 
@@ -199,6 +202,8 @@ void TranscriberMainWindow::transcriberModel_currentMarkerIndChanged()
 	PticaGovorun::MarkerLevelOfDetail uiMarkerLevel = transcriberModel_->templateMarkerLevelOfDetail();
 	QString uiMarkerIdStr = "###";
 	QString uiMarkerTranscriptStr = "";
+	bool uiMarkerStopsPlayback = false;
+	bool uiMarkerStopsPlaybackEnabled = false;
 
 	int markerInd = transcriberModel_->currentMarkerInd();
 	if (markerInd != -1)
@@ -208,6 +213,12 @@ void TranscriberMainWindow::transcriberModel_currentMarkerIndChanged()
 		uiMarkerLevel = marker.LevelOfDetail;
 
 		uiMarkerTranscriptStr = marker.TranscripText;
+		uiMarkerStopsPlayback = marker.StopsPlayback;
+		uiMarkerStopsPlaybackEnabled = true;
+	}
+	else
+	{
+		uiMarkerStopsPlaybackEnabled = false;
 	}
 
 	// update ui
@@ -220,9 +231,16 @@ void TranscriberMainWindow::transcriberModel_currentMarkerIndChanged()
 		ui->radioButtonPhoneLevel->setChecked(true);
 
 	ui->lineEditMarkerText->setText(uiMarkerTranscriptStr);
+	ui->checkBoxCurMarkerStopOnPlayback->setEnabled(uiMarkerStopsPlaybackEnabled);
+	ui->checkBoxCurMarkerStopOnPlayback->setChecked(uiMarkerStopsPlayback);
 }
 
 void TranscriberMainWindow::lineEditMarkerText_editingFinished()
 {
 	transcriberModel_->setCurrentMarkerTranscriptText(ui->lineEditMarkerText->text());
+}
+
+void TranscriberMainWindow::checkBoxCurMarkerStopOnPlayback_toggled(bool checked)
+{
+	transcriberModel_->setCurrentMarkerStopOnPlayback(checked);
 }

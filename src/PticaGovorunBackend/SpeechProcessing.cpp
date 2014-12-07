@@ -5,6 +5,15 @@
 
 namespace PticaGovorun {
 
+bool getDefaultMarkerStopsPlayback(MarkerLevelOfDetail levelOfDetail)
+{
+	if (levelOfDetail == MarkerLevelOfDetail::Word)
+		return true;
+
+	// do not stop on phone markers
+	return false;
+}
+
 	std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> void> wordToPhoneListFun, bool insertShortPause, std::vector<std::string>& speechPhones)
 {
 	std::wsmatch matchRes;

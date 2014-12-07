@@ -35,9 +35,11 @@ private slots:
 	void transcriberModel_audioSamplesChanged();
 	void transcriberModel_docOffsetXChanged();
 	void transcriberModel_lastMouseDocPosXChanged(float mouseDocPosX);
+	void UpdateDocPosXAndFrameInd(float mouseDocPosX, float sampleInd);
 	void transcriberModel_currentFrameIndChanged(long oldValue);
 	void transcriberModel_currentMarkerIndChanged();
 	void lineEditMarkerText_editingFinished();
+	void checkBoxCurMarkerStopOnPlayback_toggled(bool checked);
 private:
     Ui::TranscriberMainWindow *ui;
     std::shared_ptr<TranscriberViewModel> transcriberModel_;

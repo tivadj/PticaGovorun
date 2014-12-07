@@ -73,6 +73,7 @@ struct TimePointMarker
 	// Uniquely identifies the marker. For example, when two markers have the same sample index.
 	int Id = -1;
 
+	// The index of the frame (sample) this marker points at.
 	long SampleInd;
 
 	// Whether marker was added by user (manual=true). Automatic markers (manual=false) can be freely
@@ -83,7 +84,10 @@ struct TimePointMarker
 	// Separates phones in audio.
 	MarkerLevelOfDetail LevelOfDetail = MarkerLevelOfDetail::Word;
 
-	// bool StopsAudioPlayer;
+	// Determines if this marker stops the audio playback.
+	// by default: true for word-level markers and false for phone-level markers
+	// This property is not serializable.
+	bool StopsPlayback;
 
 	QString TranscripText;
 	PhoneAlignmentInfo TranscripTextPhones; // splits transcripted text into phones and align them onto audio
@@ -93,6 +97,9 @@ struct TimePointMarker
 	QString RecogSegmentWords;
 	std::vector<AlignedPhoneme> RecogAlignedPhonemeSeq;
 };
+
+// Determines if a marker with given level of detail will stop the audio playback.
+PG_EXPORTS bool getDefaultMarkerStopsPlayback(MarkerLevelOfDetail levelOfDetail);
 
 // insertShortPause=true to insert sp phone between words.
 PG_EXPORTS std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> void> wordToPhoneListFun, bool insertShortPause, std::vector<std::string>& speechPhones);

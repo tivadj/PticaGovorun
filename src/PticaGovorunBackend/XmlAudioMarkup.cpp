@@ -94,6 +94,8 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMa
 
 			// UI specific
 			syncPoint.IsManual = true;
+			syncPoint.StopsPlayback = getDefaultMarkerStopsPlayback(levelOfDetail);
+
 			syncPoints.push_back(syncPoint);
 		}
 	}

@@ -136,13 +136,19 @@ public:
 
 	const std::vector<PticaGovorun::TimePointMarker>& frameIndMarkers() const;
 	void collectMarkersOfInterest(std::vector<MarkerRefToOrigin>& markersOfInterest, bool processPhoneMarkers);
+	
+	template <typename MarkerPred>
+	void transformMarkersIf(std::vector<MarkerRefToOrigin>& markersOfInterest, MarkerPred canSelectMarker);
+	
 	void insertNewMarkerAtCursor();
 	void deleteCurrentMarker();
 	// dist=number of frames between frameInd and the closest marker.
-	int getClosestMarkerInd(long frameInd, bool processPhoneMarkers, long* dist);
+	template <typename Markers, typename FrameIndSelector>
+	int getClosestMarkerInd(const Markers& markers, FrameIndSelector markerFrameIndSelector, long frameInd, long* dist) const;
 	void selectMarkerClosestToCurrentCursor();
 	int currentMarkerInd() const;
 	void setCurrentMarkerTranscriptText(const QString& text);
+	void setCurrentMarkerStopOnPlayback(bool stopsPlayback);
 
 	void setTemplateMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail);
 	PticaGovorun::MarkerLevelOfDetail templateMarkerLevelOfDetail() const;
@@ -158,7 +164,9 @@ private:
 	// returns false if such segment can't be determined.
 	// leftMarkerInd=-1 for the frames before the first marker, and rightMarkerInd=-1 for the frames after the last marker.
 	// acceptOutOfRangeFrameInd = true to return the first or the last segment for negative frameInd or frameInd larger than max frameInd.
-	bool findSegmentMarkerInds(const std::vector<MarkerRefToOrigin>& markers, long frameInd, int& leftMarkerInd, int& rightMarkerInd, bool acceptOutOfRangeFrameInd);
+	template <typename Markers, typename FrameIndSelector>
+	bool findSegmentMarkerInds(const Markers& markers, FrameIndSelector markerFrameIndSelector, long frameInd, bool acceptOutOfRangeFrameInd, int& leftMarkerInd, int& rightMarkerInd) const;
+
 	int generateMarkerId();
 
 	// Ensures that all markers are sorted ascending by FrameInd.
