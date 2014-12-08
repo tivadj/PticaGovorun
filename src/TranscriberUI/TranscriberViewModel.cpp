@@ -670,7 +670,7 @@ void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos)
 	{
 		// click on empty space in document
 		// update cursor
-		setCurrentFrameIndInternal(curFrameInd, true);
+		setCurrentFrameIndInternal(curFrameInd, true, false);
 	}
 }
 
@@ -681,10 +681,10 @@ long TranscriberViewModel::currentFrameInd() const
 
 void TranscriberViewModel::setCurrentFrameInd(long value)
 {
-	setCurrentFrameIndInternal(value, true);
+	setCurrentFrameIndInternal(value, true, true);
 }
 
-void TranscriberViewModel::setCurrentFrameIndInternal(long value, bool updateCurrentMarkerInd)
+void TranscriberViewModel::setCurrentFrameIndInternal(long value, bool updateCurrentMarkerInd, bool updateViewportOffset)
 {
 	if (currentFrameInd_ != value)
 	{
@@ -698,7 +698,18 @@ void TranscriberViewModel::setCurrentFrameIndInternal(long value, bool updateCur
 		if (updateCurrentMarkerInd)
 		{
 			int curMarkerInd = -1; // reset the marker
-			setCurrentMarkerIndInternal(curMarkerInd, false);
+			setCurrentMarkerIndInternal(curMarkerInd, false, updateViewportOffset);
+		}
+
+		if (updateViewportOffset)
+		{
+			// TODO: put viewport width (in document units) into model 
+
+			// put docOffsetX some pixels to the left of given frameInd
+			const int LeftDxPix = 50;
+			float framePix = sampleIndToDocPosX(value);
+			long newDocOffsetX = framePix - LeftDxPix;
+			setDocOffsetX(newDocOffsetX);
 		}
 	}
 }
@@ -727,7 +738,7 @@ void TranscriberViewModel::insertNewMarkerAtCursor()
 	newMarker.StopsPlayback = getDefaultMarkerStopsPlayback(templateMarkerLevelOfDetail_);
 	insertNewMarkerSafe(newMarkerInd, newMarker);
 
-	setCurrentMarkerIndInternal(newMarkerInd, true);
+	setCurrentMarkerIndInternal(newMarkerInd, true, false);
 
 	// TODO: repaint only current marker
 	emit audioSamplesChanged();
@@ -741,7 +752,7 @@ void TranscriberViewModel::deleteCurrentMarker()
 
 	frameIndMarkers_.erase(frameIndMarkers_.cbegin() + markerInd);
 
-	setCurrentMarkerIndInternal(-1, false);
+	setCurrentMarkerIndInternal(-1, false, false);
 }
 
 template <typename Markers, typename FrameIndSelector>
@@ -808,10 +819,10 @@ void TranscriberViewModel::selectMarkerClosestToCurrentCursor()
 	auto markerFrameIndSelector = [](const PticaGovorun::TimePointMarker& m) { return m.SampleInd; };
 	int closestMarkerInd = getClosestMarkerInd(frameIndMarkers_, markerFrameIndSelector, curFrameInd, &distToClosestMarker);
 
-	setCurrentMarkerIndInternal(closestMarkerInd, true);
+	setCurrentMarkerIndInternal(closestMarkerInd, true, false);
 }
 
-void TranscriberViewModel::setCurrentMarkerIndInternal(int markerInd, bool updateCurrentFrameInd)
+void TranscriberViewModel::setCurrentMarkerIndInternal(int markerInd, bool updateCurrentFrameInd, bool updateViewportOffset)
 {
 	if (currentMarkerInd_ != markerInd)
 	{
@@ -823,7 +834,7 @@ void TranscriberViewModel::setCurrentMarkerIndInternal(int markerInd, bool updat
 		{
 			// udpdate cursor position
 			long newCurSampleInd = frameIndMarkers_[markerInd].SampleInd;
-			setCurrentFrameIndInternal(newCurSampleInd, false);
+			setCurrentFrameIndInternal(newCurSampleInd, false, updateViewportOffset);
 		}
 	}
 }
@@ -1125,4 +1136,26 @@ int TranscriberViewModel::markerIndByMarkerId(int markerId)
 			return i;
 	}
 	return -1;
+}
+
+void TranscriberViewModel::setAudioMarkupNavigator(std::shared_ptr<AudioMarkupNavigator> audioMarkupNavigator)
+{
+	audioMarkupNavigator_ = audioMarkupNavigator;
+}
+
+void TranscriberViewModel::navigateToMarkerCommandHandler()
+{
+	if (audioMarkupNavigator_ == nullptr)
+		return;
+	
+	// ask user for marker id
+	int markerId = -1;
+	if (!audioMarkupNavigator_->requestMarkerId(markerId))
+		return;
+
+	int markerInd = markerIndByMarkerId(markerId);
+	if (markerInd == -1) // user input non existent marker id
+		return;
+
+	setCurrentMarkerIndInternal(markerInd, true, true);
 }

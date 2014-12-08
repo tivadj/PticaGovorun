@@ -25,13 +25,16 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../build/x64/debug -
 SOURCES += main.cpp \
     TranscriberMainWindow.cpp \
     AudioSamplesWidget.cpp \
-    TranscriberViewModel.cpp
+    TranscriberViewModel.cpp \
+    AudioMarkupNavigatorDialog.cpp
 
 HEADERS  += \
     TranscriberMainWindow.h \
     AudioSamplesWidget.h \
-    TranscriberViewModel.h
+    TranscriberViewModel.h \
+    AudioMarkupNavigatorDialog.h
 
 FORMS    += \
     AudioSamplesWidget.ui \
-    TranscriberMainWindow.ui
+    TranscriberMainWindow.ui \
+    AudioMarkupNavigatorDialog.ui

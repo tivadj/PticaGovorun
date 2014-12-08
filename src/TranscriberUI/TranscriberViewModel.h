@@ -11,6 +11,7 @@
 #include "XmlAudioMarkup.h"
 #include "JuliusToolNativeWrapper.h"
 #include "SpeechProcessing.h"
+#include "AudioMarkupNavigator.h"
 
 // we work with Julius in 'Windows-1251' encoding
 static const char* PGEncodingStr = "windows-1251";
@@ -108,7 +109,7 @@ public: // frames (samples)
 	long currentFrameInd() const;
 	void setCurrentFrameInd(long value);
 private:
-	void setCurrentFrameIndInternal(long value, bool updateCurrentMarkerInd);
+	void setCurrentFrameIndInternal(long value, bool updateCurrentMarkerInd, bool updateViewportOffset);
 	
 	// markers
 private:
@@ -159,7 +160,7 @@ public:
 	void dragMarkerStop();
 	void dragMarkerContinue(const QPointF& localPos);
 private:
-	void setCurrentMarkerIndInternal(int markerInd, bool updateCurrentFrameInd);
+	void setCurrentMarkerIndInternal(int markerInd, bool updateCurrentFrameInd, bool updateViewportOffset);
 
 	// returns the closest segment which contains given frameInd. The segment is described by two indices in
 	// the original collection of markers.
@@ -188,6 +189,13 @@ public: // segment composer
 	int markerIndByMarkerId(int markerId);
 private:
 	std::vector<short> composedAudio_;
+
+public:
+	// navigation
+	void setAudioMarkupNavigator(std::shared_ptr<AudioMarkupNavigator> audioMarkupNavigator);
+	void navigateToMarkerCommandHandler();
+private:
+	std::shared_ptr<AudioMarkupNavigator> audioMarkupNavigator_;
 
 private:
 	std::vector<short> audioSamples_;

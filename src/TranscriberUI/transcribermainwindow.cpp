@@ -25,6 +25,7 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
 
 	//
     transcriberModel_ = std::make_shared<TranscriberViewModel>();
+	transcriberModel_->setAudioMarkupNavigator(std::make_shared<AudioMarkupNavigator>());
 
 	QObject::connect(transcriberModel_.get(), SIGNAL(audioSamplesLoaded()), this, SLOT(transcriberModel_audioSamplesLoaded()));
     QObject::connect(transcriberModel_.get(), SIGNAL(nextNotification(const QString&)), this, SLOT(transcriberModel_nextNotification(const QString&)));
@@ -94,6 +95,9 @@ void TranscriberMainWindow::updateSamplesSlider()
 	//ui->horizontalScrollBarSamples->setSingleStep(pageStep / stepsPerScreen);
 	ui->horizontalScrollBarSamples->setSingleStep(100);
 	ui->horizontalScrollBarSamples->setPageStep(pageStep);
+	
+	float docOffsetX = transcriberModel_->docOffsetX();
+	ui->horizontalScrollBarSamples->setValue((int)docOffsetX);
 }
 
 

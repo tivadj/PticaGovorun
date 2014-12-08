@@ -363,6 +363,9 @@ void AudioSamplesWidget::keyPressEvent(QKeyEvent* ke)
 	else if (ke->key() == Qt::Key_T)
 		transcriberModel_->selectMarkerClosestToCurrentCursor();
 
+	else if (ke->key() == Qt::Key_G && ke->modifiers().testFlag(Qt::ControlModifier))
+		transcriberModel_->navigateToMarkerCommandHandler();
+
 	else
 		QWidget::keyPressEvent(ke);
 }

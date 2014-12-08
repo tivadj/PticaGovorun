@@ -77,6 +77,18 @@
     <ClCompile Include="TranscriberViewModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_AudioMarkupNavigatorDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_AudioMarkupNavigatorDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioMarkupNavigator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioMarkupNavigatorDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="transcribermainwindow.h">
@@ -91,6 +103,12 @@
     <CustomBuild Include="TranscriberViewModel.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="AudioMarkupNavigatorDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="AudioMarkupNavigatorDialog.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="transcribermainwindow.ui">
@@ -102,6 +120,12 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_AudioSamplesWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioMarkupNavigator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_AudioMarkupNavigatorDialog.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
