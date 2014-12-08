@@ -60,7 +60,7 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMa
 				// generate random id
 				while (true)
 				{
-					markerId = rand() % 400;
+					markerId = 1 + rand() % 400; // +1 for id>0
 					if (usedIds.find(markerId) == std::end(usedIds))
 						break;
 				}

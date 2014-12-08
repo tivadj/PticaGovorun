@@ -67,10 +67,11 @@ void TranscriberViewModel::loadAudioFile()
 	emit audioSamplesLoaded();
 }
 
-void TranscriberViewModel::soundPlayerPlay(long startPlayingFrameInd, long finishPlayingFrameInd, bool restoreCurFrameInd)
+void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPlayingFrameInd, long finishPlayingFrameInd, bool restoreCurFrameInd)
 {
 	SoundPlayerData& data = soundPlayerData_;
 	data.transcriberViewModel = this;
+	data.AudioSouce = audioSouce;
 #if PG_DEBUG
 	data.StartPlayingFrameInd = startPlayingFrameInd;
 #endif
@@ -106,7 +107,7 @@ void TranscriberViewModel::soundPlayerPlay(long startPlayingFrameInd, long finis
 		TranscriberViewModel& transcriberViewModel = *data.transcriberViewModel;
 
 		long sampleInd = data.CurPlayingFrameInd;
-		long sampleEnd = std::min((long)transcriberViewModel.audioSamples_.size(), sampleInd + (long)framesPerBuffer);
+		long sampleEnd = std::min((long)data.FinishPlayingFrameInd, sampleInd + (long)framesPerBuffer);
 		int availableFramesCount = sampleEnd - sampleInd;
 		if (availableFramesCount < framesPerBuffer) // the last buffer
 			return paAbort;
@@ -119,7 +120,7 @@ void TranscriberViewModel::soundPlayerPlay(long startPlayingFrameInd, long finis
 		short *out = (short*)outputBuffer;
 		for (unsigned long i = 0; i<availableFramesCount; i++)
 		{
-			short sampleValue = transcriberViewModel.audioSamples_[sampleInd + i];
+			short sampleValue = data.AudioSouce[sampleInd + i];
 			*out++ = sampleValue;  // left
 			*out++ = sampleValue;  // right
 		}
@@ -162,7 +163,7 @@ void TranscriberViewModel::soundPlayerPlay(long startPlayingFrameInd, long finis
 
 		for (unsigned long i = 0; i<availableFramesCount; i++)
 		{
-			short sampleValue = transcriberViewModel.audioSamples_[sampleInd + i];
+			short sampleValue = data.AudioSouce[sampleInd + i];
 			*out++ = sampleValue;  // left
 			*out++ = sampleValue;  // right
 		}
@@ -354,7 +355,10 @@ void TranscriberViewModel::soundPlayerPlayCurrentSegment(SegmentStartFrameToPlay
 
 	// determine the frameInd to which to play audio
 	auto frameRangeToPlay = getFrameRangeToPlay(curFrameInd, startFrameChoice);
-	soundPlayerPlay(std::get<0>(frameRangeToPlay), std::get<1>(frameRangeToPlay), true);
+	long startFrameInd = std::get<0>(frameRangeToPlay);
+	long finishFrameInd = std::get<1>(frameRangeToPlay);
+
+	soundPlayerPlay(audioSamples_.data(), startFrameInd, finishFrameInd, true);
 }
 
 void TranscriberViewModel::soundPlayerPause()
@@ -379,7 +383,7 @@ void TranscriberViewModel::soundPlayerPlay()
 	if (curFrameInd == PticaGovorun::PGFrameIndNull)
 		return;
 
-	soundPlayerPlay(curFrameInd, audioSamples_.size() - 1, false);
+	soundPlayerPlay(audioSamples_.data(), curFrameInd, audioSamples_.size() - 1, false);
 }
 
 void TranscriberViewModel::soundPlayerTogglePlayPause()
@@ -545,7 +549,7 @@ int TranscriberViewModel::generateMarkerId()
 	int result;
 	while (true)
 	{
-		result = rand() % (frameIndMarkers_.size() * 2);
+		result = 1 + rand() % (frameIndMarkers_.size() * 2); // +1 for id>0
 		if (usedMarkerIds_.find(result) == std::end(usedMarkerIds_))
 			break;
 	}
@@ -725,6 +729,7 @@ void TranscriberViewModel::insertNewMarkerAtCursor()
 
 	setCurrentMarkerIndInternal(newMarkerInd, true);
 
+	// TODO: repaint only current marker
 	emit audioSamplesChanged();
 }
 
@@ -833,6 +838,23 @@ void TranscriberViewModel::setCurrentMarkerTranscriptText(const QString& text)
 	if (currentMarkerInd_ == -1)
 		return;
 	frameIndMarkers_[currentMarkerInd_].TranscripText = text;
+}
+
+void TranscriberViewModel::setCurrentMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail)
+{
+	if (currentMarkerInd_ == -1)
+	{
+		// apply user selection as a template for new markers
+		templateMarkerLevelOfDetail_ = levelOfDetail;
+	}
+	else
+	{
+		// apply the value to current marker
+		frameIndMarkers_[currentMarkerInd_].LevelOfDetail = levelOfDetail;
+
+		// TODO: repaint only current marker
+		emit audioSamplesChanged();
+	}
 }
 
 void TranscriberViewModel::setCurrentMarkerStopOnPlayback(bool stopsPlayback)
@@ -1052,3 +1074,55 @@ void TranscriberViewModel::setRecognizerName(const QString& filePath)
 	curRecognizerName_ = filePath;
 }
 
+void TranscriberViewModel::playSegmentComposingRecipe(QString recipe)
+{
+	composedAudio_.clear();
+
+	QStringList lines = recipe.split('\n', QString::SkipEmptyParts);
+	for (QString line : lines)
+	{
+		QStringList lineParts = line.split(';', QString::SkipEmptyParts);
+
+		QString rangeToPlay = lineParts[1];
+		QStringList fromToNumStrs = rangeToPlay.split('-', QString::SkipEmptyParts);
+
+		QString fromMarkerIdStr = fromToNumStrs[0];
+		QString toMarkerIdStr = fromToNumStrs[1];
+
+		bool parseOp;
+		int fromMarkerId = fromMarkerIdStr.toInt(&parseOp);
+		if (!parseOp)
+		{
+			emit nextNotification("Can't parse fromMarkerInd=" + fromMarkerIdStr);
+			return;
+		}
+		int toMarkerId = toMarkerIdStr.toInt(&parseOp);
+		if (!parseOp)
+		{
+			emit nextNotification("Can't parse toMarkerInd=" + fromMarkerIdStr);
+			return;
+		}
+
+		int fromMarkerInd = markerIndByMarkerId(fromMarkerId);
+		int toMarkerInd = markerIndByMarkerId(toMarkerId);
+
+		long fromFrameInd = frameIndMarkers_[fromMarkerInd].SampleInd;
+		long toFrameInd = frameIndMarkers_[toMarkerInd].SampleInd;
+
+		std::copy(std::begin(audioSamples_) + fromFrameInd, std::begin(audioSamples_) + toFrameInd, std::back_inserter(composedAudio_));
+	}
+
+	// play composed audio
+	soundPlayerPlay(composedAudio_.data(), 0, composedAudio_.size(), false);
+}
+
+int TranscriberViewModel::markerIndByMarkerId(int markerId)
+{
+	for (size_t i = 0; i < frameIndMarkers_.size(); ++i)
+	{
+		const auto& marker = frameIndMarkers_[i];
+		if (marker.Id == markerId)
+			return i;
+	}
+	return -1;
+}

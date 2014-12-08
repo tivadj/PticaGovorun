@@ -57,7 +57,8 @@ public:
 
 	// Plays the current segment of audio.
 	// restoreCurFrameInd=true, if current frame must be restored when playing finishes.
-	void soundPlayerPlay(long startPlayingFrameInd, long finishPlayingFrameInd, bool restoreCurFrameInd);
+	// The audio samples to play must exist during the process of playing.
+	void soundPlayerPlay(const short* audioSouce, long startPlayingFrameInd, long finishPlayingFrameInd, bool restoreCurFrameInd);
 	// outLeftMarkerInd (may be null): returns the index of current segment's left marker.
 	std::tuple<long, long> getFrameRangeToPlay(long curFrameInd, SegmentStartFrameToPlayChoice startFrameChoice, int* outLeftMarkerInd = nullptr);
 
@@ -148,6 +149,7 @@ public:
 	void selectMarkerClosestToCurrentCursor();
 	int currentMarkerInd() const;
 	void setCurrentMarkerTranscriptText(const QString& text);
+	void setCurrentMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail);
 	void setCurrentMarkerStopOnPlayback(bool stopsPlayback);
 
 	void setTemplateMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail);
@@ -180,6 +182,13 @@ public:	// recongizer
 	size_t silencePadAudioFramesCount() const;
 	QString recognizerName() const;
 	void setRecognizerName(const QString& filePath);
+
+public: // segment composer
+	void playSegmentComposingRecipe(QString recipe);
+	int markerIndByMarkerId(int markerId);
+private:
+	std::vector<short> composedAudio_;
+
 private:
 	std::vector<short> audioSamples_;
     QString audioFilePathAbs_;
@@ -195,6 +204,7 @@ private:
 	struct SoundPlayerData
 	{
 		TranscriberViewModel* transcriberViewModel;
+		const short* AudioSouce;
 		long CurPlayingFrameInd;
 
 #if PG_DEBUG

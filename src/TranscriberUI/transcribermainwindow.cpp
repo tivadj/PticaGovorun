@@ -13,6 +13,7 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
 
     QObject::connect(ui->pushButtonLoadFileName, SIGNAL(clicked()), this, SLOT(pushButtonLoad_Clicked()));
 	QObject::connect(ui->pushButtonSaveAudioAnnot, SIGNAL(clicked()), this, SLOT(pushButtonSaveAudioAnnot_Clicked()));
+	QObject::connect(ui->pushButtonSegmentComposerPlay, SIGNAL(clicked()), this, SLOT(pushButtonSegmentComposerPlay_Clicked()));
     QObject::connect(ui->lineEditFileName, SIGNAL(editingFinished()), this, SLOT(lineEditFileName_editingFinished()));
 	QObject::connect(ui->lineEditRecognizerName, SIGNAL(editingFinished()), this, SLOT(lineEditRecognizerName_editingFinished()));
     QObject::connect(ui->horizontalScrollBarSamples, SIGNAL(valueChanged(int)), this, SLOT(horizontalScrollBarSamples_valueChanged(int)));
@@ -121,7 +122,7 @@ void TranscriberMainWindow::pushButtonPause_Clicked()
 
 void TranscriberMainWindow::radioButtonWordLevel_toggled(bool checked)
 {
-	transcriberModel_->setTemplateMarkerLevelOfDetail(checked ? PticaGovorun::MarkerLevelOfDetail::Word : PticaGovorun::MarkerLevelOfDetail::Phone);
+	transcriberModel_->setCurrentMarkerLevelOfDetail(checked ? PticaGovorun::MarkerLevelOfDetail::Word : PticaGovorun::MarkerLevelOfDetail::Phone);
 }
 
 void TranscriberMainWindow::lineEditFileName_editingFinished()
@@ -243,4 +244,10 @@ void TranscriberMainWindow::lineEditMarkerText_editingFinished()
 void TranscriberMainWindow::checkBoxCurMarkerStopOnPlayback_toggled(bool checked)
 {
 	transcriberModel_->setCurrentMarkerStopOnPlayback(checked);
+}
+
+void TranscriberMainWindow::pushButtonSegmentComposerPlay_Clicked()
+{
+	QString composingRecipe = ui->plainTextEditAudioSegmentsComposer->toPlainText();
+	transcriberModel_->playSegmentComposingRecipe(composingRecipe);
 }

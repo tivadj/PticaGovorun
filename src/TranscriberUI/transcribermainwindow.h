@@ -40,6 +40,9 @@ private slots:
 	void transcriberModel_currentMarkerIndChanged();
 	void lineEditMarkerText_editingFinished();
 	void checkBoxCurMarkerStopOnPlayback_toggled(bool checked);
+
+	// segment composer
+	void pushButtonSegmentComposerPlay_Clicked();
 private:
     Ui::TranscriberMainWindow *ui;
     std::shared_ptr<TranscriberViewModel> transcriberModel_;
