@@ -20,7 +20,7 @@ static const int SampleRate = 22050;
 static const int FrameSize = 400;
 static const int FrameShift = 160;
 //static const int FrameShift = 80;
-static const PticaGovorun::LastFrameSample FrameToSamplePicker = PticaGovorun::LastFrameSample::BeginOfTheNextFrame;
+static const PticaGovorun::LastFrameSample FrameToSamplePicker = PticaGovorun::LastFrameSample::MostLikely;
 
 // Specifies which frame to choose as a starting one when playing an audio segment between two markers.
 enum class SegmentStartFrameToPlayChoice
@@ -133,6 +133,7 @@ private:
 	QPointF draggingLastViewportPos_; // used to avoid frequent repaints when mouse pos doesn't change
 	bool isDraggingMarker_ = false;
 	int draggingMarkerInd_ = -1;
+	float lastMousePressDocPosX_ = -1;
 
 public:
 
@@ -177,9 +178,9 @@ private:
 public:	// recongizer
 
 	void ensureRecognizerIsCreated();
-	void recognizeCurrentSegment();
+	void recognizeCurrentSegmentRequest();
 	void ensureWordToPhoneListVocabularyLoaded();
-	void alignPhonesForCurrentSegment();
+	void alignPhonesForCurrentSegmentRequest();
 	size_t silencePadAudioFramesCount() const;
 	QString recognizerName() const;
 	void setRecognizerName(const QString& filePath);
@@ -193,7 +194,7 @@ private:
 public:
 	// navigation
 	void setAudioMarkupNavigator(std::shared_ptr<AudioMarkupNavigator> audioMarkupNavigator);
-	void navigateToMarkerCommandHandler();
+	void navigateToMarkerRequest();
 private:
 	std::shared_ptr<AudioMarkupNavigator> audioMarkupNavigator_;
 

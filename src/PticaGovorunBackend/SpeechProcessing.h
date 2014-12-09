@@ -15,8 +15,8 @@ static const char* PGShortPause = "sp";
 enum class LastFrameSample
 {
 	BeginOfTheNextFrame,
-	EndOfLastFrame,
-	MostLikely
+	EndOfThisFrame,
+	MostLikely // two consequent frames are separated on the median between begin of the left frame and end of the right frame
 };
 
 struct AlignedPhoneme

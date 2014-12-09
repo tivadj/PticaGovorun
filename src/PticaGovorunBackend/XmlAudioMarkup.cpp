@@ -142,7 +142,7 @@ PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const std::vector<
 	return std::make_tuple(true, nullptr);
 }
 
-std::tuple<bool, const char*> loadWordToPhoneListVocabulary(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<std::string>>& wordToPhoneList, const QTextCodec& textCodec)
+std::tuple<bool, const char*> loadPronunciationVocabulary(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<std::string>>& wordToPhoneList, const QTextCodec& textCodec)
 	{
 		// file contains text in Windows-1251 encoding
 		QFile file(QString::fromStdWString(vocabFilePathAbs));

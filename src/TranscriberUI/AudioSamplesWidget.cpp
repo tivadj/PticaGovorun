@@ -157,6 +157,14 @@ void AudioSamplesWidget::drawFrameIndMarkers(QPainter& painter, int markerHeight
 
 		painter.drawLine(x, markerCenterY - markerHalfHeight, x, markerCenterY + markerHalfHeight);
 
+		// draw cross above the marker to indicate that it stops audio player
+		if (marker.StopsPlayback)
+		{
+			const int Dx = 3;
+			painter.drawLine(x-Dx, 0, x+Dx, 2*Dx);
+			painter.drawLine(x-Dx, 2*Dx, x+Dx, 0);		
+		}
+
 		// draw speech recognition results
 
 		// the recognized text from the previous invisible marker may still be visible 
@@ -351,10 +359,10 @@ void AudioSamplesWidget::keyPressEvent(QKeyEvent* ke)
 		transcriberModel_->soundPlayerTogglePlayPause();
 
 	else if (ke->key() == Qt::Key_R)
-		transcriberModel_->recognizeCurrentSegment();
+		transcriberModel_->recognizeCurrentSegmentRequest();
 
 	else if (ke->key() == Qt::Key_A)
-		transcriberModel_->alignPhonesForCurrentSegment();
+		transcriberModel_->alignPhonesForCurrentSegmentRequest();
 
 	else if (ke->key() == Qt::Key_Insert)
 		transcriberModel_->insertNewMarkerAtCursor();
@@ -364,7 +372,7 @@ void AudioSamplesWidget::keyPressEvent(QKeyEvent* ke)
 		transcriberModel_->selectMarkerClosestToCurrentCursor();
 
 	else if (ke->key() == Qt::Key_G && ke->modifiers().testFlag(Qt::ControlModifier))
-		transcriberModel_->navigateToMarkerCommandHandler();
+		transcriberModel_->navigateToMarkerRequest();
 
 	else
 		QWidget::keyPressEvent(ke);

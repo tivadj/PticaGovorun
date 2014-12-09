@@ -17,5 +17,5 @@ PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const std::vector<
 // File usually has 'voca' extension.
 // File has Windows-1251 encodeding.
 // Each word may have multiple pronunciations (1-* relation); for now we neglect it and store data into map (1-1 relation).
-PG_EXPORTS std::tuple<bool, const char*> loadWordToPhoneListVocabulary(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<std::string>>& wordToPhoneList, const QTextCodec& textCodec);
+PG_EXPORTS std::tuple<bool, const char*> loadPronunciationVocabulary(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<std::string>>& wordToPhoneList, const QTextCodec& textCodec);
 }

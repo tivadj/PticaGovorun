@@ -96,19 +96,35 @@ void JuliusClearCache()
 	recogOutputWordSeqPass2_.clear();
 }
 
-size_t chooseFrameEndSample(LastFrameSample chooseTechnique, size_t endFramIndexIncl, size_t frameSize, size_t frameShift)
+void frameRangeToSampleRange(size_t framBegIndex, size_t framEndIndex, LastFrameSample endSampleChoice, size_t frameSize, size_t frameShift, long& sampleBeg, long& sampleEnd)
 {
-	size_t endSample;
-	if (chooseTechnique == LastFrameSample::BeginOfTheNextFrame)
-		endSample = (1 + endFramIndexIncl) * frameShift;
-	else if (chooseTechnique == LastFrameSample::EndOfLastFrame)
-		endSample = endFramIndexIncl * frameShift + frameSize;
-	else if (chooseTechnique == LastFrameSample::MostLikely)
-		endSample = endFramIndexIncl * frameShift + static_cast<size_t>(0.5 * (frameSize + frameShift));
-	else
-		throw std::exception("Unknown type of sample choosing technique");
+	switch (endSampleChoice)
+	{
+	case LastFrameSample::BeginOfTheNextFrame:
+	{
+		sampleBeg = framBegIndex * frameShift;
+		sampleEnd = (1 + framEndIndex) * frameShift;
+		break;
+	}
+	case LastFrameSample::EndOfThisFrame:
+	{
+		sampleBeg = framBegIndex * frameShift;
+		sampleEnd = framEndIndex * frameShift + frameSize;
+		break;
+	}
+	case LastFrameSample::MostLikely:
+	{
+		int dx = static_cast<size_t>(0.5 * (frameSize + frameShift));
+		sampleEnd = framEndIndex      * frameShift + dx;
 
-	return endSample;
+		// segment bound lie close
+		// begin of this frame is the end of the previous frame
+		sampleBeg = (framBegIndex - 1) * frameShift + dx;
+		break;
+	}
+	default:
+		PG_Assert(false && "Unrecognized value of LastFrameSample enum");
+	}
 }
 
 auto createJuliusRecognizer(const RecognizerSettings& recognizerSettings, std::unique_ptr<QTextCodec, NoDeleteFunctor<QTextCodec>> textCodec)
@@ -283,10 +299,12 @@ std::tuple<bool, std::string> JuliusToolWrapper::recognize(LastFrameSample takeS
 		{
 			AlignedPhoneme& nativePh = recogOutputPhonemeSeq1_[i];
 
-			nativePh.BegSample = nativePh.BegFrame * recognizerSettings_.FrameShift;
+			long begSample = -1;
+			long endSample = -1;
+			frameRangeToSampleRange(nativePh.BegFrame, nativePh.EndFrameIncl, takeSample, recognizerSettings_.FrameSize, recognizerSettings_.FrameShift, begSample, endSample);
 
-			size_t endSample = chooseFrameEndSample(takeSample, nativePh.EndFrameIncl, recognizerSettings_.FrameSize, recognizerSettings_.FrameShift);
-			nativePh.EndSample = (int)endSample;
+			nativePh.BegSample = begSample;
+			nativePh.EndSample = endSample;
 		}
 		result.AlignedPhonemeSeq = recogOutputPhonemeSeq1_;
 	}
@@ -345,13 +363,13 @@ double calculateDensityLogProb(HTK_HMM_State* state, VECT* x, size_t xsize)
 
 	for (int streamInd = 0; streamInd < state->nstream; ++streamInd)
 	{
-		auto pdfInfo = state->pdf[streamInd];
+		HTK_HMM_PDF* pdfInfo = state->pdf[streamInd];
 		if (pdfInfo == nullptr)
 			continue;
 
 		for (int densInd = 0; densInd < pdfInfo->mix_num; ++densInd)
 		{
-			auto dens = pdfInfo->b[densInd];
+			HTK_HMM_Dens* dens = pdfInfo->b[densInd];
 			if (dens == nullptr)
 				continue;
 
@@ -373,7 +391,7 @@ double calculateDensityLogProb(HTK_HMM_State* state, VECT* x, size_t xsize)
 	return logProbTotal;
 }
 
-std::vector<std::vector<float>> readFrames(const std::vector<short>& sampleData, Recog* recog, size_t frameSize, size_t frameShift, size_t mfccVecLen)
+std::vector<std::vector<float>> computeMfccFeatures(const std::vector<short>& sampleData, Recog* recog, size_t frameSize, size_t frameShift, size_t mfccVecLen)
 {
 	using namespace std;
 
@@ -426,13 +444,14 @@ struct PhoneStateModel
 	HTK_HMM_State *state;
 };
 
+// Enumerates all phone's states for given state.
 int FindPhoneStates(HTK_HMM_INFO *hmmInfo, const std::string& searchPhone, std::vector<PhoneStateModel>& resultStates)
 {
 	using namespace std;
 
 	int statesAdded = 0;
 
-	for (auto phone = hmmInfo->start; phone != nullptr; phone = phone->next)
+	for (HTK_HMM_Data* phone = hmmInfo->start; phone != nullptr; phone = phone->next)
 	{
 		if (phone == nullptr)
 			continue;
@@ -443,7 +462,7 @@ int FindPhoneStates(HTK_HMM_INFO *hmmInfo, const std::string& searchPhone, std::
 
 		for (int stateInd = 0; stateInd < phone->state_num; ++stateInd)
 		{
-			auto state = phone->s[stateInd];
+			HTK_HMM_State* state = phone->s[stateInd];
 			if (state == nullptr)
 				continue;
 
@@ -456,7 +475,7 @@ int FindPhoneStates(HTK_HMM_INFO *hmmInfo, const std::string& searchPhone, std::
 
 			for (int streamInd = 0; streamInd < state->nstream; ++streamInd)
 			{
-				auto pdfInfo = state->pdf[streamInd];
+				HTK_HMM_PDF* pdfInfo = state->pdf[streamInd];
 				if (pdfInfo == nullptr)
 					continue;
 
@@ -497,10 +516,11 @@ std::vector<std::tuple<size_t, size_t>> AlignPhonesHelper(const std::vector<Phon
 		std::hash_map<int, HTK_HMM_State*> stateStateIdToDensity;
 		for (size_t i = 0; i < expectedStates.size(); ++i)
 		{
-			const auto& phoneInfo = expectedStates[i];
+			const PhoneStateModel& phoneInfo = expectedStates[i];
 
-			if (stateStateIdToDensity.find(phoneInfo.state->id) != stateStateIdToDensity.end())
-				continue;
+			// TODO: why only unique states where selected?
+			//if (stateStateIdToDensity.find(phoneInfo.state->id) != stateStateIdToDensity.end())
+			//	continue;
 
 			distinctPhoneDistributions.push_back(phoneInfo);
 			stateIndexToPhoneDistributionIndex[i] = distinctPhoneDistributions.size() - 1;
@@ -521,7 +541,7 @@ std::vector<std::tuple<size_t, size_t>> AlignPhonesHelper(const std::vector<Phon
 			const std::vector<float>& fr = frames[frameIndex];
 
 			//
-			auto state = distinctPhoneDistributions[stateIndex].state;
+			HTK_HMM_State* state = distinctPhoneDistributions[stateIndex].state;
 
 			auto prob = calculateDensityLogProb(state, const_cast<VECT*>(&fr[0]), fr.size());
 			if (prob == std::numeric_limits<decltype(prob)>::lowest())
@@ -559,12 +579,12 @@ void JuliusToolWrapper::alignPhones(const short* audioSamples, int audioSamplesC
 	size_t frameShift = -1;
 	size_t mfccVecLen = -1;
 	Value& mfccInfo = *recog->mfcclist->para;
-	auto frames = readFrames(sampleData, recog, frameSize, frameShift, mfccVecLen);
+	std::vector<std::vector<float>> frames = computeMfccFeatures(sampleData, recog, frameSize, frameShift, mfccVecLen); // convert samples to features (MFCC)
 	frameSize = recog->mfcclist->para->framesize;
 	frameShift = recog->mfcclist->para->frameshift;
 
 	//
-	auto hmmInfo = recog->amlist->hmminfo;
+	HTK_HMM_INFO* hmmInfo = recog->amlist->hmminfo;
 
 	// convert phone list to list of densities
 	std::vector<PhoneStateModel> expectedStates;
@@ -598,11 +618,14 @@ void JuliusToolWrapper::alignPhones(const short* audioSamples, int audioSamplesC
 	{
 		const auto& seg = alignedStates[i];
 
-		AlignedPhoneme align;
-		align.BegSample = std::get<0>(seg) * frameShift;
+		long begSample = -1;
+		long endSample = -1;
+		frameRangeToSampleRange(std::get<0>(seg), std::get<1>(seg), paramsInfo.TakeSample, frameSize, frameShift, begSample, endSample);
 
-		size_t endSample = chooseFrameEndSample(paramsInfo.TakeSample, std::get<1>(seg), frameSize, frameShift);
-		align.EndSample = (int)endSample;
+		AlignedPhoneme align;
+		align.BegSample = begSample;
+		align.EndSample = endSample;
+
 
 		// state name
 

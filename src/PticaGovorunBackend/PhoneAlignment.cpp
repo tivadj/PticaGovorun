@@ -123,7 +123,7 @@ void PhoneAlignment::populateStateDistributions(const std::vector<std::tuple<siz
 {
     for(size_t stateIndex = 0; stateIndex < statesAlignment.size(); ++stateIndex)
     {
-        const auto& seg = statesAlignment[stateIndex];
+		const std::tuple<size_t, size_t>& seg = statesAlignment[stateIndex];
 
         ptrdiff_t left = std::get<0>(seg) - tailSize;
         ptrdiff_t right = std::get<1>(seg) + tailSize;

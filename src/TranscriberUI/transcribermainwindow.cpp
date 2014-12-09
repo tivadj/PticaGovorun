@@ -58,7 +58,9 @@ void TranscriberMainWindow::transcriberModel_audioSamplesLoaded()
 
 void TranscriberMainWindow::transcriberModel_nextNotification(const QString& message)
 {
-	ui->textEditLogger->insertPlainText(message);
+	ui->plainTextEditLogger->moveCursor(QTextCursor::End);
+	ui->plainTextEditLogger->insertPlainText(message);
+	ui->plainTextEditLogger->insertPlainText("\n");
 }
 
 // called on:

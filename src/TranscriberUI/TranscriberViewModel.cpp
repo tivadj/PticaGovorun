@@ -113,7 +113,7 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 			return paAbort;
 
 		// updates current frame
-		transcriberViewModel.setCurrentFrameInd(sampleInd);
+		transcriberViewModel.setCurrentFrameIndInternal(sampleInd, false, false);
 
 		// populate samples buffer
 
@@ -157,7 +157,7 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 		int availableFramesCount = sampleEnd - sampleInd;
 
 		// updates current frame in UI
-		transcriberViewModel.setCurrentFrameInd(sampleInd);
+		transcriberViewModel.setCurrentFrameIndInternal(sampleInd, false, false);
 
 		// populate samples buffer
 
@@ -235,7 +235,7 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 
 		// updates current frame in UI
 		if (data.RestoreCurrentFrameInd != PticaGovorun::PGFrameIndNull)
-			data.transcriberViewModel->setCurrentFrameInd(data.RestoreCurrentFrameInd);
+			data.transcriberViewModel->setCurrentFrameIndInternal(data.RestoreCurrentFrameInd, false, false);
 
 		// parts of UI are not painted when cursor moves
 		// redraw entire UI when playing completes
@@ -299,7 +299,12 @@ std::tuple<long, long> TranscriberViewModel::getFrameRangeToPlay(long curFrameIn
 	PG_Assert(foundSegOp && "The segment to play must be found");
 
 	if (outLeftMarkerInd != nullptr)
-		*outLeftMarkerInd = leftMarkerInd;
+	{
+		if (leftMarkerInd == -1)
+			*outLeftMarkerInd = -1;
+		else
+			*outLeftMarkerInd = markers[leftMarkerInd].MarkerInd;
+	}
 
 	long startPlayFrameInd = -1;
 	long endPlayFrameInd = -1;
@@ -638,8 +643,7 @@ void TranscriberViewModel::dragMarkerContinue(const QPointF& localPos)
 
 void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos)
 {
-	float lastMousePressDocPosX = docOffsetX_ + localPos.x();
-	emit lastMouseDocPosXChanged(lastMousePressDocPosX);
+	float mousePressDocPosX = docOffsetX_ + localPos.x();
 
 	//std::stringstream msg;
 	//msg.precision(2);
@@ -652,7 +656,7 @@ void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos)
 
 	// choose between dragging the marker or setting the cursor
 
-	auto curFrameInd = (long)docPosXToSampleInd(lastMousePressDocPosX);
+	auto curFrameInd = (long)docPosXToSampleInd(mousePressDocPosX);
 
 	long distToMarker = -1;
 	auto markerFrameIndSelector = [](const PticaGovorun::TimePointMarker& m) { return m.SampleInd; };
@@ -660,9 +664,21 @@ void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos)
 
 	float distToMarkerPix = distToMarker * scale_;
 	
+	// determine if user wants to drag the marker
+
 	const long AcceptDragDelta = 5; // pix
-	if (closestMarkerInd != -1 && distToMarkerPix < AcceptDragDelta)
+	bool doDragging = closestMarkerInd != -1 && distToMarkerPix < AcceptDragDelta;
+	if (doDragging)
 	{
+		// if user clicks two times in the same position, then he doesn't want to drag
+		// and wants to move the cursor
+		if (lastMousePressDocPosX_ == mousePressDocPosX)
+			doDragging = false;
+	}
+	
+	if (doDragging)
+	{
+
 		dragMarkerStart(localPos, closestMarkerInd);
 		// do not change cursor
 	}
@@ -672,6 +688,9 @@ void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos)
 		// update cursor
 		setCurrentFrameIndInternal(curFrameInd, true, false);
 	}
+
+	lastMousePressDocPosX_ = mousePressDocPosX;
+	emit lastMouseDocPosXChanged(mousePressDocPosX);
 }
 
 long TranscriberViewModel::currentFrameInd() const
@@ -937,7 +956,7 @@ void TranscriberViewModel::ensureRecognizerIsCreated()
 	}
 }
 
-void TranscriberViewModel::recognizeCurrentSegment()
+void TranscriberViewModel::recognizeCurrentSegmentRequest()
 {
 	ensureRecognizerIsCreated();
 
@@ -995,6 +1014,9 @@ void TranscriberViewModel::recognizeCurrentSegment()
 	leftMarker.RecogSegmentWords = QString::fromStdWString(recogText.str());
 
 	leftMarker.RecogAlignedPhonemeSeq = recogResult.AlignedPhonemeSeq;
+
+	// redraw current segment
+	emit audioSamplesChanged();
 }
 
 void TranscriberViewModel::ensureWordToPhoneListVocabularyLoaded()
@@ -1008,12 +1030,12 @@ void TranscriberViewModel::ensureWordToPhoneListVocabularyLoaded()
 	PG_Assert(pTextCodec != nullptr && "Can't load text encoding");
 
 	clock_t startTime = std::clock();
-	PticaGovorun::loadWordToPhoneListVocabulary(dicPath.toStdWString(), wordToPhoneListDict_, *pTextCodec);
+	PticaGovorun::loadPronunciationVocabulary(dicPath.toStdWString(), wordToPhoneListDict_, *pTextCodec);
 	double elapsedTime1 = static_cast<double>(clock() - startTime) / CLOCKS_PER_SEC;
-	emit nextNotification(QString("Loaded dictionary in %1 secs").arg(elapsedTime1, 2));
+	emit nextNotification(QString("Loaded pronunciation dictionary in %1 secs").arg(elapsedTime1, 2));
 }
 
-void TranscriberViewModel::alignPhonesForCurrentSegment()
+void TranscriberViewModel::alignPhonesForCurrentSegmentRequest()
 {
 	using namespace PticaGovorun;
 	ensureRecognizerIsCreated();
@@ -1049,7 +1071,7 @@ void TranscriberViewModel::alignPhonesForCurrentSegment()
 		std::copy(std::begin(dictWordPhones), std::end(dictWordPhones), std::back_inserter(wordPhones));
 	};
 
-	bool insertShortPause = true;
+	bool insertShortPause = false;
 	std::vector<std::string> speechPhones;
 	convertTextToPhoneList(leftMarker.TranscripText.toStdWString(), wordToPhoneListFun, insertShortPause, speechPhones);
 	if (speechPhones.empty())
@@ -1068,6 +1090,11 @@ void TranscriberViewModel::alignPhonesForCurrentSegment()
 	recognizer_->alignPhones(audioSegmentBuffer_.data(), audioSegmentBuffer_.size(), speechPhones, alignmentParams, phoneStateDistrributionTailSize, alignmentResult);
 
 	leftMarker.TranscripTextPhones = alignmentResult;
+
+	emit nextNotification(QString("Alignment score=%1").arg(alignmentResult.AlignmentScore));
+
+	// redraw current segment
+	emit audioSamplesChanged();
 }
 
 size_t TranscriberViewModel::silencePadAudioFramesCount() const
@@ -1092,6 +1119,8 @@ void TranscriberViewModel::playSegmentComposingRecipe(QString recipe)
 	QStringList lines = recipe.split('\n', QString::SkipEmptyParts);
 	for (QString line : lines)
 	{
+		if (line.startsWith('#'))
+			continue;
 		QStringList lineParts = line.split(';', QString::SkipEmptyParts);
 
 		QString rangeToPlay = lineParts[1];
@@ -1115,7 +1144,11 @@ void TranscriberViewModel::playSegmentComposingRecipe(QString recipe)
 		}
 
 		int fromMarkerInd = markerIndByMarkerId(fromMarkerId);
+		if (fromMarkerInd == -1)
+			return;
 		int toMarkerInd = markerIndByMarkerId(toMarkerId);
+		if (toMarkerInd == -1)
+			return;
 
 		long fromFrameInd = frameIndMarkers_[fromMarkerInd].SampleInd;
 		long toFrameInd = frameIndMarkers_[toMarkerInd].SampleInd;
@@ -1143,7 +1176,7 @@ void TranscriberViewModel::setAudioMarkupNavigator(std::shared_ptr<AudioMarkupNa
 	audioMarkupNavigator_ = audioMarkupNavigator;
 }
 
-void TranscriberViewModel::navigateToMarkerCommandHandler()
+void TranscriberViewModel::navigateToMarkerRequest()
 {
 	if (audioMarkupNavigator_ == nullptr)
 		return;
