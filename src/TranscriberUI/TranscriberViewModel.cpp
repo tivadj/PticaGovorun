@@ -239,7 +239,7 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 
 		// parts of UI are not painted when cursor moves
 		// redraw entire UI when playing completes
-		emit data.transcriberViewModel->audioSamplesLoaded();
+		emit data.transcriberViewModel->audioSamplesChanged();
 
 		data.transcriberViewModel->isPlaying_ = false;
 	};
@@ -1112,16 +1112,34 @@ void TranscriberViewModel::setRecognizerName(const QString& filePath)
 	curRecognizerName_ = filePath;
 }
 
-void TranscriberViewModel::playSegmentComposingRecipe(QString recipe)
+void TranscriberViewModel::playComposingRecipeRequest(QString recipe)
 {
 	composedAudio_.clear();
+
+	// Composition recipe format:
+	// characters after # signs are comments
+	// 0 section contains the name of the file
+	// 1 section has format 3-15 meaning play audio from markerId=3 to markerId=15
+	// R3 means repeat this section 3 times
+	// empty lines are ignored
 
 	QStringList lines = recipe.split('\n', QString::SkipEmptyParts);
 	for (QString line : lines)
 	{
-		if (line.startsWith('#'))
+		// check line comment
+		int hashInd = line.indexOf('#');
+		if (hashInd != -1)
+		{
+			// remove comment: everything in the line starting from comment sign
+			line = line.remove(hashInd, line.size() - hashInd);
+		}
+
+		if (line.isEmpty())
 			continue;
+
 		QStringList lineParts = line.split(';', QString::SkipEmptyParts);
+		if (lineParts.empty())
+			continue;
 
 		QString rangeToPlay = lineParts[1];
 		QStringList fromToNumStrs = rangeToPlay.split('-', QString::SkipEmptyParts);
@@ -1153,7 +1171,27 @@ void TranscriberViewModel::playSegmentComposingRecipe(QString recipe)
 		long fromFrameInd = frameIndMarkers_[fromMarkerInd].SampleInd;
 		long toFrameInd = frameIndMarkers_[toMarkerInd].SampleInd;
 
-		std::copy(std::begin(audioSamples_) + fromFrameInd, std::begin(audioSamples_) + toFrameInd, std::back_inserter(composedAudio_));
+		// parse other possible options
+
+		int repeatTimes = 1; // R3 means repeating three times
+
+		for (int i=2; i < lineParts.size(); i++)
+		{
+			const QString& item = lineParts[i];
+
+			if (item.startsWith('R', Qt::CaseInsensitive))
+			{
+				QStringRef timesStr = item.rightRef(item.size() - 1);
+				bool parseIntOp;
+				int times = timesStr.toInt(&parseIntOp);
+				if (parseIntOp)
+					repeatTimes = times;
+			}
+		}
+
+		//
+		for (int i = 0; i < repeatTimes; ++i)
+			std::copy(std::begin(audioSamples_) + fromFrameInd, std::begin(audioSamples_) + toFrameInd, std::back_inserter(composedAudio_));
 	}
 
 	// play composed audio

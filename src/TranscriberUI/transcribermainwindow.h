@@ -21,6 +21,9 @@ public:
 private:
 	void updateSamplesSlider();
 
+protected:
+	void keyPressEvent(QKeyEvent*) override;
+
 private slots:
 	void pushButtonLoad_Clicked();
 	void pushButtonSaveAudioAnnot_Clicked();

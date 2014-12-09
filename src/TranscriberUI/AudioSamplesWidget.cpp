@@ -165,6 +165,12 @@ void AudioSamplesWidget::drawFrameIndMarkers(QPainter& painter, int markerHeight
 			painter.drawLine(x-Dx, 2*Dx, x+Dx, 0);		
 		}
 
+		// draw marker id
+		if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Phone)
+		{
+			painter.drawText(x, markerCenterY - markerHalfHeight, QString("%1").arg(marker.Id));
+		}
+
 		// draw speech recognition results
 
 		// the recognized text from the previous invisible marker may still be visible 
@@ -347,33 +353,4 @@ void AudioSamplesWidget::mouseMoveEvent(QMouseEvent* me)
 {
 	const QPointF& pos = me->localPos();
 	transcriberModel_->dragMarkerContinue(pos);
-}
-
-void AudioSamplesWidget::keyPressEvent(QKeyEvent* ke)
-{
-	if (ke->key() == Qt::Key_C)
-		transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::CurrentCursor);
-	else if (ke->key() == Qt::Key_X)
-		transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::SegmentBegin);
-	else if (ke->key() == Qt::Key_Space)
-		transcriberModel_->soundPlayerTogglePlayPause();
-
-	else if (ke->key() == Qt::Key_R)
-		transcriberModel_->recognizeCurrentSegmentRequest();
-
-	else if (ke->key() == Qt::Key_A)
-		transcriberModel_->alignPhonesForCurrentSegmentRequest();
-
-	else if (ke->key() == Qt::Key_Insert)
-		transcriberModel_->insertNewMarkerAtCursor();
-	else if (ke->key() == Qt::Key_Delete)
-		transcriberModel_->deleteCurrentMarker();
-	else if (ke->key() == Qt::Key_T)
-		transcriberModel_->selectMarkerClosestToCurrentCursor();
-
-	else if (ke->key() == Qt::Key_G && ke->modifiers().testFlag(Qt::ControlModifier))
-		transcriberModel_->navigateToMarkerRequest();
-
-	else
-		QWidget::keyPressEvent(ke);
 }

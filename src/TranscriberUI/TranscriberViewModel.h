@@ -186,7 +186,7 @@ public:	// recongizer
 	void setRecognizerName(const QString& filePath);
 
 public: // segment composer
-	void playSegmentComposingRecipe(QString recipe);
+	void playComposingRecipeRequest(QString recipe);
 	int markerIndByMarkerId(int markerId);
 private:
 	std::vector<short> composedAudio_;

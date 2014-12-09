@@ -3,6 +3,7 @@
 #include "ui_transcribermainwindow.h"
 #include <QDebug>
 #include <QMouseEvent>
+#include <QTextDocumentFragment>
 #include "SoundUtils.h"
 
 TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
@@ -101,7 +102,6 @@ void TranscriberMainWindow::updateSamplesSlider()
 	float docOffsetX = transcriberModel_->docOffsetX();
 	ui->horizontalScrollBarSamples->setValue((int)docOffsetX);
 }
-
 
 void TranscriberMainWindow::pushButtonLoad_Clicked()
 {
@@ -254,6 +254,42 @@ void TranscriberMainWindow::checkBoxCurMarkerStopOnPlayback_toggled(bool checked
 
 void TranscriberMainWindow::pushButtonSegmentComposerPlay_Clicked()
 {
-	QString composingRecipe = ui->plainTextEditAudioSegmentsComposer->toPlainText();
-	transcriberModel_->playSegmentComposingRecipe(composingRecipe);
+	QString composingRecipe;
+	if (ui->plainTextEditAudioSegmentsComposer->textCursor().hasSelection())
+		composingRecipe = ui->plainTextEditAudioSegmentsComposer->textCursor().selection().toPlainText();
+	else
+		composingRecipe = ui->plainTextEditAudioSegmentsComposer->toPlainText();
+
+	transcriberModel_->playComposingRecipeRequest(composingRecipe);
+}
+
+void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
+{
+	if (ke->key() == Qt::Key_C)
+		transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::CurrentCursor);
+	else if (ke->key() == Qt::Key_X)
+		transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::SegmentBegin);
+	else if (ke->key() == Qt::Key_Space)
+		transcriberModel_->soundPlayerTogglePlayPause();
+
+	else if (ke->key() == Qt::Key_R)
+		transcriberModel_->recognizeCurrentSegmentRequest();
+
+	else if (ke->key() == Qt::Key_A)
+		transcriberModel_->alignPhonesForCurrentSegmentRequest();
+
+	else if (ke->key() == Qt::Key_Insert)
+		transcriberModel_->insertNewMarkerAtCursor();
+	else if (ke->key() == Qt::Key_Delete)
+		transcriberModel_->deleteCurrentMarker();
+	else if (ke->key() == Qt::Key_T)
+		transcriberModel_->selectMarkerClosestToCurrentCursor();
+
+	else if (ke->key() == Qt::Key_G && ke->modifiers().testFlag(Qt::ControlModifier))
+		transcriberModel_->navigateToMarkerRequest();
+
+	else if (ke->key() == Qt::Key_F11)
+		pushButtonSegmentComposerPlay_Clicked();
+	else
+		QWidget::keyPressEvent(ke);
 }
