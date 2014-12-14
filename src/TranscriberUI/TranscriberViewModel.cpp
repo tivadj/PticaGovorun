@@ -2,16 +2,21 @@
 #include <hash_map>
 #include <ctime>
 #include <cstdlib>
+#include <memory>
+
 #include <QStandardPaths>
 #include <QPointF>
 #include <QDebug>
 #include <QDir>
 #include <QApplication>
 #include <QTextCodec>
-#include "PticaGovorunBackend/SoundUtils.h"
+
+#include "WavUtils.h"
 #include "TranscriberViewModel.h"
 #include "PticaGovorunCore.h"
 #include "ClnUtils.h"
+#include "algos_amp.cpp"
+
 
 static const decltype(paComplete) SoundPlayerCompleteOrAbortTechnique = paComplete; // paComplete or paAbort
 
@@ -25,6 +30,7 @@ TranscriberViewModel::TranscriberViewModel()
 
 void TranscriberViewModel::loadAudioFile()
 {
+	using namespace PticaGovorun;
 	audioSamples_.clear();
     auto readOp = PticaGovorun::readAllSamples(audioFilePathAbs_.toStdString(), audioSamples_);
 	if (!std::get<0>(readOp))
@@ -69,6 +75,8 @@ void TranscriberViewModel::loadAudioFile()
 
 void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPlayingFrameInd, long finishPlayingFrameInd, bool restoreCurFrameInd)
 {
+	using namespace PticaGovorun;
+
 	SoundPlayerData& data = soundPlayerData_;
 	data.transcriberViewModel = this;
 	data.AudioSouce = audioSouce;
@@ -554,7 +562,10 @@ int TranscriberViewModel::generateMarkerId()
 	int result;
 	while (true)
 	{
-		result = 1 + rand() % (frameIndMarkers_.size() * 2); // +1 for id>0
+		size_t maxId = frameIndMarkers_.size() * 2;
+		if (maxId == 0)
+			maxId = 100;
+		result = 1 + rand() % maxId; // +1 for id>0
 		if (usedMarkerIds_.find(result) == std::end(usedMarkerIds_))
 			break;
 	}
@@ -733,7 +744,7 @@ void TranscriberViewModel::setCurrentFrameIndInternal(long value, bool updateCur
 	}
 }
 
-void TranscriberViewModel::insertNewMarkerAtCursor()
+void TranscriberViewModel::insertNewMarkerAtCursorRequest()
 {
 	long curFrameInd = currentFrameInd();
 
@@ -763,7 +774,7 @@ void TranscriberViewModel::insertNewMarkerAtCursor()
 	emit audioSamplesChanged();
 }
 
-void TranscriberViewModel::deleteCurrentMarker()
+void TranscriberViewModel::deleteCurrentMarkerRequest()
 {
 	int markerInd = currentMarkerInd();
 	if (markerInd == -1)
@@ -830,7 +841,7 @@ int TranscriberViewModel::getClosestMarkerInd(const Markers& markers, FrameIndSe
 	return closestMarkerInd;
 }
 
-void TranscriberViewModel::selectMarkerClosestToCurrentCursor()
+void TranscriberViewModel::selectMarkerClosestToCurrentCursorRequest()
 {
 	long curFrameInd = currentFrameInd();
 
@@ -904,40 +915,10 @@ void TranscriberViewModel::ensureRecognizerIsCreated()
 	if (recognizer_ == nullptr)
 	{
 		RecognizerSettings rs;
-		if (recogName == "shrekky")
+		if (!initRecognizerConfiguration(recogName, rs))
 		{
-			rs.FrameSize = FrameSize;
-			rs.FrameShift = FrameShift;
-			rs.SampleRate = SampleRate;
-			rs.UseWsp = false;
-
-			rs.DictionaryFilePath =    R"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyDic.voca)path";
-			rs.LanguageModelFilePath = R"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyLM.blm)path";
-			rs.AcousticModelFilePath = R"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyAM.bam)path";
-
-			rs.LogFile = recogName + "-LogFile.txt";
-			rs.FileListFileName = recogName + "-FileList.txt";
-			rs.TempSoundFile = recogName + "-TmpAudioFile.wav";
-			rs.CfgFileName = recogName + "-Config.txt";
-			rs.CfgHeaderFileName = recogName + "-ConfigHeader.txt";
-		}
-		else if (recogName == "persian")
-		{
-			rs.FrameSize = FrameSize;
-			rs.FrameShift = FrameShift;
-			rs.SampleRate = SampleRate;
-			rs.UseWsp = false; //?
-
-			rs.DictionaryFilePath =    R"path(C:\progs\cygwin\home\mmore\voxforge_p111-117\lexicon\voxforge_lexicon)path";
-			rs.LanguageModelFilePath = R"path(C:\progs\cygwin\home\mmore\voxforge_p111-117\auto\persian.ArpaLM.bi.bin)path";
-			rs.AcousticModelFilePath = R"path(C:\progs\cygwin\home\mmore\voxforge_p111-117\auto\acoustic_model_files\hmmdefs)path";
-			rs.TiedListFilePath =      R"path(C:\progs\cygwin\home\mmore\voxforge_p111-117\auto\acoustic_model_files\tiedlist)path";
-
-			rs.LogFile = recogName + "-LogFile.txt";
-			rs.FileListFileName = recogName + "-FileList.txt";
-			rs.TempSoundFile = recogName + "-TmpAudioFile.wav";
-			rs.CfgFileName = recogName + "-Config.txt";
-			rs.CfgHeaderFileName = recogName + "-ConfigHeader.txt";
+			emit nextNotification("Can't find speech recognizer configuration");
+			return;
 		}
 
 		QTextCodec* pTextCodec = QTextCodec::codecForName(PGEncodingStr);
@@ -958,6 +939,7 @@ void TranscriberViewModel::ensureRecognizerIsCreated()
 
 void TranscriberViewModel::recognizeCurrentSegmentRequest()
 {
+	using namespace PticaGovorun;
 	ensureRecognizerIsCreated();
 
 	if (recognizer_ == nullptr)
@@ -1021,6 +1003,8 @@ void TranscriberViewModel::recognizeCurrentSegmentRequest()
 
 void TranscriberViewModel::ensureWordToPhoneListVocabularyLoaded()
 {
+	using namespace PticaGovorun;
+
 	// TODO: vocabulary is recognizer dependent
 	if (!wordToPhoneListDict_.empty())
 		return;
@@ -1110,6 +1094,125 @@ QString TranscriberViewModel::recognizerName() const
 void TranscriberViewModel::setRecognizerName(const QString& filePath)
 {
 	curRecognizerName_ = filePath;
+}
+
+void TranscriberViewModel::computeMfccRequest()
+{
+	using namespace PticaGovorun;
+	ensureRecognizerIsCreated();
+	if (recognizer_ == nullptr)
+		return;
+
+	// collect features
+
+	phoneNameToFeaturesVector_.clear();
+
+	QFileInfo wavFolder(R"path(E:\devb\workshop\PticaGovorunProj\data\prokopeo_specific\)path");
+	auto featsOp = PticaGovorun::collectMfccFeatures(wavFolder, FrameSize, FrameShift, MfccVecLen, phoneNameToFeaturesVector_);
+	if (!std::get<0>(featsOp))
+	{
+		emit nextNotification(QString::fromStdString(std::get<1>(featsOp)));
+		return;
+	}
+
+	// train GMMs
+
+	phoneNameToEMObj_.clear();
+	int nclusters = NumClusters;
+	auto trainOp = PticaGovorun::trainMonophoneClassifier(phoneNameToFeaturesVector_, MfccVecLen, nclusters, phoneNameToEMObj_);
+	if (!std::get<0>(trainOp))
+	{
+		emit nextNotification(QString::fromStdString(std::get<1>(trainOp)));
+		return;
+	}
+
+	emit nextNotification("Done training phone classifiers");
+}
+
+void TranscriberViewModel::testMfccRequest()
+{
+	using namespace PticaGovorun;
+	ensureRecognizerIsCreated();
+	if (recognizer_ == nullptr)
+		return;
+
+	int outLeftMarkerInd;
+	auto curSeg = getFrameRangeToPlay(currentFrameInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
+	if (outLeftMarkerInd == -1) // not marker to associate recognized text with
+		return;
+
+	long curSegBeg = std::get<0>(curSeg);
+	long curSegEnd = std::get<1>(curSeg);
+	auto len = curSegEnd - curSegBeg;
+
+	// convert
+	auto& leftMarker = frameIndMarkers_[outLeftMarkerInd];
+	if (leftMarker.TranscripText.isEmpty())
+		return;
+
+	size_t mfccVecLen = MfccVecLen;
+	std::vector<float> mfccFeatures;
+	int framesCount;
+	auto mfccFeatsOp = PticaGovorun::computeMfccFeaturesPub(&audioSamples_[curSegBeg], len, FrameSize, FrameShift, mfccVecLen, mfccFeatures, framesCount);
+	if (!std::get<0>(mfccFeatsOp))
+	{
+		emit nextNotification(QString::fromStdString(std::get<1>(mfccFeatsOp)));
+		return;
+	}
+
+	// convert data to to double
+
+	std::vector<double> mfccFeaturesDouble(mfccFeatures.size());
+	std::transform(std::begin(mfccFeatures), std::end(mfccFeatures), std::begin(mfccFeaturesDouble), [](float x) { return (double)x; });
+	
+	// test each frame, each phone
+	
+	cv::Mat cacheL;
+	cacheL.create(1, NumClusters, CV_64FC1);
+
+	for (int i = 0; i < framesCount; i++)
+	{
+		qDebug() << "frame=" << i;
+		for (const auto& phoneEMPair : phoneNameToEMObj_)
+		{
+			const std::string& phoneName = phoneEMPair.first;
+			PticaGovorun::EMQuick& em = *phoneEMPair.second.get();
+
+			cv::Mat oneMfccVector(1, mfccVecLen, CV_64FC1, mfccFeaturesDouble.data() + (i*mfccVecLen));
+			cv::Vec2d resP2 = PticaGovorun::EMQuick::predict2(oneMfccVector, em.getMeans(), em.getInvCovsEigenValuesPar(), em.getLogWeightDivDetPar(), cacheL);
+
+			cv::Vec2d resEm = em.predict(oneMfccVector); // TODO: OpenCV impl doesn't work?
+
+			double ampLogProb = computeGaussMixtureModel(NumClusters, mfccVecLen, (double*)em.getMeans().data, (double*)em.getInvCovsEigenValuesPar()[0].data, (double*)em.getLogWeightDivDetPar().data, (double*)oneMfccVector.data, (double*)cacheL.data);
+
+			//qDebug() <<QString::fromStdString(phoneName) << "LogP=" << res[0] << " Label=" << res[1];
+			//qDebug() <<QString::fromStdString(phoneName) << "LogP=" << logProb;
+			qDebug() << QString::fromStdString(phoneName) << "LOGP: amp=" << ampLogProb <<" p2=" <<resP2[0] <<" EM=" <<resEm[0];
+		}
+	}
+
+	std::stringstream msg;
+	for (int i = 0; i < framesCount; i++)
+	{
+		std::string bestPhoneName = "?";
+		double bestPhoneLogProb = std::numeric_limits<double>::lowest();
+		for (const auto& phoneEMPair : phoneNameToEMObj_)
+		{
+			const std::string& phoneName = phoneEMPair.first;
+			PticaGovorun::EMQuick& em = *phoneEMPair.second.get();
+
+			cv::Mat oneMfccVector(1, mfccVecLen, CV_64FC1, mfccFeaturesDouble.data() + (i*mfccVecLen));
+
+			double ampLogProb = computeGaussMixtureModel(NumClusters, mfccVecLen, (double*)em.getMeans().data, (double*)em.getInvCovsEigenValuesPar()[0].data, (double*)em.getLogWeightDivDetPar().data, (double*)oneMfccVector.data, (double*)cacheL.data);
+			if (ampLogProb > bestPhoneLogProb)
+			{
+				bestPhoneLogProb = ampLogProb;
+				bestPhoneName = phoneName;
+			}
+		}
+		msg << bestPhoneName << " ";
+	}
+	qDebug() << "Recog: " << msg.str().c_str();
 }
 
 void TranscriberViewModel::playComposingRecipeRequest(QString recipe)

@@ -1,9 +1,14 @@
 #ifndef TRANSCRIBERVIEWMODEL_H
 #define TRANSCRIBERVIEWMODEL_H
 #include <vector>
+#include <map>
 #include <atomic>
 #include <memory>
 #include <hash_set>
+
+#include "MLUtils.h"
+
+
 #include <QObject>
 #include <QPointF>
 //#include "array_view.hpp"
@@ -12,15 +17,6 @@
 #include "JuliusToolNativeWrapper.h"
 #include "SpeechProcessing.h"
 #include "AudioMarkupNavigator.h"
-
-// we work with Julius in 'Windows-1251' encoding
-static const char* PGEncodingStr = "windows-1251";
-
-static const int SampleRate = 22050;
-static const int FrameSize = 400;
-static const int FrameShift = 160;
-//static const int FrameShift = 80;
-static const PticaGovorun::LastFrameSample FrameToSamplePicker = PticaGovorun::LastFrameSample::MostLikely;
 
 // Specifies which frame to choose as a starting one when playing an audio segment between two markers.
 enum class SegmentStartFrameToPlayChoice
@@ -143,12 +139,12 @@ public:
 	template <typename MarkerPred>
 	void transformMarkersIf(std::vector<MarkerRefToOrigin>& markersOfInterest, MarkerPred canSelectMarker);
 	
-	void insertNewMarkerAtCursor();
-	void deleteCurrentMarker();
+	void insertNewMarkerAtCursorRequest();
+	void deleteCurrentMarkerRequest();
 	// dist=number of frames between frameInd and the closest marker.
 	template <typename Markers, typename FrameIndSelector>
 	int getClosestMarkerInd(const Markers& markers, FrameIndSelector markerFrameIndSelector, long frameInd, long* dist) const;
-	void selectMarkerClosestToCurrentCursor();
+	void selectMarkerClosestToCurrentCursorRequest();
 	int currentMarkerInd() const;
 	void setCurrentMarkerTranscriptText(const QString& text);
 	void setCurrentMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail);
@@ -184,6 +180,12 @@ public:	// recongizer
 	size_t silencePadAudioFramesCount() const;
 	QString recognizerName() const;
 	void setRecognizerName(const QString& filePath);
+	
+	void computeMfccRequest();
+	void testMfccRequest();
+private:
+	std::map<std::string, std::unique_ptr<PticaGovorun::EMQuick>> phoneNameToEMObj_;
+	std::map<std::string, std::vector<float>> phoneNameToFeaturesVector_;
 
 public: // segment composer
 	void playComposingRecipeRequest(QString recipe);

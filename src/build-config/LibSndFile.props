@@ -30,7 +30,8 @@
     </Text>
   </ItemGroup>-->
 
-  <Target Name="MyLibSndCopyBinaries" AfterTargets="Build">
+  <Target Name="LibSndCopyBinaries" AfterTargets="Build">
+    <Message Text="Copying $(LibSndFileFullPath)" />
     <Copy SourceFiles="$(LibSndFileFullPath)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
   </Target>
 </Project>

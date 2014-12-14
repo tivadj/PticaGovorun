@@ -61,6 +61,7 @@
     <Import Project="..\build-config\Qt.props" />
     <Import Project="..\build-config\zlib.props" />
     <Import Project="..\build-config\PortAudio.props" />
+    <Import Project="..\build-config\OpenCV.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -70,6 +71,7 @@
     <Import Project="..\build-config\Qt.props" />
     <Import Project="..\build-config\zlib.props" />
     <Import Project="..\build-config\PortAudio.props" />
+    <Import Project="..\build-config\OpenCV.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -79,6 +81,7 @@
     <Import Project="..\build-config\Qt.props" />
     <Import Project="..\build-config\zlib.props" />
     <Import Project="..\build-config\PortAudio.props" />
+    <Import Project="..\build-config\OpenCV.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -88,6 +91,7 @@
     <Import Project="..\build-config\Qt.props" />
     <Import Project="..\build-config\zlib.props" />
     <Import Project="..\build-config\PortAudio.props" />
+    <Import Project="..\build-config\OpenCV.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -172,16 +176,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ClnUtils.h" />
+    <ClInclude Include="InteropPython.h" />
     <ClInclude Include="JuliusToolNativeWrapper.h" />
+    <ClInclude Include="MLUtils.h" />
     <ClInclude Include="PhoneAlignment.h" />
     <ClInclude Include="PticaGovorunCore.h" />
     <ClInclude Include="SoundUtils.h" />
     <ClInclude Include="SpeechProcessing.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="WavUtils.h" />
     <ClInclude Include="XmlAudioMarkup.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="algos_amp.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
@@ -196,7 +204,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="InteropPython.cpp" />
     <ClCompile Include="JuliusToolNativeWrapper.cpp" />
+    <ClCompile Include="MLUtils.cpp" />
     <ClCompile Include="PhoneAlignment.cpp" />
     <ClCompile Include="PticaGovorunBackend.cpp" />
     <ClCompile Include="SoundUtils.cpp" />
@@ -207,6 +217,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="WavUtils.cpp" />
     <ClCompile Include="XmlAudioMarkup.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

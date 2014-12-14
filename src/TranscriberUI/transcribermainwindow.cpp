@@ -279,17 +279,21 @@ void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 		transcriberModel_->alignPhonesForCurrentSegmentRequest();
 
 	else if (ke->key() == Qt::Key_Insert)
-		transcriberModel_->insertNewMarkerAtCursor();
+		transcriberModel_->insertNewMarkerAtCursorRequest();
 	else if (ke->key() == Qt::Key_Delete)
-		transcriberModel_->deleteCurrentMarker();
+		transcriberModel_->deleteCurrentMarkerRequest();
 	else if (ke->key() == Qt::Key_T)
-		transcriberModel_->selectMarkerClosestToCurrentCursor();
+		transcriberModel_->selectMarkerClosestToCurrentCursorRequest();
 
 	else if (ke->key() == Qt::Key_G && ke->modifiers().testFlag(Qt::ControlModifier))
 		transcriberModel_->navigateToMarkerRequest();
 
 	else if (ke->key() == Qt::Key_F11)
 		pushButtonSegmentComposerPlay_Clicked();
+	else if (ke->key() == Qt::Key_F1)
+		transcriberModel_->computeMfccRequest();
+	else if (ke->key() == Qt::Key_F2)
+		transcriberModel_->testMfccRequest();
 	else
 		QWidget::keyPressEvent(ke);
 }

@@ -207,6 +207,7 @@ void AudioSamplesWidget::drawMarkerRecognizedText(QPainter& painter, const Ptica
 
 void AudioSamplesWidget::drawPhonemesAndPhonemeMarkers(QPainter& painter, int markerHeight, float visibleDocLeft, float visibleDocRight)
 {
+	using namespace PticaGovorun;
 	int leftMarkerInd = -1;
 	std::tuple<long,long> seg = transcriberModel_->getFrameRangeToPlay(transcriberModel_->currentFrameInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &leftMarkerInd);
 	if (leftMarkerInd == -1)
@@ -249,6 +250,7 @@ void AudioSamplesWidget::drawPhonemesAndPhonemeMarkers(QPainter& painter, int ma
 
 void AudioSamplesWidget::drawShiftedFramesRuler(QPainter& painter, int phonemesBottomLine, int ruleBegSample, int rulerEndSample, int phoneRowHeight, int phoneRowsCount)
 {
+	using namespace PticaGovorun;
 	int curY = phonemesBottomLine;
 	int phonemeRowsAccum = 0;
 

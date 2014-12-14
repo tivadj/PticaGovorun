@@ -27,7 +27,7 @@
     </Text>
   </ItemGroup>-->
 
-  <Target Name="MyLibSndCopyBinaries" AfterTargets="Build">
+  <Target Name="PortAudioCopyBinaries" AfterTargets="Build">
     <Message Condition="'$(PlatformShortName)'!='x64'" Text="Platform $(PlatformShortName) is not supported" />
     <Copy SourceFiles="$(PortAudioBinDir)portaudio_x64.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
   </Target>

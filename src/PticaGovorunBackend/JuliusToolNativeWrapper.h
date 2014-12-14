@@ -77,7 +77,13 @@ public:
 	const RecognizerSettings& settings() const;
 };
 
+PG_EXPORTS bool initRecognizerConfiguration(const std::string& recogName, RecognizerSettings& rs);
+
 PG_EXPORTS auto createJuliusRecognizer(const RecognizerSettings& recognizerSettings, std::unique_ptr<QTextCodec, NoDeleteFunctor<QTextCodec>> textCodec)->std::tuple < bool, std::string, std::unique_ptr<JuliusToolWrapper> >;
+
+// Computes MFCC features using global initialized 'Recog' object.
+// mfccFeatures contains MFCC features for the first frame, then for the second etc.
+PG_EXPORTS std::tuple<bool,const char*> computeMfccFeaturesPub(const short* sampleData, int sampleDataSize, size_t frameSize, size_t frameShift, size_t mfccVecLen, std::vector<float>& mfccFeatures, int& framesCount);
 
 void JuliusClearCache();
 

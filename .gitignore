@@ -19,3 +19,5 @@ array_view.props
 # Qt specific
 GeneratedFiles/
 
+# Python
+.idea

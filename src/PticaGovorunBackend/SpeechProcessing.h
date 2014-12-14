@@ -4,13 +4,27 @@
 #include <string>
 #include <functional>
 #include <tuple>
+#include <memory>
+
 #include <QObject>
+#include <QFileInfo>
 #include "PticaGovorunCore.h"
+#include "MLUtils.h"
 
 namespace PticaGovorun {
 
 static const char* PGPhoneSilence = "sil";
 static const char* PGShortPause = "sp";
+
+// we work with Julius in 'Windows-1251' encoding
+static const char* PGEncodingStr = "windows-1251";
+
+static const int SampleRate = 22050;
+static const int FrameSize = 400;
+static const int FrameShift = 160;
+//static const int FrameShift = 80;
+static const size_t MfccVecLen = 39;
+static const size_t NumClusters = 1;
 
 enum class LastFrameSample
 {
@@ -18,6 +32,8 @@ enum class LastFrameSample
 	EndOfThisFrame,
 	MostLikely // two consequent frames are separated on the median between begin of the left frame and end of the right frame
 };
+
+static const PticaGovorun::LastFrameSample FrameToSamplePicker = PticaGovorun::LastFrameSample::MostLikely;
 
 struct AlignedPhoneme
 {
@@ -110,4 +126,13 @@ PG_EXPORTS void padSilence(const short* audioFrames, int audioFramesCount, int s
 
 // Merges a sequence of phone-states (such as j2,j3,j4,o2,o3...) into monophone sequence (such as j,o...)
 void mergeSamePhoneStates(const std::vector<AlignedPhoneme>& phoneStates, std::vector<AlignedPhoneme>& monoPhones);
+
+PG_EXPORTS std::tuple<bool, const char*> collectMfccFeatures(const QFileInfo& folderOrWavFilePath, int frameSize, int frameShift, int mfccVecLen, std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector);
+
+// Gets the number of frames. Eatch frame contains 'mfccVecLen' features. Total number of features is 'featuresTotalCount'.
+PG_EXPORTS int featuresFramesCount(int featuresTotalCount, int mfccVecLen);
+
+PG_EXPORTS std::tuple<bool, const char*> trainMonophoneClassifier(const std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector, int mfccVecLen, int numClusters,
+	std::map<std::string, std::unique_ptr<PticaGovorun::EMQuick>>& phoneNameToEMObj);
+
 }
