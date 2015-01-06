@@ -11,7 +11,6 @@
 
 #include <QObject>
 #include <QPointF>
-//#include "array_view.hpp"
 #include <portaudio.h>
 #include "XmlAudioMarkup.h"
 #include "JuliusToolNativeWrapper.h"
@@ -183,6 +182,7 @@ public:	// recongizer
 	
 	void computeMfccRequest();
 	void testMfccRequest();
+	void classifyMfccIntoPhones();
 private:
 	std::map<std::string, std::unique_ptr<PticaGovorun::EMQuick>> phoneNameToEMObj_;
 	std::map<std::string, std::vector<float>> phoneNameToFeaturesVector_;

@@ -294,6 +294,8 @@ void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 		transcriberModel_->computeMfccRequest();
 	else if (ke->key() == Qt::Key_F2)
 		transcriberModel_->testMfccRequest();
+	else if (ke->key() == Qt::Key_F3)
+		transcriberModel_->classifyMfccIntoPhones();
 	else
 		QWidget::keyPressEvent(ke);
 }

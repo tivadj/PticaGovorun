@@ -38,6 +38,9 @@ private:
 
 	// phonesOffsetSampleInd the origin from which all phones are calculated.
 	void drawPhoneMarkersAndNames(QPainter& painter, long phonesOffsetSampleInd, const std::vector<PticaGovorun::AlignedPhoneme>& markerPhones, int markerBottomY, int maxPhoneMarkerHeight, int phoneTextY);
+
+	// Draw probability of each phone for each frame in the current segment.
+	void drawClassifiedPhonesGrid(QPainter& painter, long phonesOffsetSampleInd, const std::vector<PticaGovorun::ClassifiedSpeechSegment>& markerPhones, int gridTopY, int gridBottomY);
 private:
 	std::shared_ptr<TranscriberViewModel> transcriberModel_;
 };

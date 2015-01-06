@@ -70,6 +70,7 @@
     <Import Project="..\build-config\array_view.props" />
     <Import Project="..\build-config\PortAudio.props" />
     <Import Project="..\build-config\OpenCV.props" />
+    <Import Project="..\build-config\MatlabBuild.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
@@ -79,6 +80,7 @@
     <Import Project="..\build-config\array_view.props" />
     <Import Project="..\build-config\PortAudio.props" />
     <Import Project="..\build-config\OpenCV.props" />
+    <Import Project="..\build-config\MatlabBuild.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
@@ -88,6 +90,7 @@
     <Import Project="..\build-config\array_view.props" />
     <Import Project="..\build-config\PortAudio.props" />
     <Import Project="..\build-config\OpenCV.props" />
+    <Import Project="..\build-config\MatlabBuild.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
@@ -97,6 +100,7 @@
     <Import Project="..\build-config\array_view.props" />
     <Import Project="..\build-config\PortAudio.props" />
     <Import Project="..\build-config\OpenCV.props" />
+    <Import Project="..\build-config\MatlabBuild.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -108,16 +112,20 @@
     <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IgnoreImportLibrary>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(PticaGovorunDir)src\PticaGovorunBackend;$(IncludePath)</IncludePath>
+    <IncludePath>$(PticaGovorunDir)src\PticaGovorunBackend;$(OutDir)PticaGovorunInteropMatlab_obj;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir)PticaGovorunInteropMatlab_obj;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(PticaGovorunDir)src\PticaGovorunBackend;$(IncludePath)</IncludePath>
+    <IncludePath>$(PticaGovorunDir)src\PticaGovorunBackend;$(OutDir)PticaGovorunInteropMatlab_obj;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir)PticaGovorunInteropMatlab_obj;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(PticaGovorunDir)src\PticaGovorunBackend;$(IncludePath)</IncludePath>
+    <IncludePath>$(PticaGovorunDir)src\PticaGovorunBackend;$(OutDir)PticaGovorunInteropMatlab_obj;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir)PticaGovorunInteropMatlab_obj;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(PticaGovorunDir)src\PticaGovorunBackend;$(IncludePath)</IncludePath>
+    <IncludePath>$(PticaGovorunDir)src\PticaGovorunBackend;$(OutDir)PticaGovorunInteropMatlab_obj;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir)PticaGovorunInteropMatlab_obj;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -146,7 +154,7 @@
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>PticaGovorunBackend$(LibSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PticaGovorunBackend$(LibSuffix).lib;PticaGovorunInteropMatlab.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <DefaultCharType>Unsigned</DefaultCharType>
@@ -174,6 +182,7 @@
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <WarningLevel>Level3</WarningLevel>
       <AdditionalIncludeDirectories>.\GeneratedFiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Cpp0xSupport>true</Cpp0xSupport>
     </ClCompile>
     <Link>
       <DataExecutionPrevention>true</DataExecutionPrevention>
@@ -184,7 +193,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX64</TargetMachine>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>PticaGovorunBackend$(LibSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PticaGovorunBackend$(LibSuffix).lib;PticaGovorunInteropMatlab.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <DefaultCharType>Unsigned</DefaultCharType>
@@ -221,7 +230,7 @@
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>PticaGovorunBackend$(LibSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PticaGovorunBackend$(LibSuffix).lib;PticaGovorunInteropMatlab.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <DefaultCharType>Unsigned</DefaultCharType>
@@ -249,6 +258,7 @@
       <WarningLevel>Level3</WarningLevel>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <AdditionalIncludeDirectories>.\GeneratedFiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Cpp0xSupport>true</Cpp0xSupport>
     </ClCompile>
     <Link>
       <DataExecutionPrevention>true</DataExecutionPrevention>
@@ -258,7 +268,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX64</TargetMachine>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>PticaGovorunBackend$(LibSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PticaGovorunBackend$(LibSuffix).lib;PticaGovorunInteropMatlab.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <DefaultCharType>Unsigned</DefaultCharType>

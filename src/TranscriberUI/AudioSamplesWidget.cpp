@@ -2,6 +2,8 @@
 #include <QPainter>
 #include <QBrush>
 #include <QDebug>
+#include "InteropPython.h"
+
 AudioSamplesWidget::AudioSamplesWidget(QWidget *parent) :
     QWidget(parent)
 {
@@ -238,7 +240,11 @@ void AudioSamplesWidget::drawPhonemesAndPhonemeMarkers(QPainter& painter, int ma
 	const auto& markers = transcriberModel_->frameIndMarkers();
 	const PticaGovorun::TimePointMarker& marker = markers[leftMarkerInd];
 	int phoneNameY = phonemesBottomLine - PhoneRowHeight*(PhoneRowsCount + 1); // +1 to jump to the upper line
-	long phonesOffsetX = marker.SampleInd - transcriberModel_->silencePadAudioFramesCount();
+	
+	long phonesOffsetX = marker.SampleInd;
+	if (marker.RecogAlignedPhonemeSeqPadded)
+		phonesOffsetX -= transcriberModel_->silencePadAudioFramesCount();
+
 	drawPhoneMarkersAndNames(painter, phonesOffsetX, marker.RecogAlignedPhonemeSeq, markerHeight, markerHeight*0.3, phoneNameY);
 
 	// transcription text phones
@@ -246,6 +252,11 @@ void AudioSamplesWidget::drawPhonemesAndPhonemeMarkers(QPainter& painter, int ma
 	int transcripTextMarkerBottomY = markerHeight*0.69;
 	int transcripTextPhoneNameY = transcripTextMarkerBottomY + 16; // +height of text
 	drawPhoneMarkersAndNames(painter, phonesOffsetX, marker.TranscripTextPhones.AlignInfo, transcripTextMarkerBottomY, markerHeight*0.3, transcripTextPhoneNameY);
+
+	// grid is in the top
+	int gridTopY = 0;
+	int gridBotY = markerHeight*0.3;
+	drawClassifiedPhonesGrid(painter, phonesOffsetX, marker.ClassifiedFrames, gridTopY, gridBotY);
 }
 
 void AudioSamplesWidget::drawShiftedFramesRuler(QPainter& painter, int phonemesBottomLine, int ruleBegSample, int rulerEndSample, int phoneRowHeight, int phoneRowsCount)
@@ -337,6 +348,79 @@ void AudioSamplesWidget::drawPhoneMarkersAndNames(QPainter& painter, long phones
 		painter.drawText((x1 + x2) / 2 - TextPad, markerBottomY - maxPhoneMarkerHeight - TextPad, QString::fromStdString(phone.Name)); // name above the horizontal line
 
 		i++;
+	}
+}
+
+void AudioSamplesWidget::drawClassifiedPhonesGrid(QPainter& painter, long phonesOffsetSampleInd, const std::vector<PticaGovorun::ClassifiedSpeechSegment>& markerPhones, int gridTopY, int gridBottomY)
+{
+	// y is directed from top to bottom
+
+	if (markerPhones.empty())
+		return;
+
+	float docOffsetX = transcriberModel_->docOffsetX();
+
+	int gridHeight = gridBottomY - gridTopY;
+	int phonesCount = PticaGovorun::phoneMonoCount();
+	int i = -1;
+	std::string phoneName = "?";
+
+	for (const PticaGovorun::ClassifiedSpeechSegment& phone : markerPhones)
+	{
+		i++;
+
+		// align to the start of the segment
+		long leftSampleInd = phonesOffsetSampleInd + phone.BegSample;
+		long rightSampleInd = phonesOffsetSampleInd + phone.EndSample;
+
+		float begSampleDocX = transcriberModel_->sampleIndToDocPosX(leftSampleInd);
+		float endSampleDocX = transcriberModel_->sampleIndToDocPosX(rightSampleInd);
+
+		// map to the current viewport
+		int x1 = begSampleDocX - docOffsetX;
+		int x2 = endSampleDocX - docOffsetX;
+
+		auto maxIt = std::max_element(std::begin(phone.PhoneLogProbs), std::end(phone.PhoneLogProbs));
+		int mostProbPhoneInd = maxIt - std::begin(phone.PhoneLogProbs);
+
+		for (int phoneInd = 0; phoneInd < phonesCount; ++phoneInd)
+		{
+			float cellTopY = gridTopY + phoneInd / (float)phonesCount * gridHeight;
+			float cellBotY = gridTopY + (phoneInd + 1) / (float)phonesCount * gridHeight;
+
+			float prob = phone.PhoneLogProbs[phoneInd];
+
+			// color from black to green
+			QColor cellBgColor(0, 0, 0);
+			QColor penColor(255, 255, 255);
+			//if (prob < 0.2)
+			//	cellBgColor = QColor(0, 0, 0); // black
+			//else if (prob < 0.4)
+			//	cellBgColor = QColor(0, 0, 255); // blue
+			//else if (prob < 0.6)
+			//	cellBgColor = QColor(125, 125, 0); // light yellow
+			//else if (prob < 0.8)
+			//	cellBgColor = QColor(255, 255, 0); // yellow
+			//else
+			//	cellBgColor = QColor(0, 255, 0); // green
+			if (phoneInd == mostProbPhoneInd)
+				cellBgColor = QColor(0, 255, 0); // green
+
+			painter.setBrush(QBrush(cellBgColor));
+			painter.setPen(penColor);
+
+			painter.drawRect(x1, cellTopY, x2 - x1, cellBotY - cellTopY);
+
+			// phone name
+
+			const int TextPad = 2; // pixels, prevent phone marker and phone name overlapping 
+			PticaGovorun::phoneIdToByPhoneName(phoneInd, phoneName);
+
+			int percTens = (int)(prob * 10);
+			//QString text = QString::fromStdString(phoneName);
+			QString text = QString("%1").arg(percTens);
+			painter.drawText((x1 + x2) / 2 - TextPad, (cellTopY + cellBotY) / 2 + TextPad, text);
+		}
 	}
 }
 

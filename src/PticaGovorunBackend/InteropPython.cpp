@@ -19,7 +19,7 @@ namespace PticaGovorun {
 	// classifiers
 	std::map<int, std::map<std::string, std::unique_ptr<PticaGovorun::EMQuick>>> globalPhoneNameToEMObj_;
 
-	std::vector<const char*> phoneIdToPhoneName_ = { "?", "a", "e", "y", "i", "o", "u" };
+	std::vector<const char*> phoneIdToPhoneName_ = { "a", "e", "y", "i", "o", "u" };
 	std::map<std::string, int> phoneNameToPhoneId_;
 
 	bool globalInitialized_ = false;
@@ -27,10 +27,6 @@ namespace PticaGovorun {
 	{
 		if (globalInitialized_)
 			return true;
-
-		int phoneId = 0;
-		for (const char* phoneName : phoneIdToPhoneName_)
-			phoneNameToPhoneId_[phoneName] = phoneId++;
 
 		//
 		RecognizerSettings rs;
@@ -151,7 +147,7 @@ namespace PticaGovorun {
 
 			const std::string& phoneName = phoneNameToFeatsPair.first;
 
-			int phoneId = phoneNameToPhoneId_[phoneName];
+			int phoneId = phoneNameToPhoneId(phoneName);
 
 			std::generate_n(pOutPhoneIds, framesCountPerPhone, [phoneId]() -> int { return phoneId; });
 			pOutPhoneIds += framesCountPerPhone;
@@ -233,7 +229,7 @@ namespace PticaGovorun {
 			for (const auto& phoneEMPair : phoneNameToEMObj)
 			{
 				const std::string& phoneName = phoneEMPair.first;
-				int phoneId = phoneNameToPhoneId_[phoneName];
+				int phoneId = phoneNameToPhoneId(phoneName);
 
 				PticaGovorun::EMQuick& em = *phoneEMPair.second.get();
 
@@ -258,5 +254,34 @@ namespace PticaGovorun {
 		}
 
 		return true;
+	}
+
+	int phoneNameToPhoneId(const std::string& phoneName)
+	{
+		if (phoneNameToPhoneId_.empty())
+		{
+			int phoneId = 0;
+			for (const char* phoneNameCStr : phoneIdToPhoneName_)
+				phoneNameToPhoneId_[phoneNameCStr] = phoneId++;
+		}
+
+		auto it = phoneNameToPhoneId_.find(phoneName);
+		if (it == std::end(phoneNameToPhoneId_))
+			return -1;
+		int id = it->second;
+		return id;
+	}
+
+	void phoneIdToByPhoneName(int phoneId, std::string& phoneName)
+	{
+		if (phoneId < phoneIdToPhoneName_.size())
+			phoneName = phoneIdToPhoneName_[phoneId];
+		else
+			phoneName = "?";
+	}
+
+	int phoneMonoCount()
+	{
+		return phoneIdToPhoneName_.size();
 	}
 }

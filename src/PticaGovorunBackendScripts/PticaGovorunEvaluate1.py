@@ -3,9 +3,11 @@ import numpy as np
 
 print("test")
 
-#pticaGovorun = CDLL("../../build/x64/Debug/PticaGovorundBackendD.dll") # ERROR
-pg = C.CDLL("C:\\devb\\PticaGovorunProj\\srcrep\\build\\x64\\Debug\\PticaGovorunBackendd")
-#pticaGovorun = CDLL("PticaGovorunBackendd")
+# NOTE: put the dll's folder into environment PATH variable
+#pg = C.CDLL("../../build/x64/Debug/PticaGovorundBackendD") # ERROR
+#pg = C.CDLL("C:\\devb\\PticaGovorunProj\\srcrep\\build\\x64\\Debug\\PticaGovorunBackendd")
+#pg = C.CDLL("C:/devb/PticaGovorunProj/srcrep/build/x64/Debug/PticaGovorunBackendd")
+pg = C.CDLL("PticaGovorunBackendd")
 #pticaGovorun = CDLL("PticaGovorunBackendd.dll")
 print(pg)
 
@@ -79,4 +81,5 @@ def evaluate():
 #phoneIds = np.zeros((1,2), np.int32)
 #pg.test2(2, feats.ctypes.data_as(POINTER(c_float)))
 
-evaluate()
+if __name__ == "__main__":
+    evaluate()

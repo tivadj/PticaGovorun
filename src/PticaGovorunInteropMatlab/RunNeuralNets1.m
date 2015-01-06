@@ -1,9 +1,11 @@
-table1=csvread('speech_MFCC1.txt');
+table1=csvread('../../../data/speech_MFCC1.txt');
+Q=size(table1,1) % num samples
 feats = table1(:,1:size(table1,2)-1);
 phoneIds = table1(:,size(table1,2));
-
+phoneIds = phoneIds+1; % 0-based to 1-based phone indices
 fprintf('phones tally:\n')
-[(1:max(phoneIds))' histc(phoneIds(:),1:max(phoneIds))]
+phoneIdsUnique = min(phoneIds):max(phoneIds);
+[phoneIdsUnique' histc(phoneIds(:),phoneIdsUnique)]
 
 %% Try feedforwardnet
 % 'trainlm' =bad, Levenberg-Marquardt backpropagation, (default), 
@@ -27,15 +29,19 @@ recogRate = sum(phoneIdsSim == phoneIds') / length(phoneIds)
 
 %% convert expected output to patternnet format 
 % (NumClasses,NumSamples)
-phCount = max(phoneIds);
+phCount = length(phoneIdsUnique);
 % phonePatTarget = zeros(phCount, length(phoneIds));
 % for phId = 1:phCount
 %     phonePatTarget(phId, phoneIds == phId) = 1;
 % end
 phonePatTarget=full(ind2vec(phoneIds',phCount)); % [phCount,length(phoneIds)]
 %% Try ::patternnet (recogRate<85%, layers=[3221], trainTime=1min)
+% accur=74% when 282 neurons
 % 'trainscg', Scaled conjugate gradient backpropagation
-net = patternnet([390]);
+net = patternnet([282]);
+net.divideParam.trainRatio=1;
+net.divideParam.valRatio=0;
+net.divideParam.testRatio=0;
 [net,tr] = train(net, feats', phonePatTarget);
 phoneIdsFloatSim = net(feats');
 perf = crossentropy(net, phonePatTarget, phoneIdsFloatSim)
@@ -43,9 +49,21 @@ perf = crossentropy(net, phonePatTarget, phoneIdsFloatSim)
 [C,phoneIdsSim]=max(phoneIdsFloatSim,[],1);
 %phoneIdsSim = vec2ind(phoneIdsFloatSim);
 recogRate = sum(phoneIdsSim == phoneIds') / length(phoneIds)
+accuracyTopN(phoneIdsFloatSim,phoneIds',1)
+%plotconfusion(phonePatTarget,phoneIdsFloatSim)
+%%
+phoneProbs = simulateStandaloneNet(single(feats'));
+accuracyTopN(phoneProbs,phoneIds',1);
+
+% save network
+%save('netPatternnet282.mat', 'net')
+
+% generate standalone M-function from the trained net
+genFunction(net, 'classifySpeechMfcc.m', 'MatrixOnly','yes', 'ShowLinks','no')
+
 %% Use random search for ::patternnet
 LayersMax = 1;
-LayerSizeMax = 16000;
+LayerSizeMax = 100;
 
 bestRecogRate=0;
 bestHiddenLayersConfig=[];

@@ -3,19 +3,25 @@
 #include <ctime>
 #include <cstdlib>
 #include <memory>
+#include <array>
 
 #include <QStandardPaths>
 #include <QPointF>
 #include <QDebug>
 #include <QDir>
-#include <QApplication>
 #include <QTextCodec>
 
 #include "WavUtils.h"
 #include "TranscriberViewModel.h"
 #include "PticaGovorunCore.h"
 #include "ClnUtils.h"
-#include "algos_amp.cpp"
+//#include "algos_amp.cpp"
+#include "InteropPython.h"
+
+#if HAS_MATLAB
+#include "matrix.h" // mxArray, mxCreateLogicalArray
+#include "PticaGovorunInteropMatlab.h"
+#endif
 
 
 static const decltype(paComplete) SoundPlayerCompleteOrAbortTechnique = paComplete; // paComplete or paAbort
@@ -1183,7 +1189,8 @@ void TranscriberViewModel::testMfccRequest()
 
 			cv::Vec2d resEm = em.predict(oneMfccVector); // TODO: OpenCV impl doesn't work?
 
-			double ampLogProb = computeGaussMixtureModel(NumClusters, mfccVecLen, (double*)em.getMeans().data, (double*)em.getInvCovsEigenValuesPar()[0].data, (double*)em.getLogWeightDivDetPar().data, (double*)oneMfccVector.data, (double*)cacheL.data);
+			//double ampLogProb = computeGaussMixtureModel(NumClusters, mfccVecLen, (double*)em.getMeans().data, (double*)em.getInvCovsEigenValuesPar()[0].data, (double*)em.getLogWeightDivDetPar().data, (double*)oneMfccVector.data, (double*)cacheL.data);
+			double ampLogProb = -1;
 
 			//qDebug() <<QString::fromStdString(phoneName) << "LogP=" << res[0] << " Label=" << res[1];
 			//qDebug() <<QString::fromStdString(phoneName) << "LogP=" << logProb;
@@ -1202,17 +1209,113 @@ void TranscriberViewModel::testMfccRequest()
 			PticaGovorun::EMQuick& em = *phoneEMPair.second.get();
 
 			cv::Mat oneMfccVector(1, mfccVecLen, CV_64FC1, mfccFeaturesDouble.data() + (i*mfccVecLen));
-
-			double ampLogProb = computeGaussMixtureModel(NumClusters, mfccVecLen, (double*)em.getMeans().data, (double*)em.getInvCovsEigenValuesPar()[0].data, (double*)em.getLogWeightDivDetPar().data, (double*)oneMfccVector.data, (double*)cacheL.data);
-			if (ampLogProb > bestPhoneLogProb)
+			cv::Vec2d resP2 = PticaGovorun::EMQuick::predict2(oneMfccVector, em.getMeans(), em.getInvCovsEigenValuesPar(), em.getLogWeightDivDetPar(), cacheL);
+			double logProb = resP2[0];
+			//double ampLogProb = computeGaussMixtureModel(NumClusters, mfccVecLen, (double*)em.getMeans().data, (double*)em.getInvCovsEigenValuesPar()[0].data, //(double*)em.getLogWeightDivDetPar().data, (double*)oneMfccVector.data, (double*)cacheL.data);
+			if (logProb > bestPhoneLogProb)
 			{
-				bestPhoneLogProb = ampLogProb;
+				bestPhoneLogProb = logProb;
 				bestPhoneName = phoneName;
 			}
 		}
 		msg << bestPhoneName << " ";
 	}
 	qDebug() << "Recog: " << msg.str().c_str();
+}
+
+void TranscriberViewModel::classifyMfccIntoPhones()
+{
+	using namespace PticaGovorun;
+	ensureRecognizerIsCreated();
+	if (recognizer_ == nullptr)
+		return;
+
+	int outLeftMarkerInd;
+	auto curSeg = getFrameRangeToPlay(currentFrameInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
+	if (outLeftMarkerInd == -1) // not marker to associate recognized text with
+		return;
+
+	long curSegBeg = std::get<0>(curSeg);
+	long curSegEnd = std::get<1>(curSeg);
+	auto len = curSegEnd - curSegBeg;
+
+	// speech -> MFCC
+
+	size_t mfccVecLen = MfccVecLen;
+	std::vector<float> mfccFeatures;
+	int framesCount;
+	auto mfccFeatsOp = PticaGovorun::computeMfccFeaturesPub(&audioSamples_[curSegBeg], len, FrameSize, FrameShift, mfccVecLen, mfccFeatures, framesCount);
+	if (!std::get<0>(mfccFeatsOp))
+	{
+		emit nextNotification(QString::fromStdString(std::get<1>(mfccFeatsOp)));
+		return;
+	}
+
+#if HAS_MATLAB
+	int phonesCount = 6;
+	// MFCC -> phoneIds
+	std::vector<ClassifiedSpeechSegment> classifiedWindows;
+	for (int i = 0; i < framesCount; i++)
+	{
+		mwArray featsMat(mfccVecLen, 1, mxSINGLE_CLASS);
+		featsMat.SetData(mfccFeatures.data() + (i*mfccVecLen), mfccVecLen);
+
+		mwArray probsPerPatternMat;
+		classifySpeechMfcc(1, probsPerPatternMat, featsMat);
+		std::vector<float> probsPerPhone(phonesCount);
+		probsPerPatternMat.GetData(probsPerPhone.data(), probsPerPhone.size());
+
+		//
+		ClassifiedSpeechSegment alignedPhone;
+		alignedPhone.BegFrame = i;
+		alignedPhone.EndFrameIncl = i;
+
+		long begSample = -1;
+		long endSample = -1;
+		frameRangeToSampleRange(i, i, FrameToSamplePicker, FrameSize, FrameShift, begSample, endSample);
+
+		alignedPhone.BegSample = begSample;
+		alignedPhone.EndSample = endSample;
+
+		alignedPhone.PhoneLogProbs = std::move(probsPerPhone);
+
+		classifiedWindows.push_back(alignedPhone);
+	}
+
+	//
+	std::stringstream msg;
+	std::vector<AlignedPhoneme> monoPhonesPerWindow;
+	for (const ClassifiedSpeechSegment& probsPerPhone : classifiedWindows)
+	{
+		auto maxIt = std::max_element(std::begin(probsPerPhone.PhoneLogProbs), std::end(probsPerPhone.PhoneLogProbs));
+		int phoneInd = maxIt - std::begin(probsPerPhone.PhoneLogProbs);
+
+		std::string bestPhoneName = "?";
+		phoneIdToByPhoneName(phoneInd, bestPhoneName);
+
+		AlignedPhoneme ap;
+		ap.Name = bestPhoneName;
+		ap.BegFrame = probsPerPhone.BegFrame;
+		ap.EndFrameIncl = probsPerPhone.EndFrameIncl;
+		ap.BegSample = probsPerPhone.BegSample;
+		ap.EndSample = probsPerPhone.EndSample;
+		monoPhonesPerWindow.push_back(ap);
+	
+		msg << bestPhoneName << " ";
+	}
+	qDebug() << "Recog: " << msg.str().c_str();
+
+	std::vector<AlignedPhoneme> monoPhonesMerged;
+	mergeSamePhoneStates(monoPhonesPerWindow, monoPhonesMerged);
+
+	TimePointMarker& leftMarker = frameIndMarkers_[outLeftMarkerInd];
+	leftMarker.ClassifiedFrames = classifiedWindows;
+	leftMarker.RecogAlignedPhonemeSeq = monoPhonesMerged;
+	leftMarker.RecogAlignedPhonemeSeqPadded = false;
+
+	// redraw current segment
+	emit audioSamplesChanged();
+#endif
 }
 
 void TranscriberViewModel::playComposingRecipeRequest(QString recipe)

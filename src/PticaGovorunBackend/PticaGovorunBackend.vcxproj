@@ -62,6 +62,7 @@
     <Import Project="..\build-config\zlib.props" />
     <Import Project="..\build-config\PortAudio.props" />
     <Import Project="..\build-config\OpenCV.props" />
+    <Import Project="..\build-config\MatlabBuild.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -72,6 +73,7 @@
     <Import Project="..\build-config\zlib.props" />
     <Import Project="..\build-config\PortAudio.props" />
     <Import Project="..\build-config\OpenCV.props" />
+    <Import Project="..\build-config\MatlabBuild.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -82,6 +84,7 @@
     <Import Project="..\build-config\zlib.props" />
     <Import Project="..\build-config\PortAudio.props" />
     <Import Project="..\build-config\OpenCV.props" />
+    <Import Project="..\build-config\MatlabBuild.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -92,6 +95,7 @@
     <Import Project="..\build-config\zlib.props" />
     <Import Project="..\build-config\PortAudio.props" />
     <Import Project="..\build-config\OpenCV.props" />
+    <Import Project="..\build-config\MatlabBuild.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -176,6 +180,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ClnUtils.h" />
+    <ClInclude Include="CoreUtils.h" />
     <ClInclude Include="InteropPython.h" />
     <ClInclude Include="JuliusToolNativeWrapper.h" />
     <ClInclude Include="MLUtils.h" />
@@ -189,7 +194,7 @@
     <ClInclude Include="XmlAudioMarkup.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="algos_amp.cpp" />
+    <ClCompile Include="CoreUtils.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>

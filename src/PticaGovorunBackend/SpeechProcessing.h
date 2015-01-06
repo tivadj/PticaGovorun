@@ -54,6 +54,19 @@ struct AlignmentParams
 	LastFrameSample TakeSample;
 };
 
+// Stores probabilities of each phone for each window (frame).
+struct ClassifiedSpeechSegment
+{
+	int BegFrame;
+	int EndFrameIncl;
+
+	// 
+	int BegSample;
+	int EndSample;
+
+	std::vector<float> PhoneLogProbs;
+};
+
 struct PhoneDistributionPart
 {
 	int OffsetFrameIndex;
@@ -112,6 +125,8 @@ struct TimePointMarker
 	QString RecogSegmentText;
 	QString RecogSegmentWords;
 	std::vector<AlignedPhoneme> RecogAlignedPhonemeSeq;
+	bool RecogAlignedPhonemeSeqPadded = true; // true, if alignment was on a padded (with zeros) segment
+	std::vector<ClassifiedSpeechSegment> ClassifiedFrames;
 };
 
 // Determines if a marker with given level of detail will stop the audio playback.
@@ -125,9 +140,13 @@ PG_EXPORTS std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstr
 PG_EXPORTS void padSilence(const short* audioFrames, int audioFramesCount, int silenceFramesCount, std::vector<short>& paddedAudio);
 
 // Merges a sequence of phone-states (such as j2,j3,j4,o2,o3...) into monophone sequence (such as j,o...)
-void mergeSamePhoneStates(const std::vector<AlignedPhoneme>& phoneStates, std::vector<AlignedPhoneme>& monoPhones);
+PG_EXPORTS void mergeSamePhoneStates(const std::vector<AlignedPhoneme>& phoneStates, std::vector<AlignedPhoneme>& monoPhones);
+
+PG_EXPORTS void frameRangeToSampleRange(size_t framBegIndex, size_t framEndIndex, LastFrameSample endSampleChoice, size_t frameSize, size_t frameShift, long& sampleBeg, long& sampleEnd);
 
 PG_EXPORTS std::tuple<bool, const char*> collectMfccFeatures(const QFileInfo& folderOrWavFilePath, int frameSize, int frameShift, int mfccVecLen, std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector);
+
+//PG_EXPORTS void makeFlatData(const std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector)
 
 // Gets the number of frames. Eatch frame contains 'mfccVecLen' features. Total number of features is 'featuresTotalCount'.
 PG_EXPORTS int featuresFramesCount(int featuresTotalCount, int mfccVecLen);

@@ -1,6 +1,9 @@
 # This app specific
 build/
 build-*Desktop_Qt*/
+build_icl*/
+build_msvc*/
+deploy/
 output/
 TmpLib1/
 array_view.props

@@ -18,4 +18,10 @@ namespace PticaGovorun
 
 	// Simulates classifier on the given feature vector.
 	extern "C" PG_EXPORTS bool evaluateMonophoneClassifier(int classifierId, const float* features, int featuresCountPerFrame, int framesCount, int* phoneIdArray, float* logProbArray);
+
+	extern "C" PG_EXPORTS int phoneNameToPhoneId(const std::string& phoneName);
+
+	extern "C" PG_EXPORTS void phoneIdToByPhoneName(int phoneId, std::string& phoneName);
+
+	extern "C" PG_EXPORTS int phoneMonoCount();
 }

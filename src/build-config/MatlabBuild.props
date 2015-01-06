@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+
+  <PropertyGroup Label="UserMacros">
+    <MatlabDir>E:\Programs\MATLAB\R2014a\</MatlabDir>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IncludePath>$(MatlabDir)extern\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(MatlabDir)extern\lib\win64\microsoft;$(LibraryPath)</LibraryPath>
+  
+    <IncludePath>$(SolutionDir)..\..\build\x64\Debug\PticaGovorunMatlabProxy\for_testing\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\build\x64\Debug\PticaGovorunMatlabProxy\for_testing\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>HAS_MATLAB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <!--Matlab specific-->
+      <AdditionalDependencies>libmex.lib;libmx.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <!--mxDestroyArray_proxy-->
+      <AdditionalDependencies>mclmcrrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <!--<AdditionalOptions Condition="'$(ConfigurationType)' == 'DynamicLibrary'">/ASSEMBLYLINKRESOURCE:"$(PortAudioFullPath)" %(AdditionalOptions)</AdditionalOptions>-->
+    </Link>
+  </ItemDefinitionGroup>
+
+  <Target Name="MatlabProxyCopyBinaries" AfterTargets="Build">
+  </Target>
+
+</Project>

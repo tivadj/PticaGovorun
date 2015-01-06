@@ -163,6 +163,37 @@ namespace PticaGovorun {
 		}
 	}
 
+	void frameRangeToSampleRange(size_t framBegIndex, size_t framEndIndex, LastFrameSample endSampleChoice, size_t frameSize, size_t frameShift, long& sampleBeg, long& sampleEnd)
+	{
+		switch (endSampleChoice)
+		{
+		case LastFrameSample::BeginOfTheNextFrame:
+		{
+			sampleBeg = framBegIndex * frameShift;
+			sampleEnd = (1 + framEndIndex) * frameShift;
+			break;
+		}
+		case LastFrameSample::EndOfThisFrame:
+		{
+			sampleBeg = framBegIndex * frameShift;
+			sampleEnd = framEndIndex * frameShift + frameSize;
+			break;
+		}
+		case LastFrameSample::MostLikely:
+		{
+			int dx = static_cast<size_t>(0.5 * (frameSize + frameShift));
+			sampleEnd = framEndIndex      * frameShift + dx;
+
+			// segment bound lie close
+			// begin of this frame is the end of the previous frame
+			sampleBeg = (framBegIndex - 1) * frameShift + dx;
+			break;
+		}
+		default:
+			PG_Assert(false && "Unrecognized value of LastFrameSample enum");
+		}
+	}
+
 	// phoneNameToFeaturesVector[phone] has mfccVecLen features for one frame, then for another frame, etc.
 	std::tuple<bool, const char*> collectMfccFeatures(const QFileInfo& folderOrWavFilePath, int frameSize, int frameShift, int mfccVecLen, std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector)
 	{

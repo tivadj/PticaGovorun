@@ -19,32 +19,33 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{1893D07B-F318-4E79-BFDE-55FFBD085424}</ProjectGuid>
+    <ProjectGuid>{C8C6FCA2-D8A8-4EC3-A4DE-81473C514AF8}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>PticaGovorunSimpleConsoleClient</RootNamespace>
+    <RootNamespace>PticaGovorunInteropMatlab</RootNamespace>
+    <ProjectName>PticaGovorunInteropMatlab</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -56,135 +57,156 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\build-config\PticaGovorunCommon.props" />
-    <Import Project="..\build-config\array_view.props" />
     <Import Project="..\build-config\MatlabBuild.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\build-config\PticaGovorunCommon.props" />
-    <Import Project="..\build-config\array_view.props" />
     <Import Project="..\build-config\MatlabBuild.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\build-config\PticaGovorunCommon.props" />
-    <Import Project="..\build-config\array_view.props" />
     <Import Project="..\build-config\MatlabBuild.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\build-config\PticaGovorunCommon.props" />
-    <Import Project="..\build-config\array_view.props" />
     <Import Project="..\build-config\MatlabBuild.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(PticaGovorunDir)src\PticaGovorunBackend;$(OutDir)PticaGovorunInteropMatlab_obj;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir)PticaGovorunInteropMatlab_obj;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(PticaGovorunDir)src\PticaGovorunBackend;$(OutDir)PticaGovorunInteropMatlab_obj;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir)PticaGovorunInteropMatlab_obj;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(PticaGovorunDir)src\PticaGovorunBackend;$(OutDir)PticaGovorunInteropMatlab_obj;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir)PticaGovorunInteropMatlab_obj;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(PticaGovorunDir)src\PticaGovorunBackend;$(OutDir)PticaGovorunInteropMatlab_obj;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir)PticaGovorunInteropMatlab_obj;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>PticaGovorunInteropMatlab.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>echo "Pre-Build"</Command>
+    </PreBuildEvent>
+    <CustomBuildStep>
+      <Command>echo "Custom build step"</Command>
+    </CustomBuildStep>
+    <CustomBuild>
+      <Command>echod "Custom build tool"</Command>
+    </CustomBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <Cpp0xSupport>true</Cpp0xSupport>
-      <AdditionalOptions>/Qstd=c++0x %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>PticaGovorunInteropMatlab.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>echo "Pre-Build"</Command>
+    </PreBuildEvent>
+    <CustomBuildStep>
+      <Command>echo "Custom build step"</Command>
+    </CustomBuildStep>
+    <CustomBuild>
+      <Command>echod "Custom build tool"</Command>
+    </CustomBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>PticaGovorunInteropMatlab.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>echo "Pre-Build"</Command>
+    </PreBuildEvent>
+    <CustomBuildStep>
+      <Command>echo "Custom build step"</Command>
+    </CustomBuildStep>
+    <CustomBuild>
+      <Command>echod "Custom build tool"</Command>
+    </CustomBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <Cpp0xSupport>true</Cpp0xSupport>
-      <AdditionalOptions>/Qstd=c++0x %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>PticaGovorunInteropMatlab.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>echo "Pre-Build"</Command>
+    </PreBuildEvent>
+    <CustomBuildStep>
+      <Command>echo "Custom build step"</Command>
+    </CustomBuildStep>
+    <CustomBuild>
+      <Command>echod "Custom build tool"</Command>
+    </CustomBuild>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
+    <None Include="classifySpeechMfcc.m" />
+    <None Include="loadNet.m" />
+    <None Include="loadNetAndSimulate.m" />
+    <None Include="simulateNet.m" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="MatlabTester.cpp" />
-    <ClCompile Include="PticaGovorunSimpleConsoleClient.cpp" />
-    <ClCompile Include="SliceTester.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
+    <Text Include="readme.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <!-- From input Matlab *.m files builds the dll -->
+  <Target Name="BuildMatlabProxy" BeforeTargets="Build" Inputs="@(None)" Outputs="$(IntDir)$(ProjectName).dll;$(OutDir)$(ProjectName).dll;">
+    <Message Text="Building Matlab proxy" Importance="high" />
+    <Message Text="MatlabDir=$(MatlabDir)" Importance="high" />
+    <Message Text="BuildDir=$(IntDir)" Importance="high" />
+    <Message Text="Matlab sources:" Importance="high" />
+    <Message Text="%(None.FullPath)" Importance="high" />
+    <!-- Construct list of *.m absolute pathes-->
+    <ItemGroup>
+      <MatlabMFileAbsPath Include="%(None.FullPath)" />
+    </ItemGroup>
+    <Exec Command="$(MatlabDir)bin\mcc -W cpplib:$(ProjectName) -T link:lib -d $(IntDir) -v @(MatlabMFileAbsPath, ' ')" />
+    <Copy SourceFiles="$(IntDir)$(ProjectName).dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True" />
+  </Target>
 </Project>

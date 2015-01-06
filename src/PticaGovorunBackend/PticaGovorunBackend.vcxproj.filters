@@ -51,6 +51,9 @@
     <ClInclude Include="InteropPython.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CoreUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -80,13 +83,13 @@
     <ClCompile Include="MLUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="algos_amp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="WavUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="InteropPython.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CoreUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
