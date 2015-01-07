@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
 
   <PropertyGroup Label="UserMacros">
-    <PortAudioDir>$(PticaGovorunDir)ThirdParty\portaudio\</PortAudioDir>
+    <PortAudioDir>C:\devb\PticaGovorunProj\srcrep\ThirdParty\portaudio\</PortAudioDir>
     <PortAudioBinDir>$(PortAudioDir)build-msvc120-x64\$(Configuration)\</PortAudioBinDir>
   </PropertyGroup>
   

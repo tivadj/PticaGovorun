@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
 
   <PropertyGroup Label="UserMacros">
-    <LibSndFileDir>$(PticaGovorunDir)ThirdParty\libsndfile\</LibSndFileDir>
+    <LibSndFileDir>C:\devb\PticaGovorunProj\srcrep\ThirdParty\libsndfile\</LibSndFileDir>
     <!--<LibSndFileFilename>libsndfile-1_$(PlatformShortName)</LibSndFileFilename>-->
     <LibSndFileFullPath>$(LibSndFileDir)bin\$(PlatformShortName)\libsndfile-1.dll</LibSndFileFullPath>
   </PropertyGroup>

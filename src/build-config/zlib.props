@@ -2,16 +2,15 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
 
-  <!--NOTE: ZLib is available in Release configuration only-->
-  
   <PropertyGroup Label="UserMacros">
-    <ZlibDir>$(PticaGovorunDir)ThirdParty\zlib-1.2.7\</ZlibDir>
+    <ZlibDir>C:\devb\PticaGovorunProj\srcrep\ThirdParty\zlib-1.2.7\</ZlibDir>
+    <ZlibBinDir>$(ZlibDir)contrib\vstudio\vc10\$(Platform)\$(Configuration)\</ZlibBinDir>
     <ZlibFilename>zlibwapi_$(PlatformShortName)</ZlibFilename>
   </PropertyGroup>
 
   <PropertyGroup>
     <IncludePath>$(ZlibDir);$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir)..\Release\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(ZlibBinDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
 
   <ItemDefinitionGroup>
@@ -24,7 +23,7 @@
   </ItemDefinitionGroup>
 
   <Target Name="MyZlibCopyBinaries" AfterTargets="Build">
-    <Copy SourceFiles="$(OutDir)..\Release\$(ZlibFilename).dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
+    <Copy SourceFiles="$(ZlibBinDir)$(ZlibFilename).dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
   </Target>
 
 </Project>

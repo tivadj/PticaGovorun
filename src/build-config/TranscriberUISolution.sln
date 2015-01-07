@@ -45,8 +45,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "julius", "..\..\ThirdParty\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsent", "..\..\ThirdParty\julius4\msvc\libsent\libsent.vcxproj", "{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlibvc", "..\..\ThirdParty\zlib-1.2.7\contrib\vstudio\vc10\zlibvc.vcxproj", "{8FD826F8-3739-44E6-8CC8-997122E53B8D}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PticaGovorunInteropMatlab", "..\PticaGovorunInteropMatlab\PticaGovorunInteropMatlab.vcxproj", "{C8C6FCA2-D8A8-4EC3-A4DE-81473C514AF8}"
 EndProject
 Global
@@ -170,24 +168,6 @@ Global
 		{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}.ReleaseWithoutAsm|Win32.Build.0 = Release|Win32
 		{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}.ReleaseWithoutAsm|x64.ActiveCfg = Release|x64
 		{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}.ReleaseWithoutAsm|x64.Build.0 = Release|x64
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.Debug|Mixed Platforms.Build.0 = Debug|Win32
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.Debug|Win32.ActiveCfg = Debug|Win32
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.Debug|Win32.Build.0 = Debug|Win32
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.Debug|x64.ActiveCfg = Release|x64
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.Debug|x64.Build.0 = Release|x64
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.Release|Mixed Platforms.Build.0 = Release|Win32
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.Release|Win32.ActiveCfg = Release|Win32
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.Release|Win32.Build.0 = Release|Win32
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.Release|x64.ActiveCfg = Release|x64
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.Release|x64.Build.0 = Release|x64
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.ReleaseWithoutAsm|Mixed Platforms.ActiveCfg = ReleaseWithoutAsm|Win32
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.ReleaseWithoutAsm|Mixed Platforms.Build.0 = ReleaseWithoutAsm|Win32
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.ReleaseWithoutAsm|Win32.ActiveCfg = ReleaseWithoutAsm|Win32
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.ReleaseWithoutAsm|Win32.Build.0 = ReleaseWithoutAsm|Win32
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.ReleaseWithoutAsm|x64.ActiveCfg = ReleaseWithoutAsm|x64
-		{8FD826F8-3739-44E6-8CC8-997122E53B8D}.ReleaseWithoutAsm|x64.Build.0 = ReleaseWithoutAsm|x64
 		{C8C6FCA2-D8A8-4EC3-A4DE-81473C514AF8}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{C8C6FCA2-D8A8-4EC3-A4DE-81473C514AF8}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{C8C6FCA2-D8A8-4EC3-A4DE-81473C514AF8}.Debug|Win32.ActiveCfg = Debug|Win32
