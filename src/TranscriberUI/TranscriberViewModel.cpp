@@ -1226,9 +1226,9 @@ void TranscriberViewModel::testMfccRequest()
 void TranscriberViewModel::classifyMfccIntoPhones()
 {
 	using namespace PticaGovorun;
-	ensureRecognizerIsCreated();
-	if (recognizer_ == nullptr)
-		return;
+	//ensureRecognizerIsCreated();
+	//if (recognizer_ == nullptr)
+	//	return;
 
 	int outLeftMarkerInd;
 	auto curSeg = getFrameRangeToPlay(currentFrameInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
@@ -1241,15 +1241,38 @@ void TranscriberViewModel::classifyMfccIntoPhones()
 
 	// speech -> MFCC
 
-	size_t mfccVecLen = MfccVecLen;
-	std::vector<float> mfccFeatures;
-	int framesCount;
-	auto mfccFeatsOp = PticaGovorun::computeMfccFeaturesPub(&audioSamples_[curSegBeg], len, FrameSize, FrameShift, mfccVecLen, mfccFeatures, framesCount);
-	if (!std::get<0>(mfccFeatsOp))
-	{
-		emit nextNotification(QString::fromStdString(std::get<1>(mfccFeatsOp)));
-		return;
-	}
+	//size_t mfccVecLen = MfccVecLen;
+	//std::vector<float> mfccFeatures;
+	//int framesCount;
+	//auto mfccFeatsOp = PticaGovorun::computeMfccFeaturesPub(&audioSamples_[curSegBeg], len, FrameSize, FrameShift, mfccVecLen, mfccFeatures, framesCount);
+	//if (!std::get<0>(mfccFeatsOp))
+	//{
+	//	emit nextNotification(QString::fromStdString(std::get<1>(mfccFeatsOp)));
+	//	return;
+	//}
+
+	//
+	int frameSize = FrameSize;
+	int frameShift = FrameShift;
+	float sampleRate = SampleRate;
+
+	// init filter bank
+	int binCount = 24; // number of bins in the triangular filter bank
+	int fftNum = getMinDftPointsCount(frameSize);
+	TriangularFilterBank filterBank;
+	buildTriangularFilterBank(sampleRate, binCount, fftNum, filterBank);
+
+	// speech -> MFCC
+
+	const int mfccCount = 12;
+	// +1 for usage of cepstral0 coef
+	// *3 for velocity and acceleration coefs
+	int mfccVecLen = 3 * (mfccCount + 1);
+
+	int framesCount = getSplitFramesCount(len, frameSize, frameShift);
+	std::vector<float> mfccFeatures(mfccVecLen*framesCount, 0);
+	wv::slice<short> samplesPart = wv::make_view(audioSamples_.data() + curSegBeg, len);
+	computeMfccVelocityAccel(samplesPart, frameSize, frameShift, framesCount, mfccCount, mfccVecLen, filterBank, mfccFeatures);
 
 #if HAS_MATLAB
 	int phonesCount = 6;

@@ -5,11 +5,13 @@
 
 namespace MatlabTesterNS { void run(); }
 namespace SliceTesterNS { void run(); }
+namespace ComputeSpeechMfccTesterNS { void run(); }
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//SliceTesterNS::run();
-	MatlabTesterNS::run();
+	//MatlabTesterNS::run();
+	ComputeSpeechMfccTesterNS::run();
 
 	return 0;
 }

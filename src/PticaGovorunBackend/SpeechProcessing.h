@@ -10,6 +10,7 @@
 #include <QFileInfo>
 #include "PticaGovorunCore.h"
 #include "MLUtils.h"
+#include "ClnUtils.h"
 
 namespace PticaGovorun {
 
@@ -154,4 +155,41 @@ PG_EXPORTS int featuresFramesCount(int featuresTotalCount, int mfccVecLen);
 PG_EXPORTS std::tuple<bool, const char*> trainMonophoneClassifier(const std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector, int mfccVecLen, int numClusters,
 	std::map<std::string, std::unique_ptr<PticaGovorun::EMQuick>>& phoneNameToEMObj);
 
+PG_EXPORTS void preEmphasisInplace(wv::slice<float> xs, float preEmph);
+
+PG_EXPORTS void hammingInplace(wv::slice<float> frame);
+
+PG_EXPORTS int getMinDftPointsCount(int frameSize);
+
+// The segment [freqLowHz; freqHighHz] is covered with overlapped triangles.
+// Each triangle has unit height (unit response) at the 'center' (the left shoulder is less then the right, 
+// hence it is not exactly the center).
+// Each triangle has zero height (zero response) in the centers of two neighbour trangles.
+// Majority of frequencies hit two neighbour bins.
+// Freqencies in [freqLowHz; bin[0].center] have response only in the right bin.
+// Freqencies in [lastBin.center; freqHighHz] have response only in the left bin.
+struct FilterHitInfo
+{
+	const static int NoBin = -1;
+
+	int LeftBinInd = NoBin;
+	int RightBinInd = NoBin;
+
+	float LeftFilterResponse = 0.0f;
+	float RightFilterResponse = 0.0f;
+};
+
+struct TriangularFilterBank
+{
+	int BinCount; // number of triangles (bins) in the filter
+	int FftNum; // number of DFT points
+	std::vector<FilterHitInfo> fftFreqIndToHitInfo;
+};
+
+PG_EXPORTS void buildTriangularFilterBank(float sampleRate, int binsCount, int fftNum, TriangularFilterBank& filterBank);
+
+// Returns number of frames when samples are split into sliding frames.
+PG_EXPORTS int getSplitFramesCount(int samplesCount, int frameSize, int frameShift);
+
+PG_EXPORTS void computeMfccVelocityAccel(const wv::slice<short> samples, int frameSize, int frameShift, int framesCount, int mfcc_dim, int mfccVecLen, const TriangularFilterBank& filterBank, wv::slice<float> mfccFeatures);
 }
