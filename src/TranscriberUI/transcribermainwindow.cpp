@@ -1,4 +1,5 @@
 #include <sstream>
+#include <array>
 #include "transcribermainwindow.h"
 #include "ui_transcribermainwindow.h"
 #include <QDebug>
@@ -33,7 +34,7 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
 	QObject::connect(transcriberModel_.get(), SIGNAL(audioSamplesChanged()), this, SLOT(transcriberModel_audioSamplesChanged()));
 	QObject::connect(transcriberModel_.get(), SIGNAL(docOffsetXChanged()), this, SLOT(transcriberModel_docOffsetXChanged()));
 	QObject::connect(transcriberModel_.get(), SIGNAL(lastMouseDocPosXChanged(float)), this, SLOT(transcriberModel_lastMouseDocPosXChanged(float)));
-	QObject::connect(transcriberModel_.get(), SIGNAL(currentFrameIndChanged(long)), this, SLOT(transcriberModel_currentFrameIndChanged(long)));
+	QObject::connect(transcriberModel_.get(), SIGNAL(cursorChanged(std::pair<long, long>)), this, SLOT(transcriberModel_cursorChanged(std::pair<long, long>)));
 	QObject::connect(transcriberModel_.get(), SIGNAL(currentMarkerIndChanged()), this, SLOT(transcriberModel_currentMarkerIndChanged()));
 
 	//
@@ -167,34 +168,49 @@ void TranscriberMainWindow::UpdateDocPosXAndFrameInd(float mouseDocPosX, float s
 	ui->lineEditCurSampleInd->setText(QString::fromStdString(msg.str()));
 }
 
-void TranscriberMainWindow::transcriberModel_currentFrameIndChanged(long oldCurFrameInd)
+void TranscriberMainWindow::transcriberModel_cursorChanged(std::pair<long, long> oldCursor)
 {
 	QRect updateRect = ui->widgetSamples->rect();
-	if (oldCurFrameInd == PticaGovorun::PGFrameIndNull)
-		ui->widgetSamples->update(updateRect);
 
-	long newCurFrameInd = transcriberModel_->currentFrameInd();
-	if (newCurFrameInd == PticaGovorun::PGFrameIndNull)
-		ui->widgetSamples->update(updateRect);
+	auto nullCur = TranscriberViewModel::nullCursor();
+	auto newCursor = transcriberModel_->cursor();
+	if (oldCursor != nullCur && newCursor != nullCur)
+	{
+		//
+		float newCursorDocPosX = transcriberModel_->sampleIndToDocPosX(newCursor.first);
+		UpdateDocPosXAndFrameInd(newCursorDocPosX, newCursor.first);
 
-	//
-	float newCursorDocPosX = transcriberModel_->sampleIndToDocPosX(newCurFrameInd);
-	UpdateDocPosXAndFrameInd(newCursorDocPosX, newCurFrameInd);
+		// update only invalidated rect
 
-	// update only invalidated rect
+		std::array<long, 4> cursorBounds;
+		int cursorBoundsCount = 0;
+		if (oldCursor.first != PticaGovorun::NullSampleInd)
+			cursorBounds[cursorBoundsCount++] = oldCursor.first;
+		if (oldCursor.second != PticaGovorun::NullSampleInd)
+			cursorBounds[cursorBoundsCount++] = oldCursor.second;
+		if (newCursor.first != PticaGovorun::NullSampleInd)
+			cursorBounds[cursorBoundsCount++] = newCursor.first;
+		if (newCursor.second != PticaGovorun::NullSampleInd)
+			cursorBounds[cursorBoundsCount++] = newCursor.second;
 
-	auto minFrameInd = std::min(oldCurFrameInd, newCurFrameInd);
-	auto maxFrameInd = std::max(oldCurFrameInd, newCurFrameInd);
+		assert(cursorBoundsCount > 0 && "Must be some cursor boundaries on cursor change");
 
-	auto minX = transcriberModel_->sampleIndToDocPosX(minFrameInd);
-	minX -= transcriberModel_->docOffsetX();
+		auto minIt = std::min_element(cursorBounds.begin(), cursorBounds.begin() + cursorBoundsCount);
+		auto maxIt = std::max_element(cursorBounds.begin(), cursorBounds.begin() + cursorBoundsCount);
 
-	auto maxX = transcriberModel_->sampleIndToDocPosX(maxFrameInd);
-	maxX -= transcriberModel_->docOffsetX();
+		auto minSampleInd = *minIt;
+		auto maxSampleInd = *maxIt;
 
-	const static int VerticalMarkerWidth = 3;
-	updateRect.setLeft(minX - VerticalMarkerWidth);
-	updateRect.setRight(maxX + VerticalMarkerWidth);
+		auto minX = transcriberModel_->sampleIndToDocPosX(minSampleInd);
+		minX -= transcriberModel_->docOffsetX();
+
+		auto maxX = transcriberModel_->sampleIndToDocPosX(maxSampleInd);
+		maxX -= transcriberModel_->docOffsetX();
+
+		const static int VerticalMarkerWidth = 3;
+		updateRect.setLeft(minX - VerticalMarkerWidth);
+		updateRect.setRight(maxX + VerticalMarkerWidth);
+	}
 
 	// QWidget::repaint is more responsive and the moving cursor may not flicker
 	// but if drawing is slow, the UI may stop responding at all

@@ -3,7 +3,7 @@
 
 namespace PticaGovorun {
 	typedef long PGFrameInd;
-	static const PGFrameInd PGFrameIndNull = -1;
+	static const PGFrameInd NullSampleInd = -1;
 }
 
 #if defined PGAPI_EXPORTS

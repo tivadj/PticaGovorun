@@ -26,7 +26,10 @@ protected:
 	void mouseReleaseEvent(QMouseEvent*) override;
 	void mouseMoveEvent(QMouseEvent*) override;
 private:
-	void drawFrameIndMarkers(QPainter& painter, int markerHeight, float visibleDocLeft, float visibleDocRight);
+	// This method draws cursor or samples range.
+	// inForeground, true if this method called after all content is drawn; false, if before.
+	void drawCursor(QPainter& painter, bool inForeground, float topY, float bottomY);
+	void drawSampleMarkers(QPainter& painter, int markerHeight, float visibleDocLeft, float visibleDocRight);
 	void drawMarkerRecognizedText(QPainter& painter, const PticaGovorun::TimePointMarker& marker, float frameDocX);
 	void drawPhonemesAndPhonemeMarkers(QPainter& painter, int markerHeight, float visibleDocLeft, float visibleDocRight);
 

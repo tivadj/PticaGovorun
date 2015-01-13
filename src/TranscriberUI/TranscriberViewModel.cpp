@@ -74,7 +74,7 @@ void TranscriberViewModel::loadAudioFile()
 
 	//
 
-	setCurrentFrameInd(0);
+	setCursorInternal(0, true ,false);
 
 	emit audioSamplesLoaded();
 }
@@ -91,7 +91,7 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 #endif
 	data.FinishPlayingFrameInd = finishPlayingFrameInd;
 	data.CurPlayingFrameInd = startPlayingFrameInd;
-	data.RestoreCurrentFrameInd = restoreCurFrameInd ? currentFrameInd() : PticaGovorun::PGFrameIndNull;
+	data.RestoreCurrentFrameInd = restoreCurFrameInd ? currentSampleInd() : PticaGovorun::NullSampleInd;
 
 	//
 	PaDeviceIndex deviceIndex = Pa_GetDefaultOutputDevice(); /* default output device */
@@ -127,7 +127,7 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 			return paAbort;
 
 		// updates current frame
-		transcriberViewModel.setCurrentFrameIndInternal(sampleInd, false, false);
+		transcriberViewModel.setCursorInternal(sampleInd, false, false);
 
 		// populate samples buffer
 
@@ -171,7 +171,7 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 		int availableFramesCount = sampleEnd - sampleInd;
 
 		// updates current frame in UI
-		transcriberViewModel.setCurrentFrameIndInternal(sampleInd, false, false);
+		transcriberViewModel.setCursorInternal(sampleInd, false, false);
 
 		// populate samples buffer
 
@@ -248,8 +248,8 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 		}
 
 		// updates current frame in UI
-		if (data.RestoreCurrentFrameInd != PticaGovorun::PGFrameIndNull)
-			data.transcriberViewModel->setCurrentFrameIndInternal(data.RestoreCurrentFrameInd, false, false);
+		if (data.RestoreCurrentFrameInd != PticaGovorun::NullSampleInd)
+			data.transcriberViewModel->setCursorInternal(data.RestoreCurrentFrameInd, false, false);
 
 		// parts of UI are not painted when cursor moves
 		// redraw entire UI when playing completes
@@ -367,7 +367,7 @@ void TranscriberViewModel::soundPlayerPlayCurrentSegment(SegmentStartFrameToPlay
 	if (audioSamples_.empty())
 		return;
 
-	auto curFrameInd = currentFrameInd();
+	auto curFrameInd = currentSampleInd();
 	if (curFrameInd < 0)
 		curFrameInd = 0;
 
@@ -398,8 +398,8 @@ void TranscriberViewModel::soundPlayerPlay()
 	if (audioSamples_.empty())
 		return;
 
-	auto curFrameInd = currentFrameInd();
-	if (curFrameInd == PticaGovorun::PGFrameIndNull)
+	auto curFrameInd = currentSampleInd();
+	if (curFrameInd == PticaGovorun::NullSampleInd)
 		return;
 
 	soundPlayerPlay(audioSamples_.data(), curFrameInd, audioSamples_.size() - 1, false);
@@ -658,7 +658,7 @@ void TranscriberViewModel::dragMarkerContinue(const QPointF& localPos)
 	}
 }
 
-void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos)
+void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos, bool isShiftPressed)
 {
 	float mousePressDocPosX = docOffsetX_ + localPos.x();
 
@@ -673,11 +673,11 @@ void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos)
 
 	// choose between dragging the marker or setting the cursor
 
-	auto curFrameInd = (long)docPosXToSampleInd(mousePressDocPosX);
+	auto curSampleInd = (long)docPosXToSampleInd(mousePressDocPosX);
 
 	long distToMarker = -1;
 	auto markerFrameIndSelector = [](const PticaGovorun::TimePointMarker& m) { return m.SampleInd; };
-	int closestMarkerInd = getClosestMarkerInd(frameIndMarkers_, markerFrameIndSelector, curFrameInd, &distToMarker);
+	int closestMarkerInd = getClosestMarkerInd(frameIndMarkers_, markerFrameIndSelector, curSampleInd, &distToMarker);
 
 	float distToMarkerPix = distToMarker * scale_;
 	
@@ -701,34 +701,50 @@ void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos)
 	}
 	else
 	{
+		auto newCursor = cursor_;
+
 		// click on empty space in document
-		// update cursor
-		setCurrentFrameIndInternal(curFrameInd, true, false);
+		if (isShiftPressed)
+		{
+			// update current samples range
+			// retain the current cursor, but change the second cursor
+			newCursor.second = curSampleInd;
+		}
+		else
+		{
+			// update cursor
+			newCursor.first = curSampleInd;
+			newCursor.second = PticaGovorun::NullSampleInd;
+		}
+		setCursorInternal(newCursor, true, false);
 	}
 
 	lastMousePressDocPosX_ = mousePressDocPosX;
 	emit lastMouseDocPosXChanged(mousePressDocPosX);
 }
 
-long TranscriberViewModel::currentFrameInd() const
+long TranscriberViewModel::currentSampleInd() const
 {
-	return currentFrameInd_;
+	return cursor_.first;
 }
 
-void TranscriberViewModel::setCurrentFrameInd(long value)
+void TranscriberViewModel::setCursorInternal(long curSampleInd, bool updateCurrentMarkerInd, bool updateViewportOffset)
 {
-	setCurrentFrameIndInternal(value, true, true);
+	auto cursor = cursor_;
+	cursor.first = curSampleInd;
+	cursor.second = PticaGovorun::NullSampleInd;
+
+	setCursorInternal(cursor, updateCurrentMarkerInd, updateViewportOffset);
 }
 
-void TranscriberViewModel::setCurrentFrameIndInternal(long value, bool updateCurrentMarkerInd, bool updateViewportOffset)
+void TranscriberViewModel::setCursorInternal(std::pair<long,long> value, bool updateCurrentMarkerInd, bool updateViewportOffset)
 {
-	if (currentFrameInd_ != value)
+	if (cursor_ != value)
 	{
-		long oldValue = currentFrameInd_;
+		auto oldValue = cursor_;
 
-		currentFrameInd_ = value;
-
-		emit currentFrameIndChanged(oldValue);
+		cursor_ = value;
+		emit cursorChanged(oldValue);
 
 		// reset current marker
 		if (updateCurrentMarkerInd)
@@ -743,16 +759,21 @@ void TranscriberViewModel::setCurrentFrameIndInternal(long value, bool updateCur
 
 			// put docOffsetX some pixels to the left of given frameInd
 			const int LeftDxPix = 50;
-			float framePix = sampleIndToDocPosX(value);
-			long newDocOffsetX = framePix - LeftDxPix;
+			float samplePix = sampleIndToDocPosX(value.first);
+			long newDocOffsetX = samplePix - LeftDxPix;
 			setDocOffsetX(newDocOffsetX);
 		}
 	}
 }
 
+std::pair<long, long> TranscriberViewModel::cursor() const
+{
+	return cursor_;
+}
+
 void TranscriberViewModel::insertNewMarkerAtCursorRequest()
 {
-	long curFrameInd = currentFrameInd();
+	long curFrameInd = currentSampleInd();
 
 	// find the insertion position in the markers collection
 
@@ -849,7 +870,7 @@ int TranscriberViewModel::getClosestMarkerInd(const Markers& markers, FrameIndSe
 
 void TranscriberViewModel::selectMarkerClosestToCurrentCursorRequest()
 {
-	long curFrameInd = currentFrameInd();
+	long curFrameInd = currentSampleInd();
 
 	long distToClosestMarker = -1;
 	auto markerFrameIndSelector = [](const PticaGovorun::TimePointMarker& m) { return m.SampleInd; };
@@ -858,7 +879,7 @@ void TranscriberViewModel::selectMarkerClosestToCurrentCursorRequest()
 	setCurrentMarkerIndInternal(closestMarkerInd, true, false);
 }
 
-void TranscriberViewModel::setCurrentMarkerIndInternal(int markerInd, bool updateCurrentFrameInd, bool updateViewportOffset)
+void TranscriberViewModel::setCurrentMarkerIndInternal(int markerInd, bool updateCurrentSampleInd, bool updateViewportOffset)
 {
 	if (currentMarkerInd_ != markerInd)
 	{
@@ -866,11 +887,11 @@ void TranscriberViewModel::setCurrentMarkerIndInternal(int markerInd, bool updat
 		currentMarkerInd_ = markerInd;
 		emit currentMarkerIndChanged();
 
-		if (updateCurrentFrameInd && markerInd != -1)
+		if (updateCurrentSampleInd && markerInd != -1)
 		{
 			// udpdate cursor position
 			long newCurSampleInd = frameIndMarkers_[markerInd].SampleInd;
-			setCurrentFrameIndInternal(newCurSampleInd, false, updateViewportOffset);
+			setCursorInternal(newCurSampleInd, false, updateViewportOffset);
 		}
 	}
 }
@@ -952,7 +973,7 @@ void TranscriberViewModel::recognizeCurrentSegmentRequest()
 		return;
 
 	int outLeftMarkerInd;
-	auto curSeg = getFrameRangeToPlay(currentFrameInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
+	auto curSeg = getFrameRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
 	if (outLeftMarkerInd == -1) // not marker to associate recognized text with
 		return;
 
@@ -1036,7 +1057,7 @@ void TranscriberViewModel::alignPhonesForCurrentSegmentRequest()
 	ensureWordToPhoneListVocabularyLoaded();
 
 	int outLeftMarkerInd;
-	auto curSeg = getFrameRangeToPlay(currentFrameInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
+	auto curSeg = getFrameRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
 	if (outLeftMarkerInd == -1) // not marker to associate recognized text with
 		return;
 
@@ -1143,7 +1164,7 @@ void TranscriberViewModel::testMfccRequest()
 		return;
 
 	int outLeftMarkerInd;
-	auto curSeg = getFrameRangeToPlay(currentFrameInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
+	auto curSeg = getFrameRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
 	if (outLeftMarkerInd == -1) // not marker to associate recognized text with
 		return;
 
@@ -1231,7 +1252,7 @@ void TranscriberViewModel::classifyMfccIntoPhones()
 	//	return;
 
 	int outLeftMarkerInd;
-	auto curSeg = getFrameRangeToPlay(currentFrameInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
+	auto curSeg = getFrameRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
 	if (outLeftMarkerInd == -1) // not marker to associate recognized text with
 		return;
 

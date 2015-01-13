@@ -49,8 +49,10 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 	float canvasHeight = height();
 	float canvasHeightHalf = canvasHeight / 2.0f;
 
+	// draw samples range adornment
+	drawCursor(painter, false, 0, canvasHeight);
+
 	// determine first left visible sample
-	
 
 	QColor sampleColor(0, 0, 0);
 	painter.setPen(sampleColor);
@@ -102,20 +104,46 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 
 	// draw phrase markers
 
-	drawFrameIndMarkers(painter, canvasHeight, visibleDocLeft, visibleDocRight);
+	drawSampleMarkers(painter, canvasHeight, visibleDocLeft, visibleDocRight);
 
-	// draw current frame adornment
+	// draw samples range adornment
+	drawCursor(painter, true, 0, canvasHeight);
+}
+
+void AudioSamplesWidget::drawCursor(QPainter& painter, bool inForeground, float topY, float bottomY)
+{
+	assert(bottomY >= topY && "Y axis goes from top to bottom");
+
+	std::pair<long,long> cursor =  transcriberModel_->cursor();
+
+	float curSampleDocX = transcriberModel_->sampleIndToDocPosX(cursor.first);
+	curSampleDocX -= transcriberModel_->docOffsetX();
 
 	QColor curMarkerColor(0, 0, 0);
 	painter.setPen(curMarkerColor);
-	
-	long currentFrameInd = transcriberModel_->currentFrameInd();
-	float curFrameDocX = transcriberModel_->sampleIndToDocPosX(currentFrameInd);
-	curFrameDocX -= transcriberModel_->docOffsetX();
-	painter.drawLine(curFrameDocX, 0, curFrameDocX, canvasHeight);
+
+	// this method is called twice - before and after all content is drawn
+	// in background we draw current samples range
+	// in foreground we draw current cursor
+
+	if (cursor.second == PticaGovorun::NullSampleInd && inForeground)
+	{
+		// only cursor is selected
+		painter.drawLine(curSampleDocX, topY, curSampleDocX, bottomY);
+	}
+	else if (cursor.second != PticaGovorun::NullSampleInd && !inForeground)
+	{
+		// range is selected
+
+		float secondCurSampleDocX = transcriberModel_->sampleIndToDocPosX(cursor.second);
+		secondCurSampleDocX -= transcriberModel_->docOffsetX();
+
+		painter.setBrush(Qt::lightGray);
+		painter.drawRect(curSampleDocX, topY, secondCurSampleDocX - curSampleDocX, bottomY - topY);
+	}
 }
 
-void AudioSamplesWidget::drawFrameIndMarkers(QPainter& painter, int markerHeightMax, float visibleDocLeft, float visibleDocRight)
+void AudioSamplesWidget::drawSampleMarkers(QPainter& painter, int markerHeightMax, float visibleDocLeft, float visibleDocRight)
 {
 	auto docOffsetX = transcriberModel_->docOffsetX();
 
@@ -211,7 +239,7 @@ void AudioSamplesWidget::drawPhonemesAndPhonemeMarkers(QPainter& painter, int ma
 {
 	using namespace PticaGovorun;
 	int leftMarkerInd = -1;
-	std::tuple<long,long> seg = transcriberModel_->getFrameRangeToPlay(transcriberModel_->currentFrameInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &leftMarkerInd);
+	std::tuple<long,long> seg = transcriberModel_->getFrameRangeToPlay(transcriberModel_->currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &leftMarkerInd);
 	if (leftMarkerInd == -1)
 		return;
 	
@@ -427,7 +455,8 @@ void AudioSamplesWidget::drawClassifiedPhonesGrid(QPainter& painter, long phones
 void AudioSamplesWidget::mousePressEvent(QMouseEvent* me)
 {
 	const QPointF& pos = me->localPos();
-	transcriberModel_->setLastMousePressPos(pos);
+	bool isShiftPressed = me->modifiers().testFlag(Qt::ShiftModifier);
+	transcriberModel_->setLastMousePressPos(pos, isShiftPressed);
 }
 
 void AudioSamplesWidget::mouseReleaseEvent(QMouseEvent*)
@@ -440,3 +469,4 @@ void AudioSamplesWidget::mouseMoveEvent(QMouseEvent* me)
 	const QPointF& pos = me->localPos();
 	transcriberModel_->dragMarkerContinue(pos);
 }
+

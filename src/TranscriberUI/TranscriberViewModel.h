@@ -29,6 +29,8 @@ enum class SegmentStartFrameToPlayChoice
 
 // The document is a graph for samples plus padding to the left and right.
 // The samples graph is painted with current 'scale'.
+// A user can specify samples of interest using a cursor. The sample is specified with a sample index.
+// The range of samples is specified with indices of two boundary samples.
 class TranscriberViewModel : public QObject
 {
     Q_OBJECT
@@ -42,7 +44,7 @@ signals :
 	void lastMouseDocPosXChanged(float mouseDocPosX);
 
 	// Occurs when current frame cursor changes.
-	void currentFrameIndChanged(long oldValue);
+	void cursorChanged(std::pair<long,long> oldValue);
 
 	// Occurs when current marker selection changed.
 	void currentMarkerIndChanged();
@@ -97,15 +99,24 @@ public:
 	//	return arv::array_view<short>(std::begin(audioSamples_), std::end(audioSamples_));
 	//}
 
-public: // frames (samples)
+public: // current sample
 	const std::vector<short>& audioSamples() const;
 
-	void setLastMousePressPos(const QPointF& localPos);
-	long currentFrameInd() const;
-	void setCurrentFrameInd(long value);
+	void setLastMousePressPos(const QPointF& localPos, bool isShiftPressed);
+	long currentSampleInd() const;
+	std::pair<long, long> cursor() const;
+	static std::pair<long, long> nullCursor() { return std::make_pair(PticaGovorun::NullSampleInd, PticaGovorun::NullSampleInd); }
 private:
-	void setCurrentFrameIndInternal(long value, bool updateCurrentMarkerInd, bool updateViewportOffset);
-	
+	void setCursorInternal(long curSampleInd, bool updateCurrentMarkerInd, bool updateViewportOffset);
+	void setCursorInternal(std::pair<long, long> value, bool updateCurrentMarkerInd, bool updateViewportOffset);
+private:
+		
+	// The range of samples to perform action on.
+	// when user clicks on the screen the first value is updated
+	// if user selects the region, the second value is updated
+	// two values are in unordered state
+	std::pair<long, long> cursor_ = nullCursor();
+
 	// markers
 private:
 	// Helper structure to store marker and its index in original markers collection.
@@ -156,7 +167,7 @@ public:
 	void dragMarkerStop();
 	void dragMarkerContinue(const QPointF& localPos);
 private:
-	void setCurrentMarkerIndInternal(int markerInd, bool updateCurrentFrameInd, bool updateViewportOffset);
+	void setCurrentMarkerIndInternal(int markerInd, bool updateCurrentSampleInd, bool updateViewportOffset);
 
 	// returns the closest segment which contains given frameInd. The segment is described by two indices in
 	// the original collection of markers.
@@ -208,7 +219,6 @@ private:
 	// number of pixels to the left/right of samples graph
 	// together with the samples graph is treated as the document
 	float docPaddingPix_ = 100;
-	long currentFrameInd_ = -1;
 
 	// Represents internal audio player's data.
 	// The range (StartPlayingFrameInd;FinishPlayingFrameInd) of frames is played.
@@ -226,7 +236,7 @@ private:
 		// used to determine when to stop playing
 		long FinishPlayingFrameInd; // is not changed when playing
 
-		// PticaGovorun::PGFrameIndNull if CurFrameInd should not be restored
+		// PticaGovorun::NullSampleInd if CurFrameInd should not be restored
 		long RestoreCurrentFrameInd; // CurFrameInd to restore when playing finishes
 		PaStream *stream;
 		std::atomic<bool> allowPlaying;
