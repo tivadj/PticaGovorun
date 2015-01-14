@@ -27,6 +27,27 @@ enum class SegmentStartFrameToPlayChoice
 	SegmentBegin
 };
 
+// Visual representation of the segment of samples.
+struct DiagramSegment
+{
+	long SampleIndBegin = -1;
+	long SampleIndEnd = -1;
+
+	PticaGovorun::PhoneAlignmentInfo TranscripTextPhones; // splits transcripted text into phones and align them onto audio
+
+	// Text used for phone alignment on this segment
+	QString TextToAlign;
+	//PhoneAlignmentInfo TranscripTextPhones; // splits transcripted text into phones and align them onto audio
+
+	// segmemt recognition result
+	QString RecogSegmentText;
+	QString RecogSegmentWords;
+	std::vector<PticaGovorun::AlignedPhoneme> RecogAlignedPhonemeSeq;
+	bool RecogAlignedPhonemeSeqPadded = true; // true, if alignment was on a padded (with zeros) segment
+
+	std::vector<PticaGovorun::ClassifiedSpeechSegment> ClassifiedFrames;
+};
+
 // The document is a graph for samples plus padding to the left and right.
 // The samples graph is painted with current 'scale'.
 // A user can specify samples of interest using a cursor. The sample is specified with a sample index.
@@ -57,8 +78,9 @@ public:
 	// restoreCurFrameInd=true, if current frame must be restored when playing finishes.
 	// The audio samples to play must exist during the process of playing.
 	void soundPlayerPlay(const short* audioSouce, long startPlayingFrameInd, long finishPlayingFrameInd, bool restoreCurFrameInd);
+	
 	// outLeftMarkerInd (may be null): returns the index of current segment's left marker.
-	std::tuple<long, long> getFrameRangeToPlay(long curFrameInd, SegmentStartFrameToPlayChoice startFrameChoice, int* outLeftMarkerInd = nullptr);
+	std::tuple<long, long> getSampleRangeToPlay(long curSampleInd, SegmentStartFrameToPlayChoice startFrameChoice, int* outLeftMarkerInd = nullptr);
 
 	void soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice startFrameChoice);
 	void soundPlayerPause();
@@ -98,6 +120,9 @@ public:
 	//  return arv::array_view<short>(audioSamples_);
 	//	return arv::array_view<short>(std::begin(audioSamples_), std::end(audioSamples_));
 	//}
+public:
+	// generic requests
+	void deleteRequest();
 
 public: // current sample
 	const std::vector<short>& audioSamples() const;
@@ -142,6 +167,16 @@ private:
 	float lastMousePressDocPosX_ = -1;
 
 public:
+	// Diagrams on sound wave.
+
+	const wv::slice<const DiagramSegment> diagramSegments() const;
+	void collectDiagramSegmentIndsOverlappingRange(std::pair<long, long> samplesRange, std::vector<int>& diagElemInds);
+	
+	// returns true if something was deleted
+	bool deleteDiagramSegmentsAtCursor(std::pair<long, long> samplesRange);
+private:
+	std::vector<DiagramSegment> diagramSegments_;
+public:
 
 	const std::vector<PticaGovorun::TimePointMarker>& frameIndMarkers() const;
 	void collectMarkersOfInterest(std::vector<MarkerRefToOrigin>& markersOfInterest, bool processPhoneMarkers);
@@ -150,7 +185,9 @@ public:
 	void transformMarkersIf(std::vector<MarkerRefToOrigin>& markersOfInterest, MarkerPred canSelectMarker);
 	
 	void insertNewMarkerAtCursorRequest();
-	void deleteCurrentMarkerRequest();
+
+	// true if marker was deleted
+	bool deleteMarker(int markerInd);
 	// dist=number of frames between frameInd and the closest marker.
 	template <typename Markers, typename FrameIndSelector>
 	int getClosestMarkerInd(const Markers& markers, FrameIndSelector markerFrameIndSelector, long frameInd, long* dist) const;
@@ -204,6 +241,9 @@ public: // segment composer
 private:
 	std::vector<short> composedAudio_;
 
+	// string assiciated with the range of samples (cursor)
+	QString cursorTextToAlign_;
+
 public:
 	// navigation
 	void setAudioMarkupNavigator(std::shared_ptr<AudioMarkupNavigator> audioMarkupNavigator);
@@ -252,7 +292,7 @@ private:
 	
 	// number of padding silence samples to the left and right of audio segment
 	// The silence prefix/suffix for audio is equal across all recognizers.
-	size_t silencePadAudioFramesCount_ = 1500; // pad with couple of windows of FrameSize
+	size_t silencePadAudioSamplesCount_ = 1500; // pad with couple of windows of FrameSize
 
 public:
 	float scale_;

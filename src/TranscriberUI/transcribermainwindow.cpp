@@ -297,7 +297,7 @@ void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 	else if (ke->key() == Qt::Key_Insert)
 		transcriberModel_->insertNewMarkerAtCursorRequest();
 	else if (ke->key() == Qt::Key_Delete)
-		transcriberModel_->deleteCurrentMarkerRequest();
+		transcriberModel_->deleteRequest();
 	else if (ke->key() == Qt::Key_T)
 		transcriberModel_->selectMarkerClosestToCurrentCursorRequest();
 

@@ -97,14 +97,15 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 		prevY = y;
 	}
 
-
-	QColor phonemeColor(0, 0, 0);
-	painter.setPen(phonemeColor);
-	drawPhonemesAndPhonemeMarkers(painter, canvasHeight, visibleDocLeft, visibleDocRight);
+	auto diagItemDrawFun = [=,&painter](const DiagramSegment& diagItem)
+	{
+		drawDiagramSegment(painter, diagItem, canvasHeight);
+	};
+	processVisibleDiagramSegments(painter, visibleDocLeft, visibleDocRight, diagItemDrawFun);
 
 	// draw phrase markers
 
-	drawSampleMarkers(painter, canvasHeight, visibleDocLeft, visibleDocRight);
+	drawMarkers(painter, visibleDocLeft, visibleDocRight, 0, canvasHeight);
 
 	// draw samples range adornment
 	drawCursor(painter, true, 0, canvasHeight);
@@ -143,7 +144,7 @@ void AudioSamplesWidget::drawCursor(QPainter& painter, bool inForeground, float 
 	}
 }
 
-void AudioSamplesWidget::drawSampleMarkers(QPainter& painter, int markerHeightMax, float visibleDocLeft, float visibleDocRight)
+void AudioSamplesWidget::drawMarkers(QPainter& painter, float visibleDocLeft, float visibleDocRight, int markerTopY, int markerBotY)
 {
 	auto docOffsetX = transcriberModel_->docOffsetX();
 
@@ -151,7 +152,8 @@ void AudioSamplesWidget::drawSampleMarkers(QPainter& painter, int markerHeightMa
 
 	QColor wordMarkerColor(0, 255, 0); // green
 	QColor phoneMarkerColor(255, 127, 39); // orange
-	int markerCenterY = markerHeightMax / 2;
+	int markerHeightMax = markerBotY - markerTopY;
+	int markerCenterY = markerTopY + markerHeightMax / 2;
 	int markerHalfHeightMax = markerHeightMax / 2;
 	
 	//
@@ -160,18 +162,18 @@ void AudioSamplesWidget::drawSampleMarkers(QPainter& painter, int markerHeightMa
 	{
 		const PticaGovorun::TimePointMarker& marker = markers[markerInd];
 
-		long frameInd = marker.SampleInd;
-		float frameDocX = transcriberModel_->sampleIndToDocPosX(frameInd);
+		long markerSampleInd = marker.SampleInd;
+		float markerDocX = transcriberModel_->sampleIndToDocPosX(markerSampleInd);
 		
 		// repaint only markers from invalidated region
-		if (frameDocX < visibleDocLeft) continue;
-		if (frameDocX > visibleDocRight) break;
+		if (markerDocX < visibleDocLeft) continue;
+		if (markerDocX > visibleDocRight) break;
 
 		visibleMarkerInd++;
 
 		// draw marker
 
-		auto x = frameDocX - docOffsetX;
+		auto x = markerDocX - docOffsetX;
 
 		int markerHalfHeight = markerHalfHeightMax;
 		if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Word)
@@ -185,7 +187,7 @@ void AudioSamplesWidget::drawSampleMarkers(QPainter& painter, int markerHeightMa
 			markerHalfHeight = markerHalfHeightMax * 0.6;
 		}
 
-		painter.drawLine(x, markerCenterY - markerHalfHeight, x, markerCenterY + markerHalfHeight);
+		painter.drawLine(x, markerTopY, x, markerBotY);
 
 		// draw cross above the marker to indicate that it stops audio player
 		if (marker.StopsPlayback)
@@ -203,88 +205,26 @@ void AudioSamplesWidget::drawSampleMarkers(QPainter& painter, int markerHeightMa
 
 		// draw speech recognition results
 
+		auto markerTextFun = [=,&painter](const PticaGovorun::TimePointMarker& marker, int markerViewportX)
+		{
+			static const int TextHeight = 16;
+
+			if (!marker.TranscripText.isEmpty())
+			{
+				painter.drawText(markerViewportX, TextHeight, marker.TranscripText);
+			}
+		};
+
 		// the recognized text from the previous invisible marker may still be visible 
 		if (visibleMarkerInd == 0 && markerInd >= 1)
 		{
 			const auto& prevMarker = markers[markerInd - 1];
-			float prevFrameDocX = transcriberModel_->sampleIndToDocPosX(prevMarker.SampleInd);
-			drawMarkerRecognizedText(painter, prevMarker, prevFrameDocX);
+			float prevMarkerDocX = transcriberModel_->sampleIndToDocPosX(prevMarker.SampleInd);
+			float prevViewpX = prevMarkerDocX - docOffsetX;
+			markerTextFun(prevMarker, prevViewpX);
 		}
-		drawMarkerRecognizedText(painter, marker, frameDocX);
+		markerTextFun(marker, x);
 	}
-}
-
-void AudioSamplesWidget::drawMarkerRecognizedText(QPainter& painter, const PticaGovorun::TimePointMarker& marker, float frameDocX)
-{
-	auto docOffsetX = transcriberModel_->docOffsetX();
-	auto x = frameDocX - docOffsetX;
-
-	static const int TextHeight = 16;
-
-	if (!marker.TranscripText.isEmpty())
-	{
-		painter.drawText(x, TextHeight, marker.TranscripText);
-	}
-	if (!marker.RecogSegmentText.isEmpty())
-	{
-		painter.drawText(x, TextHeight*2, marker.RecogSegmentText);
-	}
-	if (!marker.RecogSegmentWords.isEmpty())
-	{
-		painter.drawText(x, TextHeight * 3, marker.RecogSegmentWords);
-	}
-}
-
-void AudioSamplesWidget::drawPhonemesAndPhonemeMarkers(QPainter& painter, int markerHeight, float visibleDocLeft, float visibleDocRight)
-{
-	using namespace PticaGovorun;
-	int leftMarkerInd = -1;
-	std::tuple<long,long> seg = transcriberModel_->getFrameRangeToPlay(transcriberModel_->currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &leftMarkerInd);
-	if (leftMarkerInd == -1)
-		return;
-	
-	int segBegSample = std::get<0>(seg);
-	int segEndSample = std::get<1>(seg);
-
-	// extend the segment with silence
-	long extendedSegBegSample = segBegSample - transcriberModel_->silencePadAudioFramesCount();
-	long extendedSegEndSample = segEndSample + transcriberModel_->silencePadAudioFramesCount();
-
-	const int PhoneRowHeight = 10; // height of each phone's delimiter cell
-	
-	// make the number of phone rows so that each phone cell do not overlap with neighbour cell in the next column
-	const int CellGapXPix = 10; // (in pixels) the width of the empty space between neighbour phone cells in one row
-	float pixPerSample = transcriberModel_->pixelsPerSample();
-	int PhoneRowsCount = 1 + (FrameSize * pixPerSample + CellGapXPix) / (FrameShift * pixPerSample);
-
-	int phonemesBottomLine = height();
-
-	// paint optimization, prevent drawing the phone ruler when audio plays
-	if (!transcriberModel_->soundPlayerIsPlaying())
-		drawShiftedFramesRuler(painter, phonemesBottomLine, extendedSegBegSample, extendedSegEndSample, PhoneRowHeight, PhoneRowsCount);
-
-	// recognized phones
-
-	const auto& markers = transcriberModel_->frameIndMarkers();
-	const PticaGovorun::TimePointMarker& marker = markers[leftMarkerInd];
-	int phoneNameY = phonemesBottomLine - PhoneRowHeight*(PhoneRowsCount + 1); // +1 to jump to the upper line
-	
-	long phonesOffsetX = marker.SampleInd;
-	if (marker.RecogAlignedPhonemeSeqPadded)
-		phonesOffsetX -= transcriberModel_->silencePadAudioFramesCount();
-
-	drawPhoneMarkersAndNames(painter, phonesOffsetX, marker.RecogAlignedPhonemeSeq, markerHeight, markerHeight*0.3, phoneNameY);
-
-	// transcription text phones
-
-	int transcripTextMarkerBottomY = markerHeight*0.69;
-	int transcripTextPhoneNameY = transcripTextMarkerBottomY + 16; // +height of text
-	drawPhoneMarkersAndNames(painter, phonesOffsetX, marker.TranscripTextPhones.AlignInfo, transcripTextMarkerBottomY, markerHeight*0.3, transcripTextPhoneNameY);
-
-	// grid is in the top
-	int gridTopY = 0;
-	int gridBotY = markerHeight*0.3;
-	drawClassifiedPhonesGrid(painter, phonesOffsetX, marker.ClassifiedFrames, gridTopY, gridBotY);
 }
 
 void AudioSamplesWidget::drawShiftedFramesRuler(QPainter& painter, int phonemesBottomLine, int ruleBegSample, int rulerEndSample, int phoneRowHeight, int phoneRowsCount)
@@ -322,7 +262,7 @@ void AudioSamplesWidget::drawShiftedFramesRuler(QPainter& painter, int phonemesB
 	}
 }
 
-void AudioSamplesWidget::drawPhoneMarkersAndNames(QPainter& painter, long phonesOffsetSampleInd, const std::vector<PticaGovorun::AlignedPhoneme>& markerPhones, int markerBottomY, int maxPhoneMarkerHeight, int phoneTextY)
+void AudioSamplesWidget::drawPhoneSeparatorsAndNames(QPainter& painter, long phonesOffsetSampleInd, const std::vector<PticaGovorun::AlignedPhoneme>& markerPhones, int markerBottomY, int maxPhoneMarkerHeight, int phoneTextY)
 {
 	if (markerPhones.empty())
 		return;
@@ -449,6 +389,111 @@ void AudioSamplesWidget::drawClassifiedPhonesGrid(QPainter& painter, long phones
 			QString text = QString("%1").arg(percTens);
 			painter.drawText((x1 + x2) / 2 - TextPad, (cellTopY + cellBotY) / 2 + TextPad, text);
 		}
+	}
+}
+
+void AudioSamplesWidget::drawDiagramSegment(QPainter& painter, const DiagramSegment& diagItem, int canvasHeight)
+{
+	using namespace PticaGovorun;
+
+	// extend the segment with silence
+	long paddedSegBegSample = diagItem.SampleIndBegin;
+	long paddedSegEndSample = diagItem.SampleIndEnd;
+	if (diagItem.RecogAlignedPhonemeSeqPadded)
+	{
+		paddedSegBegSample -= transcriberModel_->silencePadAudioFramesCount();
+		paddedSegEndSample += transcriberModel_->silencePadAudioFramesCount();
+	}
+
+	{
+		const int PhoneRowHeight = 10; // height of each phone's delimiter cell
+
+		// make the number of phone rows so that each phone cell do not overlap with neighbour cell in the next column
+		const int CellGapXPix = 10; // (in pixels) the width of the empty space between neighbour phone cells in one row
+		float pixPerSample = transcriberModel_->pixelsPerSample();
+		int PhoneRowsCount = 1 + (FrameSize * pixPerSample + CellGapXPix) / (FrameShift * pixPerSample);
+
+		int phonemesBottomLine = height();
+
+		// paint optimization, prevent drawing the phone ruler when audio plays
+		if (!transcriberModel_->soundPlayerIsPlaying())
+		{
+			QColor rulerColor(155, 155, 155);
+			painter.setPen(rulerColor);
+			drawShiftedFramesRuler(painter, phonemesBottomLine, paddedSegBegSample, paddedSegEndSample, PhoneRowHeight, PhoneRowsCount);
+		}
+
+		int phoneNameY = phonemesBottomLine - PhoneRowHeight*(PhoneRowsCount + 1); // +1 to jump to the upper line
+
+		// recognized text split into phones
+
+		int sepBotY = canvasHeight;
+		int sepHeight = canvasHeight*0.3;
+		drawPhoneSeparatorsAndNames(painter, paddedSegBegSample, diagItem.RecogAlignedPhonemeSeq, sepBotY, sepHeight, phoneNameY);
+
+		// transcription text split into phones
+
+		int transcripTextMarkerBottomY = canvasHeight*0.69;
+		int transcripTextPhoneNameY = transcripTextMarkerBottomY + 16; // +height of text
+		int maxPhoneMarkerHeight = canvasHeight*0.3;
+		drawPhoneSeparatorsAndNames(painter, paddedSegBegSample, diagItem.TranscripTextPhones.AlignInfo, transcripTextMarkerBottomY, maxPhoneMarkerHeight, transcripTextPhoneNameY);
+	}
+
+	{
+		// grid is in the top
+		int gridTopY = 20; // skip some space from top to avoid painting over text
+		int gridBotY = gridTopY + canvasHeight*0.3;
+		drawClassifiedPhonesGrid(painter, paddedSegBegSample, diagItem.ClassifiedFrames, gridTopY, gridBotY);
+	}
+	
+	{
+		// draw recognized text
+
+		long frameInd = paddedSegBegSample;
+		float frameDocX = transcriberModel_->sampleIndToDocPosX(frameInd);
+
+		auto docOffsetX = transcriberModel_->docOffsetX();
+		auto x = frameDocX - docOffsetX;
+
+		static const int TextHeight = 16;
+
+		if (!diagItem.TextToAlign.isEmpty())
+		{
+			painter.drawText(x, TextHeight, diagItem.TextToAlign);
+		}
+		if (!diagItem.RecogSegmentText.isEmpty())
+		{
+			painter.drawText(x, TextHeight * 2, diagItem.RecogSegmentText);
+		}
+		if (!diagItem.RecogSegmentWords.isEmpty())
+		{
+			painter.drawText(x, TextHeight * 3, diagItem.RecogSegmentWords);
+		}
+	}
+}
+
+void AudioSamplesWidget::processVisibleDiagramSegments(QPainter& painter, float visibleDocLeft, float visibleDocRight,
+	std::function<void(const DiagramSegment& diagItem)> onDiagItem)
+{
+	wv::slice<const DiagramSegment> diagItems = transcriberModel_->diagramSegments();
+	for (const DiagramSegment diagItem : diagItems)
+	{
+		auto diagItemDocXBeg = transcriberModel_->sampleIndToDocPosX(diagItem.SampleIndBegin);
+		auto diagItemDocXEnd = transcriberModel_->sampleIndToDocPosX(diagItem.SampleIndEnd);
+		
+		// diagram element is inside the visible range
+		bool hitBeg = diagItemDocXBeg >= visibleDocLeft && diagItemDocXBeg <= visibleDocRight;
+		bool hitEnd = diagItemDocXEnd >= visibleDocLeft && diagItemDocXEnd <= visibleDocRight;
+
+		// visible range overlaps the diagram element
+		bool visBeg = visibleDocLeft >= diagItemDocXBeg && visibleDocLeft <= diagItemDocXEnd;
+		bool visEnd = visibleDocRight >= diagItemDocXBeg && visibleDocRight <= diagItemDocXEnd;
+
+		bool visib = hitBeg || hitEnd || visBeg || visEnd;
+		if (!visib)
+			continue;
+
+		onDiagItem(diagItem);
 	}
 }
 

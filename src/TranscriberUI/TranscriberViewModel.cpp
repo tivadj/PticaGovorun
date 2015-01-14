@@ -38,6 +38,8 @@ void TranscriberViewModel::loadAudioFile()
 {
 	using namespace PticaGovorun;
 	audioSamples_.clear();
+	diagramSegments_.clear();
+
     auto readOp = PticaGovorun::readAllSamples(audioFilePathAbs_.toStdString(), audioSamples_);
 	if (!std::get<0>(readOp))
 	{
@@ -289,9 +291,15 @@ void TranscriberViewModel::transformMarkersIf(std::vector<MarkerRefToOrigin>& ma
 	}
 }
 
-std::tuple<long, long> TranscriberViewModel::getFrameRangeToPlay(long curFrameInd, SegmentStartFrameToPlayChoice startFrameChoice, int* outLeftMarkerInd)
+std::tuple<long, long> TranscriberViewModel::getSampleRangeToPlay(long curSampleInd, SegmentStartFrameToPlayChoice startFrameChoice, int* outLeftMarkerInd)
 {
 	PG_Assert(!audioSamples_.empty() && "Audio samples must be loaded");
+
+	auto cur = cursor();
+	
+	// if range is selected, then always operate on it
+	if (cur.second != PticaGovorun::NullSampleInd)
+		return std::make_tuple(cur.first, cur.second);
 
 	std::vector<MarkerRefToOrigin>& markers = markersOfInterestCache_;
 	markers.clear();
@@ -309,7 +317,7 @@ std::tuple<long, long> TranscriberViewModel::getFrameRangeToPlay(long curFrameIn
 	int leftMarkerInd = -1;
 	int rightMarkerInd = -1;
 	auto markerFrameIndSelector = [](const MarkerRefToOrigin& m) { return m.Marker.SampleInd;  };
-	bool foundSegOp = findSegmentMarkerInds(markers, markerFrameIndSelector, curFrameInd, true, leftMarkerInd, rightMarkerInd);
+	bool foundSegOp = findSegmentMarkerInds(markers, markerFrameIndSelector, curSampleInd, true, leftMarkerInd, rightMarkerInd);
 	PG_Assert(foundSegOp && "The segment to play must be found");
 
 	if (outLeftMarkerInd != nullptr)
@@ -328,7 +336,7 @@ std::tuple<long, long> TranscriberViewModel::getFrameRangeToPlay(long curFrameIn
 		// current frameInd is before the first marker
 
 		if (startFrameChoice == SegmentStartFrameToPlayChoice::CurrentCursor)
-			startPlayFrameInd = curFrameInd;
+			startPlayFrameInd = curSampleInd;
 		else if (startFrameChoice == SegmentStartFrameToPlayChoice::SegmentBegin)
 			startPlayFrameInd = 0;
 
@@ -338,7 +346,7 @@ std::tuple<long, long> TranscriberViewModel::getFrameRangeToPlay(long curFrameIn
 	else
 	{
 		if (startFrameChoice == SegmentStartFrameToPlayChoice::CurrentCursor)
-			startPlayFrameInd = curFrameInd;
+			startPlayFrameInd = curSampleInd;
 		else if (startFrameChoice == SegmentStartFrameToPlayChoice::SegmentBegin)
 			startPlayFrameInd = markers[leftMarkerInd].Marker.SampleInd;
 
@@ -373,7 +381,7 @@ void TranscriberViewModel::soundPlayerPlayCurrentSegment(SegmentStartFrameToPlay
 
 
 	// determine the frameInd to which to play audio
-	auto frameRangeToPlay = getFrameRangeToPlay(curFrameInd, startFrameChoice);
+	auto frameRangeToPlay = getSampleRangeToPlay(curFrameInd, startFrameChoice);
 	long startFrameInd = std::get<0>(frameRangeToPlay);
 	long finishFrameInd = std::get<1>(frameRangeToPlay);
 
@@ -495,9 +503,79 @@ float TranscriberViewModel::sampleIndToDocPosX(long sampleInd) const
 	return docPaddingPix_ + sampleInd * scale_;
 }
 
+void TranscriberViewModel::deleteRequest()
+{
+	// delete current marker?
+
+	int markerInd = currentMarkerInd();
+	bool delMarkerOp = deleteMarker(markerInd);
+	if (delMarkerOp)
+		return;
+
+	std::pair<long, long> samplesRange = cursor();
+	bool delDiagOp = deleteDiagramSegmentsAtCursor(samplesRange);
+	if (delDiagOp)
+		return;
+}
+
 const std::vector<short>& TranscriberViewModel::audioSamples() const
 {
 	return audioSamples_;
+}
+
+const wv::slice<const DiagramSegment> TranscriberViewModel::diagramSegments() const
+{
+	//return wv::make_view(diagramSegments_);
+	return wv::make_view(diagramSegments_.data(), diagramSegments_.size());
+}
+
+void TranscriberViewModel::collectDiagramSegmentIndsOverlappingRange(std::pair<long, long> samplesRange, std::vector<int>& diagElemInds)
+{
+	int i = -1;
+	for (const DiagramSegment diagItem : diagramSegments_)
+	{
+		++i;
+
+		auto diagItemBeg = diagItem.SampleIndBegin;
+		auto diagItemEnd = diagItem.SampleIndEnd;
+
+		// diagram element is inside the visible range
+		bool hitBeg = diagItemBeg >= samplesRange.first && diagItemBeg <= samplesRange.second;
+		bool hitEnd = diagItemEnd >= samplesRange.first && diagItemEnd <= samplesRange.second;
+
+		// visible range overlaps the diagram element
+		bool visBeg = samplesRange.first >= diagItemBeg && samplesRange.first <= diagItemEnd;
+		bool visEnd = samplesRange.second >= diagItemBeg && samplesRange.second <= diagItemEnd;
+
+		bool visib = hitBeg || hitEnd || visBeg || visEnd;
+		if (visib)
+			diagElemInds.push_back(i);
+	}
+}
+
+bool TranscriberViewModel::deleteDiagramSegmentsAtCursor(std::pair<long, long> samplesRange)
+{
+	if (samplesRange.first == PticaGovorun::NullSampleInd)
+		return false;
+
+	if (samplesRange.second == PticaGovorun::NullSampleInd)
+		samplesRange.second = samplesRange.first;
+
+	std::vector<int> diagElemInds;
+	collectDiagramSegmentIndsOverlappingRange(samplesRange, diagElemInds);
+	if (diagElemInds.empty())
+		return false;
+
+	for (auto it = diagElemInds.rbegin(); it != diagElemInds.rend(); ++it)
+	{
+		int indToRemove = *it;
+		diagramSegments_.erase(diagramSegments_.begin() + indToRemove);
+	}
+
+	// redraw everything
+	emit audioSamplesChanged();
+
+	return true;
 }
 
 const std::vector<PticaGovorun::TimePointMarker>& TranscriberViewModel::frameIndMarkers() const
@@ -801,15 +879,15 @@ void TranscriberViewModel::insertNewMarkerAtCursorRequest()
 	emit audioSamplesChanged();
 }
 
-void TranscriberViewModel::deleteCurrentMarkerRequest()
+bool TranscriberViewModel::deleteMarker(int markerInd)
 {
-	int markerInd = currentMarkerInd();
-	if (markerInd == -1)
-		return;
+	if (markerInd < 0 || markerInd >= frameIndMarkers_.size())
+		return false;
 
 	frameIndMarkers_.erase(frameIndMarkers_.cbegin() + markerInd);
 
 	setCurrentMarkerIndInternal(-1, false, false);
+	return true;
 }
 
 template <typename Markers, typename FrameIndSelector>
@@ -903,9 +981,10 @@ int TranscriberViewModel::currentMarkerInd() const
 
 void TranscriberViewModel::setCurrentMarkerTranscriptText(const QString& text)
 {
-	if (currentMarkerInd_ == -1)
-		return;
-	frameIndMarkers_[currentMarkerInd_].TranscripText = text;
+	if (currentMarkerInd_ != -1)
+		frameIndMarkers_[currentMarkerInd_].TranscripText = text;
+	else
+		cursorTextToAlign_ = text;
 }
 
 void TranscriberViewModel::setCurrentMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail)
@@ -972,17 +1051,13 @@ void TranscriberViewModel::recognizeCurrentSegmentRequest()
 	if (recognizer_ == nullptr)
 		return;
 
-	int outLeftMarkerInd;
-	auto curSeg = getFrameRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
-	if (outLeftMarkerInd == -1) // not marker to associate recognized text with
-		return;
-
+	auto curSeg = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin);
 	long curSegBeg = std::get<0>(curSeg);
 	long curSegEnd = std::get<1>(curSeg);
 	auto len = curSegEnd - curSegBeg;
 
 	// pad the audio with silince
-	PticaGovorun::padSilence(&audioSamples_[curSegBeg], len, silencePadAudioFramesCount_, audioSegmentBuffer_);
+	PticaGovorun::padSilence(&audioSamples_[curSegBeg], len, silencePadAudioSamplesCount_, audioSegmentBuffer_);
 
 	PticaGovorun::JuiliusRecognitionResult recogResult;
 	auto recogOp = recognizer_->recognize(FrameToSamplePicker, audioSegmentBuffer_.data(), audioSegmentBuffer_.size(), recogResult);
@@ -996,8 +1071,8 @@ void TranscriberViewModel::recognizeCurrentSegmentRequest()
 	if (!recogResult.AlignmentErrorMessage.empty())
 		emit nextNotification(QString::fromStdString(recogResult.AlignmentErrorMessage));
 
-#if PG_DEBUG
-	long markerOffset = frameIndMarkers_[outLeftMarkerInd].SampleInd;
+#if PG_DEBUG // TODO: take sampleInd from curSegBeg
+	long markerOffset = curSegBeg - silencePadAudioSamplesCount_;
 	for (const PticaGovorun::AlignedPhoneme& phone : recogResult.AlignedPhonemeSeq)
 	{
 		qDebug() << "[" << phone.BegFrame << "," << phone.EndFrameIncl << "] [" 
@@ -1006,23 +1081,27 @@ void TranscriberViewModel::recognizeCurrentSegmentRequest()
 #endif
 
 	//
-	PticaGovorun::TimePointMarker& leftMarker = frameIndMarkers_[outLeftMarkerInd];
-	
+	DiagramSegment diagSeg;
+	diagSeg.SampleIndBegin = curSegBeg;
+	diagSeg.SampleIndEnd = curSegEnd;
+	diagSeg.RecogAlignedPhonemeSeqPadded = true;
+
 	std::wstringstream recogText;
 	for (const std::wstring& word : recogResult.TextPass1)
 	{
 		recogText << word << " ";
 	}
-	leftMarker.RecogSegmentText = QString::fromStdWString(recogText.str());
+	diagSeg.RecogSegmentText = QString::fromStdWString(recogText.str());
 
 	recogText.str(L"");
 	for (const std::wstring& word : recogResult.WordSeq)
 	{
 		recogText << word << " ";
 	}
-	leftMarker.RecogSegmentWords = QString::fromStdWString(recogText.str());
+	diagSeg.RecogSegmentWords = QString::fromStdWString(recogText.str());
+	diagSeg.RecogAlignedPhonemeSeq = recogResult.AlignedPhonemeSeq;
 
-	leftMarker.RecogAlignedPhonemeSeq = recogResult.AlignedPhonemeSeq;
+	diagramSegments_.push_back(diagSeg);
 
 	// redraw current segment
 	emit audioSamplesChanged();
@@ -1056,18 +1135,23 @@ void TranscriberViewModel::alignPhonesForCurrentSegmentRequest()
 
 	ensureWordToPhoneListVocabularyLoaded();
 
-	int outLeftMarkerInd;
-	auto curSeg = getFrameRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
-	if (outLeftMarkerInd == -1) // not marker to associate recognized text with
-		return;
-
+	int outLeftMarkerInd = -1;
+	auto curSeg = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
 	long curSegBeg = std::get<0>(curSeg);
 	long curSegEnd = std::get<1>(curSeg);
 	auto len = curSegEnd - curSegBeg;
 
-	// convert
-	auto& leftMarker = frameIndMarkers_[outLeftMarkerInd];
-	if (leftMarker.TranscripText.isEmpty())
+	//
+	QString alignText;
+	if (!cursorTextToAlign_.isEmpty())
+		alignText = cursorTextToAlign_;
+	else if (outLeftMarkerInd != -1)
+	{
+		// there is a marker assiciated with this alignment operation
+		alignText = frameIndMarkers_[outLeftMarkerInd].TranscripText;
+	}
+	
+	if (alignText.isEmpty()) // nothing to align
 		return;
 
 	auto wordToPhoneListFun = [this](const std::wstring& word, std::vector<std::string>& wordPhones)->void
@@ -1084,12 +1168,12 @@ void TranscriberViewModel::alignPhonesForCurrentSegmentRequest()
 
 	bool insertShortPause = false;
 	std::vector<std::string> speechPhones;
-	convertTextToPhoneList(leftMarker.TranscripText.toStdWString(), wordToPhoneListFun, insertShortPause, speechPhones);
+	convertTextToPhoneList(alignText.toStdWString(), wordToPhoneListFun, insertShortPause, speechPhones);
 	if (speechPhones.empty())
 		return;
 
 	// pad the audio with silince
-	padSilence(&audioSamples_[curSegBeg], len, silencePadAudioFramesCount_, audioSegmentBuffer_);
+	padSilence(&audioSamples_[curSegBeg], len, silencePadAudioSamplesCount_, audioSegmentBuffer_);
 
 	PticaGovorun::AlignmentParams alignmentParams;
 	alignmentParams.FrameSize = recognizer_->settings().FrameSize;
@@ -1100,7 +1184,14 @@ void TranscriberViewModel::alignPhonesForCurrentSegmentRequest()
 	PticaGovorun::PhoneAlignmentInfo alignmentResult;
 	recognizer_->alignPhones(audioSegmentBuffer_.data(), audioSegmentBuffer_.size(), speechPhones, alignmentParams, phoneStateDistrributionTailSize, alignmentResult);
 
-	leftMarker.TranscripTextPhones = alignmentResult;
+	//
+	DiagramSegment diagSeg;
+	diagSeg.SampleIndBegin = curSegBeg;
+	diagSeg.SampleIndEnd = curSegEnd;
+	diagSeg.RecogAlignedPhonemeSeqPadded = true;
+	diagSeg.TextToAlign = alignText;
+	diagSeg.TranscripTextPhones = alignmentResult;
+	diagramSegments_.push_back(diagSeg);
 
 	emit nextNotification(QString("Alignment score=%1").arg(alignmentResult.AlignmentScore));
 
@@ -1110,7 +1201,7 @@ void TranscriberViewModel::alignPhonesForCurrentSegmentRequest()
 
 size_t TranscriberViewModel::silencePadAudioFramesCount() const
 {
-	return silencePadAudioFramesCount_;
+	return silencePadAudioSamplesCount_;
 }
 
 QString TranscriberViewModel::recognizerName() const
@@ -1164,7 +1255,7 @@ void TranscriberViewModel::testMfccRequest()
 		return;
 
 	int outLeftMarkerInd;
-	auto curSeg = getFrameRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
+	auto curSeg = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
 	if (outLeftMarkerInd == -1) // not marker to associate recognized text with
 		return;
 
@@ -1247,32 +1338,14 @@ void TranscriberViewModel::testMfccRequest()
 void TranscriberViewModel::classifyMfccIntoPhones()
 {
 	using namespace PticaGovorun;
-	//ensureRecognizerIsCreated();
-	//if (recognizer_ == nullptr)
-	//	return;
 
-	int outLeftMarkerInd;
-	auto curSeg = getFrameRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
-	if (outLeftMarkerInd == -1) // not marker to associate recognized text with
-		return;
-
+	auto curSeg = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin);
 	long curSegBeg = std::get<0>(curSeg);
 	long curSegEnd = std::get<1>(curSeg);
 	auto len = curSegEnd - curSegBeg;
 
 	// speech -> MFCC
 
-	//size_t mfccVecLen = MfccVecLen;
-	//std::vector<float> mfccFeatures;
-	//int framesCount;
-	//auto mfccFeatsOp = PticaGovorun::computeMfccFeaturesPub(&audioSamples_[curSegBeg], len, FrameSize, FrameShift, mfccVecLen, mfccFeatures, framesCount);
-	//if (!std::get<0>(mfccFeatsOp))
-	//{
-	//	emit nextNotification(QString::fromStdString(std::get<1>(mfccFeatsOp)));
-	//	return;
-	//}
-
-	//
 	int frameSize = FrameSize;
 	int frameShift = FrameShift;
 	float sampleRate = SampleRate;
@@ -1352,10 +1425,13 @@ void TranscriberViewModel::classifyMfccIntoPhones()
 	std::vector<AlignedPhoneme> monoPhonesMerged;
 	mergeSamePhoneStates(monoPhonesPerWindow, monoPhonesMerged);
 
-	TimePointMarker& leftMarker = frameIndMarkers_[outLeftMarkerInd];
-	leftMarker.ClassifiedFrames = classifiedWindows;
-	leftMarker.RecogAlignedPhonemeSeq = monoPhonesMerged;
-	leftMarker.RecogAlignedPhonemeSeqPadded = false;
+	DiagramSegment diagSeg;
+	diagSeg.SampleIndBegin = curSegBeg;
+	diagSeg.SampleIndEnd = curSegEnd;
+	diagSeg.RecogAlignedPhonemeSeqPadded = false;
+	diagSeg.RecogAlignedPhonemeSeq = monoPhonesMerged;
+	diagSeg.ClassifiedFrames = classifiedWindows;
+	diagramSegments_.push_back(diagSeg);
 
 	// redraw current segment
 	emit audioSamplesChanged();

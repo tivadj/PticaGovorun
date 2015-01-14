@@ -120,14 +120,6 @@ struct TimePointMarker
 	bool StopsPlayback;
 
 	QString TranscripText;
-	PhoneAlignmentInfo TranscripTextPhones; // splits transcripted text into phones and align them onto audio
-
-	// recognition results
-	QString RecogSegmentText;
-	QString RecogSegmentWords;
-	std::vector<AlignedPhoneme> RecogAlignedPhonemeSeq;
-	bool RecogAlignedPhonemeSeqPadded = true; // true, if alignment was on a padded (with zeros) segment
-	std::vector<ClassifiedSpeechSegment> ClassifiedFrames;
 };
 
 // Determines if a marker with given level of detail will stop the audio playback.
