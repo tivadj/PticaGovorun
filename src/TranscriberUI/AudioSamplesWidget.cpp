@@ -342,13 +342,37 @@ void AudioSamplesWidget::drawClassifiedPhonesGrid(QPainter& painter, long phones
 		return;
 
 	float docOffsetX = transcriberModel_->docOffsetX();
-
 	int gridHeight = gridBottomY - gridTopY;
 	int phonesCount = PticaGovorun::phoneMonoCount();
-	int i = -1;
 	std::string phoneName = "?";
+	const int TextPad = 2; // pixels, prevent phone marker and phone name overlapping 
 
-	for (const PticaGovorun::ClassifiedSpeechSegment& phone : markerPhones)
+	auto rowTopY = [=](int rowInd) { return gridTopY + rowInd / (float)phonesCount * gridHeight; };
+
+	{
+		// draw title of each row
+		long firstFrameSampleInd = phonesOffsetSampleInd + markerPhones[0].BegSample;
+		float firstFrameX = transcriberModel_->sampleIndToDocPosX(firstFrameSampleInd);
+		firstFrameX -= docOffsetX;
+
+		QColor headerPhoneColor(0, 0, 0); // black
+		painter.setPen(headerPhoneColor);
+
+		for (int rowInd = 0; rowInd < phonesCount; ++rowInd)
+		{
+			float cellTopY = rowTopY(rowInd);
+			float cellBotY = rowTopY(rowInd + 1);
+
+			PticaGovorun::phoneIdToByPhoneName(rowInd, phoneName);
+			QString text = QString::fromStdString(phoneName);
+
+			const int PhoneNameWidth = 6;
+			painter.drawText(firstFrameX - PhoneNameWidth, (cellTopY + cellBotY) / 2 + TextPad, text);
+		}
+	}
+
+	int i = -1;
+	for (const PticaGovorun::ClassifiedSpeechSegment& phone : markerPhones) // classified frames in columns
 	{
 		i++;
 
@@ -366,10 +390,10 @@ void AudioSamplesWidget::drawClassifiedPhonesGrid(QPainter& painter, long phones
 		auto maxIt = std::max_element(std::begin(phone.PhoneLogProbs), std::end(phone.PhoneLogProbs));
 		int mostProbPhoneInd = maxIt - std::begin(phone.PhoneLogProbs);
 
-		for (int phoneInd = 0; phoneInd < phonesCount; ++phoneInd)
+		for (int phoneInd = 0; phoneInd < phonesCount; ++phoneInd) // rows, vertical direction
 		{
-			float cellTopY = gridTopY + phoneInd / (float)phonesCount * gridHeight;
-			float cellBotY = gridTopY + (phoneInd + 1) / (float)phonesCount * gridHeight;
+			float cellTopY = rowTopY(phoneInd);
+			float cellBotY = rowTopY(phoneInd + 1);
 
 			float prob = phone.PhoneLogProbs[phoneInd];
 
@@ -396,7 +420,6 @@ void AudioSamplesWidget::drawClassifiedPhonesGrid(QPainter& painter, long phones
 
 			// phone name
 
-			const int TextPad = 2; // pixels, prevent phone marker and phone name overlapping 
 			PticaGovorun::phoneIdToByPhoneName(phoneInd, phoneName);
 
 			int percTens = (int)(prob * 10);
