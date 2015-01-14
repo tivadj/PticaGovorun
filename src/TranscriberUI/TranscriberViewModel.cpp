@@ -93,7 +93,6 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 #endif
 	data.FinishPlayingFrameInd = finishPlayingFrameInd;
 	data.CurPlayingFrameInd = startPlayingFrameInd;
-	data.RestoreCurrentFrameInd = restoreCurFrameInd ? currentSampleInd() : PticaGovorun::NullSampleInd;
 
 	//
 	PaDeviceIndex deviceIndex = Pa_GetDefaultOutputDevice(); /* default output device */
@@ -172,8 +171,8 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 		long sampleEnd = std::min(data.FinishPlayingFrameInd, sampleInd + (long)framesPerBuffer);
 		int availableFramesCount = sampleEnd - sampleInd;
 
-		// updates current frame in UI
-		transcriberViewModel.setCursorInternal(sampleInd, false, false);
+		// updates playing sample in UI
+		transcriberViewModel.setPlayingSampleInd(sampleInd);
 
 		// populate samples buffer
 
@@ -249,9 +248,8 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 			}
 		}
 
-		// updates current frame in UI
-		if (data.RestoreCurrentFrameInd != PticaGovorun::NullSampleInd)
-			data.transcriberViewModel->setCursorInternal(data.RestoreCurrentFrameInd, false, false);
+		// hides current playing sample in UI
+		data.transcriberViewModel->setPlayingSampleInd(PticaGovorun::NullSampleInd);
 
 		// parts of UI are not painted when cursor moves
 		// redraw entire UI when playing completes
@@ -426,6 +424,21 @@ void TranscriberViewModel::soundPlayerTogglePlayPause()
 bool TranscriberViewModel::soundPlayerIsPlaying() const
 {
 	return isPlaying_;
+}
+
+long TranscriberViewModel::playingSampleInd() const
+{
+	return playingSampleInd_;
+}
+
+void TranscriberViewModel::setPlayingSampleInd(long value)
+{
+	if (playingSampleInd_ != value)
+	{
+		long oldValue = playingSampleInd_;
+		playingSampleInd_ = value;
+		emit playingSampleIndChanged(oldValue);
+	}
 }
 
 QString TranscriberViewModel::audioMarkupFilePathAbs() const

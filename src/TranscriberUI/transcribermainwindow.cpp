@@ -36,6 +36,7 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
 	QObject::connect(transcriberModel_.get(), SIGNAL(lastMouseDocPosXChanged(float)), this, SLOT(transcriberModel_lastMouseDocPosXChanged(float)));
 	QObject::connect(transcriberModel_.get(), SIGNAL(cursorChanged(std::pair<long, long>)), this, SLOT(transcriberModel_cursorChanged(std::pair<long, long>)));
 	QObject::connect(transcriberModel_.get(), SIGNAL(currentMarkerIndChanged()), this, SLOT(transcriberModel_currentMarkerIndChanged()));
+	QObject::connect(transcriberModel_.get(), SIGNAL(playingSampleIndChanged(long)), this, SLOT(transcriberModel_playingSampleIndChanged(long)));
 
 	//
 	ui->widgetSamples->setModel(transcriberModel_);
@@ -256,6 +257,32 @@ void TranscriberMainWindow::transcriberModel_currentMarkerIndChanged()
 	ui->lineEditMarkerText->setText(uiMarkerTranscriptStr);
 	ui->checkBoxCurMarkerStopOnPlayback->setEnabled(uiMarkerStopsPlaybackEnabled);
 	ui->checkBoxCurMarkerStopOnPlayback->setChecked(uiMarkerStopsPlayback);
+}
+
+void TranscriberMainWindow::transcriberModel_playingSampleIndChanged(long oldPlayingSampleInd)
+{
+	QRect updateRect = ui->widgetSamples->rect();
+
+	auto playingSampleInd = transcriberModel_->playingSampleInd();
+	if (oldPlayingSampleInd != PticaGovorun::NullSampleInd && playingSampleInd != PticaGovorun::NullSampleInd)
+	{
+		assert(oldPlayingSampleInd <= playingSampleInd && "Audio must be played forward?");
+
+		auto minSampleInd = oldPlayingSampleInd;
+		auto maxSampleInd = playingSampleInd;
+
+		auto minX = transcriberModel_->sampleIndToDocPosX(minSampleInd);
+		minX -= transcriberModel_->docOffsetX();
+
+		auto maxX = transcriberModel_->sampleIndToDocPosX(maxSampleInd);
+		maxX -= transcriberModel_->docOffsetX();
+
+		const static int VerticalMarkerWidth = 1;
+		updateRect.setLeft(minX - VerticalMarkerWidth);
+		updateRect.setRight(maxX + VerticalMarkerWidth);
+	}
+
+	ui->widgetSamples->update(updateRect);
 }
 
 void TranscriberMainWindow::lineEditMarkerText_editingFinished()

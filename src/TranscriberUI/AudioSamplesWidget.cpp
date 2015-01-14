@@ -109,6 +109,8 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 
 	// draw samples range adornment
 	drawCursor(painter, true, 0, canvasHeight);
+
+	drawPlayingSampleInd(painter, 0, canvasHeight);
 }
 
 void AudioSamplesWidget::drawCursor(QPainter& painter, bool inForeground, float topY, float bottomY)
@@ -142,6 +144,19 @@ void AudioSamplesWidget::drawCursor(QPainter& painter, bool inForeground, float 
 		painter.setBrush(Qt::lightGray);
 		painter.drawRect(curSampleDocX, topY, secondCurSampleDocX - curSampleDocX, bottomY - topY);
 	}
+}
+
+void AudioSamplesWidget::drawPlayingSampleInd(QPainter& painter, int markerTopY, int markerBotY)
+{
+	long sampleInd = transcriberModel_->playingSampleInd();
+	if (sampleInd == PticaGovorun::NullSampleInd)
+		return;
+	auto sampleDocX = transcriberModel_->sampleIndToDocPosX(sampleInd);
+	auto sampleX = sampleDocX - transcriberModel_->docOffsetX();
+
+	QColor curPlayingSampleColor(36, 96, 46); // dark green, like in Audacity
+	painter.setPen(curPlayingSampleColor);
+	painter.drawLine(sampleX, markerTopY, sampleX, markerBotY);
 }
 
 void AudioSamplesWidget::drawMarkers(QPainter& painter, float visibleDocLeft, float visibleDocRight, int markerTopY, int markerBotY)

@@ -31,6 +31,9 @@ private:
 	// inForeground, true if this method called after all content is drawn; false, if before.
 	void drawCursor(QPainter& painter, bool inForeground, float topY, float bottomY);
 	void drawMarkers(QPainter& painter, float visibleDocLeft, float visibleDocRight, int markerTopY, int markerBotY);
+	
+	// Draw current playing sample
+	void drawPlayingSampleInd(QPainter& painter, int markerTopY, int markerBotY);
 
 	// Draw the delimiter cells to show range of phones.
 	// The phones are constructed when audio is split into windows by speech recognition library.

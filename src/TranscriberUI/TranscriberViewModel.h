@@ -52,6 +52,7 @@ struct DiagramSegment
 // The samples graph is painted with current 'scale'.
 // A user can specify samples of interest using a cursor. The sample is specified with a sample index.
 // The range of samples is specified with indices of two boundary samples.
+// When playing audio, the current playing sample is shown.
 class TranscriberViewModel : public QObject
 {
     Q_OBJECT
@@ -69,6 +70,9 @@ signals :
 
 	// Occurs when current marker selection changed.
 	void currentMarkerIndChanged();
+
+	// Occurs when the index of current playing sample changes.
+	void playingSampleIndChanged(long oldPlayingSampleInd);
 public:
     TranscriberViewModel();
 
@@ -91,6 +95,9 @@ public:
 	// Plays from the current frame index to the next frame marker or the end of audio, what will occur earlier.
 	void soundPlayerTogglePlayPause();
 	bool soundPlayerIsPlaying() const;
+	long playingSampleInd() const;
+	void setPlayingSampleInd(long value);
+
 	QString audioMarkupFilePathAbs() const;
 	//
 
@@ -115,11 +122,6 @@ public:
 	// Returns first visible sample which is at docOffsetX position.
 	float docPosXToSampleInd(float docPosX) const;
 	float sampleIndToDocPosX(long sampleInd) const;
-	//const arv::array_view<short> audioSamples222() const
-	//{
-	//  return arv::array_view<short>(audioSamples_);
-	//	return arv::array_view<short>(std::begin(audioSamples_), std::end(audioSamples_));
-	//}
 public:
 	// generic requests
 	void deleteRequest();
@@ -276,13 +278,12 @@ private:
 		// used to determine when to stop playing
 		long FinishPlayingFrameInd; // is not changed when playing
 
-		// PticaGovorun::NullSampleInd if CurFrameInd should not be restored
-		long RestoreCurrentFrameInd; // CurFrameInd to restore when playing finishes
 		PaStream *stream;
 		std::atomic<bool> allowPlaying;
 	};
 	SoundPlayerData soundPlayerData_;
 	std::atomic<bool> isPlaying_;
+	long playingSampleInd_ = PticaGovorun::NullSampleInd; // the plyaing sample or -1 if audio is not playing
 
 	// recognition
 	QString curRecognizerName_;

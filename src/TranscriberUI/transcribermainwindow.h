@@ -41,6 +41,7 @@ private slots:
 	void UpdateDocPosXAndFrameInd(float mouseDocPosX, float sampleInd);
 	void transcriberModel_cursorChanged(std::pair<long, long> oldCursor);
 	void transcriberModel_currentMarkerIndChanged();
+	void transcriberModel_playingSampleIndChanged(long oldPlayingSampleInd);
 	void lineEditMarkerText_editingFinished();
 	void checkBoxCurMarkerStopOnPlayback_toggled(bool checked);
 
