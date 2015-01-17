@@ -48,6 +48,16 @@ struct AlignedPhoneme
 	int EndSample;
 };
 
+// Represents word which is anchored to the waveform.
+struct AlignedWord
+{
+	QString Name;
+	int BegSample;
+	int EndSample;
+	float Prob;
+};
+
+
 struct AlignmentParams
 {
 	int FrameSize;

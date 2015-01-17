@@ -103,7 +103,7 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 	};
 	processVisibleDiagramSegments(painter, visibleDocLeft, visibleDocRight, diagItemDrawFun);
 
-	// draw phrase markers
+	// draw sentence markers
 
 	drawMarkers(painter, visibleDocLeft, visibleDocRight, 0, canvasHeight);
 
@@ -430,6 +430,62 @@ void AudioSamplesWidget::drawClassifiedPhonesGrid(QPainter& painter, long phones
 	}
 }
 
+void AudioSamplesWidget::drawWordSeparatorsAndNames(QPainter& painter, long firstWordSampleIndOffset, const std::vector<PticaGovorun::AlignedWord>& wordBounds, int separatorTopY, int separatorBotY)
+{
+	if (wordBounds.empty())
+		return;
+
+	float docOffsetX = transcriberModel_->docOffsetX();
+	int sepHeightMax = separatorBotY - separatorTopY;
+
+	{
+		// draw min-max horizontal bars to indicate limits of word confidence
+		long leftSampleInd  = firstWordSampleIndOffset + wordBounds[0].BegSample;
+		long rightSampleInd = firstWordSampleIndOffset + wordBounds[wordBounds.size()-1].EndSample;
+
+		float begSampleDocX = transcriberModel_->sampleIndToDocPosX(leftSampleInd);
+		float endSampleDocX = transcriberModel_->sampleIndToDocPosX(rightSampleInd);
+
+		// map to the current viewport
+		int x1 = begSampleDocX - docOffsetX;
+		int x2 = endSampleDocX - docOffsetX;
+
+		QColor barColor(120, 120, 120);
+		painter.setPen(barColor);
+		painter.drawLine(x1, separatorTopY, x2, separatorTopY); // top vertical line
+		painter.drawLine(x1, separatorBotY, x2, separatorBotY); // bottom vertical line
+	}
+
+	QColor separColor(50, 50, 50); // gray
+	painter.setPen(separColor);
+
+	for (const PticaGovorun::AlignedWord& wordBnd : wordBounds)
+	{
+		// align to the start of the segment
+		long leftSampleInd = firstWordSampleIndOffset + wordBnd.BegSample;
+		long rightSampleInd = firstWordSampleIndOffset + wordBnd.EndSample;
+
+		float begSampleDocX = transcriberModel_->sampleIndToDocPosX(leftSampleInd);
+		float endSampleDocX = transcriberModel_->sampleIndToDocPosX(rightSampleInd);
+
+		// map to the current viewport
+		int x1 = begSampleDocX - docOffsetX;
+		int x2 = endSampleDocX - docOffsetX;
+
+		// height of the bar is proportional to the word confidence
+		int segHeight = sepHeightMax*wordBnd.Prob;
+		int horizBarY = separatorBotY - segHeight;
+		painter.drawLine(x1, horizBarY, x1, separatorBotY); // left vertical line
+		painter.drawLine(x2, horizBarY, x2, separatorBotY); // right vertical line
+		painter.drawLine(x1, horizBarY, x2, horizBarY); // horiz line connects two vertical lines
+
+		// text
+
+		const int TextPad = 2; // pixels, prevent vertical line and text overlapping 
+		painter.drawText((x1 + x2) / 2 - TextPad, horizBarY - TextPad, wordBnd.Name); // name above the horizontal line
+	}
+}
+
 void AudioSamplesWidget::drawDiagramSegment(QPainter& painter, const DiagramSegment& diagItem, int canvasHeight)
 {
 	using namespace PticaGovorun;
@@ -482,6 +538,13 @@ void AudioSamplesWidget::drawDiagramSegment(QPainter& painter, const DiagramSegm
 		int gridTopY = 20; // skip some space from top to avoid painting over text
 		int gridBotY = gridTopY + canvasHeight*0.3;
 		drawClassifiedPhonesGrid(painter, paddedSegBegSample, diagItem.ClassifiedFrames, gridTopY, gridBotY);
+	}
+	
+	{
+		// draw word boundaries
+		int blockTopY = canvasHeight*0.3;
+		int blockBotY = canvasHeight*0.7;
+		drawWordSeparatorsAndNames(painter, paddedSegBegSample, diagItem.WordBoundaries, blockTopY, blockBotY);
 	}
 	
 	{

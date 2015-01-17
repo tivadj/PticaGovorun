@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include <vector>
 #include <iostream>
-#include <numeric>
 #include <cmath> // M_PI
 #include "InteropPython.h"
 #include "WavUtils.h"

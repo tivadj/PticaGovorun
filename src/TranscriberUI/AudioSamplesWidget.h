@@ -47,6 +47,9 @@ private:
 	// Draw probability of each phone for each frame in the current segment.
 	void drawClassifiedPhonesGrid(QPainter& painter, long phonesOffsetSampleInd, const std::vector<PticaGovorun::ClassifiedSpeechSegment>& markerPhones, int gridTopY, int gridBottomY);
 
+	// Draw recognized words boundaries.
+	void drawWordSeparatorsAndNames(QPainter& painter, long firstWordSampleIndOffset, const std::vector<PticaGovorun::AlignedWord>& wordBounds, int separatorTopY, int separatorBotY);
+
 	// Draws visual elements associated with the segment of samples.
 	void drawDiagramSegment(QPainter& painter, const DiagramSegment& diagItem, int canvasHeight);
 

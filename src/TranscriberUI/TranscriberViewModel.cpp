@@ -18,6 +18,15 @@
 //#include "algos_amp.cpp"
 #include "InteropPython.h"
 
+#include <samplerate.h>
+
+#if HAS_POCKETSPHINX
+#include <pocketsphinx.h>
+#include <pocketsphinx_internal.h> // ps_decoder_s
+#include <fe_internal.h> // fe_s
+#endif
+
+
 #if HAS_MATLAB
 #include "matrix.h" // mxArray, mxCreateLogicalArray
 #include "PticaGovorunInteropMatlab.h"
@@ -1056,7 +1065,7 @@ void TranscriberViewModel::ensureRecognizerIsCreated()
 	}
 }
 
-void TranscriberViewModel::recognizeCurrentSegmentRequest()
+void TranscriberViewModel::recognizeCurrentSegmentJuliusRequest()
 {
 	using namespace PticaGovorun;
 	ensureRecognizerIsCreated();
@@ -1119,6 +1128,143 @@ void TranscriberViewModel::recognizeCurrentSegmentRequest()
 	// redraw current segment
 	emit audioSamplesChanged();
 }
+
+#if HAS_POCKETSPHINX
+void TranscriberViewModel::recognizeCurrentSegmentSphinxRequest()
+{
+	using namespace PticaGovorun;
+
+	auto curSeg = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin);
+	long curSegBeg = std::get<0>(curSeg);
+	long curSegEnd = std::get<1>(curSeg);
+	auto len = curSegEnd - curSegBeg;
+
+	// pad the audio with silince
+	PticaGovorun::padSilence(&audioSamples_[curSegBeg], len, silencePadAudioSamplesCount_, audioSegmentBuffer_);
+
+	//PticaGovorun::JuiliusRecognitionResult recogResult;
+	//auto recogOp = recognizer_->recognize(FrameToSamplePicker, audioSegmentBuffer_.data(), audioSegmentBuffer_.size(), recogResult);
+
+	const char* hmmPath = R"path(C:/devb/PticaGovorunProj/data/CMUSphinxTutorial/persian/model_parameters/persian.cd_cont_200/)path";
+	const char* langModelPath = R"path(C:/devb/PticaGovorunProj/data/CMUSphinxTutorial/persian/etc/persian.lm.DMP)path";
+	const char* dictPath = R"path(C:/devb/PticaGovorunProj/data/CMUSphinxTutorial/persian/etc/persian.dic)path";
+	cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
+		"-hmm", hmmPath,
+		"-lm", langModelPath,
+		"-dict", dictPath,
+		nullptr);
+	if (config == nullptr)
+		return;
+
+	ps_decoder_t *ps = ps_init(config);
+	if (ps == nullptr)
+		return;
+
+	fe_t* pFeatInfo = ps->acmod->fe; // feature extraction info
+	float sphinxSampleRate = pFeatInfo->sampling_rate;
+	int frameSize = pFeatInfo->frame_size;
+	int frameShift = pFeatInfo->frame_shift;
+
+	// convert to sample frequency required by Sphinx
+	std::vector<float> samplesFloat(std::begin(audioSegmentBuffer_), std::end(audioSegmentBuffer_));
+	std::vector<float> resampledWaveFloat(samplesFloat.size(), 0);
+
+	SRC_DATA convertData;
+	convertData.data_in = samplesFloat.data();
+	convertData.input_frames = samplesFloat.size();
+	convertData.data_out = resampledWaveFloat.data();
+	convertData.output_frames = resampledWaveFloat.size();
+	convertData.src_ratio = sphinxSampleRate / (float)SampleRate;
+
+	int converterType = SRC_SINC_BEST_QUALITY;
+	int channels = 1;
+	int error = src_simple(&convertData, converterType, channels);
+	if (error != 0)
+	{
+		const char* msg = src_strerror(error);
+		qDebug() << msg;
+		return;
+	}
+
+	resampledWaveFloat.resize(convertData.output_frames_gen);
+	std::vector<short> resampledWave(std::begin(resampledWaveFloat), std::end(resampledWaveFloat));
+
+	//
+
+	int ret = ps_start_utt(ps, "goforward");
+	if (ret < 0)
+		return;
+
+	const bool fullUtterance = true;
+	ret = ps_process_raw(ps, resampledWave.data(), resampledWave.size(), false, fullUtterance);
+	if (ret < 0)
+		return;
+
+	ret = ps_end_utt(ps);
+	if (ret < 0)
+		return;
+
+	//
+	int32 score;
+	const char* uttid;
+	const char* hyp = ps_get_hyp(ps, &score, &uttid);
+	if (hyp == nullptr)
+	{
+		qDebug() << "No hypothesis is available";
+		return;
+	}
+
+	QTextCodec* textCodec = QTextCodec::codecForName("utf8");
+	QString hypQStr = textCodec->toUnicode(hyp);
+	std::wstring hypWStr = hypQStr.toStdWString();
+
+
+	// word segmentation
+	std::vector<PticaGovorun::AlignedWord> wordBoundaries;
+	for (ps_seg_t *seg = ps_seg_iter(ps, &score); seg; seg = ps_seg_next(seg))
+	{
+		const char* word = ps_seg_word(seg);
+		QString wordQStr = textCodec->toUnicode(word);
+
+		int frameStart, frameEnd;
+		ps_seg_frames(seg, &frameStart, &frameEnd);
+
+		int32 lscr, ascr, lback;
+		int32 post = ps_seg_prob(seg, &ascr, &lscr, &lback); // posterior probability?
+
+		float64 prob = logmath_exp(ps_get_logmath(ps), post);
+
+		long sampleBeg = -1;
+		long sampleEnd = -1;
+		frameRangeToSampleRange(frameStart, frameEnd, FrameToSamplePicker, frameSize, frameShift, sampleBeg, sampleEnd);
+
+		// convert sampleInd back to original sample rate
+		sampleBeg /= convertData.src_ratio;
+		sampleEnd /= convertData.src_ratio;
+
+		AlignedWord wordBnds;
+		wordBnds.Name = wordQStr;
+		wordBnds.BegSample = sampleBeg;
+		wordBnds.EndSample = sampleEnd;
+		wordBnds.Prob = (float)prob;
+		wordBoundaries.push_back(wordBnds);
+	}
+
+	ps_free(ps);
+
+	//
+	DiagramSegment diagSeg;
+	diagSeg.SampleIndBegin = curSegBeg;
+	diagSeg.SampleIndEnd = curSegEnd;
+	diagSeg.RecogAlignedPhonemeSeqPadded = true;
+	diagSeg.RecogSegmentText = hypQStr;
+	diagSeg.WordBoundaries = std::move(wordBoundaries);
+	diagramSegments_.push_back(diagSeg);
+
+	// redraw current segment
+	emit audioSamplesChanged();
+}
+#endif
 
 void TranscriberViewModel::ensureWordToPhoneListVocabularyLoaded()
 {

@@ -13,6 +13,7 @@
 #include "WavUtils.h"
 #include "MLUtils.h"
 #include "JuliusToolNativeWrapper.h"
+#include "InteropPython.h"
 
 namespace PticaGovorun {
 
@@ -253,6 +254,9 @@ namespace PticaGovorun {
 				i + 1 < syncPoints.size())
 			{
 				std::string phoneName = marker.TranscripText.toStdString();
+				int phoneId = phoneNameToPhoneId(phoneName);
+				if (phoneId == -1)
+					continue;
 				
 				auto it = phoneNameToFeaturesVector.find(phoneName);
 				if (it == std::end(phoneNameToFeaturesVector))

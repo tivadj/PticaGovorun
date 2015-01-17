@@ -46,6 +46,9 @@ struct DiagramSegment
 	bool RecogAlignedPhonemeSeqPadded = true; // true, if alignment was on a padded (with zeros) segment
 
 	std::vector<PticaGovorun::ClassifiedSpeechSegment> ClassifiedFrames;
+
+	// Recognized words for the segment of speech.
+	std::vector<PticaGovorun::AlignedWord> WordBoundaries;
 };
 
 // The document is a graph for samples plus padding to the left and right.
@@ -223,7 +226,10 @@ private:
 public:	// recongizer
 
 	void ensureRecognizerIsCreated();
-	void recognizeCurrentSegmentRequest();
+	void recognizeCurrentSegmentJuliusRequest();
+#if HAS_POCKETSPHINX
+	void recognizeCurrentSegmentSphinxRequest();
+#endif
 	void ensureWordToPhoneListVocabularyLoaded();
 	void alignPhonesForCurrentSegmentRequest();
 	size_t silencePadAudioFramesCount() const;

@@ -41,5 +41,11 @@
     <ClCompile Include="ComputeSpeechMfccTester.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ResampleAudioTester.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RecognizeSpeechSphinxTester.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

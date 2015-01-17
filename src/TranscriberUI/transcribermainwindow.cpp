@@ -316,7 +316,9 @@ void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 		transcriberModel_->soundPlayerTogglePlayPause();
 
 	else if (ke->key() == Qt::Key_R)
-		transcriberModel_->recognizeCurrentSegmentRequest();
+		transcriberModel_->recognizeCurrentSegmentJuliusRequest();
+	else if (ke->key() == Qt::Key_F6)
+		transcriberModel_->recognizeCurrentSegmentSphinxRequest();
 
 	else if (ke->key() == Qt::Key_A)
 		transcriberModel_->alignPhonesForCurrentSegmentRequest();
