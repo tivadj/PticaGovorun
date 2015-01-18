@@ -523,6 +523,39 @@ float TranscriberViewModel::docWidthPix() const
     return audioSamples_.size() * scale_ + 2 * docPaddingPix_;
 }
 
+void TranscriberViewModel::scrollDocumentEndRequest()
+{
+	float maxDocWidth = docWidthPix();
+	scrollPageWithLimits(maxDocWidth);
+}
+
+void TranscriberViewModel::scrollDocumentStartRequest()
+{
+	scrollPageWithLimits(0);
+}
+
+void TranscriberViewModel::scrollPageForwardRequest()
+{
+	static const float PageWidthPix = 500;
+	scrollPageWithLimits(docOffsetX_ + PageWidthPix);
+}
+
+void TranscriberViewModel::scrollPageBackwardRequest()
+{
+	static const float PageWidthPix = 500;
+	scrollPageWithLimits(docOffsetX_ - PageWidthPix);
+}
+
+void TranscriberViewModel::scrollPageWithLimits(float newDocOffsetX)
+{
+	float maxDocWidth = docWidthPix();
+	if (newDocOffsetX > maxDocWidth)
+		newDocOffsetX = maxDocWidth;
+	else if (newDocOffsetX < 0)
+		newDocOffsetX = newDocOffsetX;
+	setDocOffsetX(newDocOffsetX);
+}
+
 float TranscriberViewModel::docPosXToSampleInd(float docPosX) const
 {
 	return (docPosX - docPaddingPix_) / scale_;

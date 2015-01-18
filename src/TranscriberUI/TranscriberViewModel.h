@@ -122,7 +122,16 @@ public:
 
 	// Width of the document (in pixels).
     float docWidthPix() const;
+
+	void scrollPageForwardRequest();
+	void scrollPageBackwardRequest();
+	void scrollDocumentStartRequest();
+	void scrollDocumentEndRequest();
+private:
+	// forward=true, false=backward
+	void scrollPageWithLimits(float newDocOffsetX);
 	
+public:
 	// Returns first visible sample which is at docOffsetX position.
 	float docPosXToSampleInd(float docPosX) const;
 	float sampleIndToDocPosX(long sampleInd) const;

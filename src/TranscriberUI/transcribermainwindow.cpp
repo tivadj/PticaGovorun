@@ -310,14 +310,14 @@ void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 {
 	if (ke->key() == Qt::Key_C)
 		transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::CurrentCursor);
-	else if (ke->key() == Qt::Key_X)
+	else if (ke->key() == Qt::Key_Backslash)
 		transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::SegmentBegin);
 	else if (ke->key() == Qt::Key_Space)
 		transcriberModel_->soundPlayerTogglePlayPause();
 
 	else if (ke->key() == Qt::Key_R)
 		transcriberModel_->recognizeCurrentSegmentJuliusRequest();
-	else if (ke->key() == Qt::Key_F6)
+	else if (ke->key() == Qt::Key_F1)
 		transcriberModel_->recognizeCurrentSegmentSphinxRequest();
 
 	else if (ke->key() == Qt::Key_A)
@@ -332,6 +332,15 @@ void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 
 	else if (ke->key() == Qt::Key_G && ke->modifiers().testFlag(Qt::ControlModifier))
 		transcriberModel_->navigateToMarkerRequest();
+	else if (ke->key() == Qt::Key_PageUp)
+		transcriberModel_->scrollPageBackwardRequest(); // PageUp is near Home => it scrolls backward
+	else if (ke->key() == Qt::Key_PageDown)
+		transcriberModel_->scrollPageForwardRequest();
+
+	else if (ke->key() == Qt::Key_End)
+		transcriberModel_->scrollDocumentEndRequest();
+	else if (ke->key() == Qt::Key_Home)
+		transcriberModel_->scrollDocumentStartRequest();
 
 	else if (ke->key() == Qt::Key_F11)
 		pushButtonSegmentComposerPlay_Clicked();
