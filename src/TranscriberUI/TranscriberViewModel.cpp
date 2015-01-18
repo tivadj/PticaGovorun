@@ -93,6 +93,7 @@ void TranscriberViewModel::loadAudioFile()
 void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPlayingFrameInd, long finishPlayingFrameInd, bool restoreCurFrameInd)
 {
 	using namespace PticaGovorun;
+	assert(startPlayingFrameInd <= finishPlayingFrameInd && "Must play start <= end");
 
 	SoundPlayerData& data = soundPlayerData_;
 	data.transcriberViewModel = this;
@@ -306,7 +307,11 @@ std::tuple<long, long> TranscriberViewModel::getSampleRangeToPlay(long curSample
 	
 	// if range is selected, then always operate on it
 	if (cur.second != PticaGovorun::NullSampleInd)
-		return std::make_tuple(cur.first, cur.second);
+	{
+		long left = std::min(cur.first, cur.second);
+		long right = std::max(cur.first, cur.second);
+		return std::make_tuple(left, right);
+	}
 
 	std::vector<MarkerRefToOrigin>& markers = markersOfInterestCache_;
 	markers.clear();
@@ -388,11 +393,11 @@ void TranscriberViewModel::soundPlayerPlayCurrentSegment(SegmentStartFrameToPlay
 
 
 	// determine the frameInd to which to play audio
-	auto frameRangeToPlay = getSampleRangeToPlay(curFrameInd, startFrameChoice);
-	long startFrameInd = std::get<0>(frameRangeToPlay);
-	long finishFrameInd = std::get<1>(frameRangeToPlay);
+	long curSegBeg;
+	long curSegEnd;
+	std::tie(curSegBeg, curSegEnd) = getSampleRangeToPlay(curFrameInd, startFrameChoice);
 
-	soundPlayerPlay(audioSamples_.data(), startFrameInd, finishFrameInd, true);
+	soundPlayerPlay(audioSamples_.data(), curSegBeg, curSegEnd, true);
 }
 
 void TranscriberViewModel::soundPlayerPause()
@@ -1073,9 +1078,9 @@ void TranscriberViewModel::recognizeCurrentSegmentJuliusRequest()
 	if (recognizer_ == nullptr)
 		return;
 
-	auto curSeg = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin);
-	long curSegBeg = std::get<0>(curSeg);
-	long curSegEnd = std::get<1>(curSeg);
+	long curSegBeg;
+	long curSegEnd;
+	std::tie(curSegBeg, curSegEnd) = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin);
 	auto len = curSegEnd - curSegBeg;
 
 	// pad the audio with silince
@@ -1134,9 +1139,9 @@ void TranscriberViewModel::recognizeCurrentSegmentSphinxRequest()
 {
 	using namespace PticaGovorun;
 
-	auto curSeg = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin);
-	long curSegBeg = std::get<0>(curSeg);
-	long curSegEnd = std::get<1>(curSeg);
+	long curSegBeg;
+	long curSegEnd;
+	std::tie(curSegBeg, curSegEnd) = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin);
 	auto len = curSegEnd - curSegBeg;
 
 	// pad the audio with silince
@@ -1295,9 +1300,9 @@ void TranscriberViewModel::alignPhonesForCurrentSegmentRequest()
 	ensureWordToPhoneListVocabularyLoaded();
 
 	int outLeftMarkerInd = -1;
-	auto curSeg = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
-	long curSegBeg = std::get<0>(curSeg);
-	long curSegEnd = std::get<1>(curSeg);
+	long curSegBeg;
+	long curSegEnd;
+	std::tie(curSegBeg, curSegEnd) = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
 	auto len = curSegEnd - curSegBeg;
 
 	//
@@ -1414,12 +1419,12 @@ void TranscriberViewModel::testMfccRequest()
 		return;
 
 	int outLeftMarkerInd;
-	auto curSeg = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
+	long curSegBeg;
+	long curSegEnd;
+	std::tie(curSegBeg, curSegEnd) = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
 	if (outLeftMarkerInd == -1) // not marker to associate recognized text with
 		return;
 
-	long curSegBeg = std::get<0>(curSeg);
-	long curSegEnd = std::get<1>(curSeg);
 	auto len = curSegEnd - curSegBeg;
 
 	// convert
@@ -1498,9 +1503,9 @@ void TranscriberViewModel::classifyMfccIntoPhones()
 {
 	using namespace PticaGovorun;
 
-	auto curSeg = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin);
-	long curSegBeg = std::get<0>(curSeg);
-	long curSegEnd = std::get<1>(curSeg);
+	long curSegBeg;
+	long curSegEnd;
+	std::tie(curSegBeg, curSegEnd) = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin);
 	auto len = curSegEnd - curSegBeg;
 
 	// speech -> MFCC

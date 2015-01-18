@@ -86,6 +86,7 @@ public:
 	// The audio samples to play must exist during the process of playing.
 	void soundPlayerPlay(const short* audioSouce, long startPlayingFrameInd, long finishPlayingFrameInd, bool restoreCurFrameInd);
 	
+	// Returns the ordered (first <= second) range of samples to process.
 	// outLeftMarkerInd (may be null): returns the index of current segment's left marker.
 	std::tuple<long, long> getSampleRangeToPlay(long curSampleInd, SegmentStartFrameToPlayChoice startFrameChoice, int* outLeftMarkerInd = nullptr);
 
