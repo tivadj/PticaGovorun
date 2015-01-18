@@ -95,6 +95,9 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 	using namespace PticaGovorun;
 	assert(startPlayingFrameInd <= finishPlayingFrameInd && "Must play start <= end");
 
+	if (soundPlayerIsPlaying())
+		return;
+
 	SoundPlayerData& data = soundPlayerData_;
 	data.transcriberViewModel = this;
 	data.AudioSouce = audioSouce;
