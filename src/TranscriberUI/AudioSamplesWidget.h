@@ -27,31 +27,36 @@ protected:
 	void mouseReleaseEvent(QMouseEvent*) override;
 	void mouseMoveEvent(QMouseEvent*) override;
 private:
-	// This method draws cursor or samples range.
-	// inForeground, true if this method called after all content is drawn; false, if before.
-	void drawCursor(QPainter& painter, bool inForeground, float topY, float bottomY);
-	void drawMarkers(QPainter& painter, float visibleDocLeft, float visibleDocRight, int markerTopY, int markerBotY);
+	// Draw entire model in a given viewport rectangle.
+	void drawModel(QPainter& painter, const QRect& viewportRect, const QRect& invalidRect);
+
+	// Draw amplitudes of samples. Horizontal axis is time.
+	void drawWaveform(QPainter& painter, const QRect& viewportRect, float docLeft, float docRight);
+
+	void drawCursorSingle(QPainter& painter, const QRect& viewportRect, float docLeft);
+	void drawCursorRange(QPainter& painter, const QRect& viewportRect, float docLeft, float docRight);
+	void drawMarkers(QPainter& painter, const QRect& viewportRect, float docLeft, float docRight);
 	
 	// Draw current playing sample
-	void drawPlayingSampleInd(QPainter& painter, int markerTopY, int markerBotY);
+	void drawPlayingSampleInd(QPainter& painter);
 
 	// Draw the delimiter cells to show range of phones.
 	// The phones are constructed when audio is split into windows by speech recognition library.
 	// Window has width FrameSize. Window 'shifts' on top of audio samples with interval FrameShift.
 	// The ruler is drawn above the 'phonemesBottomLine' in X interval (BegSample; EndSample)
-	void drawShiftedFramesRuler(QPainter& painter, int phonemesBottomLine, int rulerBegSample, int rulerEndSample, int phoneRowHeight, int phoneRowsCount);
+	void drawShiftedFramesRuler(QPainter& painter, int phonemesBottomLine, int rulerBegSample, int rulerEndSample, int phoneRowHeight, int phoneRowsCount, float laneOffsetDocX, int frameSize, int frameShift);
 
 	// phonesOffsetSampleInd the origin from which all phones are calculated.
-	void drawPhoneSeparatorsAndNames(QPainter& painter, long phonesOffsetSampleInd, const std::vector<PticaGovorun::AlignedPhoneme>& markerPhones, int markerBottomY, int maxPhoneMarkerHeight, int phoneTextY);
+	void drawPhoneSeparatorsAndNames(QPainter& painter, long phonesOffsetSampleInd, const std::vector<PticaGovorun::AlignedPhoneme>& markerPhones, float laneOffsetDocX, int markerBottomY, int maxPhoneMarkerHeight, int phoneTextY);
 
 	// Draw probability of each phone for each frame in the current segment.
-	void drawClassifiedPhonesGrid(QPainter& painter, long phonesOffsetSampleInd, const std::vector<PticaGovorun::ClassifiedSpeechSegment>& markerPhones, int gridTopY, int gridBottomY);
+	void drawClassifiedPhonesGrid(QPainter& painter, long phonesOffsetSampleInd, const std::vector<PticaGovorun::ClassifiedSpeechSegment>& markerPhones, float laneOffsetDocX, int gridTopY, int gridBottomY);
 
 	// Draw recognized words boundaries.
-	void drawWordSeparatorsAndNames(QPainter& painter, long firstWordSampleIndOffset, const std::vector<PticaGovorun::AlignedWord>& wordBounds, int separatorTopY, int separatorBotY);
+	void drawWordSeparatorsAndNames(QPainter& painter, long firstWordSampleIndOffset, const std::vector<PticaGovorun::AlignedWord>& wordBounds, float laneOffsetDocX, int separatorTopY, int separatorBotY);
 
 	// Draws visual elements associated with the segment of samples.
-	void drawDiagramSegment(QPainter& painter, const DiagramSegment& diagItem, int canvasHeight);
+	void drawDiagramSegment(QPainter& painter, const QRect& viewportRect, const DiagramSegment& diagItem, float laneOffsetDocX);
 
 	// Draw diagram elements, which are associated with the range of samples.
 	void processVisibleDiagramSegments(QPainter& painter, float visibleDocLeft, float visibleDocRight, std::function<void(const DiagramSegment& diagItem)> onDiagItem);

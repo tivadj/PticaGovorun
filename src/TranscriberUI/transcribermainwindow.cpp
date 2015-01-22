@@ -4,6 +4,7 @@
 #include "ui_transcribermainwindow.h"
 #include <QDebug>
 #include <QMouseEvent>
+#include <QSize>
 #include <QTextDocumentFragment>
 #include "SoundUtils.h"
 
@@ -175,7 +176,7 @@ void TranscriberMainWindow::transcriberModel_cursorChanged(std::pair<long, long>
 
 	auto nullCur = TranscriberViewModel::nullCursor();
 	auto newCursor = transcriberModel_->cursor();
-	if (oldCursor != nullCur && newCursor != nullCur)
+	if (false && oldCursor != nullCur && newCursor != nullCur)
 	{
 		//
 		float newCursorDocPosX = transcriberModel_->sampleIndToDocPosX(newCursor.first);
@@ -271,15 +272,24 @@ void TranscriberMainWindow::transcriberModel_playingSampleIndChanged(long oldPla
 		auto minSampleInd = oldPlayingSampleInd;
 		auto maxSampleInd = playingSampleInd;
 
-		auto minX = transcriberModel_->sampleIndToDocPosX(minSampleInd);
-		minX -= transcriberModel_->docOffsetX();
+		auto leftX  = transcriberModel_->sampleIndToDocPosX(minSampleInd);
+		auto rightX = transcriberModel_->sampleIndToDocPosX(maxSampleInd);
 
-		auto maxX = transcriberModel_->sampleIndToDocPosX(maxSampleInd);
-		maxX -= transcriberModel_->docOffsetX();
+		// repaint optimization when caret moves inside one lane
+		ViewportHitInfo hitLeft;
+		ViewportHitInfo hitRight;
+		if (transcriberModel_->docPosToViewport(leftX, hitLeft) && 
+			transcriberModel_->docPosToViewport(rightX, hitRight) &&
+			hitLeft.LaneInd == hitRight.LaneInd)
+		{
+			RectY laneY = transcriberModel_->laneYBounds(hitLeft.LaneInd);
 
-		const static int VerticalMarkerWidth = 1;
-		updateRect.setLeft(minX - VerticalMarkerWidth);
-		updateRect.setRight(maxX + VerticalMarkerWidth);
+			const static int VerticalMarkerWidth = 1;
+			updateRect.setLeft(hitLeft.DocXInsideLane - VerticalMarkerWidth);
+			updateRect.setRight(hitRight.DocXInsideLane + VerticalMarkerWidth);
+			updateRect.setTop(laneY.Top);
+			updateRect.setBottom(laneY.Top + laneY.Height);
+		}
 	}
 
 	ui->widgetSamples->update(updateRect);
@@ -342,6 +352,11 @@ void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 	else if (ke->key() == Qt::Key_Home)
 		transcriberModel_->scrollDocumentStartRequest();
 
+	else if (ke->key() == Qt::Key_Plus)
+		transcriberModel_->increaseLanesCountRequest();
+	else if (ke->key() == Qt::Key_Minus)
+		transcriberModel_->decreaseLanesCountRequest();
+
 	else if (ke->key() == Qt::Key_F11)
 		pushButtonSegmentComposerPlay_Clicked();
 	else if (ke->key() == Qt::Key_F1)
@@ -352,4 +367,12 @@ void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 		transcriberModel_->classifyMfccIntoPhones();
 	else
 		QWidget::keyPressEvent(ke);
+}
+
+void TranscriberMainWindow::resizeEvent(QResizeEvent* e)
+{
+	QSize samplesWidgetSize = ui->widgetSamples->size();
+	qDebug() << samplesWidgetSize;
+
+	transcriberModel_->setViewportSize(samplesWidgetSize.width(), samplesWidgetSize.height());
 }

@@ -6,13 +6,12 @@
 #include <memory>
 #include <hash_set>
 
-#include "MLUtils.h"
-
-
-#include <QObject>
-#include <QPointF>
+#include <QPoint>
+#include <QSize>
 #include <portaudio.h>
+
 #include "XmlAudioMarkup.h"
+#include "MLUtils.h"
 #include "JuliusToolNativeWrapper.h"
 #include "SpeechProcessing.h"
 #include "AudioMarkupNavigator.h"
@@ -49,6 +48,23 @@ struct DiagramSegment
 
 	// Recognized words for the segment of speech.
 	std::vector<PticaGovorun::AlignedWord> WordBoundaries;
+};
+
+// The position of a sample inside the viewport.
+// The viewport is split into horizontal lanes.
+struct ViewportHitInfo
+{
+	int LaneInd = -1;
+
+	// The horizontal offset from lane start.
+	float DocXInsideLane = -1;
+};
+
+// The vertical part of a Rect.
+struct RectY
+{
+	float Top;
+	float Height;
 };
 
 // The document is a graph for samples plus padding to the left and right.
@@ -123,6 +139,8 @@ public:
 	// Width of the document (in pixels).
     float docWidthPix() const;
 
+	bool phoneRulerVisible() const;
+
 	void scrollPageForwardRequest();
 	void scrollPageBackwardRequest();
 	void scrollDocumentStartRequest();
@@ -130,11 +148,42 @@ public:
 private:
 	// forward=true, false=backward
 	void scrollPageWithLimits(float newDocOffsetX);
+public:
+	// Number of horizontal strips which split viewport area.
+	// Used to show more waveform data on a screen.
+	int lanesCount() const;
+	void setLanesCount(int lanesCount);
+	void increaseLanesCountRequest();
+	void decreaseLanesCountRequest();
+
+	QSizeF viewportSize() const;
+	void setViewportSize(float viewportWidth, float viewportHeight);
+private:
+	float docOffsetX_ = 0;
+	int lanesCount_ = 3; // number of horizontal lines to split viewport into
+
+	// number of pixels to the left/right of samples graph
+	// together with the samples graph is treated as the document
+	float docPaddingPix_ = 100;
+	bool phoneRulerVisible_ = false;
+	QSizeF viewportSize_;
 	
 public:
 	// Returns first visible sample which is at docOffsetX position.
 	float docPosXToSampleInd(float docPosX) const;
 	float sampleIndToDocPosX(long sampleInd) const;
+
+	// Converts local (x;y) position into document position, counting from viewport origin.
+	// The document offset of the viewport is not counted.
+	// Lanes are handled.
+	// Returns true if position is inside the viewport.
+	bool viewportPosToLocalDocPosX(const QPointF& pos, float& docPosX) const;
+
+	// Returns true, if doc position hit the viewport
+	bool docPosToViewport(float docX, ViewportHitInfo& hitInfo) const;
+
+	// Returns the vertical coordinates of a lane.
+	RectY laneYBounds(int laneInd) const;
 public:
 	// generic requests
 	void deleteRequest();
@@ -272,11 +321,6 @@ private:
 private:
 	std::vector<short> audioSamples_;
     QString audioFilePathAbs_;
-	float docOffsetX_ = 0;
-	
-	// number of pixels to the left/right of samples graph
-	// together with the samples graph is treated as the document
-	float docPaddingPix_ = 100;
 
 	// Represents internal audio player's data.
 	// The range (StartPlayingFrameInd;FinishPlayingFrameInd) of frames is played.

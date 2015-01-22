@@ -523,9 +523,14 @@ float TranscriberViewModel::docWidthPix() const
     return audioSamples_.size() * scale_ + 2 * docPaddingPix_;
 }
 
+bool TranscriberViewModel::phoneRulerVisible() const
+{
+	return phoneRulerVisible_;
+}
+
 void TranscriberViewModel::scrollDocumentEndRequest()
 {
-	float maxDocWidth = docWidthPix();
+	float maxDocWidth = docWidthPix();\
 	scrollPageWithLimits(maxDocWidth);
 }
 
@@ -533,7 +538,7 @@ void TranscriberViewModel::scrollDocumentStartRequest()
 {
 	scrollPageWithLimits(0);
 }
-
+\
 void TranscriberViewModel::scrollPageForwardRequest()
 {
 	static const float PageWidthPix = 500;
@@ -556,6 +561,42 @@ void TranscriberViewModel::scrollPageWithLimits(float newDocOffsetX)
 	setDocOffsetX(newDocOffsetX);
 }
 
+int TranscriberViewModel::lanesCount() const
+{
+	return lanesCount_;
+}
+
+void TranscriberViewModel::setLanesCount(int lanesCount)
+{
+	if (lanesCount_ != lanesCount && lanesCount > 0)
+	{
+		lanesCount_ = lanesCount;
+		emit audioSamplesChanged();
+	}
+}
+
+void TranscriberViewModel::increaseLanesCountRequest()
+{
+	int newLanesCount = lanesCount() + 1;
+	setLanesCount(newLanesCount);
+}
+void TranscriberViewModel::decreaseLanesCountRequest()
+{
+	int newLanesCount = lanesCount() - 1;
+	setLanesCount(newLanesCount);
+}
+
+
+QSizeF TranscriberViewModel::viewportSize() const
+{
+	return viewportSize_;
+}
+
+void TranscriberViewModel::setViewportSize(float viewportWidth, float viewportHeight)
+{
+	viewportSize_ = QSizeF(viewportWidth, viewportHeight);
+}
+
 float TranscriberViewModel::docPosXToSampleInd(float docPosX) const
 {
 	return (docPosX - docPaddingPix_) / scale_;
@@ -564,6 +605,61 @@ float TranscriberViewModel::docPosXToSampleInd(float docPosX) const
 float TranscriberViewModel::sampleIndToDocPosX(long sampleInd) const
 {
 	return docPaddingPix_ + sampleInd * scale_;
+}
+
+bool TranscriberViewModel::viewportPosToLocalDocPosX(const QPointF& pos, float& docPosX) const
+{
+	if (pos.x() < 0 || pos.y() < 0 || pos.x() >= viewportSize_.width() || pos.y() >= viewportSize_.height())
+		return false;
+
+	// determine lane
+	float laneHeight = viewportSize_.height() / lanesCount();
+	int laneInd = (int)(pos.y() / laneHeight);
+
+	// whole number of lanes
+	docPosX = laneInd * viewportSize_.width(); 
+
+	// portion on the last lane
+	docPosX += pos.x();
+	return true;
+}
+
+bool TranscriberViewModel::docPosToViewport(float docX, ViewportHitInfo& hitInfo) const
+{
+	// to the left of viewport?
+	if (docX < docOffsetX_)
+		return false;
+
+	float viewportDocX = docX - docOffsetX_;
+
+	// multiple lanes may be shown in a viewport
+	float viewportDocWidth = viewportSize_.width() * lanesCount();
+
+	// to the right of viewport?
+	if (viewportDocX >= viewportDocWidth)
+		return false;
+
+	// determine lane
+	float laneWidth = viewportSize_.width();
+	int laneInd = (int)(viewportDocX / laneWidth);
+	assert(laneInd < lanesCount_ && "DocPos must hit some lane");
+
+	float insideLaneOffset = viewportDocX - laneInd * viewportSize_.width();
+	
+	hitInfo.LaneInd = laneInd;
+	hitInfo.DocXInsideLane = insideLaneOffset;
+	return true;
+}
+
+RectY TranscriberViewModel::laneYBounds(int laneInd) const
+{
+	float laneHeight = viewportSize_.height() / lanesCount();
+
+	RectY bnd;
+	bnd.Top = laneInd * laneHeight;
+	bnd.Height = laneHeight;
+
+	return bnd;
 }
 
 void TranscriberViewModel::deleteRequest()
@@ -801,7 +897,11 @@ void TranscriberViewModel::dragMarkerContinue(const QPointF& localPos)
 
 void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos, bool isShiftPressed)
 {
-	float mousePressDocPosX = docOffsetX_ + localPos.x();
+	float mousePressDocPosX = -1;
+	if (!viewportPosToLocalDocPosX(localPos, mousePressDocPosX))
+		return;
+
+	mousePressDocPosX += docOffsetX_;
 
 	//std::stringstream msg;
 	//msg.precision(2);
@@ -1186,9 +1286,9 @@ void TranscriberViewModel::recognizeCurrentSegmentSphinxRequest()
 	//PticaGovorun::JuiliusRecognitionResult recogResult;
 	//auto recogOp = recognizer_->recognize(FrameToSamplePicker, audioSegmentBuffer_.data(), audioSegmentBuffer_.size(), recogResult);
 
-	const char* hmmPath = R"path(C:/devb/PticaGovorunProj/data/CMUSphinxTutorial/persian/model_parameters/persian.cd_cont_200/)path";
-	const char* langModelPath = R"path(C:/devb/PticaGovorunProj/data/CMUSphinxTutorial/persian/etc/persian.lm.DMP)path";
-	const char* dictPath = R"path(C:/devb/PticaGovorunProj/data/CMUSphinxTutorial/persian/etc/persian.dic)path";
+	const char* hmmPath =       R"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\model_parameters\persian.cd_cont_200)path";
+	const char* langModelPath = R"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian.lm.DMP)path";
+	const char* dictPath =      R"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian.dic)path";
 	cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
 		"-hmm", hmmPath,
 		"-lm", langModelPath,
@@ -1251,7 +1351,8 @@ void TranscriberViewModel::recognizeCurrentSegmentSphinxRequest()
 	const char* hyp = ps_get_hyp(ps, &score, &uttid);
 	if (hyp == nullptr)
 	{
-		qDebug() << "No hypothesis is available";
+		QString msg("No hypothesis is available");
+		emit nextNotification(msg);
 		return;
 	}
 
