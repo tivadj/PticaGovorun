@@ -188,6 +188,9 @@ public:
 	// generic requests
 	void deleteRequest();
 
+	// Refresh any data from cache.
+	void refreshRequest();
+
 public: // current sample
 	const std::vector<short>& audioSamples() const;
 
@@ -290,6 +293,8 @@ public:	// recongizer
 	void recognizeCurrentSegmentSphinxRequest();
 #endif
 	void ensureWordToPhoneListVocabularyLoaded();
+	void loadAuxiliaryPhoneticDictionaryRequest();
+
 	void alignPhonesForCurrentSegmentRequest();
 	size_t silencePadAudioFramesCount() const;
 	QString recognizerName() const;
@@ -349,6 +354,7 @@ private:
 	QString curRecognizerName_;
 	std::unique_ptr<PticaGovorun::JuliusToolWrapper> recognizer_;
 	std::map<std::wstring, std::vector<std::string>> wordToPhoneListDict_;
+	std::map<std::wstring, std::vector<std::string>> wordToPhoneListAuxiliaryDict_;
 	std::vector<short> audioSegmentBuffer_; // the buffer to keep the padded audio segments
 	
 	// number of padding silence samples to the left and right of audio segment

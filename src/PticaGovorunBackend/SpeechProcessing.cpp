@@ -23,55 +23,61 @@ namespace PticaGovorun {
 			return true;
 
 		// do not stop on phone markers
-		return true;
+		return false;
 	}
 
-	std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> void> wordToPhoneListFun, bool insertShortPause, std::vector<std::string>& speechPhones)
-{
-	std::wsmatch matchRes;
-	static std::wregex r(LR"regex(\w+)regex"); // match words
-
-	// iterate through words
-
-	std::wstring word;
-	word.reserve(32);
-
-	std::vector<std::string> wordPhones;
-	wordPhones.reserve(word.capacity());
-
-	// insert the starting silence phone
-	speechPhones.push_back(PGPhoneSilence);
-
-	auto wordBeg = std::cbegin(text);
-	while (std::regex_search(wordBeg, std::cend(text), matchRes, r))
+	// wordToPhoneListFun returns false, if word can't be translated into phone list
+	std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> bool> wordToPhoneListFun, bool insertShortPause, std::vector<std::string>& speechPhones)
 	{
-		auto& wordSlice = matchRes[0];
-		word.assign(wordSlice.first, wordSlice.second);
+		std::wsmatch matchRes;
+		static std::wregex r(LR"regex(\w+)regex"); // match words
 
-		// convert word to phones
-		wordPhones.clear();
-		wordToPhoneListFun(word, wordPhones);
+		// iterate through words
 
-		std::copy(std::begin(wordPhones), std::end(wordPhones), std::back_inserter(speechPhones));
+		std::wstring word;
+		word.reserve(32);
 
-		// insert the silence phone between words
+		std::vector<std::string> wordPhones;
+		wordPhones.reserve(word.capacity());
+
+		// insert the starting silence phone
+		speechPhones.push_back(PGPhoneSilence);
+
+		auto wordBeg = std::cbegin(text);
+		while (std::regex_search(wordBeg, std::cend(text), matchRes, r))
+		{
+			auto& wordSlice = matchRes[0];
+			word.assign(wordSlice.first, wordSlice.second);
+
+			// convert word to phones
+			wordPhones.clear();
+			if (!wordToPhoneListFun(word, wordPhones))
+			{
+				std::wstringstream errBuf;
+				errBuf << "Word '" << word << "' is not found in the dictionary";
+				return std::make_tuple(false, errBuf.str());
+			}
+
+			std::copy(std::begin(wordPhones), std::end(wordPhones), std::back_inserter(speechPhones));
+
+			// insert the silence phone between words
+			if (insertShortPause)
+				speechPhones.push_back(PGShortPause);
+
+			wordBeg = wordSlice.second;
+		}
+
+		// remove last short pause phone
 		if (insertShortPause)
-			speechPhones.push_back(PGShortPause);
+		{
+			speechPhones.pop_back();
+		}
 
-		wordBeg = wordSlice.second;
+		// set the last pohone to be a silence phone
+		speechPhones.push_back(PGPhoneSilence);
+
+		return std::make_tuple(true, L"");
 	}
-
-	// remove last short pause phone
-	if (insertShortPause)
-	{
-		speechPhones.pop_back();
-	}
-
-	// set the last pohone to be a silence phone
-	speechPhones.push_back(PGPhoneSilence);
-
-	return std::make_tuple(true, L"");
-}
 
 	void padSilence(const short* audioFrames, int audioFramesCount, int silenceFramesCount, std::vector<short>& paddedAudio)
 	{

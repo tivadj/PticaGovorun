@@ -10,6 +10,8 @@
 
 int main(int argc, char *argv[])
 {
+	qDebug() << "PG_AUX_DICT_PATH=" << qgetenv("PG_AUX_DICT_PATH").constData();
+
 	auto cd = QDir::currentPath();
 	qDebug() << "CD=" << cd;
 

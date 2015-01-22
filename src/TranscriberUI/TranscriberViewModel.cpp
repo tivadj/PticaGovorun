@@ -677,6 +677,11 @@ void TranscriberViewModel::deleteRequest()
 		return;
 }
 
+void TranscriberViewModel::refreshRequest()
+{
+	loadAuxiliaryPhoneticDictionaryRequest();
+}
+
 const std::vector<short>& TranscriberViewModel::audioSamples() const
 {
 	return audioSamples_;
@@ -1412,18 +1417,53 @@ void TranscriberViewModel::ensureWordToPhoneListVocabularyLoaded()
 {
 	using namespace PticaGovorun;
 
-	// TODO: vocabulary is recognizer dependent
-	if (!wordToPhoneListDict_.empty())
-		return;
-
-	QString dicPath = QString::fromStdString(recognizer_->settings().DictionaryFilePath);
 	QTextCodec* pTextCodec = QTextCodec::codecForName(PGEncodingStr);
 	PG_Assert(pTextCodec != nullptr && "Can't load text encoding");
 
+	// TODO: vocabulary is recognizer dependent
+	if (wordToPhoneListDict_.empty())
+	{
+		QString dicPath = QString::fromStdString(recognizer_->settings().DictionaryFilePath);
+
+		clock_t startTime = std::clock();
+		std::tuple<bool, const char*> loadOp = PticaGovorun::loadPronunciationVocabulary(dicPath.toStdWString(), wordToPhoneListDict_, *pTextCodec);
+		double elapsedTime1 = static_cast<double>(clock() - startTime) / CLOCKS_PER_SEC;
+		if (!std::get<0>(loadOp))
+		{
+			emit nextNotification(QString(std::get<1>(loadOp)));
+			return;
+		}
+		emit nextNotification(QString("Loaded pronunciation dictionary in %1 secs").arg(elapsedTime1, 2));
+	}
+
+	if (wordToPhoneListAuxiliaryDict_.empty())
+		loadAuxiliaryPhoneticDictionaryRequest();
+}
+
+void TranscriberViewModel::loadAuxiliaryPhoneticDictionaryRequest()
+{
+	using namespace PticaGovorun;
+	QTextCodec* pTextCodec = QTextCodec::codecForName(PGEncodingStr);
+	PG_Assert(pTextCodec != nullptr && "Can't load text encoding");
+
+	const char* dicPatCStr = qgetenv("PG_AUX_DICT_PATH").constData();
+	QString dicPath = QString(dicPatCStr);
+	if (dicPath.isEmpty())
+	{
+		emit nextNotification("Specify path PG_AUX_DICT_PATH to auxiliary dictionary");
+		return;
+	}
+
 	clock_t startTime = std::clock();
-	PticaGovorun::loadPronunciationVocabulary(dicPath.toStdWString(), wordToPhoneListDict_, *pTextCodec);
+	wordToPhoneListAuxiliaryDict_.clear();
+	std::tuple<bool,const char*> loadOp = PticaGovorun::loadPronunciationVocabulary(dicPath.toStdWString(), wordToPhoneListAuxiliaryDict_, *pTextCodec);
 	double elapsedTime1 = static_cast<double>(clock() - startTime) / CLOCKS_PER_SEC;
-	emit nextNotification(QString("Loaded pronunciation dictionary in %1 secs").arg(elapsedTime1, 2));
+	if (!std::get<0>(loadOp))
+	{
+		emit nextNotification(QString(std::get<1>(loadOp)));
+		return;
+	}
+	emit nextNotification(QString("Loaded pronunciation AX dictionary in %1 secs").arg(elapsedTime1, 2));
 }
 
 void TranscriberViewModel::alignPhonesForCurrentSegmentRequest()
@@ -1454,24 +1494,38 @@ void TranscriberViewModel::alignPhonesForCurrentSegmentRequest()
 	
 	if (alignText.isEmpty()) // nothing to align
 		return;
+	
+	// make all words lowercase, because all words in phonetic dictionary are in lowercase
+	alignText = alignText.toLower();
 
-	auto wordToPhoneListFun = [this](const std::wstring& word, std::vector<std::string>& wordPhones)->void
+	auto wordToPhoneListFun = [this](const std::wstring& word, std::vector<std::string>& wordPhones)->bool
 	{
-		const auto& wordDict = wordToPhoneListDict_;
-
-		auto it = wordDict.find(word);
-		if (it == std::end(wordDict))
-			return;
-
-		const std::vector<std::string>& dictWordPhones = it->second;
-		std::copy(std::begin(dictWordPhones), std::end(dictWordPhones), std::back_inserter(wordPhones));
+		auto it = wordToPhoneListDict_.find(word);
+		if (it != std::end(wordToPhoneListDict_))
+		{
+			const std::vector<std::string>& dictWordPhones = it->second;
+			std::copy(std::begin(dictWordPhones), std::end(dictWordPhones), std::back_inserter(wordPhones));
+			return true;
+		}
+		it = wordToPhoneListAuxiliaryDict_.find(word);
+		if (it != std::end(wordToPhoneListAuxiliaryDict_))
+		{
+			const std::vector<std::string>& dictWordPhones = it->second;
+			std::copy(std::begin(dictWordPhones), std::end(dictWordPhones), std::back_inserter(wordPhones));
+			return true;
+		}
+		return false;
 	};
 
 	bool insertShortPause = false;
 	std::vector<std::string> speechPhones;
-	convertTextToPhoneList(alignText.toStdWString(), wordToPhoneListFun, insertShortPause, speechPhones);
-	if (speechPhones.empty())
+	std::tuple<bool, std::wstring> convOp = convertTextToPhoneList(alignText.toStdWString(), wordToPhoneListFun, insertShortPause, speechPhones);
+	if (!std::get<0>(convOp))
+	{
+		std::wstring errMsg = std::get<1>(convOp);
+		emit nextNotification(QString::fromStdWString(errMsg));
 		return;
+	}
 
 	// pad the audio with silince
 	padSilence(&audioSamples_[curSegBeg], len, silencePadAudioSamplesCount_, audioSegmentBuffer_);
