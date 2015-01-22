@@ -151,6 +151,12 @@ namespace PticaGovorun {
 
 			if (recognizerSettings.UseWsp)
 				cfgFile << "-iwsp" << std::endl;
+			
+			// avoid any silence cutting, otherwise the cut speech will not align in diagram
+			cfgFile << "# prohibit cutting the trailing zeros" << std::endl;
+			cfgFile << "-nostrip" << std::endl;
+			cfgFile << "# prohibit cutting the trailing silence" << std::endl;
+			cfgFile << "-nocutsilence" << std::endl;
 
 			cfgFile << "-logfile " << recognizerSettings.LogFile << std::endl;
 

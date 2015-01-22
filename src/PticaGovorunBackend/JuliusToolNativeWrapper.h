@@ -15,28 +15,29 @@ struct RecognizerSettings
 	int FrameShift;
 	int SampleRate;
 	
-	// -wsp option
+	// enable inter-word short pause handing (for multipath)
+	// Julius -iwsp option
 	bool UseWsp;
 
-	// -logfile option
+	// Julius -logfile option
 	std::string LogFile;
 
-	// -d option
+	// Julius -d option
 	std::string LanguageModelFilePath;
 
-	// -v option
+	// Julius -v option
 	std::string DictionaryFilePath;
 
-	// -h option
+	// Julius -h option
 	std::string AcousticModelFilePath;
 
-	// -hlist option
+	// Julius -hlist option
 	std::string TiedListFilePath;
 
-	// -filelist option
+	// Julius -filelist option
 	std::string FileListFileName;
 
-	// -C option
+	// Julius  -C option
 	std::string CfgFileName;
 
 	std::string CfgHeaderFileName;
