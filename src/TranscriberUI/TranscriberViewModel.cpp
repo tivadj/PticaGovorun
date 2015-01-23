@@ -9,6 +9,7 @@
 #include <QPointF>
 #include <QDebug>
 #include <QDir>
+#include <QDateTime>
 #include <QTextCodec>
 
 #include "WavUtils.h"
@@ -37,9 +38,7 @@ static const decltype(paComplete) SoundPlayerCompleteOrAbortTechnique = paComple
 
 TranscriberViewModel::TranscriberViewModel()
 {
-    QString fileName = QString::fromStdWString(L"PticaGovorun/2011-04-pynzenyk-q_11.wav");
-    audioFilePathAbs_ = QStandardPaths::locate(QStandardPaths::DocumentsLocation, fileName, QStandardPaths::LocateFile);
-
+	audioFilePathAbs_ = QString(qgetenv("PG_WAV_FILE_PATH").constData());
 	curRecognizerName_ = "shrekky";
 }
 
@@ -106,6 +105,7 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 #endif
 	data.FinishPlayingFrameInd = finishPlayingFrameInd;
 	data.CurPlayingFrameInd = startPlayingFrameInd;
+	data.MoveCursorToLastPlayingPosition = !restoreCurFrameInd;
 
 	//
 	PaDeviceIndex deviceIndex = Pa_GetDefaultOutputDevice(); /* default output device */
@@ -185,7 +185,7 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 		int availableFramesCount = sampleEnd - sampleInd;
 
 		// updates playing sample in UI
-		transcriberViewModel.setPlayingSampleInd(sampleInd);
+		transcriberViewModel.setPlayingSampleInd(sampleInd, true);
 
 		// populate samples buffer
 
@@ -261,8 +261,14 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 			}
 		}
 
+		if (data.MoveCursorToLastPlayingPosition)
+		{
+			long cursor = data.CurPlayingFrameInd;
+			data.transcriberViewModel->setCursorInternal(cursor, true, false);
+		}
+
 		// hides current playing sample in UI
-		data.transcriberViewModel->setPlayingSampleInd(PticaGovorun::NullSampleInd);
+		data.transcriberViewModel->setPlayingSampleInd(PticaGovorun::NullSampleInd, false);
 
 		// parts of UI are not painted when cursor moves
 		// redraw entire UI when playing completes
@@ -448,13 +454,28 @@ long TranscriberViewModel::playingSampleInd() const
 	return playingSampleInd_;
 }
 
-void TranscriberViewModel::setPlayingSampleInd(long value)
+void TranscriberViewModel::setPlayingSampleInd(long value, bool updateViewportOffset)
 {
 	if (playingSampleInd_ != value)
 	{
 		long oldValue = playingSampleInd_;
 		playingSampleInd_ = value;
 		emit playingSampleIndChanged(oldValue);
+
+		if (updateViewportOffset)
+		{
+			float caretDocX = sampleIndToDocPosX(value);
+
+			float rightVisDocX = docOffsetX_ + viewportSize_.width() * lanesCount_;
+
+			bool outOfView = caretDocX > rightVisDocX;
+			if (outOfView)
+			{
+				const float PadX = 50; // some pixels to keep to the left from caret when viewport shifts
+				long newDocOffset = rightVisDocX - PadX;
+				setDocOffsetX(newDocOffset);
+			}
+		}
 	}
 }
 
@@ -482,6 +503,9 @@ void TranscriberViewModel::saveAudioMarkupToXml()
 	QString audioMarkupPathAbs = audioMarkupFilePathAbs();
 	
 	PticaGovorun::saveAudioMarkupToXml(frameIndMarkers_, audioMarkupPathAbs.toStdWString());
+	
+	QString msg = QString("[%1]: Saved xml markup.").arg(QTime::currentTime().toString("hh:mm:ss"));
+	emit nextNotification(msg);
 }
 
 QString TranscriberViewModel::audioFilePath() const
@@ -889,7 +913,11 @@ void TranscriberViewModel::dragMarkerContinue(const QPointF& localPos)
 	{
 		qDebug() << "dragMarkerContinue";
 
-		float mouseMoveDocPosX = docOffsetX_ + localPos.x();
+		float mouseMoveLocalDocPosX = -1;
+		if (!viewportPosToLocalDocPosX(localPos, mouseMoveLocalDocPosX))
+			return;
+
+		float mouseMoveDocPosX = docOffsetX_ + mouseMoveLocalDocPosX;
 		long frameInd = (long)docPosXToSampleInd(mouseMoveDocPosX);
 
 		frameIndMarkers_[draggingMarkerInd_].SampleInd = frameInd;
@@ -999,15 +1027,19 @@ void TranscriberViewModel::setCursorInternal(std::pair<long,long> value, bool up
 			setCurrentMarkerIndInternal(curMarkerInd, false, updateViewportOffset);
 		}
 
-		if (updateViewportOffset)
+		if (updateViewportOffset && cursor_.first != PticaGovorun::NullSampleInd)
 		{
-			// TODO: put viewport width (in document units) into model 
-
-			// put docOffsetX some pixels to the left of given frameInd
-			const int LeftDxPix = 50;
-			float samplePix = sampleIndToDocPosX(value.first);
-			long newDocOffsetX = samplePix - LeftDxPix;
-			setDocOffsetX(newDocOffsetX);
+			float cursorFirstDocX = sampleIndToDocPosX(cursor_.first);
+			float rightVisDocX = docOffsetX_ + viewportSize_.width() * lanesCount_;
+			bool cursorVisible = cursorFirstDocX >= docOffsetX_ && cursorFirstDocX < rightVisDocX;
+			if (!cursorVisible)
+			{
+				// move docOffsetX to cursor
+				const int LeftDxPix = 50;
+				float samplePix = sampleIndToDocPosX(value.first);
+				long newDocOffsetX = samplePix - LeftDxPix;
+				setDocOffsetX(newDocOffsetX);
+			}
 		}
 	}
 }
@@ -1123,6 +1155,52 @@ void TranscriberViewModel::selectMarkerClosestToCurrentCursorRequest()
 	int closestMarkerInd = getClosestMarkerInd(frameIndMarkers_, markerFrameIndSelector, curFrameInd, &distToClosestMarker);
 
 	setCurrentMarkerIndInternal(closestMarkerInd, true, false);
+}
+
+void TranscriberViewModel::selectMarkerForward()
+{
+	selectMarkerInternal(true);
+}
+
+void TranscriberViewModel::selectMarkerBackward()
+{
+	selectMarkerInternal(false);
+}
+
+void TranscriberViewModel::selectMarkerInternal(bool moveForward)
+{
+	long curSampleInd = cursor().first;
+	if (curSampleInd == PticaGovorun::NullSampleInd)
+		return;
+
+	int leftMarkerInd = -1;
+	int rightMarkerInd = -1;
+	auto markerFrameIndSelector = [](const PticaGovorun::TimePointMarker& m) { return m.SampleInd;  };
+	bool foundSegOp = findSegmentMarkerInds(frameIndMarkers_, markerFrameIndSelector, curSampleInd, true, leftMarkerInd, rightMarkerInd);
+	if (!foundSegOp)
+		return;
+
+	int nextMarkerInd = -1;
+	if (moveForward && rightMarkerInd != -1)
+	{
+		assert(rightMarkerInd < frameIndMarkers_.size());
+		nextMarkerInd = rightMarkerInd;
+	}
+	else if (!moveForward && leftMarkerInd != -1)
+	{
+		// inside the segment?
+		long markerSampleInd = frameIndMarkers_[leftMarkerInd].SampleInd;
+		if (markerSampleInd != curSampleInd)
+			nextMarkerInd = leftMarkerInd;
+		else
+		{
+			if (leftMarkerInd - 1 >= 0)
+				nextMarkerInd = leftMarkerInd - 1;
+		}
+	}
+
+	if (nextMarkerInd != -1)
+		setCurrentMarkerIndInternal(nextMarkerInd, true, true);
 }
 
 void TranscriberViewModel::setCurrentMarkerIndInternal(int markerInd, bool updateCurrentSampleInd, bool updateViewportOffset)

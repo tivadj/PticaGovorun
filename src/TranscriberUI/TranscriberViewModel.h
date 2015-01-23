@@ -116,7 +116,9 @@ public:
 	void soundPlayerTogglePlayPause();
 	bool soundPlayerIsPlaying() const;
 	long playingSampleInd() const;
-	void setPlayingSampleInd(long value);
+
+	// updateViewportOffset is true to keep viewport above the playing caret.
+	void setPlayingSampleInd(long value, bool updateViewportOffset);
 
 	QString audioMarkupFilePathAbs() const;
 	//
@@ -259,6 +261,9 @@ public:
 	template <typename Markers, typename FrameIndSelector>
 	int getClosestMarkerInd(const Markers& markers, FrameIndSelector markerFrameIndSelector, long frameInd, long* dist) const;
 	void selectMarkerClosestToCurrentCursorRequest();
+	void selectMarkerForward();
+	void selectMarkerBackward();
+	void selectMarkerInternal(bool moveForward);
 	int currentMarkerInd() const;
 	void setCurrentMarkerTranscriptText(const QString& text);
 	void setCurrentMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail);
@@ -342,6 +347,9 @@ private:
 
 		// used to determine when to stop playing
 		long FinishPlayingFrameInd; // is not changed when playing
+
+		// True to move the cursor to the last playing sample index when playing stops.
+		bool MoveCursorToLastPlayingPosition = false;
 
 		PaStream *stream;
 		std::atomic<bool> allowPlaying;

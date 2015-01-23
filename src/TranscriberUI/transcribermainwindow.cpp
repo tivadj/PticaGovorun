@@ -318,11 +318,11 @@ void TranscriberMainWindow::pushButtonSegmentComposerPlay_Clicked()
 
 void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 {
-	if (ke->key() == Qt::Key_C)
+	if (ke->key() == Qt::Key_Space || ke->key() == Qt::Key_C)
 		transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::CurrentCursor);
-	else if (ke->key() == Qt::Key_Backslash)
+	else if (ke->key() == Qt::Key_X)
 		transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::SegmentBegin);
-	else if (ke->key() == Qt::Key_Space)
+	else if (ke->key() == Qt::Key_Backslash)
 		transcriberModel_->soundPlayerTogglePlayPause();
 
 	else if (ke->key() == Qt::Key_R)
@@ -347,10 +347,16 @@ void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 	else if (ke->key() == Qt::Key_PageDown)
 		transcriberModel_->scrollPageForwardRequest();
 
-	else if (ke->key() == Qt::Key_End)
+	// navigation
+	else if (ke->key() == Qt::Key_End && ke->modifiers().testFlag(Qt::ControlModifier))
 		transcriberModel_->scrollDocumentEndRequest();
-	else if (ke->key() == Qt::Key_Home)
+	else if (ke->key() == Qt::Key_Home && ke->modifiers().testFlag(Qt::ControlModifier))
 		transcriberModel_->scrollDocumentStartRequest();
+	else if (ke->key() == Qt::Key_Right && ke->modifiers().testFlag(Qt::ControlModifier))
+		transcriberModel_->selectMarkerForward();
+	else if (ke->key() == Qt::Key_Left && ke->modifiers().testFlag(Qt::ControlModifier))
+		transcriberModel_->selectMarkerBackward();
+	
 
 	else if (ke->key() == Qt::Key_Plus)
 		transcriberModel_->increaseLanesCountRequest();
