@@ -20,8 +20,6 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
     QObject::connect(ui->lineEditFileName, SIGNAL(editingFinished()), this, SLOT(lineEditFileName_editingFinished()));
 	QObject::connect(ui->lineEditRecognizerName, SIGNAL(editingFinished()), this, SLOT(lineEditRecognizerName_editingFinished()));
     QObject::connect(ui->horizontalScrollBarSamples, SIGNAL(valueChanged(int)), this, SLOT(horizontalScrollBarSamples_valueChanged(int)));
-	QObject::connect(ui->pushButtonPlay, SIGNAL(clicked()), this, SLOT(pushButtonPlay_Clicked()));
-	QObject::connect(ui->pushButtonPause, SIGNAL(clicked()), this, SLOT(pushButtonPause_Clicked()));
 	QObject::connect(ui->radioButtonWordLevel, SIGNAL(toggled(bool)), this, SLOT(radioButtonWordLevel_toggled(bool)));
 	QObject::connect(ui->lineEditMarkerText, SIGNAL(editingFinished()), this, SLOT(lineEditMarkerText_editingFinished()));
 	QObject::connect(ui->checkBoxCurMarkerStopOnPlayback, SIGNAL(toggled(bool)), this, SLOT(checkBoxCurMarkerStopOnPlayback_toggled(bool)));
@@ -117,16 +115,6 @@ void TranscriberMainWindow::pushButtonLoad_Clicked()
 void TranscriberMainWindow::pushButtonSaveAudioAnnot_Clicked()
 {
 	transcriberModel_->saveAudioMarkupToXml();
-}
-
-void TranscriberMainWindow::pushButtonPlay_Clicked()
-{
-    transcriberModel_->soundPlayerPlay();
-}
-
-void TranscriberMainWindow::pushButtonPause_Clicked()
-{
-	transcriberModel_->soundPlayerPause();
 }
 
 void TranscriberMainWindow::radioButtonWordLevel_toggled(bool checked)

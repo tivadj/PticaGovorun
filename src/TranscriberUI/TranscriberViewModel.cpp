@@ -1023,7 +1023,21 @@ void TranscriberViewModel::setCursorInternal(std::pair<long,long> value, bool up
 		// reset current marker
 		if (updateCurrentMarkerInd)
 		{
-			int curMarkerInd = -1; // reset the marker
+			int curMarkerInd = -1;
+			if (cursorKind() == TranscriberCursorKind::Single)
+			{
+				// keep active current segment, associated with the marker left to the cursor
+
+				int leftMarkerInd = -1;
+				int rightMarkerInd = -1;
+				auto markerFrameIndSelector = [](const PticaGovorun::TimePointMarker& m) { return m.SampleInd;  };
+				bool foundSegOp = findSegmentMarkerInds(frameIndMarkers_, markerFrameIndSelector, cursor_.first, true, leftMarkerInd, rightMarkerInd);
+				if (foundSegOp && leftMarkerInd != -1)
+					curMarkerInd = leftMarkerInd;
+			}
+			else
+				curMarkerInd = -1; // reset the marker
+
 			setCurrentMarkerIndInternal(curMarkerInd, false, updateViewportOffset);
 		}
 
@@ -1047,6 +1061,22 @@ void TranscriberViewModel::setCursorInternal(std::pair<long,long> value, bool up
 std::pair<long, long> TranscriberViewModel::cursor() const
 {
 	return cursor_;
+}
+
+TranscriberCursorKind TranscriberViewModel::cursorKind() const
+{
+	if (cursor_.first != PticaGovorun::NullSampleInd)
+	{
+		if (cursor_.second != PticaGovorun::NullSampleInd)
+			return TranscriberCursorKind::Range;
+		else
+			return TranscriberCursorKind::Single;
+	}
+	else 
+	{
+		assert(cursor_.second == PticaGovorun::NullSampleInd && "Cursor invariant: when first position is empty, the second position must be empty too");
+		return TranscriberCursorKind::Empty;
+	}
 }
 
 void TranscriberViewModel::insertNewMarkerAtCursorRequest()
@@ -1203,7 +1233,7 @@ void TranscriberViewModel::selectMarkerInternal(bool moveForward)
 		setCurrentMarkerIndInternal(nextMarkerInd, true, true);
 }
 
-void TranscriberViewModel::setCurrentMarkerIndInternal(int markerInd, bool updateCurrentSampleInd, bool updateViewportOffset)
+void TranscriberViewModel::setCurrentMarkerIndInternal(int markerInd, bool updateCursor, bool updateViewportOffset)
 {
 	if (currentMarkerInd_ != markerInd)
 	{
@@ -1211,7 +1241,7 @@ void TranscriberViewModel::setCurrentMarkerIndInternal(int markerInd, bool updat
 		currentMarkerInd_ = markerInd;
 		emit currentMarkerIndChanged();
 
-		if (updateCurrentSampleInd && markerInd != -1)
+		if (updateCursor && markerInd != -1)
 		{
 			// udpdate cursor position
 			long newCurSampleInd = frameIndMarkers_[markerInd].SampleInd;

@@ -67,6 +67,19 @@ struct RectY
 	float Height;
 };
 
+// Mutually exclusive set of cursor kinds.
+enum class TranscriberCursorKind
+{
+	// Cursor doesn't point to any sample.
+	Empty,
+
+	// Cursor points to the single sample.
+	Single,
+
+	// Cursor points to a range of samples.
+	Range
+};
+
 // The document is a graph for samples plus padding to the left and right.
 // The samples graph is painted with current 'scale'.
 // A user can specify samples of interest using a cursor. The sample is specified with a sample index.
@@ -199,6 +212,8 @@ public: // current sample
 	void setLastMousePressPos(const QPointF& localPos, bool isShiftPressed);
 	long currentSampleInd() const;
 	std::pair<long, long> cursor() const;
+	TranscriberCursorKind cursorKind() const;
+
 	static std::pair<long, long> nullCursor() { return std::make_pair(PticaGovorun::NullSampleInd, PticaGovorun::NullSampleInd); }
 private:
 	void setCursorInternal(long curSampleInd, bool updateCurrentMarkerInd, bool updateViewportOffset);
@@ -276,7 +291,7 @@ public:
 	void dragMarkerStop();
 	void dragMarkerContinue(const QPointF& localPos);
 private:
-	void setCurrentMarkerIndInternal(int markerInd, bool updateCurrentSampleInd, bool updateViewportOffset);
+	void setCurrentMarkerIndInternal(int markerInd, bool updateCursor, bool updateViewportOffset);
 
 	// returns the closest segment which contains given frameInd. The segment is described by two indices in
 	// the original collection of markers.
