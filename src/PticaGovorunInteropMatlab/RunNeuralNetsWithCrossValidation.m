@@ -1,7 +1,10 @@
-table1=csvread('../../../data/speech_MFCC1_internal.txt');
+table1=csvread('../../../data/speech_MFCC1_pg1_r2.txt');
 Q=size(table1,1) % num samples
 feats = table1(:,1:size(table1,2)-1)'; % [FeatCount,Q]
 phoneIds = table1(:,size(table1,2))'; % [1,Q]
+if sum(phoneIds==-1)>0
+    assert(false, 'there are some unknown phones');
+end
 phoneIds = phoneIds+1; % 0-based to 1-based phone indices
 fprintf('phones tally:\n')
 phoneIdsUnique = min(phoneIds):max(phoneIds);
@@ -14,7 +17,7 @@ phCount = length(phoneIdsUnique);
 phonePatTarget=full(ind2vec(phoneIds,phCount)); % [phCount,Q]
 
 %% Split Data into Train-Validate-Test sets
-[trainInd,valInd,testInd] = dividerand(Q, 0.75, 0.25, 0);
+[trainInd,valInd,testInd] = dividerand(Q, 0.6, 0.2, 0.2);
 fprintf('partioned Train-Valid-Test phones tally:\n')
 [phoneIdsUnique' histc(phoneIds(trainInd), phoneIdsUnique)' histc(phoneIds(valInd), phoneIdsUnique)' histc(phoneIds(testInd), phoneIdsUnique)']
 
@@ -96,7 +99,7 @@ for i=1:1000
     recogRateTrain = accuracyTopN(phoneIdProbs,phoneIds(:,trainInd),1);
     errTrainHist(Layer2Size) = 1-recogRateTrain;
 
-    % Validate
+    % Validate error
     phoneIdProbs = net(feats(:,valInd)); % [phCount,valCount]
     recogRateVal=accuracyTopN(phoneIdProbs,phoneIds(:,valInd),1);
     errValHist(Layer2Size) = 1-recogRateVal;
@@ -116,5 +119,23 @@ for i=1:1000
     plot(x, errTrainHist(hasDataMask), 'g', x, errValHist(hasDataMask), 'b')
 end
 %% Test
-%phoneIdProbs = net(feats(:,testInd)); % [phCount,testCount]
-%recogRateVal=accuracyTopN(phoneIdProbs,phoneIds(:,testInd),1)
+% construct net on Train data
+net = patternnet([37]);
+net.divideParam.trainRatio=1;
+net.divideParam.valRatio=0;
+net.divideParam.testRatio=0;
+net.trainParam.epochs=1000;
+net.trainParam.min_grad=1e-6;
+[net,tr] = train(net, feats(:,trainInd), phonePatTarget(:,trainInd));
+
+% train error
+phoneIdProbs = net(feats(:,trainInd)); % [phCount,trainCount]
+recogRateTrain = accuracyTopN(phoneIdProbs,phoneIds(:,trainInd),1)
+
+% validate error
+phoneIdProbs = net(feats(:,valInd)); % [phCount,valCount]
+recogRateVal=accuracyTopN(phoneIdProbs,phoneIds(:,valInd),1)
+
+% test on Test data
+phoneIdProbs = net(feats(:,testInd)); % [phCount,testCount]
+recogRateTest=accuracyTopN(phoneIdProbs,phoneIds(:,testInd),1)
