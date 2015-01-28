@@ -1521,6 +1521,147 @@ void TranscriberViewModel::recognizeCurrentSegmentSphinxRequest()
 }
 #endif
 
+void TranscriberViewModel::dumpSilence(long i1, long i2)
+{
+	using namespace PticaGovorun;
+	long len = i2 - i1;
+	wv::slice<short> frames = wv::make_view(&audioSamples_[i1], len);
+	float mag = signalMagnitude(frames);
+	nextNotification(QString("Magnitude=%1").arg(mag));
+	std::cout << "Magnitude=" << mag << std::endl;
+
+	//
+	int windowSize = FrameSize;
+	int windowShift = FrameShift;
+	int wndsCount = slidingWindowsCount(len, windowSize, windowShift);
+
+	float avgMag2 = 0;
+	std::vector <TwoFrameInds> wnds(wndsCount);
+	slidingWindows(i1, len, windowSize, windowShift, wnds);
+	for (int i = 0; i < wndsCount; ++i)
+	{
+		TwoFrameInds bounds = wnds[i];
+		float m = signalMagnitude(wv::make_view(&audioSamples_[bounds.Start], bounds.Count));
+		std::cout << m << " ";
+		avgMag2 += m;
+	}
+	std::cout << std::endl;
+
+	avgMag2 /= wndsCount;
+
+
+	std::cout << "Magnitude2=" << avgMag2 << std::endl; 
+}
+
+void TranscriberViewModel::dumpSilence()
+{
+	using namespace PticaGovorun;
+	if (cursorKind() != TranscriberCursorKind::Range)
+		return;
+	long start = std::min(cursor_.first, cursor_.second);
+	long end = std::max(cursor_.first, cursor_.second);
+	dumpSilence(start, end);
+}
+
+void TranscriberViewModel::analyzeUnlabeledSpeech()
+{
+	using namespace PticaGovorun;
+	// get segments, ignoring auto markers
+	// get segment complements
+	// analyze windows of samples for silence
+	// take 10 in a row like silence
+	// insert auto markers
+	if (cursorKind() != TranscriberCursorKind::Range)
+		return;
+	long start = std::min(cursor_.first, cursor_.second);
+	long end = std::max(cursor_.first, cursor_.second);
+	long len = end - start;
+	wv::slice<short> frames = wv::make_view(&audioSamples_[start], len);
+
+	// 104 ms = between syllable
+	if (silenceSlidingWindowDur_ == -1)
+		silenceSlidingWindowDur_ = 120;
+
+	int windowSize = static_cast<int>(silenceSlidingWindowDur_ / 1000 * SampleRate);
+	
+	if (silenceSlidingWindowShift_ == -1)
+		//silenceSlidingWindowShift_ = windowSize / 3;
+		silenceSlidingWindowShift_ = FrameShift;
+	int windowShift = silenceSlidingWindowShift_;
+
+	int wndsCount = slidingWindowsCount(len, windowSize, windowShift);
+	std::vector <TwoFrameInds> wnds(wndsCount);
+	slidingWindows(start, len, windowSize, windowShift, wnds);
+
+	//
+	if (silenceMagnitudeThresh_ == -1)
+		silenceMagnitudeThresh_ = 300;
+	if (silenceSmallWndMagnitudeThresh_ == -1)
+		silenceSmallWndMagnitudeThresh_ = 200;
+
+	std::vector<uchar> wndIsSilence(wndsCount);
+	for (int i = 0; i < wndsCount; ++i)
+	{
+		TwoFrameInds bounds = wnds[i];
+		float mag = signalMagnitude(wv::make_view(&audioSamples_[bounds.Start], bounds.Count));
+		
+		int smallWndSize = FrameSize;
+		int smallWndShift = FrameShift;
+		float smallMag = std::numeric_limits<float>::max();
+		for (int smallStartInd = bounds.Start; smallStartInd < bounds.Start + bounds.Count; smallStartInd += smallWndShift)
+		{
+			float m = signalMagnitude(wv::make_view(&audioSamples_[smallStartInd], smallWndSize));
+			smallMag = std::min(smallMag, m);
+		}
+
+		std::cout << "wnd[" << i << "] large=" <<mag << " small=" <<smallMag <<std::endl;
+
+		bool isSil = mag < silenceMagnitudeThresh_ && smallMag < silenceSmallWndMagnitudeThresh_;
+		wndIsSilence[i] = isSil;
+	}
+
+	PticaGovorun::TimePointMarker newMarker;
+	newMarker.IsManual = false;
+	newMarker.LevelOfDetail = MarkerLevelOfDetail::Word;
+	newMarker.StopsPlayback = getDefaultMarkerStopsPlayback(templateMarkerLevelOfDetail_);
+
+	for (int i = 0; true; )
+	{
+		// find selecnce
+		for (; i < wndsCount && !wndIsSilence[i]; ++i) {}
+		if (i >= wndsCount)
+			break;
+
+		assert(wndIsSilence[i]);
+
+		long left = wnds[i].Start;
+
+		// find end of silence
+		for (i = i + 1; i < wndsCount && wndIsSilence[i]; ++i) {}
+
+		assert(wndIsSilence[i-1]);
+
+		TwoFrameInds bndsLast = wnds[i - 1];
+		long rightExcl = bndsLast.Start + bndsLast.Count;
+
+		// reduce silence range, because usually it takes valueable data
+		left += FrameShift;
+		rightExcl -= FrameShift;
+
+		newMarker.Id = generateMarkerId();
+		newMarker.SampleInd = left;
+		insertNewMarker(newMarker, false, false);
+
+		newMarker.Id = generateMarkerId();
+		newMarker.SampleInd = rightExcl;
+		insertNewMarker(newMarker, false, false);
+
+		std::cout << "[" << left << " " << rightExcl << "] ";
+	}
+	
+	std::cout << std::endl;
+}
+
 void TranscriberViewModel::ensureWordToPhoneListVocabularyLoaded()
 {
 	using namespace PticaGovorun;
@@ -1826,7 +1967,7 @@ void TranscriberViewModel::classifyMfccIntoPhones()
 	// *3 for velocity and acceleration coefs
 	int mfccVecLen = 3 * (mfccCount + 1);
 
-	int framesCount = getSplitFramesCount(len, frameSize, frameShift);
+	int framesCount = slidingWindowsCount(len, frameSize, frameShift);
 	std::vector<float> mfccFeatures(mfccVecLen*framesCount, 0);
 	wv::slice<short> samplesPart = wv::make_view(audioSamples_.data() + curSegBeg, len);
 	computeMfccVelocityAccel(samplesPart, frameSize, frameShift, framesCount, mfccCount, mfccVecLen, filterBank, mfccFeatures);

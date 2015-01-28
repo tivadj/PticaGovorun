@@ -312,6 +312,9 @@ public:	// recongizer
 #if HAS_POCKETSPHINX
 	void recognizeCurrentSegmentSphinxRequest();
 #endif
+	void dumpSilence();
+	void dumpSilence(long i1, long i2);
+	void analyzeUnlabeledSpeech();
 	void ensureWordToPhoneListVocabularyLoaded();
 	void loadAuxiliaryPhoneticDictionaryRequest();
 
@@ -383,6 +386,10 @@ private:
 	// number of padding silence samples to the left and right of audio segment
 	// The silence prefix/suffix for audio is equal across all recognizers.
 	size_t silencePadAudioSamplesCount_ = 1500; // pad with couple of windows of FrameSize
+	float silenceMagnitudeThresh_ = -1;
+	float silenceSmallWndMagnitudeThresh_ = -1;
+	float silenceSlidingWindowDur_ = -1; // ms, the interval to check for silence
+	float silenceSlidingWindowShift_ = -1;
 
 public:
 	float scale_;

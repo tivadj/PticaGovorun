@@ -36,6 +36,15 @@ enum class LastFrameSample
 
 static const PticaGovorun::LastFrameSample FrameToSamplePicker = PticaGovorun::LastFrameSample::MostLikely;
 
+// Represents indices of the frames (samples) range.
+struct TwoFrameInds // FramesRangeRef
+{
+	// The index of the first frame, this range points to.
+	long Start;
+	// The number of frames in the range.
+	long Count;
+};
+
 struct AlignedPhoneme
 {
 	std::string Name;
@@ -159,6 +168,9 @@ PG_EXPORTS std::tuple<bool, const char*> trainMonophoneClassifier(const std::map
 
 PG_EXPORTS void preEmphasisInplace(wv::slice<float> xs, float preEmph);
 
+// Calculates average of absolute values of amplitudes.
+PG_EXPORTS float signalMagnitude(wv::slice<short> xs);
+
 PG_EXPORTS void hammingInplace(wv::slice<float> frame);
 
 PG_EXPORTS int getMinDftPointsCount(int frameSize);
@@ -191,7 +203,11 @@ struct TriangularFilterBank
 PG_EXPORTS void buildTriangularFilterBank(float sampleRate, int binsCount, int fftNum, TriangularFilterBank& filterBank);
 
 // Returns number of frames when samples are split into sliding frames.
-PG_EXPORTS int getSplitFramesCount(int samplesCount, int frameSize, int frameShift);
+PG_EXPORTS int slidingWindowsCount(long framesCount, int windowSize, int windowShift);
+
+// Fills the buffer with coordinates of sliding windows.
+// If frames range is [0 15], windowSize=10, windowShift=5 then windows bounaries are [[0 10], [5 15]]
+PG_EXPORTS void slidingWindows(long startFrameInd, long framesCount, int windowSize, int windowShift, wv::slice<TwoFrameInds> windowBounds);
 
 PG_EXPORTS void computeMfccVelocityAccel(const wv::slice<short> samples, int frameSize, int frameShift, int framesCount, int mfcc_dim, int mfccVecLen, const TriangularFilterBank& filterBank, wv::slice<float> mfccFeatures);
 }

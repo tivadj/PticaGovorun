@@ -358,7 +358,9 @@ void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 	else if (ke->key() == Qt::Key_F2)
 		transcriberModel_->testMfccRequest();
 	else if (ke->key() == Qt::Key_F3)
-		transcriberModel_->classifyMfccIntoPhones();
+		transcriberModel_->analyzeUnlabeledSpeech();
+	else if (ke->key() == Qt::Key_F4)
+		transcriberModel_->dumpSilence();
 
 	else if (ke->key() == Qt::Key_F5)
 		transcriberModel_->refreshRequest();

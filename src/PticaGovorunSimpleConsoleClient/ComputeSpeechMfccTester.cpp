@@ -81,7 +81,7 @@ namespace ComputeSpeechMfccTesterNS
 		// *3 for velocity and acceleration coefs
 		int mfccVecLen = 3 * (mfccCount + 1);
 
-		int framesCount = getSplitFramesCount(len, frameSize, frameShift);
+		int framesCount = slidingWindowsCount(len, frameSize, frameShift);
 		std::vector<float> mfccFeatures(mfccVecLen*framesCount, 0);
 		wv::slice<short> samplesPart = wv::make_view(audioSamples.data() + begSampleInd, len);
 		computeMfccVelocityAccel(samplesPart, frameSize, frameShift, framesCount, mfccCount, mfccVecLen, filterBank, mfccFeatures);

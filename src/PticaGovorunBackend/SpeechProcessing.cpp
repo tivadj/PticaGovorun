@@ -296,7 +296,7 @@ namespace PticaGovorun {
 				// *3 for velocity and acceleration coefs
 				int mfccVecLen = 3 * (mfccCount + 1);
 
-				int framesCount2 = getSplitFramesCount(len, frameSize, frameShift);
+				int framesCount2 = slidingWindowsCount(len, frameSize, frameShift);
 				std::vector<float> mfccFeaturesTmp(mfccVecLen*framesCount2, 0);
 				wv::slice<short> samplesPart = wv::make_view(audioSamples.data() + begSampleInd, len);
 				computeMfccVelocityAccel(samplesPart, frameSize, frameShift, framesCount2, mfccCount, mfccVecLen, filterBank, mfccFeaturesTmp);
@@ -376,6 +376,19 @@ void preEmphasisInplace(wv::slice<float> xs, float preEmph)
 		xs[i] -= preEmph * xs[i - 1];
 	}
 	xs[0] *= 1 - preEmph;
+}
+
+float signalMagnitude(wv::slice<short> xs)
+{
+	if (xs.empty())
+		return 0;
+	float result = std::accumulate(std::begin(xs), std::end(xs), 0.0f, 
+		[](float ax, short amplitude)
+	{
+		return ax + std::abs(amplitude);
+	});
+	result /= xs.size();
+	return result;
 }
 
 // Attenuates the frame of a waveform using Hamming window.
@@ -721,10 +734,32 @@ void computeMfcc(wv::slice<float> samplesFloat, const TriangularFilterBank& filt
 	// do not perform Julius 'lifting' of cepstral coefficients
 }
 
-int getSplitFramesCount(int samplesCount, int frameSize, int frameShift)
+int slidingWindowsCount(long framesCount, int windowSize, int windowShift)
 {
-	int framesCount = 1 + (samplesCount - frameSize) / frameShift;
-	return framesCount;
+	// no windows fit frames
+	if (framesCount < windowSize)
+		return 0;
+
+	int wndCount = 1 + (framesCount - windowSize) / windowShift;
+	assert((wndCount - 1) * windowShift + windowSize <= framesCount && "The must be frames for each sliding window");
+	return wndCount;
+}
+
+void slidingWindows(long startFrameInd, long framesCount, int windowSize, int windowShift, wv::slice<TwoFrameInds> windowBounds)
+{
+	int wndCount = slidingWindowsCount(framesCount, windowSize, windowShift);
+	assert(wndCount == windowBounds.size() && "Preallocate space for windows bounds");
+	if (wndCount >= 1)
+		assert((wndCount - 1) * windowShift + windowSize <= framesCount && "The must be frames for each sliding window");
+
+	for (int i = 0; i < wndCount; ++i)
+	{
+		TwoFrameInds& bnds = windowBounds[i];
+		bnds.Start = startFrameInd;
+		bnds.Count = windowSize;
+		
+		startFrameInd += windowShift;
+	}
 }
 
 void computeMfccVelocityAccel(const wv::slice<short> samples, int frameSize, int frameShift, int framesCount, int mfcc_dim, int mfccVecLen, const TriangularFilterBank& filterBank, wv::slice<float> mfccFeatures)
