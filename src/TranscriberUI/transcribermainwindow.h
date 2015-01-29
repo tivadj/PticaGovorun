@@ -37,7 +37,7 @@ private slots:
 	void transcriberModel_audioSamplesChanged();
 	void transcriberModel_docOffsetXChanged();
 	void transcriberModel_lastMouseDocPosXChanged(float mouseDocPosX);
-	void UpdateDocPosXAndFrameInd(float mouseDocPosX, float sampleInd);
+	void UpdateCursorUI();
 	void transcriberModel_cursorChanged(std::pair<long, long> oldCursor);
 	void transcriberModel_currentMarkerIndChanged();
 	void transcriberModel_playingSampleIndChanged(long oldPlayingSampleInd);

@@ -108,7 +108,7 @@ signals :
 public:
     TranscriberViewModel();
 
-    void loadAudioFile();
+    void loadAudioFileRequest();
 
 	// Plays the current segment of audio.
 	// restoreCurFrameInd=true, if current frame must be restored when playing finishes.
@@ -201,7 +201,7 @@ public:
 	RectY laneYBounds(int laneInd) const;
 public:
 	// generic requests
-	void deleteRequest();
+	void deleteRequest(bool isControl);
 
 	// Refresh any data from cache.
 	void refreshRequest();
@@ -212,6 +212,9 @@ public: // current sample
 	void setLastMousePressPos(const QPointF& localPos, bool isShiftPressed);
 	long currentSampleInd() const;
 	std::pair<long, long> cursor() const;
+	
+	// Returns a pair of indices specifying current cursor, so that start <= end.
+	std::pair<long, long> cursorOrdered() const;
 	TranscriberCursorKind cursorKind() const;
 
 	static std::pair<long, long> nullCursor() { return std::make_pair(PticaGovorun::NullSampleInd, PticaGovorun::NullSampleInd); }
@@ -269,6 +272,8 @@ public:
 	void transformMarkersIf(std::vector<MarkerRefToOrigin>& markersOfInterest, MarkerPred canSelectMarker);
 	
 	void insertNewMarkerAtCursorRequest();
+
+	void insertNewMarker(const PticaGovorun::TimePointMarker& marker, bool updateCursor, bool updateViewportOffset);
 
 	// true if marker was deleted
 	bool deleteMarker(int markerInd);
@@ -385,7 +390,7 @@ private:
 	
 	// number of padding silence samples to the left and right of audio segment
 	// The silence prefix/suffix for audio is equal across all recognizers.
-	size_t silencePadAudioSamplesCount_ = 1500; // pad with couple of windows of FrameSize
+	size_t silencePadAudioSamplesCount_ = 0; // pad with couple of windows of FrameSize
 	float silenceMagnitudeThresh_ = -1;
 	float silenceSmallWndMagnitudeThresh_ = -1;
 	float silenceSlidingWindowDur_ = -1; // ms, the interval to check for silence

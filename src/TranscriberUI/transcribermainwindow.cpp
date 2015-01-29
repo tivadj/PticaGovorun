@@ -106,10 +106,7 @@ void TranscriberMainWindow::updateSamplesSlider()
 
 void TranscriberMainWindow::pushButtonLoad_Clicked()
 {
-	qDebug() << "pushButtonLoad_Clicked";
-    transcriberModel_->loadAudioFile();
-	//ui->widgetSamples->update(10, 10, 20, 100);
-	//ui->widgetSamples->repaint(10, 10, 20, 100);
+    transcriberModel_->loadAudioFileRequest();
 }
 
 void TranscriberMainWindow::pushButtonSaveAudioAnnot_Clicked()
@@ -142,34 +139,74 @@ void TranscriberMainWindow::horizontalScrollBarSamples_valueChanged(int value)
 void TranscriberMainWindow::transcriberModel_lastMouseDocPosXChanged(float mouseDocPosX)
 {
 	float sampleInd = transcriberModel_->docPosXToSampleInd(mouseDocPosX);
-	UpdateDocPosXAndFrameInd(mouseDocPosX, sampleInd);
 }
 
-void TranscriberMainWindow::UpdateDocPosXAndFrameInd(float mouseDocPosX, float sampleInd)
+void TranscriberMainWindow::UpdateCursorUI()
 {
+	const char* emptyText = "###";
+
+	// fill UI for the case of cursor=None
+	ui->lineEditCursorFirstFrameInd->setText(emptyText);
+	ui->lineEditCursorFirstDocPosX->setText(emptyText);
+	ui->lineEditCursorSecondFrameInd->setText(emptyText);
+	ui->lineEditCursorSecondDocPosX->setText(emptyText);
+	ui->lineEditCursorFramesCount->setText(emptyText);
+	ui->lineEditCursorDocLen->setText(emptyText);
+
 	std::stringstream msg;
 	msg.precision(2);
 	msg << std::fixed;
-	msg << mouseDocPosX;
-	ui->lineEditCurDocPosX->setText(QString::fromStdString(msg.str()));
 
-	msg.str("");
-	msg << sampleInd;
-	ui->lineEditCurSampleInd->setText(QString::fromStdString(msg.str()));
+	float firstDocX = -1;
+	std::pair<long, long> cursor = transcriberModel_->cursor();
+	if (cursor.first != PticaGovorun::NullSampleInd)
+	{
+		msg.str("");
+		msg << cursor.first;
+		ui->lineEditCursorFirstFrameInd->setText(QString::fromStdString(msg.str()));
+
+		firstDocX = transcriberModel_->sampleIndToDocPosX(cursor.first);
+		msg.str("");
+		msg << firstDocX;
+		ui->lineEditCursorFirstDocPosX->setText(QString::fromStdString(msg.str()));
+	}
+
+	if (cursor.second != PticaGovorun::NullSampleInd)
+	{
+		msg.str("");
+		msg << cursor.second;
+		ui->lineEditCursorSecondFrameInd->setText(QString::fromStdString(msg.str()));
+
+		float secondDocX = transcriberModel_->sampleIndToDocPosX(cursor.second);
+		msg.str("");
+		msg << secondDocX;
+		ui->lineEditCursorSecondDocPosX->setText(QString::fromStdString(msg.str()));
+
+		// cursor length
+
+		assert(firstDocX != -1);
+		long len = cursor.second - cursor.first;
+		msg.str("");
+		msg << len;
+		ui->lineEditCursorFramesCount->setText(QString::fromStdString(msg.str()));
+
+		float lenDocX = secondDocX - firstDocX;
+		msg.str("");
+		msg << lenDocX;
+		ui->lineEditCursorDocLen->setText(QString::fromStdString(msg.str()));
+	}
 }
 
 void TranscriberMainWindow::transcriberModel_cursorChanged(std::pair<long, long> oldCursor)
 {
+	UpdateCursorUI();
+
 	QRect updateRect = ui->widgetSamples->rect();
 
 	auto nullCur = TranscriberViewModel::nullCursor();
 	auto newCursor = transcriberModel_->cursor();
 	if (false && oldCursor != nullCur && newCursor != nullCur)
 	{
-		//
-		float newCursorDocPosX = transcriberModel_->sampleIndToDocPosX(newCursor.first);
-		UpdateDocPosXAndFrameInd(newCursorDocPosX, newCursor.first);
-
 		// update only invalidated rect
 
 		std::array<long, 4> cursorBounds;
@@ -286,6 +323,7 @@ void TranscriberMainWindow::transcriberModel_playingSampleIndChanged(long oldPla
 void TranscriberMainWindow::lineEditMarkerText_editingFinished()
 {
 	transcriberModel_->setCurrentMarkerTranscriptText(ui->lineEditMarkerText->text());
+	ui->widgetSamples->setFocus();
 }
 
 void TranscriberMainWindow::checkBoxCurMarkerStopOnPlayback_toggled(bool checked)
@@ -324,7 +362,7 @@ void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 	else if (ke->key() == Qt::Key_Insert)
 		transcriberModel_->insertNewMarkerAtCursorRequest();
 	else if (ke->key() == Qt::Key_Delete)
-		transcriberModel_->deleteRequest();
+		transcriberModel_->deleteRequest(ke->modifiers().testFlag(Qt::ControlModifier));
 	else if (ke->key() == Qt::Key_T)
 		transcriberModel_->selectMarkerClosestToCurrentCursorRequest();
 
@@ -353,10 +391,10 @@ void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 
 	else if (ke->key() == Qt::Key_F11)
 		pushButtonSegmentComposerPlay_Clicked();
-	else if (ke->key() == Qt::Key_F1)
-		transcriberModel_->computeMfccRequest();
 	else if (ke->key() == Qt::Key_F2)
-		transcriberModel_->testMfccRequest();
+	{
+		ui->lineEditMarkerText->setFocus();
+	}
 	else if (ke->key() == Qt::Key_F3)
 		transcriberModel_->analyzeUnlabeledSpeech();
 	else if (ke->key() == Qt::Key_F4)

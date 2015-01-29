@@ -18,6 +18,7 @@
 #include "ClnUtils.h"
 //#include "algos_amp.cpp"
 #include "InteropPython.h"
+#include "SpeechProcessing.h"
 
 #include <samplerate.h>
 
@@ -42,7 +43,7 @@ TranscriberViewModel::TranscriberViewModel()
 	curRecognizerName_ = "shrekky";
 }
 
-void TranscriberViewModel::loadAudioFile()
+void TranscriberViewModel::loadAudioFileRequest()
 {
 	using namespace PticaGovorun;
 	audioSamples_.clear();
@@ -70,9 +71,8 @@ void TranscriberViewModel::loadAudioFile()
 
 	emit audioSamplesChanged();
 
-	std::stringstream msg;
-	msg << "Loaded: SamplesCount=" << audioSamples_.size();
-	emit nextNotification(QString::fromStdString(msg.str()));
+	QString msg = QString("Loaded '%1' FramesCount=%2").arg(audioFilePathAbs_).arg(audioSamples_.size());
+	emit nextNotification(msg);
 
 	//
 	loadAudioMarkupFromXml();
@@ -686,14 +686,35 @@ RectY TranscriberViewModel::laneYBounds(int laneInd) const
 	return bnd;
 }
 
-void TranscriberViewModel::deleteRequest()
+void TranscriberViewModel::deleteRequest(bool isControl)
 {
 	// delete current marker?
 
-	int markerInd = currentMarkerInd();
-	bool delMarkerOp = deleteMarker(markerInd);
-	if (delMarkerOp)
-		return;
+	if (isControl)
+	{
+		if (cursorKind() == TranscriberCursorKind::Single)
+		{
+			int markerInd = currentMarkerInd();
+			bool delMarkerOp = deleteMarker(markerInd);
+			if (delMarkerOp)
+				return;
+		}
+		else if (cursorKind() == TranscriberCursorKind::Range)
+		{
+			long start;
+			long end;
+			std::tie(start, end) = cursorOrdered();
+			for (int markerInd = frameIndMarkers_.size() - 1; markerInd >= 0; --markerInd)
+			{
+				const auto marker = frameIndMarkers_[markerInd];
+				if (marker.SampleInd >= start && marker.SampleInd < end)
+				{
+					bool delMarkerOp = deleteMarker(markerInd);
+					assert(delMarkerOp);
+				}
+			}
+		}
+	}
 
 	std::pair<long, long> samplesRange = cursor();
 	bool delDiagOp = deleteDiagramSegmentsAtCursor(samplesRange);
@@ -1024,16 +1045,20 @@ void TranscriberViewModel::setCursorInternal(std::pair<long,long> value, bool up
 		if (updateCurrentMarkerInd)
 		{
 			int curMarkerInd = -1;
-			if (cursorKind() == TranscriberCursorKind::Single)
+			if (cursorKind() == TranscriberCursorKind::Single || cursorKind() == TranscriberCursorKind::Range)
 			{
 				// keep active current segment, associated with the marker left to the cursor
 
+				std::vector<MarkerRefToOrigin>& markers = markersOfInterestCache_;
+				markers.clear();
+				transformMarkersIf(markers, [](const PticaGovorun::TimePointMarker& m) { return m.StopsPlayback; });
+
 				int leftMarkerInd = -1;
 				int rightMarkerInd = -1;
-				auto markerFrameIndSelector = [](const PticaGovorun::TimePointMarker& m) { return m.SampleInd;  };
-				bool foundSegOp = findSegmentMarkerInds(frameIndMarkers_, markerFrameIndSelector, cursor_.first, true, leftMarkerInd, rightMarkerInd);
+				auto markerFrameIndSelector = [](const MarkerRefToOrigin& m) { return m.Marker.SampleInd;  };
+				bool foundSegOp = findSegmentMarkerInds(markers, markerFrameIndSelector, cursor_.first, true, leftMarkerInd, rightMarkerInd);
 				if (foundSegOp && leftMarkerInd != -1)
-					curMarkerInd = leftMarkerInd;
+					curMarkerInd = markers[leftMarkerInd].MarkerInd;
 			}
 			else
 				curMarkerInd = -1; // reset the marker
@@ -1063,6 +1088,14 @@ std::pair<long, long> TranscriberViewModel::cursor() const
 	return cursor_;
 }
 
+std::pair<long, long> TranscriberViewModel::cursorOrdered() const
+{
+	assert(cursorKind() == TranscriberCursorKind::Range);
+	long start = std::min(cursor_.first, cursor_.second);
+	long end   = std::max(cursor_.first, cursor_.second);
+	return std::make_pair(start,end);
+}
+
 TranscriberCursorKind TranscriberViewModel::cursorKind() const
 {
 	if (cursor_.first != PticaGovorun::NullSampleInd)
@@ -1082,18 +1115,8 @@ TranscriberCursorKind TranscriberViewModel::cursorKind() const
 void TranscriberViewModel::insertNewMarkerAtCursorRequest()
 {
 	long curFrameInd = currentSampleInd();
-
-	// find the insertion position in the markers collection
-
-	int newMarkerInd = -1;
-	int leftMarkerInd;
-	int rightMarkerInd;
-	auto markerFrameIndSelector = [](const PticaGovorun::TimePointMarker& m) { return m.SampleInd; };
-	bool findSegOp = findSegmentMarkerInds(frameIndMarkers_, markerFrameIndSelector, curFrameInd, true, leftMarkerInd, rightMarkerInd);
-	if (!findSegOp || leftMarkerInd == -1) // insert the first marker
-		newMarkerInd = 0;
-	else
-		newMarkerInd = leftMarkerInd + 1; // next to the left marker
+	if (curFrameInd == PticaGovorun::NullSampleInd)
+		return;
 
 	PticaGovorun::TimePointMarker newMarker;
 	newMarker.Id = generateMarkerId();
@@ -1101,9 +1124,29 @@ void TranscriberViewModel::insertNewMarkerAtCursorRequest()
 	newMarker.IsManual = true;
 	newMarker.LevelOfDetail = templateMarkerLevelOfDetail_;
 	newMarker.StopsPlayback = getDefaultMarkerStopsPlayback(templateMarkerLevelOfDetail_);
-	insertNewMarkerSafe(newMarkerInd, newMarker);
+	insertNewMarker(newMarker, true, false);
+}
 
-	setCurrentMarkerIndInternal(newMarkerInd, true, false);
+void TranscriberViewModel::insertNewMarker(const PticaGovorun::TimePointMarker& marker, bool updateCursor, bool updateViewportOffset)
+{
+	long frameInd = marker.SampleInd;
+
+	// find the insertion position in the markers collection
+
+	int newMarkerInd = -1;
+	int leftMarkerInd;
+	int rightMarkerInd;
+	auto markerFrameIndSelector = [](const PticaGovorun::TimePointMarker& m) { return m.SampleInd; };
+	bool findSegOp = findSegmentMarkerInds(frameIndMarkers_, markerFrameIndSelector, frameInd, true, leftMarkerInd, rightMarkerInd);
+	if (!findSegOp || leftMarkerInd == -1) // insert the first marker
+		newMarkerInd = 0;
+	else
+		newMarkerInd = leftMarkerInd + 1; // next to the left marker
+
+//
+	insertNewMarkerSafe(newMarkerInd, marker);
+
+	setCurrentMarkerIndInternal(newMarkerInd, updateCursor, updateViewportOffset);
 
 	// TODO: repaint only current marker
 	emit audioSamplesChanged();
@@ -1519,6 +1562,7 @@ void TranscriberViewModel::recognizeCurrentSegmentSphinxRequest()
 	// redraw current segment
 	emit audioSamplesChanged();
 }
+
 #endif
 
 void TranscriberViewModel::dumpSilence(long i1, long i2)
