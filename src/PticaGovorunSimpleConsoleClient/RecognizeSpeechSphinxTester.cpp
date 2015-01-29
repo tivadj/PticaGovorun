@@ -180,12 +180,13 @@ namespace RecognizeSpeechSphinxTester
 		//
 		struct TwoUtterances
 		{
-			float ErrorWord;
-			float ErrorChars;
+			float ErrorWord; // edit distance between utterances as a sequence of words
+			float ErrorChars; // edit distance between utterances as a sequence of chars
 			AnnotatedSpeechSegment Segment;
 			std::wstring TextActual;
 			std::vector<std::wstring> WordsExpected;
 			std::vector<std::wstring> WordsActual;
+			std::vector<float> WordProbs; // confidence of each recognized word
 		};
 
 		//
@@ -257,14 +258,30 @@ namespace RecognizeSpeechSphinxTester
 			QTextCodec* textCodec = QTextCodec::codecForName("utf8");
 			std::wstring hypWStr = textCodec->toUnicode(hyp).toStdWString();
 
+			// find words and word probabilities
+			std::vector<std::wstring> wordsActual;
+			std::vector<float> wordsActualProbs;
+			for (ps_seg_t *recogSeg = ps_seg_iter(ps, &score); recogSeg; recogSeg = ps_seg_next(recogSeg))
+			{
+				const char* word = ps_seg_word(recogSeg);
+				std::wstring wordWStr = textCodec->toUnicode(word).toStdWString();
+				wordsActual.push_back(wordWStr);
+
+				int startFrame, endFrame;
+				ps_seg_frames(recogSeg, &startFrame, &endFrame);
+
+				int32 lscr, ascr, lback;
+				int32 post = ps_seg_prob(recogSeg, &ascr, &lscr, &lback); // posterior probability?
+
+				float64 prob = logmath_exp(ps_get_logmath(ps), post);
+				wordsActualProbs.push_back((float)prob);
+			}
+
 			// split text into words
 
 			std::vector<wv::slice<const wchar_t>> wordSlicesExpected;
 			splitUtteranceIntoWords(seg.TranscriptText, wordSlicesExpected);
 			
-			std::vector<wv::slice<const wchar_t>> wordSlicesActual;
-			splitUtteranceIntoWords(hypWStr, wordSlicesActual);
-
 			auto textSliceToString = [](wv::slice<const wchar_t> wordSlice) -> std::wstring
 			{
 				std::wstring word;
@@ -275,24 +292,30 @@ namespace RecognizeSpeechSphinxTester
 			std::vector<std::wstring> wordsExpected;
 			std::transform(std::begin(wordSlicesExpected), std::end(wordSlicesExpected), std::back_inserter(wordsExpected), textSliceToString);
 
-			std::vector<std::wstring> wordsActual;
-			std::transform(std::begin(wordSlicesActual), std::end(wordSlicesActual), std::back_inserter(wordsActual), textSliceToString);
+			// skip silences for word-error computation
+			std::vector<std::wstring> wordsActualNoSil;
+			std::copy_if(std::begin(wordsActual), std::end(wordsActual), std::back_inserter(wordsActualNoSil), [](std::wstring& word)
+			{
+				return word != std::wstring(L"<s>") && word != std::wstring(L"</s>") && word != std::wstring(L"<sil>");
+			});
+
 
 			// compute word error
-
 			WordErrorCosts<std::wstring> c;
-			float dist = findEditDistance(wordsExpected.begin(), wordsExpected.end(), wordsActual.begin(), wordsActual.end(), c);
+			float distWord = findEditDistance(wordsExpected.begin(), wordsExpected.end(), wordsActualNoSil.begin(), wordsActualNoSil.end(), c);
 
+			// compute edit distances between whole utterances
 			WordErrorCosts<wchar_t> charCost;
 			float distChar = findEditDistance(std::cbegin(hypWStr), std::cend(hypWStr), std::cbegin(seg.TranscriptText), std::cend(seg.TranscriptText), charCost);
 
 			TwoUtterances utter;
-			utter.ErrorWord = dist;
+			utter.ErrorWord = distWord;
 			utter.ErrorChars = distChar;
 			utter.Segment = seg;
 			utter.TextActual = hypWStr;
 			utter.WordsExpected = wordsExpected;
 			utter.WordsActual = wordsActual;
+			utter.WordProbs = wordsActualProbs;
 			recogUtterances.push_back(utter);
 		}
 
@@ -329,7 +352,16 @@ namespace RecognizeSpeechSphinxTester
 			dumpFileStream << "WordError=" << utter.ErrorWord << " " << "CharError=" << utter.ErrorChars << " SegId=" << utter.Segment.SegmentId << " " << QString::fromStdWString(utter.Segment.FilePath) <<"\n";
 			dumpFileStream << "Expect=" << QString::fromStdWString(utter.Segment.TranscriptText) << "\n";
 			dumpFileStream << "Actual=" << QString::fromStdWString(utter.TextActual) << "\n";
-			dumpFileStream << "\n";
+			
+			dumpFileStream << "WordProbs=";
+			for (int wordInd = 0; wordInd < utter.WordsActual.size(); ++wordInd)
+			{
+				dumpFileStream << QString::fromStdWString(utter.WordsActual[wordInd]) << " ";
+				dumpFileStream << QString("%1").arg(utter.WordProbs[wordInd], 0, 'f', 2) << " ";
+			}
+			dumpFileStream << "\n"; // end of last line
+
+			dumpFileStream << "\n"; // line between utterances
 		}
 	}
 
