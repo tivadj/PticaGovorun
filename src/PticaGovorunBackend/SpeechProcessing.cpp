@@ -1,14 +1,15 @@
 #include "stdafx.h"
-#include "SpeechProcessing.h"
 #include <regex>
 #include <memory>
 #include <cctype> // std::isalpha
 #include <numeric> // std::accumulate
+
 #include <QDir>
 
 #include <opencv2\core.hpp> // cv::Mat
 #include <opencv2\ml.hpp> // cv::EM
 
+#include "SpeechProcessing.h"
 #include "XmlAudioMarkup.h"
 #include "WavUtils.h"
 #include "MLUtils.h"
@@ -26,14 +27,25 @@ namespace PticaGovorun {
 		return false;
 	}
 
-	// wordToPhoneListFun returns false, if word can't be translated into phone list
-	std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> bool> wordToPhoneListFun, bool insertShortPause, std::vector<std::string>& speechPhones)
+	void splitUtteranceIntoWords(const std::wstring& text, std::vector<wv::slice<const wchar_t>>& wordsAsSlices)
 	{
 		std::wsmatch matchRes;
 		static std::wregex r(LR"regex(\w+)regex"); // match words
 
-		// iterate through words
+		auto wordBeg = std::cbegin(text);
+		while (std::regex_search(wordBeg, std::cend(text), matchRes, r))
+		{
+			auto& wordSlice = matchRes[0];
+			wv::slice<const wchar_t> word = wv::make_view(&*wordSlice.first, wordSlice.second - wordSlice.first);
+			wordsAsSlices.push_back(word);
 
+			wordBeg = wordSlice.second;
+		}
+	}
+
+	// wordToPhoneListFun returns false, if word can't be translated into phone list
+	std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> bool> wordToPhoneListFun, bool insertShortPause, std::vector<std::string>& speechPhones)
+	{
 		std::wstring word;
 		word.reserve(32);
 
@@ -43,11 +55,13 @@ namespace PticaGovorun {
 		// insert the starting silence phone
 		speechPhones.push_back(PGPhoneSilence);
 
-		auto wordBeg = std::cbegin(text);
-		while (std::regex_search(wordBeg, std::cend(text), matchRes, r))
+		std::vector<wv::slice<const wchar_t>> wordsAsSlices;
+		splitUtteranceIntoWords(text, wordsAsSlices);
+
+		// iterate through words
+		for (wv::slice<const wchar_t>& wordSlice : wordsAsSlices)
 		{
-			auto& wordSlice = matchRes[0];
-			word.assign(wordSlice.first, wordSlice.second);
+			word.assign(wordSlice.begin(), wordSlice.end());
 
 			// convert word to phones
 			wordPhones.clear();
@@ -63,8 +77,6 @@ namespace PticaGovorun {
 			// insert the silence phone between words
 			if (insertShortPause)
 				speechPhones.push_back(PGShortPause);
-
-			wordBeg = wordSlice.second;
 		}
 
 		// remove last short pause phone
@@ -200,6 +212,94 @@ namespace PticaGovorun {
 		default:
 			PG_Assert(false && "Unrecognized value of LastFrameSample enum");
 		}
+	}
+
+	// Returns FrameInd which corresponds to FrameInd in resampled audio.
+	long frameIndToResampled(long srcFrameInd, float srcFrameRate, float dstFrameRate)
+	{
+		double timePoint = srcFrameInd / srcFrameRate;
+		long result = static_cast<long>(timePoint * dstFrameRate);
+		return result;
+	}
+
+	std::tuple<bool, const char*> loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, MarkerLevelOfDetail targetLevelOfDetail, std::vector<AnnotatedSpeechSegment>& segments)
+	{
+		if (folderOrWavFilePath.isDir())
+		{
+			QString dirAbsPath = folderOrWavFilePath.absoluteFilePath();
+			QDir dir(dirAbsPath);
+
+			QFileInfoList items = dir.entryInfoList(QDir::Filter::Files | QDir::Filter::Dirs | QDir::Filter::NoDotAndDotDot);
+			for (const QFileInfo item : items)
+			{
+				auto subOp = loadSpeechAndAnnotation(item, targetLevelOfDetail, segments);
+				if (!std::get<0>(subOp))
+					return subOp;
+			}
+			return std::make_pair(true, "");
+		}
+
+		// process wav file path
+
+		QString wavFilePath = folderOrWavFilePath.absoluteFilePath();
+
+		QString extension = folderOrWavFilePath.suffix();
+		if (extension != "wav") // skip non wav files
+			return std::make_pair(true, "");
+
+		QDir parentDir = folderOrWavFilePath.absoluteDir();
+		QString xmlFileName = folderOrWavFilePath.completeBaseName() + ".xml";
+
+		QString xmlFilePath = parentDir.absoluteFilePath(xmlFileName);
+		QFileInfo xmlFilePathInfo(xmlFilePath);
+		if (!xmlFilePathInfo.exists()) // wav has no corresponding markup	
+			return std::make_pair(true, "");
+
+		// load audio markup
+		// not all wav files has a markup, hence try to load the markup first
+
+		QString audioMarkupFilePathAbs = xmlFilePathInfo.absoluteFilePath();
+		std::vector<TimePointMarker> syncPoints;
+		std::tuple<bool, const char*> loadOp = loadAudioMarkupFromXml(audioMarkupFilePathAbs.toStdWString(), syncPoints);
+		if (!std::get<0>(loadOp))
+			return loadOp;
+
+		// take only markers of requested type
+		std::vector<TimePointMarker> markersOfInterest;
+		std::copy_if(std::begin(syncPoints), std::end(syncPoints), std::back_inserter(markersOfInterest), [=](const TimePointMarker& m)
+		{
+			return m.LevelOfDetail == targetLevelOfDetail;
+		});
+
+		// load wav file
+		std::vector<short> speechFrames;
+		float frameRate = -1;
+		auto readOp = readAllSamples(wavFilePath.toStdString(), speechFrames, &frameRate);
+		if (!std::get<0>(readOp))
+			return std::make_pair(false, "Can't read wav file");
+
+		// collect annotated frames
+		// two consequent markers form a segment of intereset
+		for (int i = 0; i < (int)markersOfInterest.size()-1; ++i)
+		{
+			const auto& marker = markersOfInterest[i];
+			if (!marker.TranscripText.isEmpty())
+			{
+				AnnotatedSpeechSegment seg;
+				seg.SegmentId = marker.Id;
+				seg.FilePath = wavFilePath.toStdWString();
+				seg.TranscriptText = marker.TranscripText.toStdWString();
+				seg.FrameRate = frameRate;
+
+				long frameStart = marker.SampleInd;
+				long frameEnd = markersOfInterest[i + 1].SampleInd;
+
+				seg.Frames = std::vector<short>(&speechFrames[frameStart], &speechFrames[frameEnd]);
+				segments.push_back(seg);
+			}
+		}
+
+		return std::make_pair(true, "");
 	}
 
 	// phoneNameToFeaturesVector[phone] has mfccVecLen features for one frame, then for another frame, etc.

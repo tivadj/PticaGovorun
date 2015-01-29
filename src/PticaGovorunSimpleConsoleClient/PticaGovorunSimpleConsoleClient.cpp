@@ -8,6 +8,7 @@ namespace SliceTesterNS { void run(); }
 namespace ComputeSpeechMfccTesterNS { void run(); }
 namespace ResampleAudioTesterNS { void run(); }
 namespace RecognizeSpeechSphinxTester { void run(); }
+namespace EditDistanceTestsNS { void run(); }
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -16,6 +17,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//ComputeSpeechMfccTesterNS::run();
 	//ResampleAudioTesterNS::run();
 	RecognizeSpeechSphinxTester::run();
+	//EditDistanceTestsNS::run();
 
 	return 0;
 }

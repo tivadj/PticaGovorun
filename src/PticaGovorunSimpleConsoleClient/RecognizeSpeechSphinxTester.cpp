@@ -3,16 +3,28 @@
 #include <array>
 #include <iostream>
 #include <locale>
+
 #include <windows.h>
+
 #include <pocketsphinx.h>
-#include "WavUtils.h" // readAllSamples
 #include <QTextCodec>
+#include <QDebug>
 
 #include "ps_alignment.h"
 #include "state_align_search.h"
 
+#include <samplerate.h>
+
+#include "WavUtils.h" // readAllSamples
+#include "SpeechProcessing.h"
+#include "StringUtils.h" // findEditDistance
+#include "CoreUtils.h" // timeStamp
+
 namespace RecognizeSpeechSphinxTester
 {
+	using namespace PticaGovorun;
+	const float CmuSphinxFrameRate = 16000;
+
 	void recognizeWav()
 	{
 		//SetConsoleOutputCP(1251);
@@ -28,16 +40,22 @@ namespace RecognizeSpeechSphinxTester
 
 		const char* wavFilePath = R"path(E:\devb\workshop\PticaGovorunProj\data\!\chitki16000Hz.wav)path";
 		std::vector<short> audioSamples;
-		auto readOp = PticaGovorun::readAllSamples(wavFilePath, audioSamples);
+		float frameRate = -1;
+		auto readOp = PticaGovorun::readAllSamples(wavFilePath, audioSamples, &frameRate);
 		if (!std::get<0>(readOp))
 		{
 			std::cerr << "Can't read wav file" << std::endl;
 			return;
 		}
+		if (frameRate != CmuSphinxFrameRate)
+		{
+			std::cerr << "CMU PocketSphinx words with 16KHz files only" << std::endl;
+			return;
+		}
 
-		const char* hmmPath = R"path(C:/devb/PticaGovorunProj/data/CMUSphinxTutorial/persian/model_parameters/persian.cd_cont_200/)path";
-		const char* langModelPath = R"path(C:/devb/PticaGovorunProj/data/CMUSphinxTutorial/persian/etc/persian.lm.DMP)path";
-		const char* dictPath = R"path(C:/devb/PticaGovorunProj/data/CMUSphinxTutorial/persian/etc/persian.dic)path";
+		const char* hmmPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";
+		const char* langModelPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.lm.DMP)path";
+		const char* dictPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.dic)path";
 		cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
 			"-hmm", hmmPath,
 			"-lm", langModelPath,
@@ -115,8 +133,209 @@ namespace RecognizeSpeechSphinxTester
 		ps_free(ps);
 	}
 
+	template <typename Letter>
+	class WordErrorCosts {
+	public:
+		typedef float CostType;
+
+		static CostType getZeroCosts() {
+			return 0;
+		}
+		inline CostType getInsertSymbolCost(Letter x) {
+			return 1;
+		}
+		inline CostType getRemoveSymbolCost(Letter x) {
+			return 1;
+		}
+		inline CostType getSubstituteSymbolCost(Letter x, Letter y) {
+			return x == y ? 0 : 1;
+		}
+	};
+
+	void testSphincDecoder()
+	{
+		const char* wavFilePath = R"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechAnnot\ncru1-slovo\)path";
+
+		std::vector<AnnotatedSpeechSegment> segments;
+		bool loadOp;
+		const char* errMsg;
+		std::tie(loadOp, errMsg) = loadSpeechAndAnnotation(QFileInfo(wavFilePath), MarkerLevelOfDetail::Word, segments);
+
+		//
+		const char* hmmPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";
+		const char* langModelPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.lm.DMP)path";
+		const char* dictPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.dic)path";
+		cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
+			"-hmm", hmmPath,
+			"-lm", langModelPath,
+			"-dict", dictPath,
+			nullptr);
+		if (config == nullptr)
+			return;
+
+		ps_decoder_t *ps = ps_init(config);
+		if (ps == nullptr)
+			return;
+
+		//
+		struct TwoUtterances
+		{
+			float ErrorWord;
+			float ErrorChars;
+			AnnotatedSpeechSegment Segment;
+			std::wstring TextActual;
+			std::vector<std::wstring> WordsExpected;
+			std::vector<std::wstring> WordsActual;
+		};
+
+		//
+		std::vector<TwoUtterances> recogUtterances;
+		float targetFrameRate = CmuSphinxFrameRate;
+		for (int i = 0; i < segments.size(); ++i)
+		{
+			const AnnotatedSpeechSegment& seg = segments[i];
+
+			std::vector<short> speechFramesResamp;
+			bool requireResampling = seg.FrameRate != targetFrameRate;
+			if (requireResampling)
+			{
+				std::vector<float> inFramesFloat(std::begin(seg.Frames), std::end(seg.Frames));
+				std::vector<float> outFramesFloat(inFramesFloat.size(), 0);
+
+				SRC_DATA convertData;
+				convertData.data_in = inFramesFloat.data();
+				convertData.input_frames = inFramesFloat.size();
+				convertData.data_out = outFramesFloat.data();
+				convertData.output_frames = outFramesFloat.size();
+				convertData.src_ratio = targetFrameRate / seg.FrameRate;
+
+				int converterType = SRC_SINC_BEST_QUALITY;
+				int channels = 1;
+				int error = src_simple(&convertData, converterType, channels);
+				if (error != 0)
+				{
+					const char* msg = src_strerror(error);
+					std::cerr << msg;
+					break;
+				}
+
+				outFramesFloat.resize(convertData.output_frames_gen);
+				speechFramesResamp.assign(std::begin(outFramesFloat), std::end(outFramesFloat));
+			}
+
+			int rv = ps_start_utt(ps, "goforward");
+			if (rv < 0)
+			{
+				std::cerr << "Error: Can't start utterance";
+				break;
+			}
+
+			bool fullUtterance = true;
+			rv = ps_process_raw(ps, speechFramesResamp.data(), speechFramesResamp.size(), false, fullUtterance);
+			if (rv < 0)
+			{
+				std::cerr << "Error: Can't process utterance";
+				break;
+			}
+			rv = ps_end_utt(ps);
+			if (rv < 0)
+			{
+				std::cerr << "Error: Can't end utterance";
+				break;
+			}
+
+			//
+			__int32 score;
+			const char* uttid;
+			const char* hyp = ps_get_hyp(ps, &score, &uttid);
+			if (hyp == nullptr)
+			{
+				// "No hypothesis is available"
+				hyp = "";
+			}
+			
+			QTextCodec* textCodec = QTextCodec::codecForName("utf8");
+			std::wstring hypWStr = textCodec->toUnicode(hyp).toStdWString();
+
+			// split text into words
+
+			std::vector<wv::slice<const wchar_t>> wordSlicesExpected;
+			splitUtteranceIntoWords(seg.TranscriptText, wordSlicesExpected);
+			
+			std::vector<wv::slice<const wchar_t>> wordSlicesActual;
+			splitUtteranceIntoWords(hypWStr, wordSlicesActual);
+
+			auto textSliceToString = [](wv::slice<const wchar_t> wordSlice) -> std::wstring
+			{
+				std::wstring word;
+				word.assign(wordSlice.begin(), wordSlice.end());
+				return word;
+			};
+			
+			std::vector<std::wstring> wordsExpected;
+			std::transform(std::begin(wordSlicesExpected), std::end(wordSlicesExpected), std::back_inserter(wordsExpected), textSliceToString);
+
+			std::vector<std::wstring> wordsActual;
+			std::transform(std::begin(wordSlicesActual), std::end(wordSlicesActual), std::back_inserter(wordsActual), textSliceToString);
+
+			// compute word error
+
+			WordErrorCosts<std::wstring> c;
+			float dist = findEditDistance(wordsExpected.begin(), wordsExpected.end(), wordsActual.begin(), wordsActual.end(), c);
+
+			WordErrorCosts<wchar_t> charCost;
+			float distChar = findEditDistance(std::cbegin(hypWStr), std::cend(hypWStr), std::cbegin(seg.TranscriptText), std::cend(seg.TranscriptText), charCost);
+
+			TwoUtterances utter;
+			utter.ErrorWord = dist;
+			utter.ErrorChars = distChar;
+			utter.Segment = seg;
+			utter.TextActual = hypWStr;
+			utter.WordsExpected = wordsExpected;
+			utter.WordsActual = wordsActual;
+			recogUtterances.push_back(utter);
+		}
+
+		//
+		ps_free(ps);
+
+		// order error, large to small
+		std::sort(std::begin(recogUtterances), std::end(recogUtterances), [](TwoUtterances& a, TwoUtterances& b)
+		{
+			return a.ErrorWord > b.ErrorWord;
+		});
+
+
+		std::stringstream dumpFileName;
+		dumpFileName << "wordErrorDump.";
+		appendTimeStampNow(dumpFileName);
+		dumpFileName << ".txt";
+
+		QFile dumpFile(dumpFileName.str().c_str());
+		if (!dumpFile.open(QIODevice::WriteOnly | QIODevice::Text))
+		{
+			std::cerr << "Can't open ouput file" <<std::endl;
+			return;
+		}
+
+		QTextStream dumpFileStream(&dumpFile);
+		dumpFileStream.setCodec("UTF-8");
+
+		for (int i = 0; i < recogUtterances.size(); ++i)
+		{
+			const TwoUtterances& utter = recogUtterances[i];
+			if (utter.ErrorWord == 0) // skip correct utterances
+				break;
+			dumpFileStream << "WordError=" << utter.ErrorWord << " " << "CharError=" << utter.ErrorChars << " SegId=" << utter.Segment.SegmentId << " " << QString::fromStdWString(utter.Segment.FilePath) <<"\n";
+			dumpFileStream << "Expect=" << QString::fromStdWString(utter.Segment.TranscriptText) << "\n";
+			dumpFileStream << "Actual=" << QString::fromStdWString(utter.TextActual) << "\n";
+			dumpFileStream << "\n";
+		}
+	}
+
 	void run()
 	{
-		recognizeWav();
+		//recognizeWav();
+		testSphincDecoder();
 	}
 }

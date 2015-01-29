@@ -141,8 +141,27 @@ struct TimePointMarker
 	QString TranscripText;
 };
 
+// Represents annotated part of a speech audio used for training the speech recognizer.
+struct AnnotatedSpeechSegment
+{
+	int SegmentId;
+
+	// Text associated with this speech segment.
+	std::wstring TranscriptText;
+
+	std::wstring FilePath;
+
+	// Frames' frame rate.
+	float FrameRate;
+
+	// Actual samples in [FrameStart; FrameEnd) range.
+	std::vector<short> Frames;
+};
+
 // Determines if a marker with given level of detail will stop the audio playback.
 PG_EXPORTS bool getDefaultMarkerStopsPlayback(MarkerLevelOfDetail levelOfDetail);
+
+PG_EXPORTS void splitUtteranceIntoWords(const std::wstring& text, std::vector<wv::slice<const wchar_t>>& wordsAsSlices);
 
 // insertShortPause=true to insert sp phone between words.
 PG_EXPORTS std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> bool> wordToPhoneListFun, bool insertShortPause, std::vector<std::string>& speechPhones);
@@ -155,6 +174,10 @@ PG_EXPORTS void padSilence(const short* audioFrames, int audioFramesCount, int s
 PG_EXPORTS void mergeSamePhoneStates(const std::vector<AlignedPhoneme>& phoneStates, std::vector<AlignedPhoneme>& monoPhones);
 
 PG_EXPORTS void frameRangeToSampleRange(size_t framBegIndex, size_t framEndIndex, LastFrameSample endSampleChoice, size_t frameSize, size_t frameShift, long& sampleBeg, long& sampleEnd);
+
+// Loads annotated speech for training.
+// targetLevelOfDetail=type of marker (segment) to query annotation.
+PG_EXPORTS std::tuple<bool, const char*> loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, MarkerLevelOfDetail targetLevelOfDetail, std::vector<AnnotatedSpeechSegment>& segments);
 
 PG_EXPORTS std::tuple<bool, const char*> collectMfccFeatures(const QFileInfo& folderOrWavFilePath, int frameSize, int frameShift, int mfccVecLen, std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector);
 

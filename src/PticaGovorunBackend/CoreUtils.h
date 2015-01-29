@@ -1,7 +1,9 @@
 #pragma once
 #include <string>
+#include <sstream>
 
 namespace PticaGovorun
 {
-	extern "C" PG_EXPORTS void appendTimeStampNow(std::string& strBuf);
+	PG_EXPORTS void appendTimeStampNow(std::string& strBuf);
+	PG_EXPORTS void appendTimeStampNow(std::stringstream& str);
 }

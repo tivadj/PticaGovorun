@@ -8,6 +8,14 @@ namespace PticaGovorun
 
 void appendTimeStampNow(std::string& str)
 {
+	std::stringstream buf;
+	appendTimeStampNow(buf);
+
+	str = buf.str();
+}
+
+void appendTimeStampNow(std::stringstream& str)
+{
 	time_t  t1 = time(0); // now time
 
 	// Convert now to tm struct for local timezone
@@ -18,7 +26,7 @@ void appendTimeStampNow(std::string& str)
 	char buf[80];
 	strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &now1); // 20120601070015
 
-	str = buf;
+	str << buf;
 }
 
 }

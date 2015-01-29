@@ -5,7 +5,7 @@
 namespace PticaGovorun {
 
 
-std::tuple<bool, std::string> readAllSamples(const std::string& fileName, std::vector<short>& result)
+std::tuple<bool, std::string> readAllSamples(const std::string& fileName, std::vector<short>& result, float *frameRate)
 {
 	SF_INFO sfInfo;
 	memset(&sfInfo, 0, sizeof(sfInfo));
@@ -19,6 +19,8 @@ std::tuple<bool, std::string> readAllSamples(const std::string& fileName, std::v
 
 	result.clear();
 	result.resize(sfInfo.frames);
+	if (frameRate != nullptr)
+		*frameRate = sfInfo.samplerate;
 
 	long long count = 0;
 	std::array<short, 32> buf;
