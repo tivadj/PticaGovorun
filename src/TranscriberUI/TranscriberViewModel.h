@@ -108,6 +108,12 @@ signals :
 public:
     TranscriberViewModel();
 
+	// Loads UI state.
+	void loadStateSettings();
+
+	// Saves UI state.
+	void saveStateSettings();
+
     void loadAudioFileRequest();
 
 	// Plays the current segment of audio.

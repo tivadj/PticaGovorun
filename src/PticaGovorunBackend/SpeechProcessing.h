@@ -175,9 +175,12 @@ PG_EXPORTS void mergeSamePhoneStates(const std::vector<AlignedPhoneme>& phoneSta
 
 PG_EXPORTS void frameRangeToSampleRange(size_t framBegIndex, size_t framEndIndex, LastFrameSample endSampleChoice, size_t frameSize, size_t frameShift, long& sampleBeg, long& sampleEnd);
 
+// For given audio (wav) file from audio repository gives absolute path of corresponding annotation (xml) file path.
+PG_EXPORTS std::wstring speechAnnotationFilePathAbs(const std::wstring& wavFileAbs, const std::wstring& wavRootDir, const std::wstring& annotRootDir);
+
 // Loads annotated speech for training.
 // targetLevelOfDetail=type of marker (segment) to query annotation.
-PG_EXPORTS std::tuple<bool, const char*> loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, MarkerLevelOfDetail targetLevelOfDetail, std::vector<AnnotatedSpeechSegment>& segments);
+PG_EXPORTS std::tuple<bool, const char*> loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir, MarkerLevelOfDetail targetLevelOfDetail, std::vector<AnnotatedSpeechSegment>& segments);
 
 PG_EXPORTS std::tuple<bool, const char*> collectMfccFeatures(const QFileInfo& folderOrWavFilePath, int frameSize, int frameShift, int mfccVecLen, std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector);
 

@@ -38,6 +38,7 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
 	QObject::connect(transcriberModel_.get(), SIGNAL(playingSampleIndChanged(long)), this, SLOT(transcriberModel_playingSampleIndChanged(long)));
 
 	//
+	transcriberModel_->loadStateSettings();
 	ui->widgetSamples->setModel(transcriberModel_);
 	updateUI();
 }
@@ -414,4 +415,9 @@ void TranscriberMainWindow::resizeEvent(QResizeEvent* e)
 	qDebug() << samplesWidgetSize;
 
 	transcriberModel_->setViewportSize(samplesWidgetSize.width(), samplesWidgetSize.height());
+}
+
+void TranscriberMainWindow::closeEvent(QCloseEvent*)
+{
+	transcriberModel_->saveStateSettings();
 }

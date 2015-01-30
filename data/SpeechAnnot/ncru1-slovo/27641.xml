@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<audioAnnotation>
+   <syncPoint id="42" sampleInd="7789" levelOfDetail="word" transcripText="вісімнадцята година"/>
+   <syncPoint id="4" sampleInd="36167" levelOfDetail="word"/>
+   <syncPoint id="5" sampleInd="38730" levelOfDetail="word" transcripText="десять хвилин"/>
+   <syncPoint id="2" sampleInd="58708" levelOfDetail="word"/>
+   <syncPoint id="7" sampleInd="2368732" levelOfDetail="word" transcripText="inhale"/>
+   <syncPoint id="9" sampleInd="2375000" levelOfDetail="word" transcripText="шчо робити у цьому разі"/>
+   <syncPoint id="8" sampleInd="2405875" levelOfDetail="word"/>
+   <syncPoint id="12" sampleInd="2407000" levelOfDetail="word" transcripText="inhale"/>
+   <syncPoint id="6" sampleInd="2411977" levelOfDetail="word"/>
+   <syncPoint id="16" sampleInd="2413400" levelOfDetail="word" transcripText="радить кандидат філологічних наук"/>
+   <syncPoint id="13" sampleInd="2456166" levelOfDetail="word"/>
+   <syncPoint id="22" sampleInd="2458712" levelOfDetail="word" transcripText="старший науковий співробітник відділу структурно математичної лінгвістики інституту української мови"/>
+   <syncPoint id="3" sampleInd="2586795" levelOfDetail="word"/>
+   <syncPoint id="14" sampleInd="2587804" levelOfDetail="word" transcripText="inhale"/>
+   <syncPoint id="23" sampleInd="2592236" levelOfDetail="word"/>
+   <syncPoint id="19" sampleInd="2592732" levelOfDetail="word"/>
+</audioAnnotation>

@@ -154,17 +154,19 @@ namespace RecognizeSpeechSphinxTester
 
 	void testSphincDecoder()
 	{
-		const char* wavFilePath = R"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechAnnot\ncru1-slovo\)path";
+		const wchar_t* wavRootDir       = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAudio\)path";
+		const wchar_t* annotRootDir     = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAnnot\)path";
+		const wchar_t* wavDirToAnalyze  = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAudio\)path";
 
 		std::vector<AnnotatedSpeechSegment> segments;
 		bool loadOp;
 		const char* errMsg;
-		std::tie(loadOp, errMsg) = loadSpeechAndAnnotation(QFileInfo(wavFilePath), MarkerLevelOfDetail::Word, segments);
+		std::tie(loadOp, errMsg) = loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, segments);
 
 		//
-		const char* hmmPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";
+		const char* hmmPath       = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";
 		const char* langModelPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.lm.DMP)path";
-		const char* dictPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.dic)path";
+		const char* dictPath      = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.dic)path";
 		cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
 			"-hmm", hmmPath,
 			"-lm", langModelPath,

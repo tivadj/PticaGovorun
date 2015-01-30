@@ -222,7 +222,23 @@ namespace PticaGovorun {
 		return result;
 	}
 
-	std::tuple<bool, const char*> loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, MarkerLevelOfDetail targetLevelOfDetail, std::vector<AnnotatedSpeechSegment>& segments)
+	std::wstring speechAnnotationFilePathAbs(const std::wstring& wavFileAbs, const std::wstring& wavRootDir, const std::wstring& annotRootDir)
+	{
+		QString wavFileAbsQ = QString::fromStdWString(wavFileAbs);
+		QFileInfo wavFileInfo(wavFileAbsQ);
+		QString speechAnnotFileName = wavFileInfo.completeBaseName() + ".xml";
+
+		// find wav relative path
+		QDir speechWavDir(QString::fromStdWString(wavRootDir));
+		QString wavRelPath = speechWavDir.relativeFilePath(wavFileAbsQ);
+
+		// mount it to annotation directory
+		QString wavPathNew = QDir(QString::fromStdWString(annotRootDir)).absoluteFilePath(wavRelPath);
+		QString annotPathAbs = QFileInfo(wavPathNew).absoluteDir().filePath(speechAnnotFileName);
+		return annotPathAbs.toStdWString();
+	}
+
+	std::tuple<bool, const char*> loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir, MarkerLevelOfDetail targetLevelOfDetail, std::vector<AnnotatedSpeechSegment>& segments)
 	{
 		if (folderOrWavFilePath.isDir())
 		{
@@ -232,7 +248,7 @@ namespace PticaGovorun {
 			QFileInfoList items = dir.entryInfoList(QDir::Filter::Files | QDir::Filter::Dirs | QDir::Filter::NoDotAndDotDot);
 			for (const QFileInfo item : items)
 			{
-				auto subOp = loadSpeechAndAnnotation(item, targetLevelOfDetail, segments);
+				auto subOp = loadSpeechAndAnnotation(item, wavRootDir, annotRootDir, targetLevelOfDetail, segments);
 				if (!std::get<0>(subOp))
 					return subOp;
 			}
@@ -244,15 +260,12 @@ namespace PticaGovorun {
 		QString wavFilePath = folderOrWavFilePath.absoluteFilePath();
 
 		QString extension = folderOrWavFilePath.suffix();
-		if (extension != "wav") // skip non wav files
+		if (extension.compare("wav", Qt::CaseInsensitive)) // skip non wav files
 			return std::make_pair(true, "");
 
-		QDir parentDir = folderOrWavFilePath.absoluteDir();
-		QString xmlFileName = folderOrWavFilePath.completeBaseName() + ".xml";
-
-		QString xmlFilePath = parentDir.absoluteFilePath(xmlFileName);
+		QString xmlFilePath = QString::fromStdWString(speechAnnotationFilePathAbs(folderOrWavFilePath.absoluteFilePath().toStdWString(), wavRootDir, annotRootDir));
 		QFileInfo xmlFilePathInfo(xmlFilePath);
-		if (!xmlFilePathInfo.exists()) // wav has no corresponding markup	
+		if (!xmlFilePathInfo.exists()) // wav has no corresponding markup
 			return std::make_pair(true, "");
 
 		// load audio markup

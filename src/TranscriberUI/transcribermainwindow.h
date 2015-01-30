@@ -24,6 +24,7 @@ private:
 protected:
 	void keyPressEvent(QKeyEvent*) override;
 	void resizeEvent(QResizeEvent*) override;
+	void closeEvent(QCloseEvent*) override;
 
 private slots:
 	void pushButtonLoad_Clicked();

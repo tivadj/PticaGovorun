@@ -11,6 +11,7 @@
 #include <QDir>
 #include <QDateTime>
 #include <QTextCodec>
+#include <QSettings>
 
 #include "WavUtils.h"
 #include "TranscriberViewModel.h"
@@ -34,13 +35,28 @@
 #include "PticaGovorunInteropMatlab.h"
 #endif
 
-
+const char* IniFileName = "TranscriberUI.ini"; // where to store settings
+const char* WavFilePath = "WavFilePath"; // last opened wav file path
 static const decltype(paComplete) SoundPlayerCompleteOrAbortTechnique = paComplete; // paComplete or paAbort
 
 TranscriberViewModel::TranscriberViewModel()
 {
-	audioFilePathAbs_ = QString(qgetenv("PG_WAV_FILE_PATH").constData());
+}
+
+void TranscriberViewModel::loadStateSettings()
+{
+	QSettings settings(IniFileName, QSettings::IniFormat);
+	QString speechWavDirVar = settings.value(WavFilePath, QString("")).toString();
+	audioFilePathAbs_ = speechWavDirVar;
+
 	curRecognizerName_ = "shrekky";
+}
+
+void TranscriberViewModel::saveStateSettings()
+{
+	QSettings settings(IniFileName, QSettings::IniFormat);
+	settings.setValue(WavFilePath, audioFilePathAbs_);
+	settings.sync();
 }
 
 void TranscriberViewModel::loadAudioFileRequest()
@@ -483,21 +499,35 @@ void TranscriberViewModel::setPlayingSampleInd(long value, bool updateViewportOf
 
 QString TranscriberViewModel::audioMarkupFilePathAbs() const
 {
-	QFileInfo audioFileInfoObj(audioFilePath());
-	QString audioMarkupFileName = audioFileInfoObj.completeBaseName() + ".xml";
+	QSettings settings(IniFileName, QSettings::IniFormat);
+	QString speechWavDirStr = settings.value("SpeechWavDir", QString(".\\")).toString();
+	QString speechAnnotDirStr = settings.value("SpeechAnnotDir", QString(".\\")).toString();
 
-	QDir absDir = audioFileInfoObj.absoluteDir();
-	QString audioMarkupPathAbs = absDir.absoluteFilePath(audioMarkupFileName);
-	return audioMarkupPathAbs;
+	std::wstring audioFilePathW = audioFilePath().toStdWString();
+	std::wstring annotPathAbsW = PticaGovorun::speechAnnotationFilePathAbs(audioFilePathW, speechWavDirStr.toStdWString(), speechAnnotDirStr.toStdWString());
+	QString annotPathAbs = QString::fromStdWString(annotPathAbsW);
+	return annotPathAbs;
 }
 
 void TranscriberViewModel::loadAudioMarkupFromXml()
 {
 	QString audioMarkupPathAbs = audioMarkupFilePathAbs();
+	if (!QFileInfo::exists(audioMarkupPathAbs))
+	{
+		emit nextNotification(QString("Can' find annotation file '%1'").arg(audioMarkupPathAbs));
+		return;
+	}
 	
 	//
 	frameIndMarkers_.clear();
-	PticaGovorun::loadAudioMarkupFromXml(audioMarkupPathAbs.toStdWString(), frameIndMarkers_);
+	bool loadOp;
+	const char* errMsg;
+	std::tie(loadOp, errMsg) = PticaGovorun::loadAudioMarkupFromXml(audioMarkupPathAbs.toStdWString(), frameIndMarkers_);
+	if (!loadOp)
+	{
+		emit nextNotification(errMsg);
+		return;
+	}
 }
 
 void TranscriberViewModel::saveAudioMarkupToXml()

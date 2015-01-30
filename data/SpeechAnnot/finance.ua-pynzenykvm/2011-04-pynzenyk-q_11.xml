@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<audioAnnotation>
+   <syncPoint id="41" sampleInd="2050" levelOfDetail="word" transcripText="якшо уважно"/>
+   <syncPoint id="456" sampleInd="3886" levelOfDetail="phone" transcripText="a"/>
+   <syncPoint id="212" sampleInd="4382" levelOfDetail="phone" transcripText="k"/>
+   <syncPoint id="450" sampleInd="5225" levelOfDetail="phone" transcripText="sh"/>
+   <syncPoint id="321" sampleInd="7293" levelOfDetail="phone" transcripText="o"/>
+   <syncPoint id="429" sampleInd="8070" levelOfDetail="phone"/>
+   <syncPoint id="397" sampleInd="8963" levelOfDetail="phone" transcripText="u&lt;&gt;"/>
+   <syncPoint id="130" sampleInd="9839" levelOfDetail="phone" transcripText="v&lt;&gt;"/>
+   <syncPoint id="415" sampleInd="13411" levelOfDetail="phone"/>
+   <syncPoint id="425" sampleInd="16057" levelOfDetail="phone" transcripText="o"/>
+   <syncPoint id="192" sampleInd="18273" levelOfDetail="word"/>
+   <syncPoint id="104" sampleInd="19911" levelOfDetail="word" transcripText="подивитись"/>
+   <syncPoint id="67" sampleInd="34662" levelOfDetail="word" transcripText="е на а"/>
+   <syncPoint id="228" sampleInd="48421" levelOfDetail="word" transcripText="inhale"/>
+   <syncPoint id="473" sampleInd="65554" levelOfDetail="word" transcripText="е"/>
+   <syncPoint id="334" sampleInd="73707" levelOfDetail="word" transcripText="ті питання які ми піднімались"/>
+   <syncPoint id="372" sampleInd="77130" levelOfDetail="phone" transcripText="питання"/>
+   <syncPoint id="100" sampleInd="87582" levelOfDetail="phone" transcripText="які ми піднімались"/>
+   <syncPoint id="369" sampleInd="111198" levelOfDetail="word"/>
+   <syncPoint id="124" sampleInd="123981" levelOfDetail="word" transcripText="то відразу зникає проблема"/>
+   <syncPoint id="278" sampleInd="138648" levelOfDetail="phone"/>
+   <syncPoint id="158" sampleInd="139708" levelOfDetail="phone" transcripText="зникає проблема"/>
+   <syncPoint id="199" sampleInd="150507" levelOfDetail="phone" transcripText="проблема"/>
+   <syncPoint id="66" sampleInd="163622" levelOfDetail="word"/>
+   <syncPoint id="162" sampleInd="164845" levelOfDetail="word" transcripText="наскільки важко прогнозувати е"/>
+   <syncPoint id="161" sampleInd="182259" levelOfDetail="phone" transcripText="важко"/>
+   <syncPoint id="260" sampleInd="191107" levelOfDetail="phone" transcripText="прогнозувати"/>
+   <syncPoint id="133" sampleInd="203080" levelOfDetail="phone"/>
+   <syncPoint id="64" sampleInd="212788" levelOfDetail="word"/>
+   <syncPoint id="448" sampleInd="237825" levelOfDetail="phone" transcripText="fill"/>
+   <syncPoint id="105" sampleInd="278689" levelOfDetail="word" transcripText="наступні роки"/>
+   <syncPoint id="145" sampleInd="296368" levelOfDetail="word"/>
+   <syncPoint id="81" sampleInd="317205" levelOfDetail="word" transcripText="и дуже просте питання"/>
+   <syncPoint id="27" sampleInd="343053" levelOfDetail="word"/>
+   <syncPoint id="361" sampleInd="361044" levelOfDetail="word" transcripText="збирається людина яка вживає алкоголь зупинити чи ні"/>
+   <syncPoint id="91" sampleInd="380493" levelOfDetail="phone" transcripText="людина яка вживає алкоголь"/>
+   <syncPoint id="154" sampleInd="389937" levelOfDetail="phone" transcripText="я"/>
+   <syncPoint id="184" sampleInd="391508" levelOfDetail="phone" transcripText="к"/>
+   <syncPoint id="454" sampleInd="392170" levelOfDetail="phone" transcripText="a"/>
+   <syncPoint id="219" sampleInd="392897" levelOfDetail="phone" transcripText="в"/>
+   <syncPoint id="80" sampleInd="394072" levelOfDetail="phone" transcripText="ж"/>
+   <syncPoint id="283" sampleInd="395229" levelOfDetail="phone" transcripText="иває"/>
+   <syncPoint id="233" sampleInd="403515" levelOfDetail="phone"/>
+   <syncPoint id="195" sampleInd="410062" levelOfDetail="phone" transcripText="зупинити чи ні"/>
+   <syncPoint id="342" sampleInd="431891" levelOfDetail="word"/>
+   <syncPoint id="236" sampleInd="486729" levelOfDetail="word" transcripText="тобто"/>
+   <syncPoint id="391" sampleInd="499019" levelOfDetail="word"/>
+   <syncPoint id="204" sampleInd="519095" levelOfDetail="word" transcripText="збирається перестати жити в борг"/>
+   <syncPoint id="193" sampleInd="533334" levelOfDetail="phone" transcripText="перестати"/>
+   <syncPoint id="302" sampleInd="555261" levelOfDetail="phone" transcripText="в борг"/>
+   <syncPoint id="153" sampleInd="571668" levelOfDetail="word"/>
+   <syncPoint id="292" sampleInd="607141" levelOfDetail="word" transcripText="якшо б"/>
+   <syncPoint id="382" sampleInd="617807" levelOfDetail="word"/>
+   <syncPoint id="221" sampleInd="625712" levelOfDetail="word" transcripText="я бачу наприклад чіткі наміри е"/>
+   <syncPoint id="316" sampleInd="644697" levelOfDetail="phone" transcripText="чіткі наміри"/>
+   <syncPoint id="118" sampleInd="668032" levelOfDetail="word"/>
+   <syncPoint id="108" sampleInd="695153" levelOfDetail="word" transcripText="е е &lt;unk&gt;"/>
+   <syncPoint id="295" sampleInd="722622" levelOfDetail="word" transcripText="і чітку дорогу"/>
+   <syncPoint id="42" sampleInd="740416" levelOfDetail="word"/>
+   <syncPoint id="247" sampleInd="741326" levelOfDetail="word" transcripText="чіткі послідовні кроки"/>
+   <syncPoint id="126" sampleInd="771457" levelOfDetail="word"/>
+   <syncPoint id="371" sampleInd="785150" levelOfDetail="word" transcripText="абсолютно очевидно можно спокійно говорити про курс"/>
+   <syncPoint id="338" sampleInd="803408" levelOfDetail="phone" transcripText="можно спокійно"/>
+   <syncPoint id="424" sampleInd="805855" levelOfDetail="phone"/>
+   <syncPoint id="335" sampleInd="809676" levelOfDetail="phone"/>
+   <syncPoint id="269" sampleInd="818407" levelOfDetail="phone" transcripText="говорити про курс"/>
+   <syncPoint id="312" sampleInd="835921" levelOfDetail="word"/>
+   <syncPoint id="365" sampleInd="897357" levelOfDetail="word" transcripText="а а я був спокійний за курс навіть цього року"/>
+   <syncPoint id="299" sampleInd="902548" levelOfDetail="phone" transcripText="я був спокійний за курс навіть цього року"/>
+   <syncPoint id="235" sampleInd="918822" levelOfDetail="phone" transcripText="за курс навіть цього року"/>
+   <syncPoint id="95" sampleInd="943596" levelOfDetail="word"/>
+   <syncPoint id="294" sampleInd="945018" levelOfDetail="word" transcripText="за цей рік я пробував робити"/>
+   <syncPoint id="303" sampleInd="955667" levelOfDetail="phone" transcripText="я пробував робити"/>
+   <syncPoint id="211" sampleInd="973149" levelOfDetail="word" transcripText="е е"/>
+   <syncPoint id="122" sampleInd="981649" levelOfDetail="word" transcripText="свої оцінки що курс буде близько триматись"/>
+   <syncPoint id="333" sampleInd="994629" levelOfDetail="phone" transcripText="що курс буде"/>
+   <syncPoint id="73" sampleInd="1006007" levelOfDetail="phone" transcripText="близько триматись"/>
+   <syncPoint id="341" sampleInd="1027805" levelOfDetail="word" transcripText="е е близько цього рівня"/>
+   <syncPoint id="453" sampleInd="1032816" levelOfDetail="phone" transcripText="близько цього рівня"/>
+   <syncPoint id="111" sampleInd="1054430" levelOfDetail="word"/>
+   <syncPoint id="253" sampleInd="1079104" levelOfDetail="word" transcripText="але зарас"/>
+   <syncPoint id="68" sampleInd="1094649" levelOfDetail="word"/>
+   <syncPoint id="347" sampleInd="1107301" levelOfDetail="word" transcripText="е е зупинка програми е е з валютним фондом"/>
+   <syncPoint id="44" sampleInd="1133148" levelOfDetail="phone" transcripText="е е"/>
+   <syncPoint id="262" sampleInd="1135266" levelOfDetail="phone" transcripText="з валютним фондом"/>
+   <syncPoint id="357" sampleInd="1157393" levelOfDetail="word"/>
+   <syncPoint id="37" sampleInd="1181736" levelOfDetail="word" transcripText="нy хоча юридично е"/>
+   <syncPoint id="59" sampleInd="1202838" levelOfDetail="word"/>
+   <syncPoint id="323" sampleInd="1205765" levelOfDetail="word" transcripText="зупинки ще нема"/>
+   <syncPoint id="141" sampleInd="1228405" levelOfDetail="word"/>
+   <syncPoint id="329" sampleInd="1232571" levelOfDetail="word" transcripText="можливо е сподіваюсь"/>
+   <syncPoint id="378" sampleInd="1248002" levelOfDetail="phone" transcripText="сподіваюсь"/>
+   <syncPoint id="190" sampleInd="1257627" levelOfDetail="word" transcripText="можливо"/>
+   <syncPoint id="242" sampleInd="1273386" levelOfDetail="word"/>
+   <syncPoint id="288" sampleInd="1277773" levelOfDetail="word"/>
+   <syncPoint id="106" sampleInd="1280812" levelOfDetail="word" transcripText="буде відновлена програма або продовжена"/>
+   <syncPoint id="240" sampleInd="1294619" levelOfDetail="phone" transcripText="програма"/>
+   <syncPoint id="142" sampleInd="1307850" levelOfDetail="phone" transcripText="або продовжена"/>
+   <syncPoint id="248" sampleInd="1325331" levelOfDetail="word" transcripText="про е"/>
+   <syncPoint id="246" sampleInd="1341108" levelOfDetail="word" transcripText="тут вже виникають ризики"/>
+   <syncPoint id="205" sampleInd="1366917" levelOfDetail="word"/>
+   <syncPoint id="290" sampleInd="1398012" levelOfDetail="word" transcripText="в чому тут полягає ризик"/>
+   <syncPoint id="370" sampleInd="1407472" levelOfDetail="phone" transcripText="полягає ризик"/>
+   <syncPoint id="50" sampleInd="1430344" levelOfDetail="word" transcripText="&lt;unk&gt;"/>
+   <syncPoint id="150" sampleInd="1433536" levelOfDetail="word" transcripText="курс"/>
+   <syncPoint id="6" sampleInd="1440151" levelOfDetail="word"/>
+   <syncPoint id="478" sampleInd="1440350" levelOfDetail="phone" transcripText="&lt;click&gt;"/>
+   <syncPoint id="206" sampleInd="1446485" levelOfDetail="word" transcripText="е обмінний курс"/>
+   <syncPoint id="301" sampleInd="1467405" levelOfDetail="word" transcripText="inhale"/>
+   <syncPoint id="393" sampleInd="1483677" levelOfDetail="word" transcripText="залежить від того скільки доларів поставляється"/>
+   <syncPoint id="348" sampleInd="1499288" levelOfDetail="phone" transcripText="скільки доларів"/>
+   <syncPoint id="29" sampleInd="1515362" levelOfDetail="phone" transcripText="поставляється"/>
+   <syncPoint id="223" sampleInd="1539641" levelOfDetail="word" transcripText="а постачальником доларів є експорт"/>
+   <syncPoint id="84" sampleInd="1581644" levelOfDetail="word"/>
+   <syncPoint id="354" sampleInd="1590262" levelOfDetail="word" transcripText="і скільки б споживається"/>
+   <syncPoint id="231" sampleInd="1635161" levelOfDetail="word" transcripText="&lt;unk&gt;"/>
+   <syncPoint id="356" sampleInd="1636352" levelOfDetail="word" transcripText="споживачем доларів є імпорт"/>
+   <syncPoint id="166" sampleInd="1669311" levelOfDetail="word"/>
+   <syncPoint id="176" sampleInd="1693870" levelOfDetail="word" transcripText="и це трошки примітивне п спрощення е е"/>
+   <syncPoint id="331" sampleInd="1725125" levelOfDetail="phone"/>
+   <syncPoint id="308" sampleInd="1728100" levelOfDetail="phone" transcripText="спрощення"/>
+   <syncPoint id="144" sampleInd="1741531" levelOfDetail="phone"/>
+   <syncPoint id="39" sampleInd="1752082" levelOfDetail="word" transcripText="пояснення але я не хочу ускладнювати деяких деталей"/>
+   <syncPoint id="226" sampleInd="1763822" levelOfDetail="phone"/>
+   <syncPoint id="123" sampleInd="1764747" levelOfDetail="phone" transcripText="але я не хочу ускладнювати"/>
+   <syncPoint id="337" sampleInd="1797294" levelOfDetail="phone" transcripText="деяких деталей"/>
+   <syncPoint id="82" sampleInd="1819819" levelOfDetail="word" transcripText="inhale"/>
+   <syncPoint id="129" sampleInd="1859923" levelOfDetail="word" transcripText="з другого боку ми маєм сто сімнадцять мільярдів доларів боргу зовнішнього"/>
+   <syncPoint id="33" sampleInd="1870787" levelOfDetail="phone" transcripText="ми маєм сто сімнадцять"/>
+   <syncPoint id="315" sampleInd="1895394" levelOfDetail="phone" transcripText="мільярдів доларів боргу"/>
+   <syncPoint id="239" sampleInd="1929063" levelOfDetail="phone" transcripText="зовнішнього"/>
+   <syncPoint id="418" sampleInd="1946529" levelOfDetail="word"/>
+   <syncPoint id="58" sampleInd="1955096" levelOfDetail="word" transcripText="оце не державний борг"/>
+   <syncPoint id="25" sampleInd="1979009" levelOfDetail="word"/>
+   <syncPoint id="304" sampleInd="1980812" levelOfDetail="word" transcripText="це весь борг"/>
+   <syncPoint id="330" sampleInd="1996622" levelOfDetail="word"/>
+   <syncPoint id="377" sampleInd="2009900" levelOfDetail="word" transcripText="тобто це й корпоративний сектор"/>
+   <syncPoint id="306" sampleInd="2034706" levelOfDetail="phone"/>
+   <syncPoint id="386" sampleInd="2037351" levelOfDetail="phone" transcripText="сектор"/>
+   <syncPoint id="345" sampleInd="2048334" levelOfDetail="word"/>
+   <syncPoint id="272" sampleInd="2075902" levelOfDetail="word" transcripText="с третього боку валютні резерви країни"/>
+   <syncPoint id="270" sampleInd="2096622" levelOfDetail="phone" transcripText="валютні резерви країни"/>
+   <syncPoint id="229" sampleInd="2128905" levelOfDetail="word"/>
+   <syncPoint id="373" sampleInd="2144580" levelOfDetail="word" transcripText="тридцять п'ять мільярдів доларів"/>
+   <syncPoint id="297" sampleInd="2174348" levelOfDetail="word"/>
+   <syncPoint id="112" sampleInd="2197585" levelOfDetail="word" transcripText="отже"/>
+   <syncPoint id="279" sampleInd="2206003" levelOfDetail="word"/>
+   <syncPoint id="90" sampleInd="2208086" levelOfDetail="word" transcripText="давайте дві цифри порівняєм"/>
+   <syncPoint id="355" sampleInd="2237755" levelOfDetail="word"/>
+   <syncPoint id="367" sampleInd="2252076" levelOfDetail="word" transcripText="в нас є проблеми"/>
+   <syncPoint id="55" sampleInd="2269705" levelOfDetail="word"/>
+   <syncPoint id="374" sampleInd="2329735" levelOfDetail="word" transcripText="країна колись мала такі проблеми"/>
+   <syncPoint id="431" sampleInd="2361406" levelOfDetail="word"/>
+   <syncPoint id="31" sampleInd="2362745" levelOfDetail="word" transcripText="але вона вийшла з них"/>
+   <syncPoint id="52" sampleInd="2385170" levelOfDetail="word"/>
+   <syncPoint id="350" sampleInd="2404602" levelOfDetail="phone" transcripText="і накопила до ста"/>
+   <syncPoint id="366" sampleInd="2423073" levelOfDetail="phone"/>
+   <syncPoint id="230" sampleInd="2426778" levelOfDetail="phone" transcripText="запаси резервів"/>
+   <syncPoint id="307" sampleInd="2454627" levelOfDetail="phone"/>
+   <syncPoint id="191" sampleInd="2474886" levelOfDetail="word" transcripText="і на відміну від"/>
+   <syncPoint id="7" sampleInd="2493557" levelOfDetail="word"/>
+   <syncPoint id="137" sampleInd="2501445" levelOfDetail="word" transcripText="е е е е тих резервів які ми маєм зараз"/>
+   <syncPoint id="257" sampleInd="2546840" levelOfDetail="word"/>
+   <syncPoint id="287" sampleInd="2563626" levelOfDetail="word" transcripText="наприклад докризовий період було максимум тридцять вісім з чимось мільярдів"/>
+   <syncPoint id="383" sampleInd="2592765" levelOfDetail="phone" transcripText="було максимум"/>
+   <syncPoint id="109" sampleInd="2605978" levelOfDetail="phone" transcripText="тридцять вісім з чимось мільярдів"/>
+   <syncPoint id="209" sampleInd="2640046" levelOfDetail="word"/>
+   <syncPoint id="188" sampleInd="2651920" levelOfDetail="word" transcripText="це різні резерви"/>
+   <syncPoint id="22" sampleInd="2671798" levelOfDetail="word"/>
+   <syncPoint id="146" sampleInd="2682976" levelOfDetail="word" transcripText="тридцять вісім мільярдів були наші"/>
+   <syncPoint id="13" sampleInd="2716135" levelOfDetail="word"/>
+   <syncPoint id="368" sampleInd="2749656" levelOfDetail="word" transcripText="е зараз цих тридцять п'яти п'яти мільярдів половина позичених міжнародним валютним фондом"/>
+   <syncPoint id="362" sampleInd="2781143" levelOfDetail="phone" transcripText="п'яти мільярдів"/>
+   <syncPoint id="210" sampleInd="2795101" levelOfDetail="phone" transcripText="половина позичених"/>
+   <syncPoint id="359" sampleInd="2816088" levelOfDetail="phone" transcripText="міжнародним валютним фондом"/>
+   <syncPoint id="490" sampleInd="2843639" levelOfDetail="word"/>
+   <syncPoint id="24" sampleInd="2847393" levelOfDetail="word" transcripText="це тимчасові гроші"/>
+   <syncPoint id="396" sampleInd="2873969" levelOfDetail="word"/>
+   <syncPoint id="83" sampleInd="2883329" levelOfDetail="word" transcripText="це не наші"/>
+   <syncPoint id="395" sampleInd="2896510" levelOfDetail="word" transcripText="вони підуть"/>
+   <syncPoint id="2" sampleInd="2912385" levelOfDetail="word" transcripText="inhale"/>
+   <syncPoint id="291" sampleInd="2926773" levelOfDetail="word" transcripText="тобто є проблема"/>
+   <syncPoint id="428" sampleInd="2952721" levelOfDetail="word"/>
+   <syncPoint id="36" sampleInd="2957963" levelOfDetail="word"/>
+   <syncPoint id="174" sampleInd="2974616" levelOfDetail="word" transcripText="и якшо не дивитись на ці проблеми"/>
+   <syncPoint id="220" sampleInd="3011278" levelOfDetail="word"/>
+   <syncPoint id="196" sampleInd="3045066" levelOfDetail="phone" transcripText="можем очіку отримати тиск на обмінний курс"/>
+   <syncPoint id="21" sampleInd="3060098" levelOfDetail="phone"/>
+   <syncPoint id="148" sampleInd="3064779" levelOfDetail="word" transcripText="отримати тиск на обмінний курс"/>
+   <syncPoint id="399" sampleInd="3112421" levelOfDetail="word"/>
+   <syncPoint id="281" sampleInd="3149120" levelOfDetail="word" transcripText="тобто як уникнути цих проблем"/>
+   <syncPoint id="53" sampleInd="3185585" levelOfDetail="word"/>
+   <syncPoint id="18" sampleInd="3190166" levelOfDetail="word" transcripText="мають бути адекватні дії"/>
+   <syncPoint id="156" sampleInd="3226945" levelOfDetail="word"/>
+   <syncPoint id="127" sampleInd="3233908" levelOfDetail="phone" transcripText="мають бути заходи"/>
+   <syncPoint id="407" sampleInd="3240390" levelOfDetail="phone" transcripText="&lt;click&gt;"/>
+   <syncPoint id="346" sampleInd="3243979" levelOfDetail="phone"/>
+   <syncPoint id="168" sampleInd="3245467" levelOfDetail="phone"/>
+   <syncPoint id="128" sampleInd="3257441" levelOfDetail="word" transcripText="має бути кроки и які з одного боку"/>
+   <syncPoint id="140" sampleInd="3276856" levelOfDetail="phone"/>
+   <syncPoint id="8" sampleInd="3279717" levelOfDetail="phone" transcripText="які з одного боку"/>
+   <syncPoint id="408" sampleInd="3300124" levelOfDetail="word"/>
+   <syncPoint id="207" sampleInd="3300421" levelOfDetail="phone" transcripText="inhale е е"/>
+   <syncPoint id="4" sampleInd="3317207" levelOfDetail="phone"/>
+   <syncPoint id="310" sampleInd="3339450" levelOfDetail="word" transcripText="зменшують маштаби залежності самої країни від кредитів з другого боку відкривають умови для інвестицій"/>
+   <syncPoint id="217" sampleInd="3373203" levelOfDetail="phone" transcripText="самої країни від кредитів"/>
+   <syncPoint id="314" sampleInd="3402356" levelOfDetail="phone" transcripText="з другого боку відкривають"/>
+   <syncPoint id="309" sampleInd="3426964" levelOfDetail="phone" transcripText="умови для інвестицій"/>
+   <syncPoint id="16" sampleInd="3457069" levelOfDetail="word"/>
+   <syncPoint id="135" sampleInd="3460918" levelOfDetail="word" transcripText="і говорять про те що країна а"/>
+   <syncPoint id="200" sampleInd="3493761" levelOfDetail="word" transcripText="не буде мати тих викликів"/>
+   <syncPoint id="49" sampleInd="3519706" levelOfDetail="word"/>
+   <syncPoint id="119" sampleInd="3529166" levelOfDetail="word" transcripText="тому надзвичайно важко робити прогнози"/>
+   <syncPoint id="398" sampleInd="3549475" levelOfDetail="phone" transcripText="робити прогнози"/>
+   <syncPoint id="224" sampleInd="3570114" levelOfDetail="word"/>
+   <syncPoint id="208" sampleInd="3588422" levelOfDetail="word" transcripText="якшо"/>
+   <syncPoint id="244" sampleInd="3597882" levelOfDetail="word"/>
+   <syncPoint id="189" sampleInd="3600693" levelOfDetail="word" transcripText="ми не можите опиратись на реальні дії"/>
+   <syncPoint id="85" sampleInd="3624821" levelOfDetail="phone" transcripText="на реальні дії"/>
+   <syncPoint id="293" sampleInd="3642169" levelOfDetail="word"/>
+   <syncPoint id="343" sampleInd="3648106" levelOfDetail="word" transcripText="бо будь яка зміна чи цін чи е е курсу"/>
+   <syncPoint id="387" sampleInd="3672381" levelOfDetail="phone" transcripText="чи цін чи"/>
+   <syncPoint id="114" sampleInd="3693152" levelOfDetail="phone"/>
+   <syncPoint id="0" sampleInd="3699370" levelOfDetail="phone" transcripText="курсу"/>
+   <syncPoint id="258" sampleInd="3709888" levelOfDetail="word"/>
+   <syncPoint id="218" sampleInd="3717216" levelOfDetail="word" transcripText="є наслідком певних дій або бездіяльності"/>
+   <syncPoint id="180" sampleInd="3750241" levelOfDetail="phone" transcripText="або бездіяльності"/>
+   <syncPoint id="389" sampleInd="3777545" levelOfDetail="word"/>
+   <syncPoint id="9" sampleInd="3797009" levelOfDetail="word" transcripText="коли не можливо спрогнозувати ті дії надзвичайно важко робити прогнози"/>
+   <syncPoint id="72" sampleInd="3837227" levelOfDetail="phone" transcripText="надзвичайно важко робити прогнози"/>
+   <syncPoint id="138" sampleInd="3873909" levelOfDetail="word"/>
+   <syncPoint id="38" sampleInd="3881847" levelOfDetail="word" transcripText="я знаю шо тре зробити шоб цього не було"/>
+   <syncPoint id="179" sampleInd="3908205" levelOfDetail="phone" transcripText="шоб цього не було"/>
+   <syncPoint id="57" sampleInd="3926812" levelOfDetail="word"/>
+   <syncPoint id="358" sampleInd="3940884" levelOfDetail="word" transcripText="але я не можу сказати що це буде зроблено"/>
+   <syncPoint id="215" sampleInd="3982246" levelOfDetail="word"/>
+   <syncPoint id="88" sampleInd="3995393" levelOfDetail="word" transcripText="бо о о"/>
+   <syncPoint id="311" sampleInd="4001743" levelOfDetail="word"/>
+   <syncPoint id="202" sampleInd="4015039" levelOfDetail="word" transcripText="нажаль навіть інколи е е маючи"/>
+   <syncPoint id="234" sampleInd="4037793" levelOfDetail="phone" transcripText="е е"/>
+   <syncPoint id="328" sampleInd="4043946" levelOfDetail="phone" transcripText="маючи"/>
+   <syncPoint id="86" sampleInd="4053192" levelOfDetail="word"/>
+   <syncPoint id="75" sampleInd="4066157" levelOfDetail="word" transcripText="посади вищі в уряді"/>
+   <syncPoint id="216" sampleInd="4097594" levelOfDetail="word"/>
+   <syncPoint id="322" sampleInd="4107369" levelOfDetail="word" transcripText="не завжди можеш це зробити"/>
+   <syncPoint id="175" sampleInd="4131613" levelOfDetail="word"/>
+   <syncPoint id="99" sampleInd="4134771" levelOfDetail="word" transcripText="бракує дрібничок"/>
+   <syncPoint id="76" sampleInd="4156600" levelOfDetail="word"/>
+   <syncPoint id="275" sampleInd="4173270" levelOfDetail="word" transcripText="важливо щоб тебе підтримало"/>
+   <syncPoint id="110" sampleInd="4206808" levelOfDetail="word"/>
+   <syncPoint id="203" sampleInd="4216201" levelOfDetail="phone" transcripText="ще п'ятнадцять"/>
+   <syncPoint id="69" sampleInd="4233864" levelOfDetail="word"/>
+   <syncPoint id="261" sampleInd="4242050" levelOfDetail="word" transcripText="а в мій час ще більше"/>
+   <syncPoint id="201" sampleInd="4269387" levelOfDetail="word"/>
+   <syncPoint id="23" sampleInd="4277044" levelOfDetail="word" transcripText="шоб таку ж позицію займав не тільки одна"/>
+   <syncPoint id="185" sampleInd="4318123" levelOfDetail="word"/>
+   <syncPoint id="182" sampleInd="4321282" levelOfDetail="word" transcripText="особа в уряді чи дві чи три"/>
+   <syncPoint id="285" sampleInd="4353877" levelOfDetail="word"/>
+   <syncPoint id="157" sampleInd="4361930" levelOfDetail="word" transcripText="а щоб це була позиція всього уряду"/>
+   <syncPoint id="232" sampleInd="4396825" levelOfDetail="word"/>
+</audioAnnotation>
