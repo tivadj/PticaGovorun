@@ -11,6 +11,7 @@
 #include <QDomDocument>
 #include <QStringList>
 #include <QTextStream>
+#include <QXmlStreamWriter>
 #include "XmlAudioMarkup.h"
 
 namespace PticaGovorun {
@@ -110,35 +111,35 @@ PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const std::vector<
 	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
 		return std::make_tuple(false, "Can't open file for writing");
 
-	QDomDocument xml;
-	QDomNode node(xml.createProcessingInstruction("xml", R"pre(version="1.0" encoding="utf-8")pre"));
-	xml.insertBefore(node, xml.firstChild());
+	QXmlStreamWriter xmlWriter(&file);
+	xmlWriter.setCodec("utf-8");
+	xmlWriter.setAutoFormatting(true);
+	xmlWriter.setAutoFormattingIndent(3);
 
-	QDomElement docElem = xml.createElement(XmlDocName);
-	xml.appendChild(docElem);
+	xmlWriter.writeStartDocument("1.0");
+	xmlWriter.writeStartElement(XmlDocName);
 	
 	for (const TimePointMarker& marker : syncPoints)
 	{
-		QDomElement syncPointNode = xml.createElement(MarkerName);
-		syncPointNode.setAttribute(MarkerIdName, marker.Id);
-		syncPointNode.setAttribute(MarkerSampleIndName, marker.SampleInd);
+		xmlWriter.writeStartElement(MarkerName);
+		xmlWriter.writeAttribute(MarkerIdName, QString::number(marker.Id));
+		xmlWriter.writeAttribute(MarkerSampleIndName, QString::number(marker.SampleInd));
 
-		if (!marker.TranscripText.isEmpty())
-			syncPointNode.setAttribute(MarkerTranscripTextName, marker.TranscripText);
-		
 		QString levelOfDetailStr = "error";
 		if (marker.LevelOfDetail == MarkerLevelOfDetail::Word)
 			levelOfDetailStr = MarkerLevelOfDetailWordName;
 		else if (marker.LevelOfDetail == MarkerLevelOfDetail::Phone)
 			levelOfDetailStr = MarkerLevelOfDetailPhoneName;
-		syncPointNode.setAttribute(MarkerLevelOfDetailName, levelOfDetailStr);
+		xmlWriter.writeAttribute(MarkerLevelOfDetailName, levelOfDetailStr);
 
-		docElem.appendChild(syncPointNode);
+		if (!marker.TranscripText.isEmpty())
+			xmlWriter.writeAttribute(MarkerTranscripTextName, marker.TranscripText);
+
+		xmlWriter.writeEndElement(); // MarkerName
 	}
 
-	QTextStream textStream(&file);
-	int indent = 3;
-	xml.save(textStream, indent);
+	xmlWriter.writeEndElement(); // XmlDocName
+	xmlWriter.writeEndDocument();
 
 	return std::make_tuple(true, nullptr);
 }
