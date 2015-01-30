@@ -139,6 +139,8 @@ public:
 	void loadAudioMarkupFromXml();
 	void saveAudioMarkupToXml();
 
+	void saveCurrentRangeAsWavRequest();
+
 	QString audioFilePath() const;
     void setAudioFilePath(const QString& filePath);
 
@@ -353,6 +355,7 @@ private:
 
 private:
 	std::vector<short> audioSamples_;
+	float audioFrameRate_; // frame (sample) rate of current audio
     QString audioFilePathAbs_;
 
 	// Represents internal audio player's data.

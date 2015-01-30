@@ -49,19 +49,21 @@ void TranscriberViewModel::loadAudioFileRequest()
 	audioSamples_.clear();
 	diagramSegments_.clear();
 
-    auto readOp = PticaGovorun::readAllSamples(audioFilePathAbs_.toStdString(), audioSamples_);
+	auto readOp = PticaGovorun::readAllSamples(audioFilePathAbs_.toStdString(), audioSamples_, &audioFrameRate_);
 	if (!std::get<0>(readOp))
 	{
 		auto msg = std::get<1>(readOp);
 		emit nextNotification(QString::fromStdString(msg));
 		return;
     }
+	if (audioFrameRate_ != SampleRate)
+		emit nextNotification("WARN: FrameRate != 22050. Perhaps other parameters (FrameSize, FrameShift) should be changed");
 
 	//
 	docOffsetX_ = 0;
 
 	const float diagWidth = 1000;
-	float seg3sec = SampleRate * 1.5f;
+	float seg3sec = audioFrameRate_ * 1.5f;
 	scale_ = diagWidth / seg3sec;
 
 	// scale
@@ -71,7 +73,7 @@ void TranscriberViewModel::loadAudioFileRequest()
 
 	emit audioSamplesChanged();
 
-	QString msg = QString("Loaded '%1' FramesCount=%2").arg(audioFilePathAbs_).arg(audioSamples_.size());
+	QString msg = QString("Loaded '%1' FrameRate=%2 FramesCount=%3").arg(audioFilePathAbs_).arg(audioFrameRate_).arg(audioSamples_.size());
 	emit nextNotification(msg);
 
 	//
@@ -230,7 +232,7 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 		&stream,
 		nullptr, /* no input */
 		&outputParameters,
-		SampleRate,
+		audioFrameRate_,
 		FRAMES_PER_BUFFER,
 		paClipOff,      /* we won't output out of range samples so don't bother clipping them */
 		patestCallback,
@@ -507,6 +509,28 @@ void TranscriberViewModel::saveAudioMarkupToXml()
 	QString msg = QString("[%1]: Saved xml markup.").arg(QTime::currentTime().toString("hh:mm:ss"));
 	emit nextNotification(msg);
 }
+
+void TranscriberViewModel::saveCurrentRangeAsWavRequest()
+{
+	long frameLeft;
+	long frameRight;
+	std::tie(frameLeft, frameRight) = getSampleRangeToPlay(cursor_.first, SegmentStartFrameToPlayChoice::SegmentBegin, nullptr);
+
+	long len = frameRight - frameLeft;
+	
+	audioSegmentBuffer_.resize(len);
+	std::copy_n(&audioSamples_[frameLeft], len, audioSegmentBuffer_.data());
+	bool writeOp;
+	std::string msg;
+	tie(writeOp, msg) = PticaGovorun::writeAllSamplesWav(&audioSamples_[frameLeft], len, "currentRange.wav", audioFrameRate_);
+	if (!writeOp)
+	{
+		emit nextNotification(QString::fromStdString(msg));
+		return;
+	}
+	emit nextNotification(QString("Wrote %1 frames to file").arg(len));
+}
+
 
 QString TranscriberViewModel::audioFilePath() const
 {
@@ -1471,7 +1495,7 @@ void TranscriberViewModel::recognizeCurrentSegmentSphinxRequest()
 	convertData.input_frames = samplesFloat.size();
 	convertData.data_out = resampledWaveFloat.data();
 	convertData.output_frames = resampledWaveFloat.size();
-	convertData.src_ratio = sphinxSampleRate / (float)SampleRate;
+	convertData.src_ratio = sphinxSampleRate / (float)audioFrameRate_;
 
 	int converterType = SRC_SINC_BEST_QUALITY;
 	int channels = 1;
@@ -1626,7 +1650,7 @@ void TranscriberViewModel::analyzeUnlabeledSpeech()
 	if (silenceSlidingWindowDur_ == -1)
 		silenceSlidingWindowDur_ = 120;
 
-	int windowSize = static_cast<int>(silenceSlidingWindowDur_ / 1000 * SampleRate);
+	int windowSize = static_cast<int>(silenceSlidingWindowDur_ / 1000 * audioFrameRate_);
 	
 	if (silenceSlidingWindowShift_ == -1)
 		//silenceSlidingWindowShift_ = windowSize / 3;
@@ -1996,7 +2020,7 @@ void TranscriberViewModel::classifyMfccIntoPhones()
 
 	int frameSize = FrameSize;
 	int frameShift = FrameShift;
-	float sampleRate = SampleRate;
+	float sampleRate = audioFrameRate_;
 
 	// init filter bank
 	int binCount = 24; // number of bins in the triangular filter bank

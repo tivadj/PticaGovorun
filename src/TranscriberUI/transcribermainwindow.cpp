@@ -399,6 +399,8 @@ void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 		transcriberModel_->analyzeUnlabeledSpeech();
 	else if (ke->key() == Qt::Key_F4)
 		transcriberModel_->dumpSilence();
+	else if (ke->key() == Qt::Key_D && ke->modifiers().testFlag(Qt::ControlModifier))
+		transcriberModel_->saveCurrentRangeAsWavRequest();
 
 	else if (ke->key() == Qt::Key_F5)
 		transcriberModel_->refreshRequest();
