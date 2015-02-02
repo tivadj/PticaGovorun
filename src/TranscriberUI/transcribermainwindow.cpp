@@ -347,7 +347,8 @@ void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 {
 	if (ke->key() == Qt::Key_Space || ke->key() == Qt::Key_C)
 		transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::CurrentCursor);
-	else if (ke->key() == Qt::Key_X)
+	// F9 is used to start playing when typing transcript text in
+	else if (ke->key() == Qt::Key_X || ke->key() == Qt::Key_F9)
 		transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::SegmentBegin);
 	else if (ke->key() == Qt::Key_Backslash)
 		transcriberModel_->soundPlayerTogglePlayPause();
@@ -403,6 +404,8 @@ void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 	else if (ke->key() == Qt::Key_D && ke->modifiers().testFlag(Qt::ControlModifier))
 		transcriberModel_->saveCurrentRangeAsWavRequest();
 
+	else if (ke->key() == Qt::Key_S && ke->modifiers().testFlag(Qt::ControlModifier))
+		transcriberModel_->saveAudioMarkupToXml();
 	else if (ke->key() == Qt::Key_F5)
 		transcriberModel_->refreshRequest();
 	else

@@ -1429,6 +1429,18 @@ void TranscriberViewModel::recognizeCurrentSegmentJuliusRequest()
 	std::tie(curSegBeg, curSegEnd) = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin);
 	auto len = curSegEnd - curSegBeg;
 
+	// limit range to some short period, otherwise Julius may crash.
+	// Julius has limitations MAXSPEECHLEN=320k for the number of samples and MAXSEQNUM=150 for the number of words
+	const int maxDur = 10; // sec, max duration to process
+	long maxFrames = audioFrameRate_ * maxDur;
+	if (len > maxFrames)
+	{
+		auto oldLen = len;
+		len = maxFrames;
+		curSegEnd = curSegBeg + len;
+		emit nextNotification(QString("WARN: Segment is too large. Limiting it from %1 to %2 samles").arg(oldLen).arg(len));
+	}
+
 	// pad the audio with silince
 	PticaGovorun::padSilence(&audioSamples_[curSegBeg], len, silencePadAudioSamplesCount_, audioSegmentBuffer_);
 
@@ -1478,6 +1490,9 @@ void TranscriberViewModel::recognizeCurrentSegmentJuliusRequest()
 
 	// redraw current segment
 	emit audioSamplesChanged();
+
+	// push the text to log so a user can copy it
+	emit nextNotification(diagSeg.RecogSegmentWords);
 }
 
 #if HAS_POCKETSPHINX
@@ -1612,6 +1627,9 @@ void TranscriberViewModel::recognizeCurrentSegmentSphinxRequest()
 	diagSeg.RecogSegmentText = hypQStr;
 	diagSeg.WordBoundaries = std::move(wordBoundaries);
 	diagramSegments_.push_back(diagSeg);
+
+	// push the text to log so a user can copy it
+	emit nextNotification(hypQStr);
 
 	// redraw current segment
 	emit audioSamplesChanged();
