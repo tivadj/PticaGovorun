@@ -30,6 +30,7 @@ private slots:
 	void pushButtonLoad_Clicked();
 	void pushButtonSaveAudioAnnot_Clicked();
 	void radioButtonWordLevel_toggled(bool checked);
+	void groupBoxLang_toggled(bool checked);
 	void lineEditFileName_editingFinished();
 	void lineEditRecognizerName_editingFinished();
 	void horizontalScrollBarSamples_valueChanged(int value);

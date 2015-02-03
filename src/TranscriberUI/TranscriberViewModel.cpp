@@ -532,6 +532,19 @@ void TranscriberViewModel::loadAudioMarkupFromXml()
 
 void TranscriberViewModel::saveAudioMarkupToXml()
 {
+	// validate marker's speech language
+	std::stringstream msgValidate;
+	for (auto& marker : frameIndMarkers_)
+	{
+		if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Phone && marker.Language != PticaGovorun::SpeechLanguage::NotSet)
+			msgValidate << "Phone marker[id=" << marker.Id << "] has non empty language" << std::endl;
+			
+		else if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Word && marker.TranscripText.isEmpty() && marker.Language != PticaGovorun::SpeechLanguage::NotSet)
+			msgValidate << "Word marker[id=" << marker.Id << "] without text has non empty language" << std::endl;
+	}
+	if (!msgValidate.str().empty())
+		emit nextNotification(QString::fromStdString(msgValidate.str()));
+
 	QString audioMarkupPathAbs = audioMarkupFilePathAbs();
 	
 	PticaGovorun::saveAudioMarkupToXml(frameIndMarkers_, audioMarkupPathAbs.toStdWString());
@@ -964,6 +977,11 @@ PticaGovorun::MarkerLevelOfDetail TranscriberViewModel::templateMarkerLevelOfDet
 	return templateMarkerLevelOfDetail_;
 }
 
+PticaGovorun::SpeechLanguage TranscriberViewModel::templateMarkerSpeechLanguage() const
+{
+	return templateMarkerSpeechLanguage_;
+}
+
 void TranscriberViewModel::dragMarkerStart(const QPointF& localPos, int markerInd)
 {
 	qDebug() << "dragMarkerStart";
@@ -1355,7 +1373,22 @@ int TranscriberViewModel::currentMarkerInd() const
 void TranscriberViewModel::setCurrentMarkerTranscriptText(const QString& text)
 {
 	if (currentMarkerInd_ != -1)
-		frameIndMarkers_[currentMarkerInd_].TranscripText = text;
+	{
+		PticaGovorun::TimePointMarker& marker = frameIndMarkers_[currentMarkerInd_];
+		marker.TranscripText = text;
+
+		//// ignore language for 'phone' markers
+		//if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Phone || text.isEmpty())
+		//	marker.Language = PticaGovorun::SpeechLanguage::NotSet;
+		if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Word)
+		{
+			// first time initialization?
+			if (marker.Language == PticaGovorun::SpeechLanguage::NotSet)
+				marker.Language = templateMarkerSpeechLanguage_;
+		}
+
+		emit currentMarkerIndChanged();
+	}
 	else
 		cursorTextToAlign_ = text;
 }
@@ -1382,6 +1415,31 @@ void TranscriberViewModel::setCurrentMarkerStopOnPlayback(bool stopsPlayback)
 	if (currentMarkerInd_ == -1)
 		return;
 	frameIndMarkers_[currentMarkerInd_].StopsPlayback = stopsPlayback;
+}
+
+void TranscriberViewModel::setCurrentMarkerLang(PticaGovorun::SpeechLanguage lang)
+{
+	std::string langStr = speechLanguageToStr(lang);
+	if (currentMarkerInd_ == -1)
+	{
+		// apply user selection as a template for new markers
+		if (templateMarkerSpeechLanguage_ != lang)
+		{
+			templateMarkerSpeechLanguage_ = lang;
+			emit nextNotification(QString("Speech language for new markers=%1").arg(langStr.c_str()));
+		}
+	}
+	else
+	{
+		// apply the value to current marker
+		PticaGovorun::SpeechLanguage oldLang = frameIndMarkers_[currentMarkerInd_].Language;
+		if (oldLang != lang)
+		{
+			PticaGovorun::TimePointMarker& m = frameIndMarkers_[currentMarkerInd_];
+			m.Language = lang;
+			emit nextNotification(QString("Marker[id=%1].Language=%2").arg(m.Id).arg(langStr.c_str()));
+		}
+	}
 }
 
 void TranscriberViewModel::ensureRecognizerIsCreated()

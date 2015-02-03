@@ -23,6 +23,9 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
 	QObject::connect(ui->radioButtonWordLevel, SIGNAL(toggled(bool)), this, SLOT(radioButtonWordLevel_toggled(bool)));
 	QObject::connect(ui->lineEditMarkerText, SIGNAL(editingFinished()), this, SLOT(lineEditMarkerText_editingFinished()));
 	QObject::connect(ui->checkBoxCurMarkerStopOnPlayback, SIGNAL(toggled(bool)), this, SLOT(checkBoxCurMarkerStopOnPlayback_toggled(bool)));
+	QObject::connect(ui->radioButtonLangNone, SIGNAL(toggled(bool)), this, SLOT(groupBoxLang_toggled(bool)));
+	QObject::connect(ui->radioButtonLangRu, SIGNAL(toggled(bool)), this, SLOT(groupBoxLang_toggled(bool)));
+	QObject::connect(ui->radioButtonLangUk, SIGNAL(toggled(bool)), this, SLOT(groupBoxLang_toggled(bool)));
 
 	//
     transcriberModel_ = std::make_shared<TranscriberViewModel>();
@@ -118,6 +121,17 @@ void TranscriberMainWindow::pushButtonSaveAudioAnnot_Clicked()
 void TranscriberMainWindow::radioButtonWordLevel_toggled(bool checked)
 {
 	transcriberModel_->setCurrentMarkerLevelOfDetail(checked ? PticaGovorun::MarkerLevelOfDetail::Word : PticaGovorun::MarkerLevelOfDetail::Phone);
+}
+
+void TranscriberMainWindow::groupBoxLang_toggled(bool checked)
+{
+	using namespace PticaGovorun;
+	SpeechLanguage lang = SpeechLanguage::NotSet;
+	if (ui->radioButtonLangRu->isChecked())
+		lang = SpeechLanguage::Russian;
+	else if (ui->radioButtonLangUk->isChecked())
+		lang = SpeechLanguage::Ukrainian;
+	transcriberModel_->setCurrentMarkerLang(lang);
 }
 
 void TranscriberMainWindow::lineEditFileName_editingFinished()
@@ -250,7 +264,9 @@ void TranscriberMainWindow::transcriberModel_cursorChanged(std::pair<long, long>
 
 void TranscriberMainWindow::transcriberModel_currentMarkerIndChanged()
 {
+	using namespace PticaGovorun;
 	PticaGovorun::MarkerLevelOfDetail uiMarkerLevel = transcriberModel_->templateMarkerLevelOfDetail();
+	PticaGovorun::SpeechLanguage uiMarkerLang = PticaGovorun::SpeechLanguage::NotSet;
 	QString uiMarkerIdStr = "###";
 	QString uiMarkerTranscriptStr = "";
 	bool uiMarkerStopsPlayback = false;
@@ -260,8 +276,11 @@ void TranscriberMainWindow::transcriberModel_currentMarkerIndChanged()
 	if (markerInd != -1)
 	{
 		const auto& marker = transcriberModel_->frameIndMarkers()[markerInd];
+		qDebug() << "Current markerId=" << marker.Id;
+
 		uiMarkerIdStr = QString("%1").arg(marker.Id);
 		uiMarkerLevel = marker.LevelOfDetail;
+		uiMarkerLang = marker.Language;
 
 		uiMarkerTranscriptStr = marker.TranscripText;
 		uiMarkerStopsPlayback = marker.StopsPlayback;
@@ -270,6 +289,7 @@ void TranscriberMainWindow::transcriberModel_currentMarkerIndChanged()
 	else
 	{
 		uiMarkerStopsPlaybackEnabled = false;
+		uiMarkerLang = transcriberModel_->templateMarkerSpeechLanguage();
 	}
 
 	// update ui
@@ -280,6 +300,14 @@ void TranscriberMainWindow::transcriberModel_currentMarkerIndChanged()
 		ui->radioButtonWordLevel->setChecked(true);
 	else if (uiMarkerLevel == PticaGovorun::MarkerLevelOfDetail::Phone)
 		ui->radioButtonPhoneLevel->setChecked(true);
+
+	// speech lang
+	QRadioButton *langButton = ui->radioButtonLangNone;
+	if (uiMarkerLang == SpeechLanguage::Ukrainian)
+		langButton = ui->radioButtonLangUk;
+	else if (uiMarkerLang == SpeechLanguage::Russian)
+		langButton = ui->radioButtonLangRu;
+	langButton->setChecked(true);
 
 	ui->lineEditMarkerText->setText(uiMarkerTranscriptStr);
 	ui->checkBoxCurMarkerStopOnPlayback->setEnabled(uiMarkerStopsPlaybackEnabled);

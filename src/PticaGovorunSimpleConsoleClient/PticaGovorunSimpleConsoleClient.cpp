@@ -9,6 +9,7 @@ namespace ComputeSpeechMfccTesterNS { void run(); }
 namespace ResampleAudioTesterNS { void run(); }
 namespace RecognizeSpeechSphinxTester { void run(); }
 namespace EditDistanceTestsNS { void run(); }
+namespace MigrateXmlSpeechAnnotRunnerNS { void run(); }
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -18,6 +19,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//ResampleAudioTesterNS::run();
 	RecognizeSpeechSphinxTester::run();
 	//EditDistanceTestsNS::run();
+	//MigrateXmlSpeechAnnotRunnerNS::run();
 
 	return 0;
 }

@@ -117,6 +117,14 @@ enum class MarkerLevelOfDetail
 	Phone
 };
 
+// The language of spoken speech.
+enum class SpeechLanguage
+{
+	NotSet,    // null, the language is not set or has empty xml string representation
+	Ukrainian, // 'uk'
+	Russian    // 'ru'
+};
+
 struct TimePointMarker
 {
 	// Uniquely identifies the marker. For example, when two markers have the same sample index.
@@ -125,20 +133,24 @@ struct TimePointMarker
 	// The index of the frame (sample) this marker points at.
 	long SampleInd;
 
-	// Whether marker was added by user (manual=true). Automatic markers (manual=false) can be freely
-	// removed from model without user's concern. For example, when audio is reanalyzed, old automatic markers
-	// may be replaced with new ones.
-	bool IsManual;
-
 	// Separates phones in audio.
 	MarkerLevelOfDetail LevelOfDetail = MarkerLevelOfDetail::Word;
+
+	QString TranscripText;
+
+	// The spoken language of corresponding segment of the speech.
+	// The language is set only when transcript text has been set.
+	SpeechLanguage Language = SpeechLanguage::NotSet;
 
 	// Determines if this marker stops the audio playback.
 	// by default: true for word-level markers and false for phone-level markers
 	// This property is not serializable.
 	bool StopsPlayback;
 
-	QString TranscripText;
+	// Whether marker was added by user (manual=true). Automatic markers (manual=false) can be freely
+	// removed from model without user's concern. For example, when audio is reanalyzed, old automatic markers
+	// may be replaced with new ones.
+	bool IsManual;
 };
 
 // Represents annotated part of a speech audio used for training the speech recognizer.
@@ -149,10 +161,12 @@ struct AnnotatedSpeechSegment
 	// Text associated with this speech segment.
 	std::wstring TranscriptText;
 
+	SpeechLanguage Language = SpeechLanguage::NotSet;
+
 	std::wstring FilePath;
 
 	// Frames' frame rate.
-	float FrameRate;
+	float FrameRate = -1;
 
 	// Actual samples in [FrameStart; FrameEnd) range.
 	std::vector<short> Frames;
@@ -160,6 +174,9 @@ struct AnnotatedSpeechSegment
 
 // Determines if a marker with given level of detail will stop the audio playback.
 PG_EXPORTS bool getDefaultMarkerStopsPlayback(MarkerLevelOfDetail levelOfDetail);
+
+// Converts language to string.
+PG_EXPORTS std::string speechLanguageToStr(SpeechLanguage lang);
 
 PG_EXPORTS void splitUtteranceIntoWords(const std::wstring& text, std::vector<wv::slice<const wchar_t>>& wordsAsSlices);
 
@@ -180,7 +197,9 @@ PG_EXPORTS std::wstring speechAnnotationFilePathAbs(const std::wstring& wavFileA
 
 // Loads annotated speech for training.
 // targetLevelOfDetail=type of marker (segment) to query annotation.
-PG_EXPORTS std::tuple<bool, const char*> loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir, MarkerLevelOfDetail targetLevelOfDetail, std::vector<AnnotatedSpeechSegment>& segments);
+// segPredBefore=predicate to determine whether to include segment into the result set; called before actual samples are loaded
+PG_EXPORTS std::tuple<bool, const char*> loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir,
+	MarkerLevelOfDetail targetLevelOfDetail, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments);
 
 PG_EXPORTS std::tuple<bool, const char*> collectMfccFeatures(const QFileInfo& folderOrWavFilePath, int frameSize, int frameShift, int mfccVecLen, std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector);
 

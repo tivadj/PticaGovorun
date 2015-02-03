@@ -256,6 +256,7 @@ private:
 
 	// Level of detail for newly created markers.
 	PticaGovorun::MarkerLevelOfDetail templateMarkerLevelOfDetail_ = PticaGovorun::MarkerLevelOfDetail::Word;
+	PticaGovorun::SpeechLanguage templateMarkerSpeechLanguage_ = PticaGovorun::SpeechLanguage::Ukrainian;
 	QPointF draggingLastViewportPos_; // used to avoid frequent repaints when mouse pos doesn't change
 	bool isDraggingMarker_ = false;
 	int draggingMarkerInd_ = -1;
@@ -296,9 +297,11 @@ public:
 	void setCurrentMarkerTranscriptText(const QString& text);
 	void setCurrentMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail);
 	void setCurrentMarkerStopOnPlayback(bool stopsPlayback);
+	void setCurrentMarkerLang(PticaGovorun::SpeechLanguage lang);
 
 	void setTemplateMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail);
 	PticaGovorun::MarkerLevelOfDetail templateMarkerLevelOfDetail() const;
+	PticaGovorun::SpeechLanguage templateMarkerSpeechLanguage() const;
 
 	void dragMarkerStart(const QPointF& localPos, int markerInd);
 	void dragMarkerStop();

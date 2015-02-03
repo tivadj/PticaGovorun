@@ -159,9 +159,17 @@ namespace RecognizeSpeechSphinxTester
 		const wchar_t* wavDirToAnalyze  = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAudio\)path";
 
 		std::vector<AnnotatedSpeechSegment> segments;
+		auto segPredBeforeFun = [](const AnnotatedSpeechSegment& seg) -> bool
+		{
+			if (seg.FilePath.find(L"pynzenykvm") != std::wstring::npos)
+				return false;
+			if (seg.Language != SpeechLanguage::Ukrainian)
+				return false;
+			return true;
+		};
 		bool loadOp;
 		const char* errMsg;
-		std::tie(loadOp, errMsg) = loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, segments);
+		std::tie(loadOp, errMsg) = loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, segPredBeforeFun, segments);
 
 		//
 		const char* hmmPath       = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";

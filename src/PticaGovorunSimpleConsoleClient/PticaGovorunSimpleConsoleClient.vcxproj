@@ -197,6 +197,7 @@
     <ClCompile Include="ComputeSpeechMfccTester.cpp" />
     <ClCompile Include="EditDistanceTests.cpp" />
     <ClCompile Include="MatlabTester.cpp" />
+    <ClCompile Include="MigrateXmlSpeechAnnotRunner.cpp" />
     <ClCompile Include="PticaGovorunSimpleConsoleClient.cpp" />
     <ClCompile Include="RecognizeSpeechSphinxTester.cpp" />
     <ClCompile Include="ResampleAudioTester.cpp" />

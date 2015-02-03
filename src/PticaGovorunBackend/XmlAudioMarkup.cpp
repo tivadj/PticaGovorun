@@ -22,6 +22,9 @@ namespace {
 	static const char* MarkerIdName = "id";
 	static const char* MarkerSampleIndName = "sampleInd";
 	static const char* MarkerTranscripTextName = "transcripText";
+	static const char* MarkerLanguageName = "lang";
+	static const char* MarkerLangUkrainian = "uk";
+	static const char* MarkerLangRussian = "ru";
 	static const char* MarkerLevelOfDetailName = "levelOfDetail";
 	static const char* MarkerLevelOfDetailWordName = "word";
 	static const char* MarkerLevelOfDetailPhoneName = "phone";
@@ -85,6 +88,13 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMa
 			else if (levelOfDetailStr == MarkerLevelOfDetailPhoneName)
 				levelOfDetail = MarkerLevelOfDetail::Phone;
 
+			QString langStr = e.attribute(MarkerLanguageName, "");
+			SpeechLanguage lang = SpeechLanguage::NotSet;
+			if (langStr == MarkerLangUkrainian)
+				lang = SpeechLanguage::Ukrainian;
+			else if (langStr == MarkerLangRussian)
+				lang = SpeechLanguage::Russian;
+
 			//
 			PG_Assert(markerId != -1);
 
@@ -93,6 +103,7 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMa
 			syncPoint.SampleInd = sampleInd;
 			syncPoint.TranscripText = transcripText;
 			syncPoint.LevelOfDetail = levelOfDetail;
+			syncPoint.Language = lang;
 
 			// UI specific
 			syncPoint.IsManual = true;
@@ -134,6 +145,12 @@ PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const std::vector<
 
 		if (!marker.TranscripText.isEmpty())
 			xmlWriter.writeAttribute(MarkerTranscripTextName, marker.TranscripText);
+
+		if (marker.Language != SpeechLanguage::NotSet)
+		{
+			std::string langStr = speechLanguageToStr(marker.Language);
+			xmlWriter.writeAttribute(MarkerLanguageName, langStr.c_str());
+		}
 
 		xmlWriter.writeEndElement(); // MarkerName
 	}

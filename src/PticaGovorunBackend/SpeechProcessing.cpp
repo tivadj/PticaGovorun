@@ -27,6 +27,19 @@ namespace PticaGovorun {
 		return false;
 	}
 
+	PG_EXPORTS std::string speechLanguageToStr(SpeechLanguage lang)
+	{
+		switch (lang)
+		{
+		case SpeechLanguage::Russian:
+			return "ru";
+		case SpeechLanguage::Ukrainian:
+			return "uk";
+		default:
+			return "";
+		}
+	}
+
 	void splitUtteranceIntoWords(const std::wstring& text, std::vector<wv::slice<const wchar_t>>& wordsAsSlices)
 	{
 		std::wsmatch matchRes;
@@ -238,7 +251,8 @@ namespace PticaGovorun {
 		return annotPathAbs.toStdWString();
 	}
 
-	std::tuple<bool, const char*> loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir, MarkerLevelOfDetail targetLevelOfDetail, std::vector<AnnotatedSpeechSegment>& segments)
+	std::tuple<bool, const char*> loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir, 
+		MarkerLevelOfDetail targetLevelOfDetail, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments)
 	{
 		if (folderOrWavFilePath.isDir())
 		{
@@ -248,7 +262,7 @@ namespace PticaGovorun {
 			QFileInfoList items = dir.entryInfoList(QDir::Filter::Files | QDir::Filter::Dirs | QDir::Filter::NoDotAndDotDot);
 			for (const QFileInfo item : items)
 			{
-				auto subOp = loadSpeechAndAnnotation(item, wavRootDir, annotRootDir, targetLevelOfDetail, segments);
+				auto subOp = loadSpeechAndAnnotation(item, wavRootDir, annotRootDir, targetLevelOfDetail, segPredBefore, segments);
 				if (!std::get<0>(subOp))
 					return subOp;
 			}
@@ -270,7 +284,6 @@ namespace PticaGovorun {
 
 		// load audio markup
 		// not all wav files has a markup, hence try to load the markup first
-
 		QString audioMarkupFilePathAbs = xmlFilePathInfo.absoluteFilePath();
 		std::vector<TimePointMarker> syncPoints;
 		std::tuple<bool, const char*> loadOp = loadAudioMarkupFromXml(audioMarkupFilePathAbs.toStdWString(), syncPoints);
@@ -284,12 +297,9 @@ namespace PticaGovorun {
 			return m.LevelOfDetail == targetLevelOfDetail;
 		});
 
-		// load wav file
-		std::vector<short> speechFrames;
+		// audio frames are lazy loaded
 		float frameRate = -1;
-		auto readOp = readAllSamples(wavFilePath.toStdString(), speechFrames, &frameRate);
-		if (!std::get<0>(readOp))
-			return std::make_pair(false, "Can't read wav file");
+		std::vector<short> speechFrames;
 
 		// collect annotated frames
 		// two consequent markers form a segment of intereset
@@ -302,6 +312,21 @@ namespace PticaGovorun {
 				seg.SegmentId = marker.Id;
 				seg.FilePath = wavFilePath.toStdWString();
 				seg.TranscriptText = marker.TranscripText.toStdWString();
+				seg.Language = marker.Language;
+
+				// filter out unwanted segments
+				if (!segPredBefore(seg))
+					continue;
+
+				// lazy load audio samples
+				if (speechFrames.empty())
+				{
+					// load wav file
+					auto readOp = readAllSamples(wavFilePath.toStdString(), speechFrames, &frameRate);
+					if (!std::get<0>(readOp))
+						return std::make_pair(false, "Can't read wav file");
+				}
+
 				seg.FrameRate = frameRate;
 
 				long frameStart = marker.SampleInd;

@@ -1,563 +1,562 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <audioAnnotation>
    <syncPoint id="68" sampleInd="2318507" levelOfDetail="phone" transcripText="speaker=Олена Климентова"/>
-   <syncPoint id="1" sampleInd="2352459" levelOfDetail="word" transcripText="той хто регулярно слухае"/>
+   <syncPoint id="1" sampleInd="2352459" levelOfDetail="word" transcripText="той хто регулярно слухае" lang="uk"/>
    <syncPoint id="5" sampleInd="2406603" levelOfDetail="word"/>
-   <syncPoint id="7" sampleInd="2411217" levelOfDetail="word" transcripText="ці недільні програми пам'ятає шчо ми вже зверталися"/>
+   <syncPoint id="7" sampleInd="2411217" levelOfDetail="word" transcripText="ці недільні програми пам'ятає шчо ми вже зверталися" lang="uk"/>
    <syncPoint id="9" sampleInd="2493822" levelOfDetail="word"/>
-   <syncPoint id="11" sampleInd="2496600" levelOfDetail="word" transcripText="до теми прихованих мовних впливів"/>
+   <syncPoint id="11" sampleInd="2496600" levelOfDetail="word" transcripText="до теми прихованих мовних впливів" lang="uk"/>
    <syncPoint id="8" sampleInd="2554365" levelOfDetail="word"/>
-   <syncPoint id="12" sampleInd="2557292" levelOfDetail="word" transcripText="на наші рішення почуття та поведінку"/>
+   <syncPoint id="12" sampleInd="2557292" levelOfDetail="word" transcripText="на наші рішення почуття та поведінку" lang="uk"/>
    <syncPoint id="6" sampleInd="2619887" levelOfDetail="word"/>
-   <syncPoint id="3" sampleInd="2629148" levelOfDetail="word" transcripText="тобто до теми мовної сугестії"/>
+   <syncPoint id="3" sampleInd="2629148" levelOfDetail="word" transcripText="тобто до теми мовної сугестії" lang="uk"/>
    <syncPoint id="16" sampleInd="2684466" levelOfDetail="word"/>
-   <syncPoint id="13" sampleInd="2692073" levelOfDetail="word" transcripText="але сігодні ми будемо говорити про захист від цих прихованих мовних впливів"/>
+   <syncPoint id="13" sampleInd="2692073" levelOfDetail="word" transcripText="але сігодні ми будемо говорити про захист від цих прихованих мовних впливів" lang="uk"/>
    <syncPoint id="17" sampleInd="2819246" levelOfDetail="phone" transcripText="'v'"/>
    <syncPoint id="22" sampleInd="2819809" levelOfDetail="word"/>
-   <syncPoint id="4" sampleInd="2823480" levelOfDetail="word" transcripText="або про контр сугестію"/>
+   <syncPoint id="4" sampleInd="2823480" levelOfDetail="word" transcripText="або про контр сугестію" lang="uk"/>
    <syncPoint id="10" sampleInd="2876946" levelOfDetail="word"/>
-   <syncPoint id="14" sampleInd="2882998" levelOfDetail="word" transcripText="в свій час шче видатний історік радянського періоду поршнєв"/>
+   <syncPoint id="14" sampleInd="2882998" levelOfDetail="word" transcripText="в свій час шче видатний історік радянського періоду поршнєв" lang="uk"/>
    <syncPoint id="19" sampleInd="2986325" levelOfDetail="phone" transcripText="'v'"/>
    <syncPoint id="35" sampleInd="2987152" levelOfDetail="word"/>
-   <syncPoint id="33" sampleInd="2988342" levelOfDetail="word" transcripText="порівнював і вивчав черепини давніших людей їх походження і поселення"/>
+   <syncPoint id="33" sampleInd="2988342" levelOfDetail="word" transcripText="порівнював і вивчав черепини давніших людей їх походження і поселення" lang="uk"/>
    <syncPoint id="31" sampleInd="3108537" levelOfDetail="word"/>
-   <syncPoint id="26" sampleInd="3113349" levelOfDetail="word" transcripText="і він писав"/>
+   <syncPoint id="26" sampleInd="3113349" levelOfDetail="word" transcripText="і він писав" lang="uk"/>
    <syncPoint id="46" sampleInd="3135989" levelOfDetail="word"/>
-   <syncPoint id="27" sampleInd="3137411" levelOfDetail="word" transcripText="шчо коли на зміну порівняно низькому"/>
+   <syncPoint id="27" sampleInd="3137411" levelOfDetail="word" transcripText="шчо коли на зміну порівняно низькому" lang="uk"/>
    <syncPoint id="34" sampleInd="3198369" levelOfDetail="word"/>
-   <syncPoint id="37" sampleInd="3199427" levelOfDetail="word" transcripText="черепному склипінню палеонтропів"/>
+   <syncPoint id="37" sampleInd="3199427" levelOfDetail="word" transcripText="черепному склипінню палеонтропів" lang="uk"/>
    <syncPoint id="44" sampleInd="3254398" levelOfDetail="word"/>
-   <syncPoint id="15" sampleInd="3255721" levelOfDetail="word" transcripText="прийшло високо підняте чело неоантропів"/>
+   <syncPoint id="15" sampleInd="3255721" levelOfDetail="word" transcripText="прийшло високо підняте чело неоантропів" lang="uk"/>
    <syncPoint id="28" sampleInd="3340591" levelOfDetail="word"/>
-   <syncPoint id="30" sampleInd="3341683" levelOfDetail="word" transcripText="нео це новий а антропос це людина"/>
+   <syncPoint id="30" sampleInd="3341683" levelOfDetail="word" transcripText="нео це новий а антропос це людина" lang="uk"/>
    <syncPoint id="20" sampleInd="3398456" levelOfDetail="word"/>
-   <syncPoint id="47" sampleInd="3401515" levelOfDetail="word" transcripText="це якраз і засвідчило формування в тілі людини"/>
+   <syncPoint id="47" sampleInd="3401515" levelOfDetail="word" transcripText="це якраз і засвідчило формування в тілі людини" lang="uk"/>
    <syncPoint id="41" sampleInd="3488139" levelOfDetail="word"/>
-   <syncPoint id="51" sampleInd="3490934" levelOfDetail="word" transcripText="генетично зумвовлених механізмів навіюваності та гіпнабельності"/>
+   <syncPoint id="51" sampleInd="3490934" levelOfDetail="word" transcripText="генетично зумвовлених механізмів навіюваності та гіпнабельності" lang="uk"/>
    <syncPoint id="61" sampleInd="3621662" levelOfDetail="word"/>
-   <syncPoint id="70" sampleInd="3624408" levelOfDetail="word" transcripText="призначення цих механізмів регулювати стосунки між людьми"/>
-   <syncPoint id="53" sampleInd="3739608" levelOfDetail="word" transcripText="і така регуляція втілювалося як у різноманітних формах тиску на іншу людину"/>
+   <syncPoint id="70" sampleInd="3624408" levelOfDetail="word" transcripText="призначення цих механізмів регулювати стосунки між людьми" lang="uk"/>
+   <syncPoint id="53" sampleInd="3739608" levelOfDetail="word" transcripText="і така регуляція втілювалося як у різноманітних формах тиску на іншу людину" lang="uk"/>
    <syncPoint id="69" sampleInd="3783052" levelOfDetail="phone" transcripText="alo OR olo?"/>
    <syncPoint id="48" sampleInd="3873710" levelOfDetail="word"/>
-   <syncPoint id="40" sampleInd="3875910" levelOfDetail="word" transcripText="так і у формах захисту від подібних тисків"/>
+   <syncPoint id="40" sampleInd="3875910" levelOfDetail="word" transcripText="так і у формах захисту від подібних тисків" lang="uk"/>
    <syncPoint id="55" sampleInd="3947881" levelOfDetail="phone" transcripText="'v' bounds?"/>
    <syncPoint id="65" sampleInd="3948443" levelOfDetail="word"/>
-   <syncPoint id="54" sampleInd="3951850" levelOfDetail="word" transcripText="отже посутньо шче радянський історік поршнєв стверджував"/>
+   <syncPoint id="54" sampleInd="3951850" levelOfDetail="word" transcripText="отже посутньо шче радянський історік поршнєв стверджував" lang="uk"/>
    <syncPoint id="86" sampleInd="4046660" levelOfDetail="word"/>
-   <syncPoint id="64" sampleInd="4048694" levelOfDetail="word" transcripText="що вже у дуже давні період люди впливали одні на одних"/>
+   <syncPoint id="64" sampleInd="4048694" levelOfDetail="word" transcripText="що вже у дуже давні період люди впливали одні на одних" lang="uk"/>
    <syncPoint id="73" sampleInd="4147902" levelOfDetail="word"/>
-   <syncPoint id="66" sampleInd="4148646" levelOfDetail="word" transcripText="і це був механізм виживання"/>
+   <syncPoint id="66" sampleInd="4148646" levelOfDetail="word" transcripText="і це був механізм виживання" lang="uk"/>
    <syncPoint id="90" sampleInd="4196953" levelOfDetail="word"/>
-   <syncPoint id="97" sampleInd="4200574" levelOfDetail="word" transcripText="хто сильніше впливає або хто краще захищається"/>
+   <syncPoint id="97" sampleInd="4200574" levelOfDetail="word" transcripText="хто сильніше впливає або хто краще захищається" lang="uk"/>
    <syncPoint id="45" sampleInd="4276068" levelOfDetail="word"/>
-   <syncPoint id="100" sampleInd="4282253" levelOfDetail="word" transcripText="у того більше шансів на виживання"/>
+   <syncPoint id="100" sampleInd="4282253" levelOfDetail="word" transcripText="у того більше шансів на виживання" lang="uk"/>
    <syncPoint id="78" sampleInd="4340415" levelOfDetail="word"/>
-   <syncPoint id="87" sampleInd="4342516" levelOfDetail="word" transcripText="с того далекого часу форма нашого черепа практично не змінилася"/>
+   <syncPoint id="87" sampleInd="4342516" levelOfDetail="word" transcripText="с того далекого часу форма нашого черепа практично не змінилася" lang="uk"/>
    <syncPoint id="108" sampleInd="4449613" levelOfDetail="word"/>
-   <syncPoint id="81" sampleInd="4453118" levelOfDetail="word" transcripText="і це означає шчо ми так само можемо не тільки впливати"/>
+   <syncPoint id="81" sampleInd="4453118" levelOfDetail="word" transcripText="і це означає шчо ми так само можемо не тільки впливати" lang="uk"/>
    <syncPoint id="18" sampleInd="4545017" levelOfDetail="word"/>
-   <syncPoint id="71" sampleInd="4550210" levelOfDetail="word" transcripText="але і захиститись від подібних впливів"/>
+   <syncPoint id="71" sampleInd="4550210" levelOfDetail="word" transcripText="але і захиститись від подібних впливів" lang="uk"/>
    <syncPoint id="24" sampleInd="4609414" levelOfDetail="word"/>
-   <syncPoint id="88" sampleInd="4613235" levelOfDetail="word" transcripText="або принаймі обмежити їх"/>
+   <syncPoint id="88" sampleInd="4613235" levelOfDetail="word" transcripText="або принаймі обмежити їх" lang="uk"/>
    <syncPoint id="72" sampleInd="4656679" levelOfDetail="word"/>
-   <syncPoint id="93" sampleInd="4659573" levelOfDetail="word" transcripText="це одна з наших біологічних функцій"/>
+   <syncPoint id="93" sampleInd="4659573" levelOfDetail="word" transcripText="це одна з наших біологічних функцій" lang="uk"/>
    <syncPoint id="74" sampleInd="4712774" levelOfDetail="word"/>
-   <syncPoint id="52" sampleInd="4715850" levelOfDetail="word" transcripText="подібно до здатності ходити чи розмовляти"/>
+   <syncPoint id="52" sampleInd="4715850" levelOfDetail="word" transcripText="подібно до здатності ходити чи розмовляти" lang="uk"/>
    <syncPoint id="82" sampleInd="4782876" levelOfDetail="word"/>
-   <syncPoint id="129" sampleInd="4785869" levelOfDetail="word" transcripText="але знову таки"/>
+   <syncPoint id="129" sampleInd="4785869" levelOfDetail="word" transcripText="але знову таки" lang="uk"/>
    <syncPoint id="98" sampleInd="4806029" levelOfDetail="word"/>
-   <syncPoint id="91" sampleInd="4809568" levelOfDetail="word" transcripText="подібно до інших наших природних сдатностей є межі"/>
+   <syncPoint id="91" sampleInd="4809568" levelOfDetail="word" transcripText="подібно до інших наших природних сдатностей є межі" lang="uk"/>
    <syncPoint id="133" sampleInd="4849539" levelOfDetail="phone" transcripText="burr"/>
    <syncPoint id="131" sampleInd="4898192" levelOfDetail="word"/>
-   <syncPoint id="85" sampleInd="4900144" levelOfDetail="word" transcripText="яких ми цією здатністю без шкоди для здоров'я можемо користуватися"/>
+   <syncPoint id="85" sampleInd="4900144" levelOfDetail="word" transcripText="яких ми цією здатністю без шкоди для здоров'я можемо користуватися" lang="uk"/>
    <syncPoint id="116" sampleInd="5006463" levelOfDetail="word"/>
-   <syncPoint id="121" sampleInd="5009771" levelOfDetail="word" transcripText="є обмеження для нашої здатності швидко рухатися щось бачити чути"/>
+   <syncPoint id="121" sampleInd="5009771" levelOfDetail="word" transcripText="є обмеження для нашої здатності швидко рухатися щось бачити чути" lang="uk"/>
    <syncPoint id="112" sampleInd="5124458" levelOfDetail="word"/>
-   <syncPoint id="79" sampleInd="5127865" levelOfDetail="word" transcripText="і погодьтеся можна бути гнучким але можна і зламатися так само й тут"/>
+   <syncPoint id="79" sampleInd="5127865" levelOfDetail="word" transcripText="і погодьтеся можна бути гнучким але можна і зламатися так само й тут" lang="uk"/>
    <syncPoint id="60" sampleInd="5223386" levelOfDetail="word"/>
-   <syncPoint id="103" sampleInd="5227288" levelOfDetail="word" transcripText="є обмеження для впливу"/>
+   <syncPoint id="103" sampleInd="5227288" levelOfDetail="word" transcripText="є обмеження для впливу" lang="uk"/>
    <syncPoint id="92" sampleInd="5264779" levelOfDetail="word"/>
-   <syncPoint id="152" sampleInd="5267871" levelOfDetail="word" transcripText="і є обмеження для захисту"/>
+   <syncPoint id="152" sampleInd="5267871" levelOfDetail="word" transcripText="і є обмеження для захисту" lang="uk"/>
    <syncPoint id="132" sampleInd="5310207" levelOfDetail="word"/>
-   <syncPoint id="49" sampleInd="5312126" levelOfDetail="word" transcripText="і нехтування цими межами є небезпечним для нашого психічного здоров'я"/>
+   <syncPoint id="49" sampleInd="5312126" levelOfDetail="word" transcripText="і нехтування цими межами є небезпечним для нашого психічного здоров'я" lang="uk"/>
    <syncPoint id="143" sampleInd="5433461" levelOfDetail="word"/>
-   <syncPoint id="23" sampleInd="5435099" levelOfDetail="word" transcripText="за це завжди треба пам'ятати"/>
+   <syncPoint id="23" sampleInd="5435099" levelOfDetail="word" transcripText="за це завжди треба пам'ятати" lang="uk"/>
    <syncPoint id="149" sampleInd="5476475" levelOfDetail="word"/>
-   <syncPoint id="110" sampleInd="5481089" levelOfDetail="word" transcripText="нагадаю шчо відповіддю організму"/>
+   <syncPoint id="110" sampleInd="5481089" levelOfDetail="word" transcripText="нагадаю шчо відповіддю організму" lang="uk"/>
    <syncPoint id="124" sampleInd="5535680" levelOfDetail="word"/>
-   <syncPoint id="160" sampleInd="5537383" levelOfDetail="word" transcripText="на отакі маніпулятивні тиски що порушують подібні межі"/>
+   <syncPoint id="160" sampleInd="5537383" levelOfDetail="word" transcripText="на отакі маніпулятивні тиски що порушують подібні межі" lang="uk"/>
    <syncPoint id="169" sampleInd="5638328" levelOfDetail="word"/>
-   <syncPoint id="106" sampleInd="5642181" levelOfDetail="word" transcripText="будуть різні форми дипресій"/>
+   <syncPoint id="106" sampleInd="5642181" levelOfDetail="word" transcripText="будуть різні форми дипресій" lang="uk"/>
    <syncPoint id="141" sampleInd="5687841" levelOfDetail="word"/>
-   <syncPoint id="43" sampleInd="5690884" levelOfDetail="word" transcripText="коли втрачається інтерес до життя взагалі"/>
+   <syncPoint id="43" sampleInd="5690884" levelOfDetail="word" transcripText="коли втрачається інтерес до життя взагалі" lang="uk"/>
    <syncPoint id="36" sampleInd="5754140" levelOfDetail="word"/>
    <syncPoint id="123" sampleInd="5756323" levelOfDetail="phone" transcripText="click"/>
-   <syncPoint id="177" sampleInd="5758721" levelOfDetail="word" transcripText="немає активності"/>
+   <syncPoint id="177" sampleInd="5758721" levelOfDetail="word" transcripText="немає активності" lang="uk"/>
    <syncPoint id="21" sampleInd="5790655" levelOfDetail="word"/>
-   <syncPoint id="179" sampleInd="5796013" levelOfDetail="word" transcripText="в голові каша"/>
+   <syncPoint id="179" sampleInd="5796013" levelOfDetail="word" transcripText="в голові каша" lang="uk"/>
    <syncPoint id="63" sampleInd="5796178" levelOfDetail="phone" transcripText="'v' bounds?"/>
    <syncPoint id="182" sampleInd="5821993" levelOfDetail="word"/>
-   <syncPoint id="144" sampleInd="5826310" levelOfDetail="word" transcripText="коли важко розібратися шчо важливо а шчо є другорядним"/>
+   <syncPoint id="144" sampleInd="5826310" levelOfDetail="word" transcripText="коли важко розібратися шчо важливо а шчо є другорядним" lang="uk"/>
    <syncPoint id="198" sampleInd="5904962" levelOfDetail="word"/>
-   <syncPoint id="162" sampleInd="5907377" levelOfDetail="word" transcripText="і відповідно така людина"/>
+   <syncPoint id="162" sampleInd="5907377" levelOfDetail="word" transcripText="і відповідно така людина" lang="uk"/>
    <syncPoint id="181" sampleInd="5940733" levelOfDetail="word"/>
-   <syncPoint id="173" sampleInd="5942899" levelOfDetail="word" transcripText="уже не здатна розподілити сили нерідко просто відмовляється жити своїм розумом"/>
+   <syncPoint id="173" sampleInd="5942899" levelOfDetail="word" transcripText="уже не здатна розподілити сили нерідко просто відмовляється жити своїм розумом" lang="uk"/>
    <syncPoint id="38" sampleInd="5959850" levelOfDetail="phone" transcripText="has 'n'?"/>
    <syncPoint id="155" sampleInd="6055900" levelOfDetail="word"/>
-   <syncPoint id="80" sampleInd="6058099" levelOfDetail="word" transcripText="і як результат звісно страждає"/>
+   <syncPoint id="80" sampleInd="6058099" levelOfDetail="word" transcripText="і як результат звісно страждає" lang="uk"/>
    <syncPoint id="212" sampleInd="6088198" levelOfDetail="phone" transcripText="no 't'!"/>
    <syncPoint id="95" sampleInd="6107298" levelOfDetail="word"/>
-   <syncPoint id="59" sampleInd="6110523" levelOfDetail="word" transcripText="отже"/>
+   <syncPoint id="59" sampleInd="6110523" levelOfDetail="word" transcripText="отже" lang="uk"/>
    <syncPoint id="183" sampleInd="6118180" levelOfDetail="word"/>
-   <syncPoint id="215" sampleInd="6126763" levelOfDetail="word" transcripText="у того хто прагне впливати"/>
+   <syncPoint id="215" sampleInd="6126763" levelOfDetail="word" transcripText="у того хто прагне впливати" lang="uk"/>
    <syncPoint id="76" sampleInd="6162501" levelOfDetail="word"/>
-   <syncPoint id="196" sampleInd="6165610" levelOfDetail="word" transcripText="завжди є ризик забути про мораль і перетворитися на безсовісного аморального маніпулятора"/>
+   <syncPoint id="196" sampleInd="6165610" levelOfDetail="word" transcripText="завжди є ризик забути про мораль і перетворитися на безсовісного аморального маніпулятора" lang="uk"/>
    <syncPoint id="222" sampleInd="6309254" levelOfDetail="phone" transcripText="'a' bounds?"/>
    <syncPoint id="29" sampleInd="6309536" levelOfDetail="word"/>
-   <syncPoint id="210" sampleInd="6314513" levelOfDetail="word" transcripText="а у того хто захищається"/>
+   <syncPoint id="210" sampleInd="6314513" levelOfDetail="word" transcripText="а у того хто захищається" lang="uk"/>
    <syncPoint id="204" sampleInd="6316332" levelOfDetail="phone" transcripText="у того OR отого?"/>
    <syncPoint id="203" sampleInd="6349044" levelOfDetail="word"/>
    <syncPoint id="236" sampleInd="6354369" levelOfDetail="word"/>
    <syncPoint id="214" sampleInd="6362439" levelOfDetail="phone" transcripText="lough"/>
-   <syncPoint id="102" sampleInd="6379621" levelOfDetail="word" transcripText="перебувати у постійному страху перед життям"/>
+   <syncPoint id="102" sampleInd="6379621" levelOfDetail="word" transcripText="перебувати у постійному страху перед життям" lang="uk"/>
    <syncPoint id="171" sampleInd="6442117" levelOfDetail="word"/>
-   <syncPoint id="94" sampleInd="6446549" levelOfDetail="word" transcripText="і є ризик почати дмухати навіть на холодну воду"/>
+   <syncPoint id="94" sampleInd="6446549" levelOfDetail="word" transcripText="і є ризик почати дмухати навіть на холодну воду" lang="uk"/>
    <syncPoint id="200" sampleInd="6525614" levelOfDetail="word"/>
-   <syncPoint id="163" sampleInd="6528079" levelOfDetail="word" transcripText="тому як фахівець"/>
+   <syncPoint id="163" sampleInd="6528079" levelOfDetail="word" transcripText="тому як фахівець" lang="uk"/>
    <syncPoint id="57" sampleInd="6549362" levelOfDetail="word"/>
-   <syncPoint id="189" sampleInd="6551330" levelOfDetail="word" transcripText="я бачу вихід у тому шчоб знання про феномен сугестії стали доступнішими"/>
+   <syncPoint id="189" sampleInd="6551330" levelOfDetail="word" transcripText="я бачу вихід у тому шчоб знання про феномен сугестії стали доступнішими" lang="uk"/>
    <syncPoint id="118" sampleInd="6697389" levelOfDetail="word"/>
-   <syncPoint id="178" sampleInd="6700184" levelOfDetail="word" transcripText="треба шчоб у людей був певний рівень обізнаності щодо цього явища"/>
+   <syncPoint id="178" sampleInd="6700184" levelOfDetail="word" transcripText="треба шчоб у людей був певний рівень обізнаності щодо цього явища" lang="uk"/>
    <syncPoint id="218" sampleInd="6799227" levelOfDetail="word"/>
-   <syncPoint id="172" sampleInd="6801642" levelOfDetail="word" transcripText="і щоби вони могли свідомо діяти в тих чи інших ситуаціях пов'язаних із впливами"/>
+   <syncPoint id="172" sampleInd="6801642" levelOfDetail="word" transcripText="і щоби вони могли свідомо діяти в тих чи інших ситуаціях пов'язаних із впливами" lang="uk"/>
    <syncPoint id="153" sampleInd="6932503" levelOfDetail="word"/>
-   <syncPoint id="58" sampleInd="6934620" levelOfDetail="word" transcripText="перша порада полягає в тому щоб якнайменше занурюватися в комунікативні питоки"/>
+   <syncPoint id="58" sampleInd="6934620" levelOfDetail="word" transcripText="перша порада полягає в тому щоб якнайменше занурюватися в комунікативні питоки" lang="uk"/>
    <syncPoint id="180" sampleInd="7083540" levelOfDetail="word"/>
-   <syncPoint id="96" sampleInd="7086963" levelOfDetail="word" transcripText="які є традиційно маніпулятивними"/>
+   <syncPoint id="96" sampleInd="7086963" levelOfDetail="word" transcripText="які є традиційно маніпулятивними" lang="uk"/>
    <syncPoint id="245" sampleInd="7148069" levelOfDetail="word"/>
-   <syncPoint id="246" sampleInd="7151393" levelOfDetail="word" transcripText="треба пам'ятати шчо діяльність ма"/>
+   <syncPoint id="246" sampleInd="7151393" levelOfDetail="word" transcripText="треба пам'ятати шчо діяльність ма" lang="uk"/>
    <syncPoint id="176" sampleInd="7205736" levelOfDetail="word"/>
-   <syncPoint id="271" sampleInd="7208531" levelOfDetail="word" transcripText="засобів масової інформації"/>
+   <syncPoint id="271" sampleInd="7208531" levelOfDetail="word" transcripText="засобів масової інформації" lang="uk"/>
    <syncPoint id="77" sampleInd="7247741" levelOfDetail="word"/>
-   <syncPoint id="257" sampleInd="7249047" levelOfDetail="word" transcripText="і насамперед телебачення з його рекламою"/>
+   <syncPoint id="257" sampleInd="7249047" levelOfDetail="word" transcripText="і насамперед телебачення з його рекламою" lang="uk"/>
    <syncPoint id="194" sampleInd="7309062" levelOfDetail="word"/>
-   <syncPoint id="32" sampleInd="7310650" levelOfDetail="word" transcripText="політична сфера з її пропагандою"/>
+   <syncPoint id="32" sampleInd="7310650" levelOfDetail="word" transcripText="політична сфера з її пропагандою" lang="uk"/>
    <syncPoint id="244" sampleInd="7365422" levelOfDetail="word"/>
-   <syncPoint id="259" sampleInd="7367969" levelOfDetail="word" transcripText="віртуальне спілкування"/>
+   <syncPoint id="259" sampleInd="7367969" levelOfDetail="word" transcripText="віртуальне спілкування" lang="uk"/>
    <syncPoint id="287" sampleInd="7406484" levelOfDetail="word"/>
-   <syncPoint id="232" sampleInd="7410486" levelOfDetail="word" transcripText="а це різноманітні електронні видання різноманітні соціальні мережі"/>
+   <syncPoint id="232" sampleInd="7410486" levelOfDetail="word" transcripText="а це різноманітні електронні видання різноманітні соціальні мережі" lang="uk"/>
    <syncPoint id="281" sampleInd="7512572" levelOfDetail="word"/>
-   <syncPoint id="128" sampleInd="7517385" levelOfDetail="word" transcripText="накшталт однокласників чи сайтів знайомств контакти"/>
+   <syncPoint id="128" sampleInd="7517385" levelOfDetail="word" transcripText="накшталт однокласників чи сайтів знайомств контакти" lang="uk"/>
    <syncPoint id="142" sampleInd="7601065" levelOfDetail="word"/>
-   <syncPoint id="56" sampleInd="7604686" levelOfDetail="word" transcripText="комп`ютерні ігри"/>
+   <syncPoint id="56" sampleInd="7604686" levelOfDetail="word" transcripText="комп`ютерні ігри" lang="uk"/>
    <syncPoint id="122" sampleInd="7633693" levelOfDetail="word"/>
-   <syncPoint id="274" sampleInd="7636273" levelOfDetail="word" transcripText="різноманітні сервісні сфери"/>
+   <syncPoint id="274" sampleInd="7636273" levelOfDetail="word" transcripText="різноманітні сервісні сфери" lang="uk"/>
    <syncPoint id="217" sampleInd="7678179" levelOfDetail="word"/>
-   <syncPoint id="201" sampleInd="7680345" levelOfDetail="word" transcripText="це сфери потужного мовного впливу"/>
+   <syncPoint id="201" sampleInd="7680345" levelOfDetail="word" transcripText="це сфери потужного мовного впливу" lang="uk"/>
    <syncPoint id="294" sampleInd="7748546" levelOfDetail="word"/>
-   <syncPoint id="170" sampleInd="7751969" levelOfDetail="word" transcripText="якщо ви про це будете пам'ятати тоді саме вам і вирішувати скільки часу ви провидите в інтернеті"/>
+   <syncPoint id="170" sampleInd="7751969" levelOfDetail="word" transcripText="якщо ви про це будете пам'ятати тоді саме вам і вирішувати скільки часу ви провидите в інтернеті" lang="uk"/>
    <syncPoint id="275" sampleInd="7901154" levelOfDetail="word"/>
-   <syncPoint id="83" sampleInd="7902328" levelOfDetail="word" transcripText="якім можна користуватись для роботи а можна для розваги"/>
+   <syncPoint id="83" sampleInd="7902328" levelOfDetail="word" transcripText="якім можна користуватись для роботи а можна для розваги" lang="uk"/>
    <syncPoint id="315" sampleInd="7978235" levelOfDetail="word"/>
-   <syncPoint id="242" sampleInd="7981378" levelOfDetail="word" transcripText="і тоді без вашої на те згоди на вашу увагу будуть претендувати якісь фотографії пристойні і не дуже"/>
+   <syncPoint id="242" sampleInd="7981378" levelOfDetail="word" transcripText="і тоді без вашої на те згоди на вашу увагу будуть претендувати якісь фотографії пристойні і не дуже" lang="uk"/>
    <syncPoint id="134" sampleInd="8137326" levelOfDetail="word"/>
-   <syncPoint id="158" sampleInd="8144454" levelOfDetail="word" transcripText="результати якихось опитувань новини реклама"/>
+   <syncPoint id="158" sampleInd="8144454" levelOfDetail="word" transcripText="результати якихось опитувань новини реклама" lang="uk"/>
    <syncPoint id="62" sampleInd="8224793" levelOfDetail="word"/>
-   <syncPoint id="309" sampleInd="8229440" levelOfDetail="word" transcripText="тощо"/>
+   <syncPoint id="309" sampleInd="8229440" levelOfDetail="word" transcripText="тощо" lang="uk"/>
    <syncPoint id="126" sampleInd="8237725" levelOfDetail="word"/>
-   <syncPoint id="239" sampleInd="8242339" levelOfDetail="word" transcripText="не забувайте"/>
+   <syncPoint id="239" sampleInd="8242339" levelOfDetail="word" transcripText="не забувайте" lang="uk"/>
    <syncPoint id="298" sampleInd="8260382" levelOfDetail="word"/>
-   <syncPoint id="107" sampleInd="8262895" levelOfDetail="word" transcripText="що може впливати навіть та інформація яку ми не слухаємо"/>
+   <syncPoint id="107" sampleInd="8262895" levelOfDetail="word" transcripText="що може впливати навіть та інформація яку ми не слухаємо" lang="uk"/>
    <syncPoint id="243" sampleInd="8369595" levelOfDetail="word"/>
-   <syncPoint id="279" sampleInd="8372390" levelOfDetail="word" transcripText="на яку мало звертаємо уваги"/>
+   <syncPoint id="279" sampleInd="8372390" levelOfDetail="word" transcripText="на яку мало звертаємо уваги" lang="uk"/>
    <syncPoint id="307" sampleInd="8421953" levelOfDetail="word"/>
-   <syncPoint id="186" sampleInd="8426617" levelOfDetail="word" transcripText="і яка як нам наївно здається"/>
+   <syncPoint id="186" sampleInd="8426617" levelOfDetail="word" transcripText="і яка як нам наївно здається" lang="uk"/>
    <syncPoint id="263" sampleInd="8477817" levelOfDetail="word"/>
-   <syncPoint id="267" sampleInd="8479719" levelOfDetail="word" transcripText="є просто шумом інформаційним сміттям"/>
+   <syncPoint id="267" sampleInd="8479719" levelOfDetail="word" transcripText="є просто шумом інформаційним сміттям" lang="uk"/>
    <syncPoint id="138" sampleInd="8539634" levelOfDetail="word"/>
-   <syncPoint id="285" sampleInd="8541552" levelOfDetail="word" transcripText="яке супроводжує пошук потрібних нам джерел чи перериває перегляд фільму"/>
+   <syncPoint id="285" sampleInd="8541552" levelOfDetail="word" transcripText="яке супроводжує пошук потрібних нам джерел чи перериває перегляд фільму" lang="uk"/>
    <syncPoint id="348" sampleInd="8652486" levelOfDetail="word"/>
-   <syncPoint id="105" sampleInd="8655182" levelOfDetail="word" transcripText="запитаєте що ж із цим робити"/>
+   <syncPoint id="105" sampleInd="8655182" levelOfDetail="word" transcripText="запитаєте що ж із цим робити" lang="uk"/>
    <syncPoint id="247" sampleInd="8704281" levelOfDetail="word"/>
    <syncPoint id="325" sampleInd="8707622" levelOfDetail="word"/>
    <syncPoint id="120" sampleInd="8714998" levelOfDetail="phone" transcripText="laugh"/>
-   <syncPoint id="104" sampleInd="8727930" levelOfDetail="word" transcripText="телеба чи інтернету"/>
+   <syncPoint id="104" sampleInd="8727930" levelOfDetail="word" transcripText="телеба чи інтернету" lang="uk"/>
    <syncPoint id="140" sampleInd="8758128" levelOfDetail="word"/>
-   <syncPoint id="362" sampleInd="8762328" levelOfDetail="word" transcripText="ні не треба"/>
+   <syncPoint id="362" sampleInd="8762328" levelOfDetail="word" transcripText="ні не треба" lang="uk"/>
    <syncPoint id="156" sampleInd="8781991" levelOfDetail="word"/>
-   <syncPoint id="111" sampleInd="8786341" levelOfDetail="word" transcripText="просто треба увімкнути здоровий глузт"/>
+   <syncPoint id="111" sampleInd="8786341" levelOfDetail="word" transcripText="просто треба увімкнути здоровий глузт" lang="uk"/>
    <syncPoint id="349" sampleInd="8852557" levelOfDetail="word"/>
-   <syncPoint id="327" sampleInd="8855930" levelOfDetail="word" transcripText="як можно вберегтися від болотної багнюки"/>
+   <syncPoint id="327" sampleInd="8855930" levelOfDetail="word" transcripText="як можно вберегтися від болотної багнюки" lang="uk"/>
    <syncPoint id="357" sampleInd="8908470" levelOfDetail="word"/>
-   <syncPoint id="211" sampleInd="8911166" levelOfDetail="word" transcripText="просто не лізти в болото"/>
+   <syncPoint id="211" sampleInd="8911166" levelOfDetail="word" transcripText="просто не лізти в болото" lang="uk"/>
    <syncPoint id="139" sampleInd="8942736" levelOfDetail="word"/>
-   <syncPoint id="114" sampleInd="8945018" levelOfDetail="word" transcripText="обійти його стороною і бути подалі"/>
+   <syncPoint id="114" sampleInd="8945018" levelOfDetail="word" transcripText="обійти його стороною і бути подалі" lang="uk"/>
    <syncPoint id="369" sampleInd="8999641" levelOfDetail="word"/>
-   <syncPoint id="89" sampleInd="9002717" levelOfDetail="word" transcripText="з рекламною теливізійною пропагандиською чи інтернет сегестію так само"/>
+   <syncPoint id="89" sampleInd="9002717" levelOfDetail="word" transcripText="з рекламною теливізійною пропагандиською чи інтернет сегестію так само" lang="uk"/>
    <syncPoint id="356" sampleInd="9031443" levelOfDetail="phone" transcripText="tele OR tely?"/>
    <syncPoint id="302" sampleInd="9123110" levelOfDetail="word"/>
-   <syncPoint id="299" sampleInd="9127030" levelOfDetail="word" transcripText="треба чітко пам'ятати"/>
+   <syncPoint id="299" sampleInd="9127030" levelOfDetail="word" transcripText="треба чітко пам'ятати" lang="uk"/>
    <syncPoint id="344" sampleInd="9162966" levelOfDetail="word"/>
-   <syncPoint id="301" sampleInd="9169531" levelOfDetail="word" transcripText="заради чого ви увійшли в цей інформаційний потік"/>
+   <syncPoint id="301" sampleInd="9169531" levelOfDetail="word" transcripText="заради чого ви увійшли в цей інформаційний потік" lang="uk"/>
    <syncPoint id="252" sampleInd="9252930" levelOfDetail="word"/>
-   <syncPoint id="216" sampleInd="9255724" levelOfDetail="word" transcripText="візьміть те по що прийшли і виходьте"/>
+   <syncPoint id="216" sampleInd="9255724" levelOfDetail="word" transcripText="візьміть те по що прийшли і виходьте" lang="uk"/>
    <syncPoint id="159" sampleInd="9315871" levelOfDetail="word"/>
-   <syncPoint id="365" sampleInd="9318749" levelOfDetail="word" transcripText="а от від комп`ютерних ігор"/>
+   <syncPoint id="365" sampleInd="9318749" levelOfDetail="word" transcripText="а от від комп`ютерних ігор" lang="uk"/>
    <syncPoint id="311" sampleInd="9342497" levelOfDetail="phone" transcripText="no 'r'"/>
    <syncPoint id="136" sampleInd="9356769" levelOfDetail="word"/>
-   <syncPoint id="125" sampleInd="9359563" levelOfDetail="word" transcripText="якшо вони не мають навчального призначення"/>
+   <syncPoint id="125" sampleInd="9359563" levelOfDetail="word" transcripText="якшо вони не мають навчального призначення" lang="uk"/>
    <syncPoint id="293" sampleInd="9407043" levelOfDetail="word"/>
-   <syncPoint id="276" sampleInd="9410234" levelOfDetail="word" transcripText="варто таки відмовитися взагалі"/>
+   <syncPoint id="276" sampleInd="9410234" levelOfDetail="word" transcripText="варто таки відмовитися взагалі" lang="uk"/>
    <syncPoint id="340" sampleInd="9461170" levelOfDetail="word"/>
-   <syncPoint id="359" sampleInd="9466627" levelOfDetail="word" transcripText="тому інша порада полягає в тому щоб використовувати ці інформаційні джерела свідомо"/>
+   <syncPoint id="359" sampleInd="9466627" levelOfDetail="word" transcripText="тому інша порада полягає в тому щоб використовувати ці інформаційні джерела свідомо" lang="uk"/>
    <syncPoint id="323" sampleInd="9613497" levelOfDetail="word"/>
-   <syncPoint id="310" sampleInd="9616407" levelOfDetail="word" transcripText="не забувати яку інформацію шукаєте"/>
+   <syncPoint id="310" sampleInd="9616407" levelOfDetail="word" transcripText="не забувати яку інформацію шукаєте" lang="uk"/>
    <syncPoint id="417" sampleInd="9680606" levelOfDetail="word"/>
-   <syncPoint id="376" sampleInd="9683566" levelOfDetail="word" transcripText="завжди її перевіряти"/>
+   <syncPoint id="376" sampleInd="9683566" levelOfDetail="word" transcripText="завжди її перевіряти" lang="uk"/>
    <syncPoint id="109" sampleInd="9726911" levelOfDetail="word"/>
-   <syncPoint id="393" sampleInd="9729673" levelOfDetail="word" transcripText="порівнюючи з повідомленнями з інших джерел"/>
+   <syncPoint id="393" sampleInd="9729673" levelOfDetail="word" transcripText="порівнюючи з повідомленнями з інших джерел" lang="uk"/>
    <syncPoint id="368" sampleInd="9794648" levelOfDetail="word"/>
-   <syncPoint id="250" sampleInd="9797758" levelOfDetail="word" transcripText="зважати на рівень конкретності інформаціі"/>
+   <syncPoint id="250" sampleInd="9797758" levelOfDetail="word" transcripText="зважати на рівень конкретності інформаціі" lang="uk"/>
    <syncPoint id="207" sampleInd="9867149" levelOfDetail="word"/>
-   <syncPoint id="341" sampleInd="9868720" levelOfDetail="word" transcripText="її достовірність про що свідчать цифри які в ній фігурують"/>
+   <syncPoint id="341" sampleInd="9868720" levelOfDetail="word" transcripText="її достовірність про що свідчать цифри які в ній фігурують" lang="uk"/>
    <syncPoint id="444" sampleInd="9955145" levelOfDetail="phone" transcripText="ть?"/>
    <syncPoint id="147" sampleInd="9956005" levelOfDetail="word"/>
-   <syncPoint id="161" sampleInd="9958915" levelOfDetail="word" transcripText="на скільки вони науково підтведжені"/>
+   <syncPoint id="161" sampleInd="9958915" levelOfDetail="word" transcripText="на скільки вони науково підтведжені" lang="uk"/>
    <syncPoint id="164" sampleInd="9998175" levelOfDetail="phone" transcripText="no 'r'"/>
    <syncPoint id="223" sampleInd="10010909" levelOfDetail="word"/>
-   <syncPoint id="421" sampleInd="10014432" levelOfDetail="word" transcripText="чи є якісь посилання звідки ця інформація надійшла"/>
+   <syncPoint id="421" sampleInd="10014432" levelOfDetail="word" transcripText="чи є якісь посилання звідки ця інформація надійшла" lang="uk"/>
    <syncPoint id="389" sampleInd="10104958" levelOfDetail="word"/>
-   <syncPoint id="42" sampleInd="10107670" levelOfDetail="word" transcripText="думайте кому загалом вона може бути вигідною"/>
+   <syncPoint id="42" sampleInd="10107670" levelOfDetail="word" transcripText="думайте кому загалом вона може бути вигідною" lang="uk"/>
    <syncPoint id="381" sampleInd="10142531" levelOfDetail="phone" transcripText="weak 'm'"/>
    <syncPoint id="228" sampleInd="10179443" levelOfDetail="word"/>
-   <syncPoint id="253" sampleInd="10182750" levelOfDetail="word" transcripText="такий підхід убеспечить вас від довірливості до брехні"/>
+   <syncPoint id="253" sampleInd="10182750" levelOfDetail="word" transcripText="такий підхід убеспечить вас від довірливості до брехні" lang="uk"/>
    <syncPoint id="337" sampleInd="10252357" levelOfDetail="phone" transcripText="burr"/>
    <syncPoint id="439" sampleInd="10288243" levelOfDetail="word"/>
-   <syncPoint id="188" sampleInd="10291055" levelOfDetail="word" transcripText="за сугестію більшою мірою відповідає наша права півкуля мозку"/>
+   <syncPoint id="188" sampleInd="10291055" levelOfDetail="word" transcripText="за сугестію більшою мірою відповідає наша права півкуля мозку" lang="uk"/>
    <syncPoint id="448" sampleInd="10398118" levelOfDetail="word"/>
-   <syncPoint id="296" sampleInd="10400483" levelOfDetail="word" transcripText="а за контроль над ситуацію ліва півкуля"/>
+   <syncPoint id="296" sampleInd="10400483" levelOfDetail="word" transcripText="а за контроль над ситуацію ліва півкуля" lang="uk"/>
    <syncPoint id="193" sampleInd="10462995" levelOfDetail="word"/>
-   <syncPoint id="154" sampleInd="10465955" levelOfDetail="word" transcripText="тому забезпечити захист від сугестії"/>
+   <syncPoint id="154" sampleInd="10465955" levelOfDetail="word" transcripText="тому забезпечити захист від сугестії" lang="uk"/>
    <syncPoint id="433" sampleInd="10529773" levelOfDetail="word"/>
-   <syncPoint id="477" sampleInd="10531824" levelOfDetail="word" transcripText="це посутньо не дозволити приспати нашу ліву півкулю"/>
+   <syncPoint id="477" sampleInd="10531824" levelOfDetail="word" transcripText="це посутньо не дозволити приспати нашу ліву півкулю" lang="uk"/>
    <syncPoint id="385" sampleInd="10620052" levelOfDetail="word"/>
-   <syncPoint id="431" sampleInd="10623309" levelOfDetail="word" transcripText="і не дати правій домінувати у процесі сприйняття"/>
+   <syncPoint id="431" sampleInd="10623309" levelOfDetail="word" transcripText="і не дати правій домінувати у процесі сприйняття" lang="uk"/>
    <syncPoint id="146" sampleInd="10696951" levelOfDetail="word"/>
-   <syncPoint id="192" sampleInd="10700077" levelOfDetail="word" transcripText="а як же це зробити на практиці"/>
+   <syncPoint id="192" sampleInd="10700077" levelOfDetail="word" transcripText="а як же це зробити на практиці" lang="uk"/>
    <syncPoint id="313" sampleInd="10739221" levelOfDetail="word"/>
-   <syncPoint id="84" sampleInd="10742958" levelOfDetail="word" transcripText="сугестивний вплив завжди нав'язує нам віру довіру некритичність"/>
+   <syncPoint id="84" sampleInd="10742958" levelOfDetail="word" transcripText="сугестивний вплив завжди нав'язує нам віру довіру некритичність" lang="uk"/>
    <syncPoint id="240" sampleInd="10877789" levelOfDetail="word"/>
-   <syncPoint id="262" sampleInd="10881741" levelOfDetail="word" transcripText="а тому формою захисту так само завжди виступатимуть сумніми в достовірності"/>
+   <syncPoint id="262" sampleInd="10881741" levelOfDetail="word" transcripText="а тому формою захисту так само завжди виступатимуть сумніми в достовірності" lang="uk"/>
    <syncPoint id="384" sampleInd="11007128" levelOfDetail="word"/>
-   <syncPoint id="145" sampleInd="11011792" levelOfDetail="word" transcripText="тож хочете захиститися від сугестивного впливу не довіряйте очам своїм"/>
+   <syncPoint id="145" sampleInd="11011792" levelOfDetail="word" transcripText="тож хочете захиститися від сугестивного впливу не довіряйте очам своїм" lang="uk"/>
    <syncPoint id="366" sampleInd="11129092" levelOfDetail="word"/>
-   <syncPoint id="260" sampleInd="11131093" levelOfDetail="word" transcripText="не довіряйте вуха не довіряйте словам"/>
-   <syncPoint id="460" sampleInd="11202502" levelOfDetail="word" transcripText="не довіряйте відчуттям і запахам"/>
+   <syncPoint id="260" sampleInd="11131093" levelOfDetail="word" transcripText="не довіряйте вуха не довіряйте словам" lang="uk"/>
+   <syncPoint id="460" sampleInd="11202502" levelOfDetail="word" transcripText="не довіряйте відчуттям і запахам" lang="uk"/>
    <syncPoint id="496" sampleInd="11263691" levelOfDetail="word"/>
-   <syncPoint id="206" sampleInd="11264915" levelOfDetail="word" transcripText="спробуйте знайти якісь ваші суб'єктивні підтвердження які вас не зраджували раніше"/>
+   <syncPoint id="206" sampleInd="11264915" levelOfDetail="word" transcripText="спробуйте знайти якісь ваші суб'єктивні підтвердження які вас не зраджували раніше" lang="uk"/>
    <syncPoint id="295" sampleInd="11368026" levelOfDetail="phone"/>
    <syncPoint id="261" sampleInd="11415026" levelOfDetail="word"/>
-   <syncPoint id="303" sampleInd="11417573" levelOfDetail="word" transcripText="і в дієвості і правдивості яких ви вже неоднаразово переконувалися"/>
+   <syncPoint id="303" sampleInd="11417573" levelOfDetail="word" transcripText="і в дієвості і правдивості яких ви вже неоднаразово переконувалися" lang="uk"/>
    <syncPoint id="461" sampleInd="11524868" levelOfDetail="word"/>
-   <syncPoint id="511" sampleInd="11526935" levelOfDetail="word" transcripText="тоді це буде ваш вибір"/>
+   <syncPoint id="511" sampleInd="11526935" levelOfDetail="word" transcripText="тоді це буде ваш вибір" lang="uk"/>
    <syncPoint id="466" sampleInd="11565699" levelOfDetail="word"/>
-   <syncPoint id="291" sampleInd="11569089" levelOfDetail="word" transcripText="і навіть якшо він виявиться помилковим і принесе розчарування ви добре запам'ятаєте негативний досвіт"/>
+   <syncPoint id="291" sampleInd="11569089" levelOfDetail="word" transcripText="і навіть якшо він виявиться помилковим і принесе розчарування ви добре запам'ятаєте негативний досвіт" lang="uk"/>
    <syncPoint id="480" sampleInd="11729387" levelOfDetail="phone" transcripText="'t' bounds?"/>
    <syncPoint id="168" sampleInd="11730760" levelOfDetail="word"/>
-   <syncPoint id="335" sampleInd="11732695" levelOfDetail="word" transcripText="отже наступного разу спробуйте виправити власні помилки"/>
+   <syncPoint id="335" sampleInd="11732695" levelOfDetail="word" transcripText="отже наступного разу спробуйте виправити власні помилки" lang="uk"/>
    <syncPoint id="137" sampleInd="11829538" levelOfDetail="word"/>
-   <syncPoint id="435" sampleInd="11832250" levelOfDetail="word" transcripText="і знайти більш достовірні підказки при прийнятті рішення"/>
+   <syncPoint id="435" sampleInd="11832250" levelOfDetail="word" transcripText="і знайти більш достовірні підказки при прийнятті рішення" lang="uk"/>
    <syncPoint id="532" sampleInd="11933807" levelOfDetail="word"/>
-   <syncPoint id="485" sampleInd="11934932" levelOfDetail="word" transcripText="ніж ті які вам хтось запропонував у певному різновиді інформаці"/>
+   <syncPoint id="485" sampleInd="11934932" levelOfDetail="word" transcripText="ніж ті які вам хтось запропонував у певному різновиді інформаці" lang="uk"/>
    <syncPoint id="235" sampleInd="12047734" levelOfDetail="word"/>
-   <syncPoint id="462" sampleInd="12052563" levelOfDetail="word" transcripText="отже сумніви в достовірності інформації є корисними"/>
+   <syncPoint id="462" sampleInd="12052563" levelOfDetail="word" transcripText="отже сумніви в достовірності інформації є корисними" lang="uk"/>
    <syncPoint id="205" sampleInd="12137929" levelOfDetail="word"/>
-   <syncPoint id="445" sampleInd="12141039" levelOfDetail="word" transcripText="вони дають змогу підтримувати діяльність лівої півкулі мозку в тонусі"/>
+   <syncPoint id="445" sampleInd="12141039" levelOfDetail="word" transcripText="вони дають змогу підтримувати діяльність лівої півкулі мозку в тонусі" lang="uk"/>
    <syncPoint id="343" sampleInd="12254982" levelOfDetail="word"/>
-   <syncPoint id="450" sampleInd="12256321" levelOfDetail="word" transcripText="а діяльність правої яка задіяна в согустивних впливах гальмується"/>
+   <syncPoint id="450" sampleInd="12256321" levelOfDetail="word" transcripText="а діяльність правої яка задіяна в согустивних впливах гальмується" lang="uk"/>
    <syncPoint id="224" sampleInd="12348468" levelOfDetail="word"/>
-   <syncPoint id="297" sampleInd="12351329" levelOfDetail="word" transcripText="і як наслідок ми сберігаємо контроль над ситуацією"/>
+   <syncPoint id="297" sampleInd="12351329" levelOfDetail="word" transcripText="і як наслідок ми сберігаємо контроль над ситуацією" lang="uk"/>
    <syncPoint id="465" sampleInd="12437903" levelOfDetail="word"/>
-   <syncPoint id="316" sampleInd="12445494" levelOfDetail="word" transcripText="це була розповідь доктора філологічних наук олени"/>
+   <syncPoint id="316" sampleInd="12445494" levelOfDetail="word" transcripText="це була розповідь доктора філологічних наук олени" lang="uk"/>
    <syncPoint id="75" sampleInd="12496892" levelOfDetail="phone" transcripText="speaker=Олена Климентова"/>
    <syncPoint id="510" sampleInd="12506187" levelOfDetail="word"/>
    <syncPoint id="546" sampleInd="12510718" levelOfDetail="phone" transcripText="music starts"/>
-   <syncPoint id="67" sampleInd="12709416" levelOfDetail="word" transcripText="наша уважна слухачка киянка"/>
+   <syncPoint id="67" sampleInd="12709416" levelOfDetail="word" transcripText="наша уважна слухачка киянка" lang="uk"/>
    <syncPoint id="292" sampleInd="12758962" levelOfDetail="word"/>
-   <syncPoint id="553" sampleInd="12767264" levelOfDetail="word" transcripText="за останні двадцять років людиною знищено"/>
+   <syncPoint id="553" sampleInd="12767264" levelOfDetail="word" transcripText="за останні двадцять років людиною знищено" lang="uk"/>
    <syncPoint id="535" sampleInd="12832041" levelOfDetail="word"/>
-   <syncPoint id="552" sampleInd="12838441" levelOfDetail="word" transcripText="шістдесят шість відсотків всіх лісів землі"/>
+   <syncPoint id="552" sampleInd="12838441" levelOfDetail="word" transcripText="шістдесят шість відсотків всіх лісів землі" lang="uk"/>
    <syncPoint id="554" sampleInd="12911587" levelOfDetail="word"/>
-   <syncPoint id="492" sampleInd="12916432" levelOfDetail="word" transcripText="одне дерево за рік виробляє близько ста двадцяти кілограмів кисню"/>
+   <syncPoint id="492" sampleInd="12916432" levelOfDetail="word" transcripText="одне дерево за рік виробляє близько ста двадцяти кілограмів кисню" lang="uk"/>
    <syncPoint id="468" sampleInd="13039389" levelOfDetail="word"/>
-   <syncPoint id="443" sampleInd="13043622" levelOfDetail="word" transcripText="у цих двох реченнях є п'ять помилок різних типів"/>
+   <syncPoint id="443" sampleInd="13043622" levelOfDetail="word" transcripText="у цих двох реченнях є п'ять помилок різних типів" lang="uk"/>
    <syncPoint id="456" sampleInd="13127897" levelOfDetail="word"/>
-   <syncPoint id="333" sampleInd="13134248" levelOfDetail="word" transcripText="про першу ми нещодавно розповідали"/>
+   <syncPoint id="333" sampleInd="13134248" levelOfDetail="word" transcripText="про першу ми нещодавно розповідали" lang="uk"/>
    <syncPoint id="528" sampleInd="13179775" levelOfDetail="word"/>
-   <syncPoint id="563" sampleInd="13184786" levelOfDetail="word" transcripText="нагадуємо що прикметник останній передовсім має значення той який закінчується"/>
+   <syncPoint id="563" sampleInd="13184786" levelOfDetail="word" transcripText="нагадуємо що прикметник останній передовсім має значення той який закінчується" lang="uk"/>
    <syncPoint id="422" sampleInd="13318972" levelOfDetail="word"/>
-   <syncPoint id="413" sampleInd="13325124" levelOfDetail="word" transcripText="добігає кінця"/>
+   <syncPoint id="413" sampleInd="13325124" levelOfDetail="word" transcripText="добігає кінця" lang="uk"/>
    <syncPoint id="305" sampleInd="13348309" levelOfDetail="word"/>
-   <syncPoint id="451" sampleInd="13352625" levelOfDetail="word" transcripText="стоїть наприкінці"/>
+   <syncPoint id="451" sampleInd="13352625" levelOfDetail="word" transcripText="стоїть наприкінці" lang="uk"/>
    <syncPoint id="574" sampleInd="13386263" levelOfDetail="word"/>
-   <syncPoint id="458" sampleInd="13392745" levelOfDetail="word" transcripText="складається враження що життя на землі вже закінчилося"/>
+   <syncPoint id="458" sampleInd="13392745" levelOfDetail="word" transcripText="складається враження що життя на землі вже закінчилося" lang="uk"/>
    <syncPoint id="248" sampleInd="13475830" levelOfDetail="word"/>
-   <syncPoint id="588" sampleInd="13482610" levelOfDetail="word" transcripText="чому б не сказати за минулі двадцять років"/>
+   <syncPoint id="588" sampleInd="13482610" levelOfDetail="word" transcripText="чому б не сказати за минулі двадцять років" lang="uk"/>
    <syncPoint id="606" sampleInd="13550480" levelOfDetail="word"/>
-   <syncPoint id="454" sampleInd="13555127" levelOfDetail="word" transcripText="адже прикметник минулий"/>
+   <syncPoint id="454" sampleInd="13555127" levelOfDetail="word" transcripText="адже прикметник минулий" lang="uk"/>
    <syncPoint id="499" sampleInd="13589988" levelOfDetail="word"/>
-   <syncPoint id="403" sampleInd="13594767" levelOfDetail="word" transcripText="має саме те значення якого ми зараз потребуємо"/>
+   <syncPoint id="403" sampleInd="13594767" levelOfDetail="word" transcripText="має саме те значення якого ми зараз потребуємо" lang="uk"/>
    <syncPoint id="521" sampleInd="13665283" levelOfDetail="word"/>
-   <syncPoint id="537" sampleInd="13668955" levelOfDetail="word" transcripText="той який був перед сучасністю і завершився"/>
+   <syncPoint id="537" sampleInd="13668955" levelOfDetail="word" transcripText="той який був перед сучасністю і завершився" lang="uk"/>
    <syncPoint id="428" sampleInd="13739768" levelOfDetail="word"/>
-   <syncPoint id="493" sampleInd="13748235" levelOfDetail="word" transcripText="він не має ніякого негативного забарвлення"/>
+   <syncPoint id="493" sampleInd="13748235" levelOfDetail="word" transcripText="він не має ніякого негативного забарвлення" lang="uk"/>
    <syncPoint id="284" sampleInd="13809738" levelOfDetail="word"/>
-   <syncPoint id="611" sampleInd="13814435" levelOfDetail="word" transcripText="і набагато точніше передає те про що хотіли сказати"/>
+   <syncPoint id="611" sampleInd="13814435" levelOfDetail="word" transcripText="і набагато точніше передає те про що хотіли сказати" lang="uk"/>
    <syncPoint id="308" sampleInd="13889581" levelOfDetail="word"/>
-   <syncPoint id="187" sampleInd="13893848" levelOfDetail="word" transcripText="автори реклами"/>
+   <syncPoint id="187" sampleInd="13893848" levelOfDetail="word" transcripText="автори реклами" lang="uk"/>
    <syncPoint id="345" sampleInd="13913511" levelOfDetail="word"/>
-   <syncPoint id="561" sampleInd="13919448" levelOfDetail="word" transcripText="другий тип помилки зауважували наші мовознавці"/>
+   <syncPoint id="561" sampleInd="13919448" levelOfDetail="word" transcripText="другий тип помилки зауважували наші мовознавці" lang="uk"/>
    <syncPoint id="507" sampleInd="13991436" levelOfDetail="word"/>
-   <syncPoint id="264" sampleInd="13994892" levelOfDetail="word" transcripText="ще в позаминулому сторіччі"/>
+   <syncPoint id="264" sampleInd="13994892" levelOfDetail="word" transcripText="ще в позаминулому сторіччі" lang="uk"/>
    <syncPoint id="529" sampleInd="14035459" levelOfDetail="word"/>
-   <syncPoint id="609" sampleInd="14041181" levelOfDetail="word" transcripText="пригадаймо приклад який створив"/>
+   <syncPoint id="609" sampleInd="14041181" levelOfDetail="word" transcripText="пригадаймо приклад який створив" lang="uk"/>
    <syncPoint id="474" sampleInd="14078423" levelOfDetail="word"/>
-   <syncPoint id="99" sampleInd="14084013" levelOfDetail="word" transcripText="агатангел кримський вистави гралися"/>
+   <syncPoint id="99" sampleInd="14084013" levelOfDetail="word" transcripText="агатангел кримський вистави гралися" lang="uk"/>
    <syncPoint id="490" sampleInd="14150345" levelOfDetail="word"/>
-   <syncPoint id="50" sampleInd="14154463" levelOfDetail="word" transcripText="кращими трупами театру"/>
+   <syncPoint id="50" sampleInd="14154463" levelOfDetail="word" transcripText="кращими трупами театру" lang="uk"/>
    <syncPoint id="489" sampleInd="14187918" levelOfDetail="word"/>
-   <syncPoint id="165" sampleInd="14194401" levelOfDetail="word" transcripText="тож нагадуймо шчо людина це не річ"/>
+   <syncPoint id="165" sampleInd="14194401" levelOfDetail="word" transcripText="тож нагадуймо шчо людина це не річ" lang="uk"/>
    <syncPoint id="495" sampleInd="14246461" levelOfDetail="word"/>
-   <syncPoint id="481" sampleInd="14250893" levelOfDetail="word" transcripText="і робити нею нічого не можна"/>
+   <syncPoint id="481" sampleInd="14250893" levelOfDetail="word" transcripText="і робити нею нічого не можна" lang="uk"/>
    <syncPoint id="565" sampleInd="14306790" levelOfDetail="word"/>
-   <syncPoint id="220" sampleInd="14314926" levelOfDetail="word" transcripText="людина завжди саме все робить"/>
+   <syncPoint id="220" sampleInd="14314926" levelOfDetail="word" transcripText="людина завжди саме все робить" lang="uk"/>
    <syncPoint id="426" sampleInd="14353475" levelOfDetail="word"/>
-   <syncPoint id="506" sampleInd="14362670" levelOfDetail="word" transcripText="правильно кажуть ті"/>
+   <syncPoint id="506" sampleInd="14362670" levelOfDetail="word" transcripText="правильно кажуть ті" lang="uk"/>
    <syncPoint id="167" sampleInd="14384880" levelOfDetail="word"/>
-   <syncPoint id="505" sampleInd="14389709" levelOfDetail="word" transcripText="хто користується висловами навзірець документ"/>
+   <syncPoint id="505" sampleInd="14389709" levelOfDetail="word" transcripText="хто користується висловами навзірець документ" lang="uk"/>
    <syncPoint id="571" sampleInd="14458885" levelOfDetail="word"/>
-   <syncPoint id="361" sampleInd="14465235" levelOfDetail="word" transcripText="підписано ручкою"/>
+   <syncPoint id="361" sampleInd="14465235" levelOfDetail="word" transcripText="підписано ручкою" lang="uk"/>
    <syncPoint id="464" sampleInd="14488884" levelOfDetail="word"/>
-   <syncPoint id="459" sampleInd="14494407" levelOfDetail="word" transcripText="дерево зрубано сокирою"/>
+   <syncPoint id="459" sampleInd="14494407" levelOfDetail="word" transcripText="дерево зрубано сокирою" lang="uk"/>
    <syncPoint id="603" sampleInd="14529583" levelOfDetail="word"/>
-   <syncPoint id="560" sampleInd="14533469" levelOfDetail="word" transcripText="розлиту воду витерто ганчіркою"/>
+   <syncPoint id="560" sampleInd="14533469" levelOfDetail="word" transcripText="розлиту воду витерто ганчіркою" lang="uk"/>
    <syncPoint id="130" sampleInd="14597453" levelOfDetail="word"/>
-   <syncPoint id="631" sampleInd="14602712" levelOfDetail="word" transcripText="креслення виконане олівцем"/>
+   <syncPoint id="631" sampleInd="14602712" levelOfDetail="word" transcripText="креслення виконане олівцем" lang="uk"/>
    <syncPoint id="637" sampleInd="14647462" levelOfDetail="word"/>
-   <syncPoint id="672" sampleInd="14654209" levelOfDetail="word" transcripText="ось і тут"/>
+   <syncPoint id="672" sampleInd="14654209" levelOfDetail="word" transcripText="ось і тут" lang="uk"/>
    <syncPoint id="440" sampleInd="14671954" levelOfDetail="word"/>
-   <syncPoint id="681" sampleInd="14676237" levelOfDetail="word" transcripText="треба сказати не людьми знищено а люди знищили"/>
+   <syncPoint id="681" sampleInd="14676237" levelOfDetail="word" transcripText="треба сказати не людьми знищено а люди знищили" lang="uk"/>
    <syncPoint id="391" sampleInd="14774619" levelOfDetail="word"/>
-   <syncPoint id="541" sampleInd="14787452" levelOfDetail="word" transcripText="третя помилка стосується чергування голосних і приголосних звуків"/>
+   <syncPoint id="541" sampleInd="14787452" levelOfDetail="word" transcripText="третя помилка стосується чергування голосних і приголосних звуків" lang="uk"/>
    <syncPoint id="195" sampleInd="14885585" levelOfDetail="word"/>
-   <syncPoint id="400" sampleInd="14893143" levelOfDetail="word" transcripText="це дуже широка тема"/>
+   <syncPoint id="400" sampleInd="14893143" levelOfDetail="word" transcripText="це дуже широка тема" lang="uk"/>
    <syncPoint id="617" sampleInd="14920198" levelOfDetail="word"/>
-   <syncPoint id="241" sampleInd="14928715" levelOfDetail="word" transcripText="тож сьогодні просто нагадуємо"/>
+   <syncPoint id="241" sampleInd="14928715" levelOfDetail="word" transcripText="тож сьогодні просто нагадуємо" lang="uk"/>
    <syncPoint id="473" sampleInd="14964767" levelOfDetail="word"/>
-   <syncPoint id="416" sampleInd="14970952" levelOfDetail="word" transcripText="за кількома винятками"/>
+   <syncPoint id="416" sampleInd="14970952" levelOfDetail="word" transcripText="за кількома винятками" lang="uk"/>
    <syncPoint id="639" sampleInd="15002936" levelOfDetail="word"/>
-   <syncPoint id="596" sampleInd="15010212" levelOfDetail="word" transcripText="при чергуванні приголосного в з голосним у"/>
+   <syncPoint id="596" sampleInd="15010212" levelOfDetail="word" transcripText="при чергуванні приголосного в з голосним у" lang="uk"/>
    <syncPoint id="701" sampleInd="15016166" levelOfDetail="phone" transcripText="че OR чи?"/>
    <syncPoint id="666" sampleInd="15086946" levelOfDetail="word"/>
-   <syncPoint id="319" sampleInd="15096191" levelOfDetail="word" transcripText="значення слів не змінюється"/>
+   <syncPoint id="319" sampleInd="15096191" levelOfDetail="word" transcripText="значення слів не змінюється" lang="uk"/>
    <syncPoint id="342" sampleInd="15143686" levelOfDetail="word"/>
-   <syncPoint id="610" sampleInd="15152269" levelOfDetail="word" transcripText="українській мові властиво повноголосся"/>
+   <syncPoint id="610" sampleInd="15152269" levelOfDetail="word" transcripText="українській мові властиво повноголосся" lang="uk"/>
    <syncPoint id="602" sampleInd="15206049" levelOfDetail="word"/>
-   <syncPoint id="646" sampleInd="15212218" levelOfDetail="word" transcripText="тож якщо попереднє слово закінчується на приголосний звук"/>
+   <syncPoint id="646" sampleInd="15212218" levelOfDetail="word" transcripText="тож якщо попереднє слово закінчується на приголосний звук" lang="uk"/>
    <syncPoint id="300" sampleInd="15287149" levelOfDetail="word"/>
-   <syncPoint id="684" sampleInd="15293103" levelOfDetail="word" transcripText="наступне має починатися з голосного"/>
+   <syncPoint id="684" sampleInd="15293103" levelOfDetail="word" transcripText="наступне має починатися з голосного" lang="uk"/>
    <syncPoint id="618" sampleInd="15343691" levelOfDetail="word"/>
-   <syncPoint id="437" sampleInd="15349810" levelOfDetail="word" transcripText="і навпаки"/>
+   <syncPoint id="437" sampleInd="15349810" levelOfDetail="word" transcripText="і навпаки" lang="uk"/>
    <syncPoint id="150" sampleInd="15365256" levelOfDetail="word"/>
-   <syncPoint id="629" sampleInd="15371358" levelOfDetail="word" transcripText="якщо попереднє слово закінчується на голосний звук"/>
+   <syncPoint id="629" sampleInd="15371358" levelOfDetail="word" transcripText="якщо попереднє слово закінчується на голосний звук" lang="uk"/>
    <syncPoint id="551" sampleInd="15445413" levelOfDetail="word"/>
-   <syncPoint id="375" sampleInd="15450540" levelOfDetail="word" transcripText="то наступне слово"/>
+   <syncPoint id="375" sampleInd="15450540" levelOfDetail="word" transcripText="то наступне слово" lang="uk"/>
    <syncPoint id="233" sampleInd="15474056" levelOfDetail="word"/>
-   <syncPoint id="570" sampleInd="15478951" levelOfDetail="word" transcripText="має починатися на приголосний"/>
+   <syncPoint id="570" sampleInd="15478951" levelOfDetail="word" transcripText="має починатися на приголосний" lang="uk"/>
    <syncPoint id="420" sampleInd="15530366" levelOfDetail="word"/>
-   <syncPoint id="396" sampleInd="15534831" levelOfDetail="word" transcripText="інакше"/>
+   <syncPoint id="396" sampleInd="15534831" levelOfDetail="word" transcripText="інакше" lang="uk"/>
    <syncPoint id="651" sampleInd="15549020" levelOfDetail="word"/>
-   <syncPoint id="373" sampleInd="15553899" levelOfDetail="word" transcripText="слова вимовлятимуться нечітко"/>
+   <syncPoint id="373" sampleInd="15553899" levelOfDetail="word" transcripText="слова вимовлятимуться нечітко" lang="uk"/>
    <syncPoint id="647" sampleInd="15600187" levelOfDetail="word"/>
-   <syncPoint id="676" sampleInd="15608258" levelOfDetail="word" transcripText="а звучання мови зіпсується"/>
+   <syncPoint id="676" sampleInd="15608258" levelOfDetail="word" transcripText="а звучання мови зіпсується" lang="uk"/>
    <syncPoint id="387" sampleInd="15654960" levelOfDetail="word"/>
-   <syncPoint id="334" sampleInd="15661938" levelOfDetail="word" transcripText="четверта помилка це використання неправильної мовної конструкції"/>
+   <syncPoint id="334" sampleInd="15661938" levelOfDetail="word" transcripText="четверта помилка це використання неправильної мовної конструкції" lang="uk"/>
    <syncPoint id="566" sampleInd="15769498" levelOfDetail="word"/>
-   <syncPoint id="397" sampleInd="15773815" levelOfDetail="word" transcripText="запозиченої із російської мови"/>
+   <syncPoint id="397" sampleInd="15773815" levelOfDetail="word" transcripText="запозиченої із російської мови" lang="uk"/>
    <syncPoint id="674" sampleInd="15818565" levelOfDetail="word"/>
-   <syncPoint id="700" sampleInd="15826735" levelOfDetail="word" transcripText="окало ста двадцати килограм"/>
-   <syncPoint id="789" sampleInd="15831100" levelOfDetail="phone" transcripText="lang=ru"/>
+   <syncPoint id="700" sampleInd="15826735" levelOfDetail="word" transcripText="окало ста двадцати килограм" lang="ru"/>
    <syncPoint id="321" sampleInd="15867880" levelOfDetail="word"/>
-   <syncPoint id="392" sampleInd="15874495" levelOfDetail="word" transcripText="це вислів властивий росіянам ми українці"/>
+   <syncPoint id="392" sampleInd="15874495" levelOfDetail="word" transcripText="це вислів властивий росіянам ми українці" lang="uk"/>
    <syncPoint id="766" sampleInd="15956868" levelOfDetail="word"/>
-   <syncPoint id="278" sampleInd="15962111" levelOfDetail="word" transcripText="висловлюваємось інакше"/>
+   <syncPoint id="278" sampleInd="15962111" levelOfDetail="word" transcripText="висловлюваємось інакше" lang="uk"/>
    <syncPoint id="455" sampleInd="15995698" levelOfDetail="word"/>
-   <syncPoint id="185" sampleInd="16002330" levelOfDetail="word" transcripText="тут вибір слів"/>
+   <syncPoint id="185" sampleInd="16002330" levelOfDetail="word" transcripText="тут вибір слів" lang="uk"/>
    <syncPoint id="779" sampleInd="16023184" levelOfDetail="word"/>
-   <syncPoint id="642" sampleInd="16026309" levelOfDetail="word" transcripText="залежить від контексту"/>
+   <syncPoint id="642" sampleInd="16026309" levelOfDetail="word" transcripText="залежить від контексту" lang="uk"/>
    <syncPoint id="583" sampleInd="16054803" levelOfDetail="word"/>
-   <syncPoint id="429" sampleInd="16058987" levelOfDetail="word" transcripText="може йтися про приблизно сто двадцять кілограмів"/>
+   <syncPoint id="429" sampleInd="16058987" levelOfDetail="word" transcripText="може йтися про приблизно сто двадцять кілограмів" lang="uk"/>
    <syncPoint id="229" sampleInd="16132910" levelOfDetail="word"/>
-   <syncPoint id="525" sampleInd="16139144" levelOfDetail="word" transcripText="понад сто двадцять кілограмів"/>
+   <syncPoint id="525" sampleInd="16139144" levelOfDetail="word" transcripText="понад сто двадцять кілограмів" lang="uk"/>
    <syncPoint id="743" sampleInd="16183597" levelOfDetail="word"/>
-   <syncPoint id="625" sampleInd="16189071" levelOfDetail="word" transcripText="майже сто двацять кілограмів"/>
+   <syncPoint id="625" sampleInd="16189071" levelOfDetail="word" transcripText="майже сто двацять кілограмів" lang="uk"/>
    <syncPoint id="317" sampleInd="16240586" levelOfDetail="word"/>
-   <syncPoint id="687" sampleInd="16245977" levelOfDetail="word" transcripText="усе залежить від того"/>
+   <syncPoint id="687" sampleInd="16245977" levelOfDetail="word" transcripText="усе залежить від того" lang="uk"/>
    <syncPoint id="612" sampleInd="16271891" levelOfDetail="word"/>
-   <syncPoint id="719" sampleInd="16276207" levelOfDetail="word" transcripText="про що саме ви хочите повідомити"/>
+   <syncPoint id="719" sampleInd="16276207" levelOfDetail="word" transcripText="про що саме ви хочите повідомити" lang="uk"/>
    <syncPoint id="199" sampleInd="16325836" levelOfDetail="word"/>
-   <syncPoint id="796" sampleInd="16332848" levelOfDetail="word" transcripText="і остання п'ята помилка стосується незнання матеріалу"/>
+   <syncPoint id="796" sampleInd="16332848" levelOfDetail="word" transcripText="і остання п'ята помилка стосується незнання матеріалу" lang="uk"/>
    <syncPoint id="558" sampleInd="16440788" levelOfDetail="word"/>
-   <syncPoint id="575" sampleInd="16445584" levelOfDetail="word" transcripText="річ у тім що кисень вимірюють не кілограмами а літрами"/>
+   <syncPoint id="575" sampleInd="16445584" levelOfDetail="word" transcripText="річ у тім що кисень вимірюють не кілограмами а літрами" lang="uk"/>
    <syncPoint id="148" sampleInd="16542924" levelOfDetail="word"/>
-   <syncPoint id="382" sampleInd="16547108" levelOfDetail="word" transcripText="взагалі кисень це хімічний елемент"/>
+   <syncPoint id="382" sampleInd="16547108" levelOfDetail="word" transcripText="взагалі кисень це хімічний елемент" lang="uk"/>
    <syncPoint id="768" sampleInd="16602972" levelOfDetail="phone" transcripText="'t' bounds?"/>
    <syncPoint id="238" sampleInd="16604245" levelOfDetail="word"/>
-   <syncPoint id="127" sampleInd="16605485" levelOfDetail="word" transcripText="газ без кольору і запаху що входить до складу повітря"/>
+   <syncPoint id="127" sampleInd="16605485" levelOfDetail="word" transcripText="газ без кольору і запаху що входить до складу повітря" lang="uk"/>
    <syncPoint id="314" sampleInd="16684303" levelOfDetail="word"/>
-   <syncPoint id="388" sampleInd="16689297" levelOfDetail="word" transcripText="він необхідний для горіння і дихання"/>
+   <syncPoint id="388" sampleInd="16689297" levelOfDetail="word" transcripText="він необхідний для горіння і дихання" lang="uk"/>
    <syncPoint id="371" sampleInd="16738248" levelOfDetail="word"/>
-   <syncPoint id="568" sampleInd="16746865" levelOfDetail="word" transcripText="морозяне повітря від свіжої легені"/>
+   <syncPoint id="568" sampleInd="16746865" levelOfDetail="word" transcripText="морозяне повітря від свіжої легені" lang="uk"/>
    <syncPoint id="778" sampleInd="16801950" levelOfDetail="word"/>
-   <syncPoint id="585" sampleInd="16808450" levelOfDetail="word" transcripText="кров насичена киснем"/>
+   <syncPoint id="585" sampleInd="16808450" levelOfDetail="word" transcripText="кров насичена киснем" lang="uk"/>
    <syncPoint id="380" sampleInd="16843526" levelOfDetail="word"/>
-   <syncPoint id="516" sampleInd="16848636" levelOfDetail="word" transcripText="добирається до найдальших цяточок мозку голова робиться свіжа"/>
+   <syncPoint id="516" sampleInd="16848636" levelOfDetail="word" transcripText="добирається до найдальших цяточок мозку голова робиться свіжа" lang="uk"/>
    <syncPoint id="289" sampleInd="16960826" levelOfDetail="word"/>
-   <syncPoint id="567" sampleInd="16967558" levelOfDetail="word" transcripText="писав юрій яновський"/>
+   <syncPoint id="567" sampleInd="16967558" levelOfDetail="word" transcripText="писав юрій яновський" lang="uk"/>
    <syncPoint id="463" sampleInd="17002088" levelOfDetail="word"/>
-   <syncPoint id="549" sampleInd="17003874" levelOfDetail="word" transcripText="доречі щодо дієслова виготовляти"/>
+   <syncPoint id="549" sampleInd="17003874" levelOfDetail="word" transcripText="доречі щодо дієслова виготовляти" lang="uk"/>
    <syncPoint id="581" sampleInd="17062136" levelOfDetail="word"/>
-   <syncPoint id="519" sampleInd="17067080" levelOfDetail="word" transcripText="його теж варто замінити на дієслово створювати"/>
+   <syncPoint id="519" sampleInd="17067080" levelOfDetail="word" transcripText="його теж варто замінити на дієслово створювати" lang="uk"/>
    <syncPoint id="802" sampleInd="17145716" levelOfDetail="word"/>
-   <syncPoint id="738" sampleInd="17151388" levelOfDetail="word" transcripText="бо виробляти"/>
+   <syncPoint id="738" sampleInd="17151388" levelOfDetail="word" transcripText="бо виробляти" lang="uk"/>
    <syncPoint id="347" sampleInd="17174988" levelOfDetail="word"/>
-   <syncPoint id="731" sampleInd="17181090" levelOfDetail="word" transcripText="має не лише позитивне а і негативне значення"/>
+   <syncPoint id="731" sampleInd="17181090" levelOfDetail="word" transcripText="має не лише позитивне а і негативне значення" lang="uk"/>
    <syncPoint id="353" sampleInd="17237946" levelOfDetail="word"/>
-   <syncPoint id="862" sampleInd="17244032" levelOfDetail="word" transcripText="наприклад хулігани виробляють дурниці"/>
+   <syncPoint id="862" sampleInd="17244032" levelOfDetail="word" transcripText="наприклад хулігани виробляють дурниці" lang="uk"/>
    <syncPoint id="578" sampleInd="17302542" levelOfDetail="word"/>
-   <syncPoint id="595" sampleInd="17306610" levelOfDetail="word" transcripText="тож соціальна реклама проти вирубування лісів корисна"/>
+   <syncPoint id="595" sampleInd="17306610" levelOfDetail="word" transcripText="тож соціальна реклама проти вирубування лісів корисна" lang="uk"/>
    <syncPoint id="472" sampleInd="17382484" levelOfDetail="word"/>
-   <syncPoint id="771" sampleInd="17389280" levelOfDetail="word" transcripText="але якщо скомпонувати її правильно"/>
+   <syncPoint id="771" sampleInd="17389280" levelOfDetail="word" transcripText="але якщо скомпонувати її правильно" lang="uk"/>
    <syncPoint id="479" sampleInd="17441538" levelOfDetail="word"/>
-   <syncPoint id="762" sampleInd="17445788" levelOfDetail="word" transcripText="вона матиме набагато сильнішу дію"/>
+   <syncPoint id="762" sampleInd="17445788" levelOfDetail="word" transcripText="вона матиме набагато сильнішу дію" lang="uk"/>
    <syncPoint id="587" sampleInd="17497584" levelOfDetail="word"/>
-   <syncPoint id="759" sampleInd="17503670" levelOfDetail="word" transcripText="за минулі двадцять років"/>
+   <syncPoint id="759" sampleInd="17503670" levelOfDetail="word" transcripText="за минулі двадцять років" lang="uk"/>
    <syncPoint id="692" sampleInd="17544634" levelOfDetail="word"/>
-   <syncPoint id="227" sampleInd="17549116" levelOfDetail="word" transcripText="люди знищили шістдесят шість відсотків усіх лісів на землі"/>
+   <syncPoint id="227" sampleInd="17549116" levelOfDetail="word" transcripText="люди знищили шістдесят шість відсотків усіх лісів на землі" lang="uk"/>
    <syncPoint id="680" sampleInd="17631340" levelOfDetail="word"/>
-   <syncPoint id="688" sampleInd="17636764" levelOfDetail="word" transcripText="одне дерево за рік створює приблизно сто двадцять літрів повітря"/>
+   <syncPoint id="688" sampleInd="17636764" levelOfDetail="word" transcripText="одне дерево за рік створює приблизно сто двадцять літрів повітря" lang="uk"/>
    <syncPoint id="486" sampleInd="17737890" levelOfDetail="word"/>
-   <syncPoint id="652" sampleInd="17745266" levelOfDetail="word" transcripText="бережіть ліси"/>
+   <syncPoint id="652" sampleInd="17745266" levelOfDetail="word" transcripText="бережіть ліси" lang="uk"/>
    <syncPoint id="478" sampleInd="17767046" levelOfDetail="word"/>
    <syncPoint id="25" sampleInd="17786660" levelOfDetail="phone" transcripText="music"/>
    <syncPoint id="364" sampleInd="17792630" levelOfDetail="word"/>
-   <syncPoint id="503" sampleInd="17950778" levelOfDetail="word" transcripText="чому обмін кориспонденцією називають перепискою"/>
+   <syncPoint id="503" sampleInd="17950778" levelOfDetail="word" transcripText="чому обмін кориспонденцією називають перепискою" lang="uk"/>
    <syncPoint id="691" sampleInd="18025958" levelOfDetail="word"/>
-   <syncPoint id="593" sampleInd="18037302" levelOfDetail="word" transcripText="адже правильно казати дружнє листування"/>
+   <syncPoint id="593" sampleInd="18037302" levelOfDetail="word" transcripText="адже правильно казати дружнє листування" lang="uk"/>
    <syncPoint id="660" sampleInd="18091958" levelOfDetail="word"/>
-   <syncPoint id="799" sampleInd="18099252" levelOfDetail="word" transcripText="ділове листування офіційне листування"/>
+   <syncPoint id="799" sampleInd="18099252" levelOfDetail="word" transcripText="ділове листування офіційне листування" lang="uk"/>
    <syncPoint id="873" sampleInd="18160474" levelOfDetail="word"/>
-   <syncPoint id="2" sampleInd="18168130" levelOfDetail="word" transcripText="саме листуванням називається дія"/>
+   <syncPoint id="2" sampleInd="18168130" levelOfDetail="word" transcripText="саме листуванням називається дія" lang="uk"/>
    <syncPoint id="346" sampleInd="18228096" levelOfDetail="word"/>
-   <syncPoint id="411" sampleInd="18236216" levelOfDetail="word" transcripText="коли двоє чи більше людей надсилають листи одні одним"/>
+   <syncPoint id="411" sampleInd="18236216" levelOfDetail="word" transcripText="коли двоє чи більше людей надсилають листи одні одним" lang="uk"/>
    <syncPoint id="508" sampleInd="18315364" levelOfDetail="word"/>
-   <syncPoint id="864" sampleInd="18321846" levelOfDetail="word" transcripText="і отримують на них відповіді українці листуються"/>
+   <syncPoint id="864" sampleInd="18321846" levelOfDetail="word" transcripText="і отримують на них відповіді українці листуються" lang="uk"/>
    <syncPoint id="157" sampleInd="18420460" levelOfDetail="word"/>
-   <syncPoint id="221" sampleInd="18429688" levelOfDetail="word" transcripText="походить це слово від іменника лист а листом"/>
+   <syncPoint id="221" sampleInd="18429688" levelOfDetail="word" transcripText="походить це слово від іменника лист а листом" lang="uk"/>
    <syncPoint id="917" sampleInd="18477084" levelOfDetail="phone" transcripText="'t'"/>
    <syncPoint id="328" sampleInd="18498318" levelOfDetail="word"/>
-   <syncPoint id="891" sampleInd="18504172" levelOfDetail="word" transcripText="ми називаємо тонкий щільний шматок"/>
+   <syncPoint id="891" sampleInd="18504172" levelOfDetail="word" transcripText="ми називаємо тонкий щільний шматок" lang="uk"/>
    <syncPoint id="166" sampleInd="18563724" levelOfDetail="word"/>
-   <syncPoint id="722" sampleInd="18570852" levelOfDetail="word" transcripText="або шар певного матеріалу"/>
+   <syncPoint id="722" sampleInd="18570852" levelOfDetail="word" transcripText="або шар певного матеріалу" lang="uk"/>
    <syncPoint id="623" sampleInd="18609962" levelOfDetail="word"/>
    <syncPoint id="876" sampleInd="18611484" levelOfDetail="phone" transcripText="click"/>
-   <syncPoint id="849" sampleInd="18615636" levelOfDetail="word" transcripText="писаний текс"/>
+   <syncPoint id="849" sampleInd="18615636" levelOfDetail="word" transcripText="писаний текс" lang="uk"/>
    <syncPoint id="360" sampleInd="18637994" levelOfDetail="phone" transcripText="no 't'!"/>
    <syncPoint id="901" sampleInd="18638474" levelOfDetail="word"/>
-   <syncPoint id="713" sampleInd="18646858" levelOfDetail="word" transcripText="призначений для повідомлення про щось для спілкування з кимось на відстані"/>
+   <syncPoint id="713" sampleInd="18646858" levelOfDetail="word" transcripText="призначений для повідомлення про щось для спілкування з кимось на відстані" lang="uk"/>
    <syncPoint id="785" sampleInd="18756848" levelOfDetail="word"/>
-   <syncPoint id="636" sampleInd="18764208" levelOfDetail="word" transcripText="а також відповідну поштову кориспонденцію"/>
+   <syncPoint id="636" sampleInd="18764208" levelOfDetail="word" transcripText="а також відповідну поштову кориспонденцію" lang="uk"/>
    <syncPoint id="704" sampleInd="18828936" levelOfDetail="word"/>
-   <syncPoint id="736" sampleInd="18842596" levelOfDetail="word" transcripText="по копійці заробляла"/>
+   <syncPoint id="736" sampleInd="18842596" levelOfDetail="word" transcripText="по копійці заробляла" lang="uk"/>
    <syncPoint id="716" sampleInd="18880268" levelOfDetail="word"/>
-   <syncPoint id="717" sampleInd="18891464" levelOfDetail="word" transcripText="копу назбирала"/>
+   <syncPoint id="717" sampleInd="18891464" levelOfDetail="word" transcripText="копу назбирала" lang="uk"/>
    <syncPoint id="251" sampleInd="18918618" levelOfDetail="word"/>
-   <syncPoint id="632" sampleInd="18927366" levelOfDetail="word" transcripText="та до сина лист писала"/>
+   <syncPoint id="632" sampleInd="18927366" levelOfDetail="word" transcripText="та до сина лист писала" lang="uk"/>
    <syncPoint id="857" sampleInd="18966396" levelOfDetail="word"/>
-   <syncPoint id="829" sampleInd="18975988" levelOfDetail="word" transcripText="у військо послала"/>
+   <syncPoint id="829" sampleInd="18975988" levelOfDetail="word" transcripText="у військо послала" lang="uk"/>
    <syncPoint id="645" sampleInd="19007292" levelOfDetail="word"/>
-   <syncPoint id="798" sampleInd="19017926" levelOfDetail="word" transcripText="полегшало"/>
+   <syncPoint id="798" sampleInd="19017926" levelOfDetail="word" transcripText="полегшало" lang="uk"/>
    <syncPoint id="831" sampleInd="19037870" levelOfDetail="word"/>
-   <syncPoint id="555" sampleInd="19047198" levelOfDetail="word" transcripText="читаймо у вірші тараса шевченка"/>
+   <syncPoint id="555" sampleInd="19047198" levelOfDetail="word" transcripText="читаймо у вірші тараса шевченка" lang="uk"/>
    <syncPoint id="488" sampleInd="19094098" levelOfDetail="word"/>
-   <syncPoint id="329" sampleInd="19108022" levelOfDetail="word" transcripText="ми возимо на схід усе потрібне"/>
+   <syncPoint id="329" sampleInd="19108022" levelOfDetail="word" transcripText="ми возимо на схід усе потрібне" lang="uk"/>
    <syncPoint id="836" sampleInd="19153054" levelOfDetail="word"/>
-   <syncPoint id="702" sampleInd="19161390" levelOfDetail="word" transcripText="набої теплий одяг прилади нічного бачення взуття білизну харчі воду"/>
+   <syncPoint id="702" sampleInd="19161390" levelOfDetail="word" transcripText="набої теплий одяг прилади нічного бачення взуття білизну харчі воду" lang="uk"/>
    <syncPoint id="783" sampleInd="19282344" levelOfDetail="word"/>
-   <syncPoint id="801" sampleInd="19289852" levelOfDetail="word" transcripText="але знаїте що найсильніше радує бійців дитячі листи із побажаннями добра і миру"/>
+   <syncPoint id="801" sampleInd="19289852" levelOfDetail="word" transcripText="але знаїте що найсильніше радує бійців дитячі листи із побажаннями добра і миру" lang="uk"/>
    <syncPoint id="656" sampleInd="19442228" levelOfDetail="word"/>
-   <syncPoint id="290" sampleInd="19453490" levelOfDetail="word" transcripText="приклад узято із інтернетної статті"/>
+   <syncPoint id="290" sampleInd="19453490" levelOfDetail="word" transcripText="приклад узято із інтернетної статті" lang="uk"/>
    <syncPoint id="616" sampleInd="19502806" levelOfDetail="word"/>
-   <syncPoint id="887" sampleInd="19563316" levelOfDetail="word" transcripText="також листами називають писанне звертання до особи чи багатьох осіб"/>
+   <syncPoint id="887" sampleInd="19563316" levelOfDetail="word" transcripText="також листами називають писанне звертання до особи чи багатьох осіб" lang="uk"/>
    <syncPoint id="237" sampleInd="19662988" levelOfDetail="word"/>
-   <syncPoint id="962" sampleInd="19667850" levelOfDetail="word" transcripText="розраховане на широке розповсюдження"/>
+   <syncPoint id="962" sampleInd="19667850" levelOfDetail="word" transcripText="розраховане на широке розповсюдження" lang="uk"/>
    <syncPoint id="845" sampleInd="19722904" levelOfDetail="word"/>
-   <syncPoint id="582" sampleInd="19729866" levelOfDetail="word" transcripText="ці листи"/>
+   <syncPoint id="582" sampleInd="19729866" levelOfDetail="word" transcripText="ці листи" lang="uk"/>
    <syncPoint id="184" sampleInd="19748834" levelOfDetail="word"/>
-   <syncPoint id="432" sampleInd="19754540" levelOfDetail="word" transcripText="не лише можно надсилати особисто"/>
+   <syncPoint id="432" sampleInd="19754540" levelOfDetail="word" transcripText="не лише можно надсилати особисто" lang="uk"/>
    <syncPoint id="379" sampleInd="19798116" levelOfDetail="word"/>
-   <syncPoint id="277" sampleInd="19801638" levelOfDetail="word" transcripText="а й розвішувати їх на стовпах розміщувати в газетах"/>
+   <syncPoint id="277" sampleInd="19801638" levelOfDetail="word" transcripText="а й розвішувати їх на стовпах розміщувати в газетах" lang="uk"/>
    <syncPoint id="913" sampleInd="19877992" levelOfDetail="word"/>
-   <syncPoint id="523" sampleInd="19882970" levelOfDetail="word" transcripText="чи викладати в мережі інтернет"/>
+   <syncPoint id="523" sampleInd="19882970" levelOfDetail="word" transcripText="чи викладати в мережі інтернет" lang="uk"/>
    <syncPoint id="547" sampleInd="19926446" levelOfDetail="word"/>
-   <syncPoint id="586" sampleInd="19932236" levelOfDetail="word" transcripText="і зрештою бувають листи офіційні грошові тощо"/>
+   <syncPoint id="586" sampleInd="19932236" levelOfDetail="word" transcripText="і зрештою бувають листи офіційні грошові тощо" lang="uk"/>
    <syncPoint id="1017" sampleInd="20014278" levelOfDetail="word"/>
-   <syncPoint id="1007" sampleInd="20021538" levelOfDetail="word" transcripText="ці листи"/>
+   <syncPoint id="1007" sampleInd="20021538" levelOfDetail="word" transcripText="ці листи" lang="uk"/>
    <syncPoint id="1002" sampleInd="20043912" levelOfDetail="word"/>
-   <syncPoint id="899" sampleInd="20051868" levelOfDetail="word" transcripText="належать до спеціальної документації і використовують їх із відповідною метою"/>
+   <syncPoint id="899" sampleInd="20051868" levelOfDetail="word" transcripText="належать до спеціальної документації і використовують їх із відповідною метою" lang="uk"/>
    <syncPoint id="818" sampleInd="20159294" levelOfDetail="word"/>
-   <syncPoint id="1022" sampleInd="20168920" levelOfDetail="word" transcripText="офіційні листи"/>
+   <syncPoint id="1022" sampleInd="20168920" levelOfDetail="word" transcripText="офіційні листи" lang="uk"/>
    <syncPoint id="735" sampleInd="20191344" levelOfDetail="word"/>
-   <syncPoint id="633" sampleInd="20196356" levelOfDetail="word" transcripText="належить до основних засобів установлення офіційних службових контактів"/>
+   <syncPoint id="633" sampleInd="20196356" levelOfDetail="word" transcripText="належить до основних засобів установлення офіційних службових контактів" lang="uk"/>
    <syncPoint id="509" sampleInd="20293646" levelOfDetail="word"/>
-   <syncPoint id="765" sampleInd="20298242" levelOfDetail="word" transcripText="між підприємствами організаціями установами"/>
+   <syncPoint id="765" sampleInd="20298242" levelOfDetail="word" transcripText="між підприємствами організаціями установами" lang="uk"/>
    <syncPoint id="569" sampleInd="20359184" levelOfDetail="word"/>
-   <syncPoint id="711" sampleInd="20363020" levelOfDetail="word" transcripText="фірмами і закладами"/>
+   <syncPoint id="711" sampleInd="20363020" levelOfDetail="word" transcripText="фірмами і закладами" lang="uk"/>
    <syncPoint id="572" sampleInd="20390672" levelOfDetail="word"/>
    <syncPoint id="922" sampleInd="20395004" levelOfDetail="phone" transcripText="click"/>
-   <syncPoint id="402" sampleInd="20396906" levelOfDetail="word" transcripText="приклад узято із інтернетної статті"/>
+   <syncPoint id="402" sampleInd="20396906" levelOfDetail="word" transcripText="приклад узято із інтернетної статті" lang="uk"/>
    <syncPoint id="269" sampleInd="20442550" levelOfDetail="word"/>
-   <syncPoint id="399" sampleInd="20450322" levelOfDetail="word" transcripText="запам'ятайте надсилання листів іншим людям"/>
+   <syncPoint id="399" sampleInd="20450322" levelOfDetail="word" transcripText="запам'ятайте надсилання листів іншим людям" lang="uk"/>
    <syncPoint id="860" sampleInd="20508186" levelOfDetail="word"/>
-   <syncPoint id="370" sampleInd="20512850" levelOfDetail="word" transcripText="називається листуванням"/>
+   <syncPoint id="370" sampleInd="20512850" levelOfDetail="word" transcripText="називається листуванням" lang="uk"/>
    <syncPoint id="902" sampleInd="20553268" levelOfDetail="word"/>
-   <syncPoint id="634" sampleInd="20559452" levelOfDetail="word" transcripText="а переписка це не наше слово"/>
+   <syncPoint id="634" sampleInd="20559452" levelOfDetail="word" transcripText="а переписка це не наше слово" lang="uk"/>
    <syncPoint id="870" sampleInd="20604832" levelOfDetail="word"/>
-   <syncPoint id="404" sampleInd="20610074" levelOfDetail="word" transcripText="йому в українській мові"/>
+   <syncPoint id="404" sampleInd="20610074" levelOfDetail="word" transcripText="йому в українській мові" lang="uk"/>
    <syncPoint id="332" sampleInd="20635030" levelOfDetail="word"/>
-   <syncPoint id="946" sampleInd="22803062" levelOfDetail="word" transcripText="як святковий день"/>
+   <syncPoint id="946" sampleInd="22803062" levelOfDetail="word" transcripText="як святковий день" lang="uk"/>
    <syncPoint id="689" sampleInd="22824032" levelOfDetail="word"/>
    <syncPoint id="773" sampleInd="22830680" levelOfDetail="word"/>
-   <syncPoint id="644" sampleInd="22838040" levelOfDetail="word" transcripText="палагна що звикла шість день на тиждень робити і тільки в свята отпочивала"/>
+   <syncPoint id="644" sampleInd="22838040" levelOfDetail="word" transcripText="палагна що звикла шість день на тиждень робити і тільки в свята отпочивала" lang="uk"/>
    <syncPoint id="793" sampleInd="22944888" levelOfDetail="word"/>
-   <syncPoint id="832" sampleInd="22953074" levelOfDetail="word" transcripText="сердито дорікала за його примхи читаймо в михайла коцюбинського"/>
+   <syncPoint id="832" sampleInd="22953074" levelOfDetail="word" transcripText="сердито дорікала за його примхи читаймо в михайла коцюбинського" lang="uk"/>
    <syncPoint id="628" sampleInd="23061940" levelOfDetail="word"/>
-   <syncPoint id="487" sampleInd="23069134" levelOfDetail="word" transcripText="також святами"/>
+   <syncPoint id="487" sampleInd="23069134" levelOfDetail="word" transcripText="також святами" lang="uk"/>
    <syncPoint id="415" sampleInd="23096702" levelOfDetail="word"/>
-   <syncPoint id="1072" sampleInd="23102524" levelOfDetail="word" transcripText="називають урочистості"/>
+   <syncPoint id="1072" sampleInd="23102524" levelOfDetail="word" transcripText="називають урочистості" lang="uk"/>
    <syncPoint id="956" sampleInd="23133548" levelOfDetail="word"/>
-   <syncPoint id="941" sampleInd="23137698" levelOfDetail="word" transcripText="влаштовані із якоїсь нагоди"/>
+   <syncPoint id="941" sampleInd="23137698" levelOfDetail="word" transcripText="влаштовані із якоїсь нагоди" lang="uk"/>
    <syncPoint id="1080" sampleInd="23177636" levelOfDetail="word"/>
-   <syncPoint id="559" sampleInd="23182598" levelOfDetail="word" transcripText="і загалом важливі радісні приємні події"/>
+   <syncPoint id="559" sampleInd="23182598" levelOfDetail="word" transcripText="і загалом важливі радісні приємні події" lang="uk"/>
    <syncPoint id="524" sampleInd="23253958" levelOfDetail="word"/>
-   <syncPoint id="322" sampleInd="23259514" levelOfDetail="word" transcripText="називають українці святом і почуття приємності радості піднесення"/>
+   <syncPoint id="322" sampleInd="23259514" levelOfDetail="word" transcripText="називають українці святом і почуття приємності радості піднесення" lang="uk"/>
    <syncPoint id="770" sampleInd="23366314" levelOfDetail="word"/>
-   <syncPoint id="446" sampleInd="23380172" levelOfDetail="word" transcripText="для марусі усе стало іншим довкола"/>
+   <syncPoint id="446" sampleInd="23380172" levelOfDetail="word" transcripText="для марусі усе стало іншим довкола" lang="uk"/>
    <syncPoint id="908" sampleInd="23438714" levelOfDetail="word"/>
-   <syncPoint id="1031" sampleInd="23443676" levelOfDetail="word" transcripText="і гори і небо і люди"/>
+   <syncPoint id="1031" sampleInd="23443676" levelOfDetail="word" transcripText="і гори і небо і люди" lang="uk"/>
    <syncPoint id="954" sampleInd="23482804" levelOfDetail="word"/>
-   <syncPoint id="994" sampleInd="23489766" levelOfDetail="word" transcripText="свято було"/>
+   <syncPoint id="994" sampleInd="23489766" levelOfDetail="word" transcripText="свято було" lang="uk"/>
    <syncPoint id="209" sampleInd="23511280" levelOfDetail="word"/>
-   <syncPoint id="304" sampleInd="23520244" levelOfDetail="word" transcripText="сині глибоких проваль на далекім верху радісно сміялася до марусі"/>
+   <syncPoint id="304" sampleInd="23520244" levelOfDetail="word" transcripText="сині глибоких проваль на далекім верху радісно сміялася до марусі" lang="uk"/>
    <syncPoint id="1016" sampleInd="23636206" levelOfDetail="word"/>
 </audioAnnotation>
