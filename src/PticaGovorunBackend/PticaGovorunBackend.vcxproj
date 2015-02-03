@@ -191,6 +191,7 @@
     <ClInclude Include="PhoneAlignment.h" />
     <ClInclude Include="PticaGovorunCore.h" />
     <ClInclude Include="SoundUtils.h" />
+    <ClInclude Include="SpeechAnnotation.h" />
     <ClInclude Include="SpeechProcessing.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StringUtils.h" />
@@ -221,6 +222,7 @@
     <ClCompile Include="PhoneAlignment.cpp" />
     <ClCompile Include="PticaGovorunBackend.cpp" />
     <ClCompile Include="SoundUtils.cpp" />
+    <ClCompile Include="SpeechAnnotation.cpp" />
     <ClCompile Include="SpeechProcessing.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

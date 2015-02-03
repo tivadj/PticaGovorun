@@ -95,13 +95,6 @@ void TranscriberViewModel::loadAudioFileRequest()
 	//
 	loadAudioMarkupFromXml();
 
-	// initialize markers id cache
-	usedMarkerIds_.clear(); // clear cache of used marker ids
-	for (const auto& m : frameIndMarkers_)
-		usedMarkerIds_.insert(m.Id);
-
-	//
-
 	setCursorInternal(0, true ,false);
 
 	emit audioSamplesLoaded();
@@ -310,12 +303,12 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 }
 
 template <typename MarkerPred>
-void TranscriberViewModel::transformMarkersIf(std::vector<MarkerRefToOrigin>& markersOfInterest, MarkerPred canSelectMarker)
+void TranscriberViewModel::transformMarkersIf(const std::vector<PticaGovorun::TimePointMarker>& markers, std::vector<MarkerRefToOrigin>& markersOfInterest, MarkerPred canSelectMarker)
 {
-	markersOfInterest.reserve(frameIndMarkers_.size());
-	for (size_t i = 0; i < frameIndMarkers_.size(); ++i)
+	markersOfInterest.reserve(markers.size());
+	for (size_t i = 0; i < markers.size(); ++i)
 	{
-		const PticaGovorun::TimePointMarker& marker = frameIndMarkers_[i];
+		const PticaGovorun::TimePointMarker& marker = markers[i];
 
 		bool include = canSelectMarker(marker);
 		if (include)
@@ -340,11 +333,11 @@ std::tuple<long, long> TranscriberViewModel::getSampleRangeToPlay(long curSample
 		return std::make_tuple(left, right);
 	}
 
-	std::vector<MarkerRefToOrigin>& markers = markersOfInterestCache_;
-	markers.clear();
-	transformMarkersIf(markers, [](const PticaGovorun::TimePointMarker& m) { return m.StopsPlayback; });
+	std::vector<MarkerRefToOrigin>& markerRefs = markersOfInterestCache_;
+	markerRefs.clear();
+	transformMarkersIf(speechAnnot_.markers(), markerRefs, [](const PticaGovorun::TimePointMarker& m) { return m.StopsPlayback; });
 
-	if (markers.empty())
+	if (markerRefs.empty())
 	{
 		// play from the start of audio
 		// play to the end of audio
@@ -356,7 +349,7 @@ std::tuple<long, long> TranscriberViewModel::getSampleRangeToPlay(long curSample
 	int leftMarkerInd = -1;
 	int rightMarkerInd = -1;
 	auto markerFrameIndSelector = [](const MarkerRefToOrigin& m) { return m.Marker.SampleInd;  };
-	bool foundSegOp = findSegmentMarkerInds(markers, markerFrameIndSelector, curSampleInd, true, leftMarkerInd, rightMarkerInd);
+	bool foundSegOp = PticaGovorun::findSegmentMarkerInds(markerRefs, markerFrameIndSelector, curSampleInd, true, leftMarkerInd, rightMarkerInd);
 	PG_Assert(foundSegOp && "The segment to play must be found");
 
 	if (outLeftMarkerInd != nullptr)
@@ -364,7 +357,7 @@ std::tuple<long, long> TranscriberViewModel::getSampleRangeToPlay(long curSample
 		if (leftMarkerInd == -1)
 			*outLeftMarkerInd = -1;
 		else
-			*outLeftMarkerInd = markers[leftMarkerInd].MarkerInd;
+			*outLeftMarkerInd = markerRefs[leftMarkerInd].MarkerInd;
 	}
 
 	long startPlayFrameInd = -1;
@@ -380,14 +373,14 @@ std::tuple<long, long> TranscriberViewModel::getSampleRangeToPlay(long curSample
 			startPlayFrameInd = 0;
 
 		// play to the closest right marker which is the first in the markers collection
-		endPlayFrameInd = markers[rightMarkerInd].Marker.SampleInd;
+		endPlayFrameInd = markerRefs[rightMarkerInd].Marker.SampleInd;
 	}
 	else
 	{
 		if (startFrameChoice == SegmentStartFrameToPlayChoice::CurrentCursor)
 			startPlayFrameInd = curSampleInd;
 		else if (startFrameChoice == SegmentStartFrameToPlayChoice::SegmentBegin)
-			startPlayFrameInd = markers[leftMarkerInd].Marker.SampleInd;
+			startPlayFrameInd = markerRefs[leftMarkerInd].Marker.SampleInd;
 
 		if (rightMarkerInd == -1)
 		{
@@ -397,7 +390,7 @@ std::tuple<long, long> TranscriberViewModel::getSampleRangeToPlay(long curSample
 		else
 		{
 			// play to the frameInd of the closest right marker
-			endPlayFrameInd = markers[rightMarkerInd].Marker.SampleInd;
+			endPlayFrameInd = markerRefs[rightMarkerInd].Marker.SampleInd;
 		}
 	}
 	
@@ -519,10 +512,10 @@ void TranscriberViewModel::loadAudioMarkupFromXml()
 	}
 	
 	//
-	frameIndMarkers_.clear();
+	speechAnnot_.clear();
 	bool loadOp;
 	const char* errMsg;
-	std::tie(loadOp, errMsg) = PticaGovorun::loadAudioMarkupFromXml(audioMarkupPathAbs.toStdWString(), frameIndMarkers_);
+	std::tie(loadOp, errMsg) = PticaGovorun::loadAudioMarkupFromXml(audioMarkupPathAbs.toStdWString(), speechAnnot_);
 	if (!loadOp)
 	{
 		emit nextNotification(errMsg);
@@ -532,22 +525,14 @@ void TranscriberViewModel::loadAudioMarkupFromXml()
 
 void TranscriberViewModel::saveAudioMarkupToXml()
 {
-	// validate marker's speech language
 	std::stringstream msgValidate;
-	for (auto& marker : frameIndMarkers_)
-	{
-		if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Phone && marker.Language != PticaGovorun::SpeechLanguage::NotSet)
-			msgValidate << "Phone marker[id=" << marker.Id << "] has non empty language" << std::endl;
-			
-		else if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Word && marker.TranscripText.isEmpty() && marker.Language != PticaGovorun::SpeechLanguage::NotSet)
-			msgValidate << "Word marker[id=" << marker.Id << "] without text has non empty language" << std::endl;
-	}
+	speechAnnot_.validateMarkers(msgValidate);
 	if (!msgValidate.str().empty())
 		emit nextNotification(QString::fromStdString(msgValidate.str()));
 
 	QString audioMarkupPathAbs = audioMarkupFilePathAbs();
 	
-	PticaGovorun::saveAudioMarkupToXml(frameIndMarkers_, audioMarkupPathAbs.toStdWString());
+	PticaGovorun::saveAudioMarkupToXml(speechAnnot_, audioMarkupPathAbs.toStdWString());
 	
 	QString msg = QString("[%1]: Saved xml markup.").arg(QTime::currentTime().toString("hh:mm:ss"));
 	emit nextNotification(msg);
@@ -771,10 +756,12 @@ void TranscriberViewModel::deleteRequest(bool isControl)
 			long start;
 			long end;
 			std::tie(start, end) = cursorOrdered();
-			for (int markerInd = frameIndMarkers_.size() - 1; markerInd >= 0; --markerInd)
+
+			// delete markers covered by cursor
+			for (int markerInd = speechAnnot_.markers().size() - 1; markerInd >= 0; --markerInd)
 			{
-				const auto marker = frameIndMarkers_[markerInd];
-				if (marker.SampleInd >= start && marker.SampleInd < end)
+				long markerFrameInd = speechAnnot_.marker(markerInd).SampleInd;
+				if (markerFrameInd >= start && markerFrameInd < end)
 				{
 					bool delMarkerOp = deleteMarker(markerInd);
 					assert(delMarkerOp);
@@ -856,115 +843,7 @@ bool TranscriberViewModel::deleteDiagramSegmentsAtCursor(std::pair<long, long> s
 
 const std::vector<PticaGovorun::TimePointMarker>& TranscriberViewModel::frameIndMarkers() const
 {
-	return frameIndMarkers_;
-}
-
-void TranscriberViewModel::collectMarkersOfInterest(std::vector<MarkerRefToOrigin>& markersOfInterest, bool processPhoneMarkers)
-{
-	// remove phone-markers from collection
-
-	markersOfInterest.reserve(frameIndMarkers_.size());
-	for (size_t i = 0; i < frameIndMarkers_.size(); ++i)
-	{
-		const PticaGovorun::TimePointMarker& marker = frameIndMarkers_[i];
-
-		//if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Phone && !processPhoneMarkers)
-		//	continue;
-		if (!marker.StopsPlayback)
-			continue;
-
-		MarkerRefToOrigin markerEx {marker, i};
-		markersOfInterest.push_back(markerEx);
-	}
-}
-
-template <typename Markers, typename FrameIndSelector>
-bool TranscriberViewModel::findSegmentMarkerInds(const Markers& markers, FrameIndSelector markerFrameIndSelector, long frameInd, bool acceptOutOfRangeFrameInd, int& leftMarkerInd, int& rightMarkerInd) const
-{
-	if (markers.empty())
-		return false;
-
-	int lastMarkerInd = markers.size() - 1;
-	long lastFrameInd = markerFrameIndSelector(markers[lastMarkerInd]);
-	if (!acceptOutOfRangeFrameInd && (frameInd < 0 || frameInd >= lastFrameInd)) // out of range of samples
-		return false;
-
-	// before the first marker?
-	if (frameInd < markerFrameIndSelector(markers[0]))
-	{
-		leftMarkerInd = -1;
-		rightMarkerInd = 0;
-		return true;
-	}
-
-	// after the last marker?
-	if (frameInd >= markerFrameIndSelector(markers[lastMarkerInd]))
-	{
-		leftMarkerInd = lastMarkerInd;
-		rightMarkerInd = -1;
-		return true;
-	}
-
-	auto hitMarkerIt = PticaGovorun::binarySearch(std::begin(markers), std::end(markers), frameInd, markerFrameIndSelector);
-	int hitMarkerInd = std::distance(std::begin(markers), hitMarkerIt);
-
-	leftMarkerInd = hitMarkerInd;
-	rightMarkerInd = hitMarkerInd + 1;
-
-	PG_Assert(leftMarkerInd >= 0 && "Marker index is out of range");
-	PG_Assert(rightMarkerInd < markers.size() && "Marker index is out of range");
-	return true;
-}
-
-int TranscriberViewModel::generateMarkerId()
-{
-	// generate random id
-	int result;
-	while (true)
-	{
-		size_t maxId = frameIndMarkers_.size() * 2;
-		if (maxId == 0)
-			maxId = 100;
-		result = 1 + rand() % maxId; // +1 for id>0
-		if (usedMarkerIds_.find(result) == std::end(usedMarkerIds_))
-			break;
-	}
-	usedMarkerIds_.insert(result);
-
-#if PG_DEBUG
-	// ensure generated id doesn't collide with id of other markers
-	for (size_t i = 0; i < frameIndMarkers_.size(); ++i)
-	{
-		const auto& marker = frameIndMarkers_[i];
-		PG_Assert(marker.Id != result && "Generated marker id which collides with id of another marker");
-	}
-#endif
-
-	return result;
-}
-
-void TranscriberViewModel::insertNewMarkerSafe(int newMarkerInd, const PticaGovorun::TimePointMarker& newMarker)
-{
-	const auto insPosIt = frameIndMarkers_.cbegin() + newMarkerInd;
-
-#if PG_DEBUG
-	// ensure all markers are sorted by FrameInd
-	// compare to the right marker
-	if (insPosIt != std::cend(frameIndMarkers_))
-	{
-		int rightFrameInd = insPosIt->SampleInd;
-		PG_Assert(newMarker.SampleInd <= rightFrameInd && "New marker is out of FrameInd order");
-	}
-	// compare to the left marker
-	if (insPosIt != std::cbegin(frameIndMarkers_))
-	{
-		auto leftMarkerIt = insPosIt - 1;
-		int leftFrameInd = leftMarkerIt->SampleInd;
-		PG_Assert(leftFrameInd <= newMarker.SampleInd && "New marker is out of FrameInd order");
-	}
-#endif
-
-	frameIndMarkers_.insert(insPosIt, newMarker);
+	return speechAnnot_.markers();
 }
 
 void TranscriberViewModel::setTemplateMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail)
@@ -1013,7 +892,7 @@ void TranscriberViewModel::dragMarkerContinue(const QPointF& localPos)
 		float mouseMoveDocPosX = docOffsetX_ + mouseMoveLocalDocPosX;
 		long frameInd = (long)docPosXToSampleInd(mouseMoveDocPosX);
 
-		frameIndMarkers_[draggingMarkerInd_].SampleInd = frameInd;
+		speechAnnot_.marker(draggingMarkerInd_).SampleInd = frameInd;
 		draggingLastViewportPos_ = localPos;
 
 		// redraw current marker
@@ -1029,22 +908,12 @@ void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos, bool is
 
 	mousePressDocPosX += docOffsetX_;
 
-	//std::stringstream msg;
-	//msg.precision(2);
-	//msg << std::fixed;
-	//msg << lastMousePressDocPosX;
-
-	//float sampleInd = docPosXToSampleInd(lastMousePressDocPosX);
-	//msg << " FrameInd=" << sampleInd;
-	//emit nextNotification(QString::fromStdString(msg.str()));
-
 	// choose between dragging the marker or setting the cursor
 
 	auto curSampleInd = (long)docPosXToSampleInd(mousePressDocPosX);
 
 	long distToMarker = -1;
-	auto markerFrameIndSelector = [](const PticaGovorun::TimePointMarker& m) { return m.SampleInd; };
-	int closestMarkerInd = getClosestMarkerInd(frameIndMarkers_, markerFrameIndSelector, curSampleInd, &distToMarker);
+	int closestMarkerInd = speechAnnot_.getClosestMarkerInd(curSampleInd, &distToMarker);
 
 	float distToMarkerPix = distToMarker * scale_;
 	
@@ -1121,16 +990,16 @@ void TranscriberViewModel::setCursorInternal(std::pair<long,long> value, bool up
 			{
 				// keep active current segment, associated with the marker left to the cursor
 
-				std::vector<MarkerRefToOrigin>& markers = markersOfInterestCache_;
-				markers.clear();
-				transformMarkersIf(markers, [](const PticaGovorun::TimePointMarker& m) { return m.StopsPlayback; });
+				std::vector<MarkerRefToOrigin>& markerRefs = markersOfInterestCache_;
+				markerRefs.clear();
+				transformMarkersIf(speechAnnot_.markers(), markerRefs, [](const PticaGovorun::TimePointMarker& m) { return m.StopsPlayback; });
 
 				int leftMarkerInd = -1;
 				int rightMarkerInd = -1;
 				auto markerFrameIndSelector = [](const MarkerRefToOrigin& m) { return m.Marker.SampleInd;  };
-				bool foundSegOp = findSegmentMarkerInds(markers, markerFrameIndSelector, cursor_.first, true, leftMarkerInd, rightMarkerInd);
+				bool foundSegOp = PticaGovorun::findSegmentMarkerInds(markerRefs, markerFrameIndSelector, cursor_.first, true, leftMarkerInd, rightMarkerInd);
 				if (foundSegOp && leftMarkerInd != -1)
-					curMarkerInd = markers[leftMarkerInd].MarkerInd;
+					curMarkerInd = markerRefs[leftMarkerInd].MarkerInd;
 			}
 			else
 				curMarkerInd = -1; // reset the marker
@@ -1191,7 +1060,7 @@ void TranscriberViewModel::insertNewMarkerAtCursorRequest()
 		return;
 
 	PticaGovorun::TimePointMarker newMarker;
-	newMarker.Id = generateMarkerId();
+	newMarker.Id = PticaGovorun::NullSampleInd;
 	newMarker.SampleInd = curFrameInd;
 	newMarker.IsManual = true;
 	newMarker.LevelOfDetail = templateMarkerLevelOfDetail_;
@@ -1201,22 +1070,7 @@ void TranscriberViewModel::insertNewMarkerAtCursorRequest()
 
 void TranscriberViewModel::insertNewMarker(const PticaGovorun::TimePointMarker& marker, bool updateCursor, bool updateViewportOffset)
 {
-	long frameInd = marker.SampleInd;
-
-	// find the insertion position in the markers collection
-
-	int newMarkerInd = -1;
-	int leftMarkerInd;
-	int rightMarkerInd;
-	auto markerFrameIndSelector = [](const PticaGovorun::TimePointMarker& m) { return m.SampleInd; };
-	bool findSegOp = findSegmentMarkerInds(frameIndMarkers_, markerFrameIndSelector, frameInd, true, leftMarkerInd, rightMarkerInd);
-	if (!findSegOp || leftMarkerInd == -1) // insert the first marker
-		newMarkerInd = 0;
-	else
-		newMarkerInd = leftMarkerInd + 1; // next to the left marker
-
-//
-	insertNewMarkerSafe(newMarkerInd, marker);
+	int newMarkerInd = speechAnnot_.insertMarker(marker);
 
 	setCurrentMarkerIndInternal(newMarkerInd, updateCursor, updateViewportOffset);
 
@@ -1226,69 +1080,11 @@ void TranscriberViewModel::insertNewMarker(const PticaGovorun::TimePointMarker& 
 
 bool TranscriberViewModel::deleteMarker(int markerInd)
 {
-	if (markerInd < 0 || markerInd >= frameIndMarkers_.size())
-		return false;
+	bool delOp = speechAnnot_.deleteMarker(markerInd);
+	if (delOp)
+		setCurrentMarkerIndInternal(-1, false, false);
 
-	frameIndMarkers_.erase(frameIndMarkers_.cbegin() + markerInd);
-
-	setCurrentMarkerIndInternal(-1, false, false);
-	return true;
-}
-
-template <typename Markers, typename FrameIndSelector>
-int TranscriberViewModel::getClosestMarkerInd(const Markers& markers, FrameIndSelector markerFrameIndSelector, long frameInd, long* distFrames) const
-{
-	*distFrames = -1;
-
-	int leftMarkerInd = -1;
-	int rightMarkerInd = -1;
-	if (!findSegmentMarkerInds(markers, markerFrameIndSelector, frameInd, true, leftMarkerInd, rightMarkerInd))
-	{
-		// there is no closest marker
-		return -1;
-	}
-	
-	int closestMarkerInd = -1;
-	
-	if (leftMarkerInd == -1)
-	{
-		// current cursor is before the first marker
-		closestMarkerInd = rightMarkerInd;
-		*distFrames = frameIndMarkers_[rightMarkerInd].SampleInd - frameInd;
-	}
-	if (rightMarkerInd == -1)
-	{
-		// current cursor is to the right of the last marker
-		closestMarkerInd = leftMarkerInd;
-		*distFrames = frameInd - frameIndMarkers_[leftMarkerInd].SampleInd;
-	}
-
-	if (closestMarkerInd == -1)
-	{
-		// there are two candidate (left and right) markers to select, select closest
-
-		long distLeft = frameInd - frameIndMarkers_[leftMarkerInd].SampleInd;
-		PG_Assert(distLeft >= 0 && "Error calculating the distance from the current cursor to the left marker");
-
-		long distRight = frameIndMarkers_[rightMarkerInd].SampleInd - frameInd;
-		PG_Assert(distRight >= 0 && "Error calculating the distance from the current cursor to the right marker");
-
-		if (distLeft < distRight)
-		{
-			closestMarkerInd = leftMarkerInd;
-			*distFrames = distLeft;
-		}
-		else
-		{
-			closestMarkerInd = rightMarkerInd;
-			*distFrames = distRight;
-		}
-	}
-	
-	PG_Assert(closestMarkerInd != -1 && "Error calculating the closest marker");
-	PG_Assert(*distFrames >= 0 && "Error calculating the distance to the closest marker");
-
-	return closestMarkerInd;
+	return delOp;
 }
 
 void TranscriberViewModel::selectMarkerClosestToCurrentCursorRequest()
@@ -1296,8 +1092,7 @@ void TranscriberViewModel::selectMarkerClosestToCurrentCursorRequest()
 	long curFrameInd = currentSampleInd();
 
 	long distToClosestMarker = -1;
-	auto markerFrameIndSelector = [](const PticaGovorun::TimePointMarker& m) { return m.SampleInd; };
-	int closestMarkerInd = getClosestMarkerInd(frameIndMarkers_, markerFrameIndSelector, curFrameInd, &distToClosestMarker);
+	int closestMarkerInd = speechAnnot_.getClosestMarkerInd(curFrameInd, &distToClosestMarker);
 
 	setCurrentMarkerIndInternal(closestMarkerInd, true, false);
 }
@@ -1321,20 +1116,20 @@ void TranscriberViewModel::selectMarkerInternal(bool moveForward)
 	int leftMarkerInd = -1;
 	int rightMarkerInd = -1;
 	auto markerFrameIndSelector = [](const PticaGovorun::TimePointMarker& m) { return m.SampleInd;  };
-	bool foundSegOp = findSegmentMarkerInds(frameIndMarkers_, markerFrameIndSelector, curSampleInd, true, leftMarkerInd, rightMarkerInd);
+	bool foundSegOp = PticaGovorun::findSegmentMarkerInds(speechAnnot_.markers(), markerFrameIndSelector, curSampleInd, true, leftMarkerInd, rightMarkerInd);
 	if (!foundSegOp)
 		return;
 
 	int nextMarkerInd = -1;
 	if (moveForward && rightMarkerInd != -1)
 	{
-		assert(rightMarkerInd < frameIndMarkers_.size());
+		assert(rightMarkerInd < speechAnnot_.markers().size());
 		nextMarkerInd = rightMarkerInd;
 	}
 	else if (!moveForward && leftMarkerInd != -1)
 	{
 		// inside the segment?
-		long markerSampleInd = frameIndMarkers_[leftMarkerInd].SampleInd;
+		long markerSampleInd = speechAnnot_.marker(leftMarkerInd).SampleInd;
 		if (markerSampleInd != curSampleInd)
 			nextMarkerInd = leftMarkerInd;
 		else
@@ -1359,7 +1154,7 @@ void TranscriberViewModel::setCurrentMarkerIndInternal(int markerInd, bool updat
 		if (updateCursor && markerInd != -1)
 		{
 			// udpdate cursor position
-			long newCurSampleInd = frameIndMarkers_[markerInd].SampleInd;
+			long newCurSampleInd = speechAnnot_.marker(markerInd).SampleInd;
 			setCursorInternal(newCurSampleInd, false, updateViewportOffset);
 		}
 	}
@@ -1374,7 +1169,7 @@ void TranscriberViewModel::setCurrentMarkerTranscriptText(const QString& text)
 {
 	if (currentMarkerInd_ != -1)
 	{
-		PticaGovorun::TimePointMarker& marker = frameIndMarkers_[currentMarkerInd_];
+		PticaGovorun::TimePointMarker& marker = speechAnnot_.marker(currentMarkerInd_);
 		marker.TranscripText = text;
 
 		//// ignore language for 'phone' markers
@@ -1403,7 +1198,7 @@ void TranscriberViewModel::setCurrentMarkerLevelOfDetail(PticaGovorun::MarkerLev
 	else
 	{
 		// apply the value to current marker
-		frameIndMarkers_[currentMarkerInd_].LevelOfDetail = levelOfDetail;
+		speechAnnot_.marker(currentMarkerInd_).LevelOfDetail = levelOfDetail;
 
 		// TODO: repaint only current marker
 		emit audioSamplesChanged();
@@ -1414,7 +1209,7 @@ void TranscriberViewModel::setCurrentMarkerStopOnPlayback(bool stopsPlayback)
 {
 	if (currentMarkerInd_ == -1)
 		return;
-	frameIndMarkers_[currentMarkerInd_].StopsPlayback = stopsPlayback;
+	speechAnnot_.marker(currentMarkerInd_).StopsPlayback = stopsPlayback;
 }
 
 void TranscriberViewModel::setCurrentMarkerLang(PticaGovorun::SpeechLanguage lang)
@@ -1432,10 +1227,10 @@ void TranscriberViewModel::setCurrentMarkerLang(PticaGovorun::SpeechLanguage lan
 	else
 	{
 		// apply the value to current marker
-		PticaGovorun::SpeechLanguage oldLang = frameIndMarkers_[currentMarkerInd_].Language;
+		PticaGovorun::TimePointMarker& m = speechAnnot_.marker(currentMarkerInd_);
+		PticaGovorun::SpeechLanguage oldLang = m.Language;
 		if (oldLang != lang)
 		{
-			PticaGovorun::TimePointMarker& m = frameIndMarkers_[currentMarkerInd_];
 			m.Language = lang;
 			emit nextNotification(QString("Marker[id=%1].Language=%2").arg(m.Id).arg(langStr.c_str()));
 		}
@@ -1795,6 +1590,7 @@ void TranscriberViewModel::analyzeUnlabeledSpeech()
 	}
 
 	PticaGovorun::TimePointMarker newMarker;
+	newMarker.Id = PticaGovorun::NullSampleInd; // id is generated by ownding collection
 	newMarker.IsManual = false;
 	newMarker.LevelOfDetail = MarkerLevelOfDetail::Word;
 	newMarker.StopsPlayback = getDefaultMarkerStopsPlayback(templateMarkerLevelOfDetail_);
@@ -1822,11 +1618,9 @@ void TranscriberViewModel::analyzeUnlabeledSpeech()
 		left += FrameShift;
 		rightExcl -= FrameShift;
 
-		newMarker.Id = generateMarkerId();
 		newMarker.SampleInd = left;
 		insertNewMarker(newMarker, false, false);
 
-		newMarker.Id = generateMarkerId();
 		newMarker.SampleInd = rightExcl;
 		insertNewMarker(newMarker, false, false);
 
@@ -1912,7 +1706,7 @@ void TranscriberViewModel::alignPhonesForCurrentSegmentRequest()
 	else if (outLeftMarkerInd != -1)
 	{
 		// there is a marker assiciated with this alignment operation
-		alignText = frameIndMarkers_[outLeftMarkerInd].TranscripText;
+		alignText = speechAnnot_.marker(outLeftMarkerInd).TranscripText;
 	}
 	
 	if (alignText.isEmpty()) // nothing to align
@@ -2042,7 +1836,7 @@ void TranscriberViewModel::testMfccRequest()
 	auto len = curSegEnd - curSegBeg;
 
 	// convert
-	auto& leftMarker = frameIndMarkers_[outLeftMarkerInd];
+	auto& leftMarker = speechAnnot_.marker(outLeftMarkerInd);
 	if (leftMarker.TranscripText.isEmpty())
 		return;
 
@@ -2265,15 +2059,15 @@ void TranscriberViewModel::playComposingRecipeRequest(QString recipe)
 			return;
 		}
 
-		int fromMarkerInd = markerIndByMarkerId(fromMarkerId);
+		int fromMarkerInd = speechAnnot_.markerIndByMarkerId(fromMarkerId);
 		if (fromMarkerInd == -1)
 			return;
-		int toMarkerInd = markerIndByMarkerId(toMarkerId);
+		int toMarkerInd = speechAnnot_.markerIndByMarkerId(toMarkerId);
 		if (toMarkerInd == -1)
 			return;
 
-		long fromFrameInd = frameIndMarkers_[fromMarkerInd].SampleInd;
-		long toFrameInd = frameIndMarkers_[toMarkerInd].SampleInd;
+		long fromFrameInd = speechAnnot_.marker(fromMarkerInd).SampleInd;
+		long toFrameInd = speechAnnot_.marker(toMarkerInd).SampleInd;
 
 		// parse other possible options
 
@@ -2302,17 +2096,6 @@ void TranscriberViewModel::playComposingRecipeRequest(QString recipe)
 	soundPlayerPlay(composedAudio_.data(), 0, composedAudio_.size(), false);
 }
 
-int TranscriberViewModel::markerIndByMarkerId(int markerId)
-{
-	for (size_t i = 0; i < frameIndMarkers_.size(); ++i)
-	{
-		const auto& marker = frameIndMarkers_[i];
-		if (marker.Id == markerId)
-			return i;
-	}
-	return -1;
-}
-
 void TranscriberViewModel::setAudioMarkupNavigator(std::shared_ptr<AudioMarkupNavigator> audioMarkupNavigator)
 {
 	audioMarkupNavigator_ = audioMarkupNavigator;
@@ -2328,7 +2111,7 @@ void TranscriberViewModel::navigateToMarkerRequest()
 	if (!audioMarkupNavigator_->requestMarkerId(markerId))
 		return;
 
-	int markerInd = markerIndByMarkerId(markerId);
+	int markerInd = speechAnnot_.markerIndByMarkerId(markerId);
 	if (markerInd == -1) // user input non existent marker id
 		return;
 

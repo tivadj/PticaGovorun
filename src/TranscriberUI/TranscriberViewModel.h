@@ -13,6 +13,7 @@
 #include "XmlAudioMarkup.h"
 #include "MLUtils.h"
 #include "JuliusToolNativeWrapper.h"
+#include "SpeechAnnotation.h"
 #include "SpeechProcessing.h"
 #include "AudioMarkupNavigator.h"
 
@@ -250,9 +251,8 @@ private:
 	// This temporary collection may store subset of markers.
 	std::vector<MarkerRefToOrigin> markersOfInterestCache_;
 
-	std::vector<PticaGovorun::TimePointMarker> frameIndMarkers_; // stores markers of all level (word, phone)
+	PticaGovorun::SpeechAnnotation speechAnnot_;
 	int currentMarkerInd_ = -1;
-	std::hash_set<int> usedMarkerIds_; // stores ids of all markers; used to generate new free marker id
 
 	// Level of detail for newly created markers.
 	PticaGovorun::MarkerLevelOfDetail templateMarkerLevelOfDetail_ = PticaGovorun::MarkerLevelOfDetail::Word;
@@ -275,10 +275,9 @@ private:
 public:
 
 	const std::vector<PticaGovorun::TimePointMarker>& frameIndMarkers() const;
-	void collectMarkersOfInterest(std::vector<MarkerRefToOrigin>& markersOfInterest, bool processPhoneMarkers);
 	
 	template <typename MarkerPred>
-	void transformMarkersIf(std::vector<MarkerRefToOrigin>& markersOfInterest, MarkerPred canSelectMarker);
+	void transformMarkersIf(const std::vector<PticaGovorun::TimePointMarker>& markers, std::vector<MarkerRefToOrigin>& markersOfInterest, MarkerPred canSelectMarker);
 	
 	void insertNewMarkerAtCursorRequest();
 
@@ -286,9 +285,7 @@ public:
 
 	// true if marker was deleted
 	bool deleteMarker(int markerInd);
-	// dist=number of frames between frameInd and the closest marker.
-	template <typename Markers, typename FrameIndSelector>
-	int getClosestMarkerInd(const Markers& markers, FrameIndSelector markerFrameIndSelector, long frameInd, long* dist) const;
+
 	void selectMarkerClosestToCurrentCursorRequest();
 	void selectMarkerForward();
 	void selectMarkerBackward();
@@ -309,18 +306,6 @@ public:
 private:
 	void setCurrentMarkerIndInternal(int markerInd, bool updateCursor, bool updateViewportOffset);
 
-	// returns the closest segment which contains given frameInd. The segment is described by two indices in
-	// the original collection of markers.
-	// returns false if such segment can't be determined.
-	// leftMarkerInd=-1 for the frames before the first marker, and rightMarkerInd=-1 for the frames after the last marker.
-	// acceptOutOfRangeFrameInd = true to return the first or the last segment for negative frameInd or frameInd larger than max frameInd.
-	template <typename Markers, typename FrameIndSelector>
-	bool findSegmentMarkerInds(const Markers& markers, FrameIndSelector markerFrameIndSelector, long frameInd, bool acceptOutOfRangeFrameInd, int& leftMarkerInd, int& rightMarkerInd) const;
-
-	int generateMarkerId();
-
-	// Ensures that all markers are sorted ascending by FrameInd.
-	void insertNewMarkerSafe(int markerInd, const PticaGovorun::TimePointMarker& marker);
 public:	// recongizer
 
 	void ensureRecognizerIsCreated();
@@ -348,7 +333,6 @@ private:
 
 public: // segment composer
 	void playComposingRecipeRequest(QString recipe);
-	int markerIndByMarkerId(int markerId);
 private:
 	std::vector<short> composedAudio_;
 

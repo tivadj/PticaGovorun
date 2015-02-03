@@ -285,10 +285,12 @@ namespace PticaGovorun {
 		// load audio markup
 		// not all wav files has a markup, hence try to load the markup first
 		QString audioMarkupFilePathAbs = xmlFilePathInfo.absoluteFilePath();
-		std::vector<TimePointMarker> syncPoints;
-		std::tuple<bool, const char*> loadOp = loadAudioMarkupFromXml(audioMarkupFilePathAbs.toStdWString(), syncPoints);
+		SpeechAnnotation speechAnnot;
+		std::tuple<bool, const char*> loadOp = loadAudioMarkupFromXml(audioMarkupFilePathAbs.toStdWString(), speechAnnot);
 		if (!std::get<0>(loadOp))
 			return loadOp;
+
+		const std::vector<TimePointMarker>& syncPoints = speechAnnot.markers();
 
 		// take only markers of requested type
 		std::vector<TimePointMarker> markersOfInterest;
@@ -378,10 +380,12 @@ namespace PticaGovorun {
 		// not all wav files has a markup, hence try to load the markup first
 
 		QString audioMarkupFilePathAbs = xmlFilePathInfo.absoluteFilePath();
-		std::vector<TimePointMarker> syncPoints;
-		std::tuple<bool, const char*> loadOp = loadAudioMarkupFromXml(audioMarkupFilePathAbs.toStdWString(), syncPoints);
+		SpeechAnnotation speechAnnot;
+		std::tuple<bool, const char*> loadOp = loadAudioMarkupFromXml(audioMarkupFilePathAbs.toStdWString(), speechAnnot);
 		if (!std::get<0>(loadOp))
 			return loadOp;
+
+		const std::vector<TimePointMarker>& syncPoints = speechAnnot.markers();
 
 		// load wav file
 		std::vector<short> audioSamples;

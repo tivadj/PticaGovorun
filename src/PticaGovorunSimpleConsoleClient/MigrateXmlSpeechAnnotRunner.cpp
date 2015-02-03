@@ -7,9 +7,10 @@
 
 namespace MigrateXmlSpeechAnnotRunnerNS
 {
+	using namespace PticaGovorun;
 	void transformXmlAnnot()
 	{
-		std::vector<PticaGovorun::TimePointMarker> frameIndMarkers;
+		SpeechAnnotation speechAnnot;
 
 		const char* dirPath = R"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAnnot\)path";
 		QDirIterator it(dirPath, QStringList() << "*.xml", QDir::Files, QDirIterator::Subdirectories);
@@ -17,10 +18,10 @@ namespace MigrateXmlSpeechAnnotRunnerNS
 			QString xmlPath = it.next();
 			qDebug() << xmlPath;
 
-			frameIndMarkers.clear();
+			speechAnnot.clear();
 			bool op;
 			const char* errMsg;
-			std::tie(op, errMsg) = PticaGovorun::loadAudioMarkupFromXml(xmlPath.toStdWString(), frameIndMarkers);
+			std::tie(op, errMsg) = PticaGovorun::loadAudioMarkupFromXml(xmlPath.toStdWString(), speechAnnot);
 			if (!op)
 			{
 				qDebug() <<errMsg;
@@ -28,8 +29,10 @@ namespace MigrateXmlSpeechAnnotRunnerNS
 			}
 
 			// add lang attr
-			for (PticaGovorun::TimePointMarker& m : frameIndMarkers)
+			for (int markerInd = 0; markerInd < speechAnnot.markers().size(); ++markerInd)
 			{
+				PticaGovorun::TimePointMarker& m = speechAnnot.marker(markerInd);
+
 				if (m.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Phone)
 					m.Language = PticaGovorun::SpeechLanguage::NotSet;
 				else
@@ -41,7 +44,7 @@ namespace MigrateXmlSpeechAnnotRunnerNS
 				}
 			}
 
-			std::tie(op, errMsg) = PticaGovorun::saveAudioMarkupToXml(frameIndMarkers, xmlPath.toStdWString());
+			std::tie(op, errMsg) = PticaGovorun::saveAudioMarkupToXml(speechAnnot, xmlPath.toStdWString());
 			if (!op)
 			{
 				qDebug() << errMsg;

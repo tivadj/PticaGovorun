@@ -7,11 +7,12 @@
 #include <QTextCodec>
 #include "PticaGovorunCore.h" // PG_EXPORTS
 #include "SpeechProcessing.h" // TimePointMarker
+#include "SpeechAnnotation.h"
 
 namespace PticaGovorun {
 
-PG_EXPORTS std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioFilePathAbs, std::vector<TimePointMarker>& syncPoints);
-PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const std::vector<TimePointMarker>& syncPoints, const std::wstring& audioFilePathAbs);
+PG_EXPORTS std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioFilePathAbs, SpeechAnnotation& speechAnnot);
+PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const SpeechAnnotation& annot, const std::wstring& audioFilePathAbs);
 
 // Loads dictionary of word -> (phone list) from text file.
 // File usually has 'voca' extension.

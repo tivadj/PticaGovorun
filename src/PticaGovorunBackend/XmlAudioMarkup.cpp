@@ -12,6 +12,7 @@
 #include <QStringList>
 #include <QTextStream>
 #include <QXmlStreamWriter>
+
 #include "XmlAudioMarkup.h"
 
 namespace PticaGovorun {
@@ -30,7 +31,7 @@ namespace {
 	static const char* MarkerLevelOfDetailPhoneName = "phone";
 }
 
-std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMarkupFilePathAbs, std::vector<TimePointMarker>& syncPoints)
+std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMarkupFilePathAbs, SpeechAnnotation& annot)
 {
 	QFile file(QString::fromStdWString(audioMarkupFilePathAbs));
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -46,7 +47,6 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMa
 	//qDebug() << docElem.tagName();
 
 	//
-	std::hash_set<int> usedIds;
 	QDomNodeList nodeList = docElem.childNodes();
 	for (int i = 0; i<nodeList.count(); ++i)
 	{
@@ -60,19 +60,7 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMa
 			
 			int markerId = e.attribute(MarkerIdName, "").toInt(&parseIntOp);
 			if (!parseIntOp)
-			{
-				// generate random id
-				while (true)
-				{
-					int markersCountMax = std::max(2 * nodeList.size(), 400); // reserve some id-space
-					markerId = 1 + rand() % markersCountMax; // +1 for id>0
-					if (usedIds.find(markerId) == std::end(usedIds))
-						break;
-				}
-				usedIds.insert(markerId);
-				
-				//return std::make_tuple(false, "Xml audio markup error: expected syncPoint.id of integer type");
-			}
+				return std::make_tuple(false, "Xml audio markup error: expected syncPoint.id of integer type");
 
 			int sampleInd = e.attribute(MarkerSampleIndName, "").toInt(&parseIntOp);
 			if (!parseIntOp)
@@ -109,14 +97,14 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMa
 			syncPoint.IsManual = true;
 			syncPoint.StopsPlayback = getDefaultMarkerStopsPlayback(levelOfDetail);
 
-			syncPoints.push_back(syncPoint);
+			annot.attachMarker(syncPoint);
 		}
 	}
 
 	return std::make_tuple(true, nullptr);
 }
 
-PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const std::vector<TimePointMarker>& syncPoints, const std::wstring& audioMarkupFilePathAbs)
+PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const SpeechAnnotation& annot, const std::wstring& audioMarkupFilePathAbs)
 {
 	QFile file(QString::fromStdWString(audioMarkupFilePathAbs));
 	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -130,7 +118,7 @@ PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const std::vector<
 	xmlWriter.writeStartDocument("1.0");
 	xmlWriter.writeStartElement(XmlDocName);
 	
-	for (const TimePointMarker& marker : syncPoints)
+	for (const TimePointMarker& marker : annot.markers())
 	{
 		xmlWriter.writeStartElement(MarkerName);
 		xmlWriter.writeAttribute(MarkerIdName, QString::number(marker.Id));
