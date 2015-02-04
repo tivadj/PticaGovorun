@@ -42,15 +42,67 @@ namespace PticaGovorun
 		return closestMarkerInd;
 	}
 
+	void SpeechAnnotation::addSpeaker(const std::wstring& speakerBriefId, const std::wstring& name)
+	{
+		SpeakerFantom speaker;
+		speaker.BriefId = speakerBriefId;
+		speaker.Name = name;
+		speakers_.push_back(speaker);
+	}
+
+	const std::vector<SpeakerFantom>& SpeechAnnotation::speakers() const
+	{
+		return speakers_;
+	}
+
+	const std::wstring SpeechAnnotation::inferRecentSpeaker(int markerInd) const
+	{
+		if (markerInd < 0 || markerInd >= frameIndMarkers_.size())
+			return L"";
+
+		// find the speaker in previous segment
+		std::wstring prevSpeakerBriefId;
+		for (int i = markerInd; i >= 0; i--)
+		{
+			const PticaGovorun::TimePointMarker& prevMarker = frameIndMarkers_[i];
+			if (!prevMarker.TranscripText.isEmpty() && !prevMarker.SpeakerBriefId.empty())
+			{
+				prevSpeakerBriefId = prevMarker.SpeakerBriefId;
+				break;
+			}
+		}
+		return prevSpeakerBriefId;
+	}
+
 	void SpeechAnnotation::validateMarkers(std::stringstream& msgValidate) const
 	{
 		for (auto& marker : frameIndMarkers_)
 		{
-			if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Phone && marker.Language != PticaGovorun::SpeechLanguage::NotSet)
-				msgValidate << "Phone marker[id=" << marker.Id << "] has non empty language" << std::endl;
+			if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Phone)
+			{
+				if (marker.Language != PticaGovorun::SpeechLanguage::NotSet)
+					msgValidate << "Phone marker[id=" << marker.Id << "] has non empty language" << std::endl;
+				if (!marker.SpeakerBriefId.empty())
+					msgValidate << "Phone marker[id=" << marker.Id << "] has non empty speakerId" << std::endl;
+			}
 
-			else if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Word && marker.TranscripText.isEmpty() && marker.Language != PticaGovorun::SpeechLanguage::NotSet)
-				msgValidate << "Word marker[id=" << marker.Id << "] without text has non empty language" << std::endl;
+			else if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Word)
+			{
+				if (marker.TranscripText.isEmpty())
+				{
+					if (marker.Language != PticaGovorun::SpeechLanguage::NotSet)
+						msgValidate << "Word marker[id=" << marker.Id << "] without text has non empty language" << std::endl;
+					if (!marker.SpeakerBriefId.empty())
+						msgValidate << "Word marker[id=" << marker.Id << "] without text has non empty speakerBriefId" << std::endl;
+				}
+				else
+				{
+					if (marker.Language == PticaGovorun::SpeechLanguage::NotSet)
+						msgValidate << "Word marker[id=" << marker.Id << "] with text has empty language" << std::endl;
+					if (marker.SpeakerBriefId.empty())
+						msgValidate << "Word marker[id=" << marker.Id << "] with text has empty speakerBriefId" << std::endl;
+				}
+			}
 		}
 	}
 
@@ -58,6 +110,7 @@ namespace PticaGovorun
 	{
 		frameIndMarkers_.clear();
 		parameters_.clear();
+		speakers_.clear();
 		usedMarkerIds_.clear(); // clear cache of used marker ids
 	}
 

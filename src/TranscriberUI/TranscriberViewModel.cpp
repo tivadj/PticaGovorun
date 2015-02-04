@@ -841,9 +841,29 @@ bool TranscriberViewModel::deleteDiagramSegmentsAtCursor(std::pair<long, long> s
 	return true;
 }
 
+const PticaGovorun::SpeechAnnotation& TranscriberViewModel::speechAnnotation() const
+{
+	return speechAnnot_;
+}
+
 const std::vector<PticaGovorun::TimePointMarker>& TranscriberViewModel::frameIndMarkers() const
 {
 	return speechAnnot_.markers();
+}
+
+void TranscriberViewModel::setCurrentMarkerSpeaker(const std::wstring& speakerBriefId)
+{
+	if (currentMarkerInd_ == -1)
+		return;
+	
+	// apply the value to current marker
+	PticaGovorun::TimePointMarker& m = speechAnnot_.marker(currentMarkerInd_);
+	std::wstring oldValue = m.SpeakerBriefId;
+	if (oldValue != speakerBriefId)
+	{
+		m.SpeakerBriefId = speakerBriefId;
+		emit nextNotification(QString("Marker[id=%1].SpeakerBriefId=%2").arg(m.Id).arg(QString::fromStdWString(speakerBriefId)));
+	}
 }
 
 void TranscriberViewModel::setTemplateMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail)
@@ -1065,6 +1085,7 @@ void TranscriberViewModel::insertNewMarkerAtCursorRequest()
 	newMarker.IsManual = true;
 	newMarker.LevelOfDetail = templateMarkerLevelOfDetail_;
 	newMarker.StopsPlayback = getDefaultMarkerStopsPlayback(templateMarkerLevelOfDetail_);
+
 	insertNewMarker(newMarker, true, false);
 }
 
@@ -1180,6 +1201,10 @@ void TranscriberViewModel::setCurrentMarkerTranscriptText(const QString& text)
 			// first time initialization?
 			if (marker.Language == PticaGovorun::SpeechLanguage::NotSet)
 				marker.Language = templateMarkerSpeechLanguage_;
+
+			// first time initialization?
+			if (marker.SpeakerBriefId.empty())
+				marker.SpeakerBriefId = speechAnnot_.inferRecentSpeaker(currentMarkerInd_);
 		}
 
 		emit currentMarkerIndChanged();

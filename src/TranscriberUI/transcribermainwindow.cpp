@@ -26,6 +26,8 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
 	QObject::connect(ui->radioButtonLangNone, SIGNAL(toggled(bool)), this, SLOT(groupBoxLang_toggled(bool)));
 	QObject::connect(ui->radioButtonLangRu, SIGNAL(toggled(bool)), this, SLOT(groupBoxLang_toggled(bool)));
 	QObject::connect(ui->radioButtonLangUk, SIGNAL(toggled(bool)), this, SLOT(groupBoxLang_toggled(bool)));
+	QObject::connect(ui->comboBoxSpeakerId, SIGNAL(currentIndexChanged(int)), this, SLOT(comboBoxSpeakerId_currentIndexChanged(int)));
+	
 
 	//
     transcriberModel_ = std::make_shared<TranscriberViewModel>();
@@ -60,6 +62,7 @@ void TranscriberMainWindow::updateUI()
 void TranscriberMainWindow::transcriberModel_audioSamplesLoaded()
 {
 	ui->widgetSamples->setFocus(Qt::OtherFocusReason);
+	UpdateSpeakerListUI();
 }
 
 void TranscriberMainWindow::transcriberModel_nextNotification(const QString& message)
@@ -212,6 +215,25 @@ void TranscriberMainWindow::UpdateCursorUI()
 	}
 }
 
+void TranscriberMainWindow::UpdateSpeakerListUI()
+{
+	ui->comboBoxSpeakerId->clear();
+	ui->comboBoxSpeakerId->addItem("empty", QVariant::fromValue(QString("")));
+
+	const auto& speakers = transcriberModel_->speechAnnotation().speakers();
+	for (const PticaGovorun::SpeakerFantom& speaker : speakers)
+	{
+		ui->comboBoxSpeakerId->addItem(QString::fromStdWString(speaker.Name), QVariant::fromValue(QString::fromStdWString(speaker.BriefId)));
+	}
+}
+
+void TranscriberMainWindow::comboBoxSpeakerId_currentIndexChanged(int index)
+{
+	QVariant tag = ui->comboBoxSpeakerId->itemData(index);
+	std::wstring speakerBriefId = tag.toString().toStdWString();
+	transcriberModel_->setCurrentMarkerSpeaker(speakerBriefId);
+}
+
 void TranscriberMainWindow::transcriberModel_cursorChanged(std::pair<long, long> oldCursor)
 {
 	UpdateCursorUI();
@@ -271,6 +293,7 @@ void TranscriberMainWindow::transcriberModel_currentMarkerIndChanged()
 	QString uiMarkerTranscriptStr = "";
 	bool uiMarkerStopsPlayback = false;
 	bool uiMarkerStopsPlaybackEnabled = false;
+	QString uiMarkerSpeakerBriefId = "";
 
 	int markerInd = transcriberModel_->currentMarkerInd();
 	if (markerInd != -1)
@@ -285,6 +308,7 @@ void TranscriberMainWindow::transcriberModel_currentMarkerIndChanged()
 		uiMarkerTranscriptStr = marker.TranscripText;
 		uiMarkerStopsPlayback = marker.StopsPlayback;
 		uiMarkerStopsPlaybackEnabled = true;
+		uiMarkerSpeakerBriefId = QString::fromStdWString(marker.SpeakerBriefId);
 	}
 	else
 	{
@@ -312,6 +336,9 @@ void TranscriberMainWindow::transcriberModel_currentMarkerIndChanged()
 	ui->lineEditMarkerText->setText(uiMarkerTranscriptStr);
 	ui->checkBoxCurMarkerStopOnPlayback->setEnabled(uiMarkerStopsPlaybackEnabled);
 	ui->checkBoxCurMarkerStopOnPlayback->setChecked(uiMarkerStopsPlayback);
+
+	int comboSpeakerInd = ui->comboBoxSpeakerId->findData(QVariant::fromValue(uiMarkerSpeakerBriefId));
+	ui->comboBoxSpeakerId->setCurrentIndex(comboSpeakerInd);
 }
 
 void TranscriberMainWindow::transcriberModel_playingSampleIndChanged(long oldPlayingSampleInd)

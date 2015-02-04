@@ -274,7 +274,9 @@ private:
 	std::vector<DiagramSegment> diagramSegments_;
 public:
 
+	const PticaGovorun::SpeechAnnotation& speechAnnotation() const;
 	const std::vector<PticaGovorun::TimePointMarker>& frameIndMarkers() const;
+	void setCurrentMarkerSpeaker(const std::wstring& speakerBriefId);
 	
 	template <typename MarkerPred>
 	void transformMarkersIf(const std::vector<PticaGovorun::TimePointMarker>& markers, std::vector<MarkerRefToOrigin>& markersOfInterest, MarkerPred canSelectMarker);

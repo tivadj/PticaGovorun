@@ -142,6 +142,9 @@ struct TimePointMarker
 	// The language is set only when transcript text has been set.
 	SpeechLanguage Language = SpeechLanguage::NotSet;
 
+	// The speaker id or speaker's name.
+	std::wstring SpeakerBriefId;
+
 	// Determines if this marker stops the audio playback.
 	// by default: true for word-level markers and false for phone-level markers
 	// This property is not serializable.

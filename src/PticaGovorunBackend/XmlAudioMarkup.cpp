@@ -19,6 +19,10 @@ namespace PticaGovorun {
 
 namespace {
 	static const char* XmlDocName = "audioAnnotation";
+	static const char* AnnotHeaderName = "header";
+	static const char* HeaderSpeakerNodeName = "speaker";
+	static const char* HeaderSpeakerBriefIdName = "briefId";
+	static const char* HeaderSpeakerNameAttrName = "name";
 	static const char* MarkerName = "syncPoint";
 	static const char* MarkerIdName = "id";
 	static const char* MarkerSampleIndName = "sampleInd";
@@ -29,6 +33,7 @@ namespace {
 	static const char* MarkerLevelOfDetailName = "levelOfDetail";
 	static const char* MarkerLevelOfDetailWordName = "word";
 	static const char* MarkerLevelOfDetailPhoneName = "phone";
+	static const char* MarkerSpeakerBriefIdName = "speakerBriefId";
 }
 
 std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMarkupFilePathAbs, SpeechAnnotation& annot)
@@ -54,7 +59,26 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMa
 		QDomElement e = n.toElement();
 		if (e.isNull())
 			continue;
-		if (e.tagName() == MarkerName)
+		QString tagName = e.tagName();
+		if (tagName == AnnotHeaderName)
+		{
+			QDomNodeList headerChildList = n.childNodes();
+			for (int headInd = 0; headInd<headerChildList.count(); ++headInd)
+			{
+				QDomElement headChild = headerChildList.at(headInd).toElement();
+				QString headChildName = headChild.tagName();
+				if (headChildName == HeaderSpeakerNodeName)
+				{
+					QString briefId = headChild.attribute(HeaderSpeakerBriefIdName, "");
+					if (briefId.isEmpty())
+						return std::make_tuple(false, "Xml audio markup error: expected non empty Speaker.Id");
+					
+					QString speakerName = headChild.attribute(HeaderSpeakerNameAttrName, "");
+					annot.addSpeaker(briefId.toStdWString(), speakerName.toStdWString());
+				}
+			}
+		}
+		else if (tagName == MarkerName)
 		{
 			bool parseIntOp;
 			
@@ -83,6 +107,8 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMa
 			else if (langStr == MarkerLangRussian)
 				lang = SpeechLanguage::Russian;
 
+			QString speakerBriefIdStr = e.attribute(MarkerSpeakerBriefIdName, "");
+
 			//
 			PG_Assert(markerId != -1);
 
@@ -92,6 +118,7 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMa
 			syncPoint.TranscripText = transcripText;
 			syncPoint.LevelOfDetail = levelOfDetail;
 			syncPoint.Language = lang;
+			syncPoint.SpeakerBriefId = speakerBriefIdStr.toStdWString();
 
 			// UI specific
 			syncPoint.IsManual = true;
@@ -117,6 +144,19 @@ PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const SpeechAnnota
 
 	xmlWriter.writeStartDocument("1.0");
 	xmlWriter.writeStartElement(XmlDocName);
+
+	if (!annot.speakers().empty())
+	{
+		xmlWriter.writeStartElement(AnnotHeaderName);
+		for (const SpeakerFantom& speaker : annot.speakers())
+		{
+			xmlWriter.writeStartElement(HeaderSpeakerNodeName);
+			xmlWriter.writeAttribute(HeaderSpeakerBriefIdName, QString::fromStdWString(speaker.BriefId));
+			xmlWriter.writeAttribute(HeaderSpeakerNameAttrName, QString::fromStdWString(speaker.Name));
+			xmlWriter.writeEndElement(); // HeaderSpeakerNodeName
+		}
+		xmlWriter.writeEndElement(); // AnnotHeaderName
+	}
 	
 	for (const TimePointMarker& marker : annot.markers())
 	{
@@ -138,6 +178,12 @@ PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const SpeechAnnota
 		{
 			std::string langStr = speechLanguageToStr(marker.Language);
 			xmlWriter.writeAttribute(MarkerLanguageName, langStr.c_str());
+		}
+
+		if (!marker.SpeakerBriefId.empty())
+		{
+			QString spkStr = QString::fromStdWString(marker.SpeakerBriefId);
+			xmlWriter.writeAttribute(MarkerSpeakerBriefIdName, spkStr);
 		}
 
 		xmlWriter.writeEndElement(); // MarkerName

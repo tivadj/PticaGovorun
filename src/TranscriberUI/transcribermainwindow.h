@@ -40,6 +40,8 @@ private slots:
 	void transcriberModel_docOffsetXChanged();
 	void transcriberModel_lastMouseDocPosXChanged(float mouseDocPosX);
 	void UpdateCursorUI();
+	void UpdateSpeakerListUI();
+	void comboBoxSpeakerId_currentIndexChanged(int index);
 	void transcriberModel_cursorChanged(std::pair<long, long> oldCursor);
 	void transcriberModel_currentMarkerIndChanged();
 	void transcriberModel_playingSampleIndChanged(long oldPlayingSampleInd);

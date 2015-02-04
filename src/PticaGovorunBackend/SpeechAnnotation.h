@@ -13,11 +13,19 @@ namespace PticaGovorun
 		std::wstring Value;
 	};
 
+	// Represents a speaker which voice occur in current recording.
+	struct PG_EXPORTS SpeakerFantom
+	{
+		std::wstring BriefId;
+		std::wstring Name;
+	};
+
 	// Represents information associated with speech signal used for learning of speech recognizer.
 	class PG_EXPORTS SpeechAnnotation
 	{
 		friend PG_EXPORTS std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioFilePathAbs, SpeechAnnotation& speechAnnot);
 		std::vector<SpeechAnnotationParameter> parameters_;
+		std::vector<SpeakerFantom> speakers_;
 		std::vector<TimePointMarker> frameIndMarkers_; // stores markers of all level (word, phone)
 		std::hash_set<int> usedMarkerIds_; // stores ids of all markers; used to generate new free marker id
 	public:
@@ -52,6 +60,13 @@ namespace PticaGovorun
 		int markerIndByMarkerId(int markerId);
 
 		int getClosestMarkerInd(long frameInd, long* dist);
+
+		void addSpeaker(const std::wstring& speakerBriefId, const std::wstring& name);
+		const std::vector<SpeakerFantom>& speakers() const;
+		
+		// Finds the speaker who has spoken recently, starting from given marker and goes back.
+		// Returns Speaker.BriefId or empty string if the last speaker was not found.
+		const std::wstring inferRecentSpeaker(int markerInd) const;
 	};
 
 	// returns the closest segment which contains given frameInd. The segment is described by two indices in
