@@ -3,123 +3,123 @@
    <header>
       <speaker briefId="zakharevycho" name="Захаревич Олена"/>
       <speaker briefId="khorkindm" name="Хоркін Дмитро Миколайович"/>
-      <speaker briefId="verbychsoo" name="Вербич Святослав Олексійович"/>
+      <speaker briefId="verbychso" name="Вербич Святослав Олексійович"/>
    </header>
    <syncPoint id="42" sampleInd="2323651" levelOfDetail="phone" transcripText="speaker=Святослав Вербич"/>
    <syncPoint id="2" sampleInd="2359917" levelOfDetail="phone" transcripText="у колі мовознавчих дисциплін особливе місце посідає ономастика"/>
    <syncPoint id="7" sampleInd="2376571" levelOfDetail="phone" transcripText="music"/>
-   <syncPoint id="5" sampleInd="2451618" levelOfDetail="word" transcripText="або назвознавство наука що вивчає походження будову встановлення і функціонування різноманітних власних назв" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="5" sampleInd="2451618" levelOfDetail="word" transcripText="або назвознавство наука що вивчає походження будову встановлення і функціонування різноманітних власних назв" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="9" sampleInd="2610642" levelOfDetail="phone" transcripText="no 'v'"/>
    <syncPoint id="3" sampleInd="2611056" levelOfDetail="word"/>
-   <syncPoint id="419" sampleInd="2618200" levelOfDetail="word" transcripText="залежно від об'єкта ономастичних досліджень розрізняють такі підрозділи цієї назвознавчої науки" lang="uk" speakerBriefId="verbychsoo"/>
-   <syncPoint id="11" sampleInd="2744646" levelOfDetail="word" transcripText="антропоніміку яка вивчає власні особові назви топоніміку що досліджує власні географічні назви" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="419" sampleInd="2618200" levelOfDetail="word" transcripText="залежно від об'єкта ономастичних досліджень розрізняють такі підрозділи цієї назвознавчої науки" lang="uk" speakerBriefId="verbychso"/>
+   <syncPoint id="11" sampleInd="2744646" levelOfDetail="word" transcripText="антропоніміку яка вивчає власні особові назви топоніміку що досліджує власні географічні назви" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="6" sampleInd="2899255" levelOfDetail="word"/>
-   <syncPoint id="10" sampleInd="2902579" levelOfDetail="word" transcripText="етноніміку котра вивчає етнічні назви людей зооніміку яка досліджує клички тварин космоніміку що вивчає назви космічних об'єктів та інші" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="10" sampleInd="2902579" levelOfDetail="word" transcripText="етноніміку котра вивчає етнічні назви людей зооніміку яка досліджує клички тварин космоніміку що вивчає назви космічних об'єктів та інші" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="12" sampleInd="3149451" levelOfDetail="word"/>
    <syncPoint id="16" sampleInd="3149897" levelOfDetail="phone" transcripText="click"/>
-   <syncPoint id="22" sampleInd="3153949" levelOfDetail="word" transcripText="кожен із цих напрямів цікавий по-своєму" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="22" sampleInd="3153949" levelOfDetail="word" transcripText="кожен із цих напрямів цікавий по-своєму" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="4" sampleInd="3213765" levelOfDetail="word"/>
-   <syncPoint id="17" sampleInd="3217833" levelOfDetail="word" transcripText="особливу увагу с поміж інших класів онімної лексики привертають власні географічні назви чи топоніми" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="17" sampleInd="3217833" levelOfDetail="word" transcripText="особливу увагу с поміж інших класів онімної лексики привертають власні географічні назви чи топоніми" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="19" sampleInd="3366158" levelOfDetail="word"/>
    <syncPoint id="14" sampleInd="3367101" levelOfDetail="phone" transcripText="click"/>
-   <syncPoint id="31" sampleInd="3368953" levelOfDetail="word" transcripText="як от назви поселень водойм гір морів країв регіонів" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="31" sampleInd="3368953" levelOfDetail="word" transcripText="як от назви поселень водойм гір морів країв регіонів" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="33" sampleInd="3486270" levelOfDetail="word"/>
-   <syncPoint id="23" sampleInd="3491645" levelOfDetail="word" transcripText="особливість топоніміки в тому що вона крім суто мовних даних оперує ще й фактами з історії і географії" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="23" sampleInd="3491645" levelOfDetail="word" transcripText="особливість топоніміки в тому що вона крім суто мовних даних оперує ще й фактами з історії і географії" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="26" sampleInd="3661700" levelOfDetail="phone" transcripText="'ї'"/>
    <syncPoint id="30" sampleInd="3662146" levelOfDetail="word"/>
-   <syncPoint id="35" sampleInd="3665834" levelOfDetail="word" transcripText="це дуже важливо враховувати під час аналізу топонімії" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="35" sampleInd="3665834" levelOfDetail="word" transcripText="це дуже важливо враховувати під час аналізу топонімії" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="39" sampleInd="3764232" levelOfDetail="word"/>
-   <syncPoint id="34" sampleInd="3769408" levelOfDetail="word" transcripText="акцент лише на формальній структурі топоніма без належної уваги до особливостей місцевості" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="34" sampleInd="3769408" levelOfDetail="word" transcripText="акцент лише на формальній структурі топоніма без належної уваги до особливостей місцевості" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="389" sampleInd="3908935" levelOfDetail="word"/>
-   <syncPoint id="27" sampleInd="3911730" levelOfDetail="word" transcripText="а також історичних умов у яких виникла та чи інша географічна назва" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="27" sampleInd="3911730" levelOfDetail="word" transcripText="а також історичних умов у яких виникла та чи інша географічна назва" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="37" sampleInd="3998271" levelOfDetail="word"/>
-   <syncPoint id="51" sampleInd="4001016" levelOfDetail="word" transcripText="може зіграти з дослідником лихий жарт спрямувавши його на хибний шлях пошуку істиного значення топоніма наприклад назву райцентру на хмельниччині полонне" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="51" sampleInd="4001016" levelOfDetail="word" transcripText="може зіграти з дослідником лихий жарт спрямувавши його на хибний шлях пошуку істиного значення топоніма наприклад назву райцентру на хмельниччині полонне" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="44" sampleInd="4219361" levelOfDetail="word"/>
-   <syncPoint id="20" sampleInd="4223975" levelOfDetail="word" transcripText="один місцевий краєзнавець пояснює так" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="20" sampleInd="4223975" levelOfDetail="word" transcripText="один місцевий краєзнавець пояснює так" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="54" sampleInd="4280285" levelOfDetail="word"/>
-   <syncPoint id="61" sampleInd="4285792" levelOfDetail="word" transcripText="місто одержало назву від слова полонити" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="61" sampleInd="4285792" levelOfDetail="word" transcripText="місто одержало назву від слова полонити" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="47" sampleInd="4349329" levelOfDetail="word"/>
-   <syncPoint id="65" sampleInd="4352604" levelOfDetail="word" transcripText="тобто брати в полон очевидно тому" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="65" sampleInd="4352604" levelOfDetail="word" transcripText="тобто брати в полон очевидно тому" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="53" sampleInd="4406797" levelOfDetail="word"/>
-   <syncPoint id="58" sampleInd="4411758" levelOfDetail="word" transcripText="що в цьому місці слов'ян брали в полон печеніги чи хозари" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="58" sampleInd="4411758" levelOfDetail="word" transcripText="що в цьому місці слов'ян брали в полон печеніги чи хозари" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="41" sampleInd="4508106" levelOfDetail="word"/>
-   <syncPoint id="69" sampleInd="4512802" levelOfDetail="word" transcripText="таке пояснення назви полонне не наукове" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="69" sampleInd="4512802" levelOfDetail="word" transcripText="таке пояснення назви полонне не наукове" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="410" sampleInd="4575116" levelOfDetail="word"/>
-   <syncPoint id="71" sampleInd="4579101" levelOfDetail="word" transcripText="свої висновки автор вибудував на основі випадкового збігу кореня полон із загально відомою лексемою полон" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="71" sampleInd="4579101" levelOfDetail="word" transcripText="свої висновки автор вибудував на основі випадкового збігу кореня полон із загально відомою лексемою полон" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="40" sampleInd="4744790" levelOfDetail="word"/>
-   <syncPoint id="63" sampleInd="4750115" levelOfDetail="word" transcripText="насправді ж ця назва походить від прикметника полонний в основі якого місцевий народний географічний термін полонь чисте вільне для пасовища або сінокосу місце" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="63" sampleInd="4750115" levelOfDetail="word" transcripText="насправді ж ця назва походить від прикметника полонний в основі якого місцевий народний географічний термін полонь чисте вільне для пасовища або сінокосу місце" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="55" sampleInd="5016022" levelOfDetail="word"/>
-   <syncPoint id="18" sampleInd="5021512" levelOfDetail="word" transcripText="якщо ж ним знехтувати то назву буде пояснено помилково" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="18" sampleInd="5021512" levelOfDetail="word" transcripText="якщо ж ним знехтувати то назву буде пояснено помилково" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="75" sampleInd="5122011" levelOfDetail="word"/>
-   <syncPoint id="50" sampleInd="5125632" levelOfDetail="word" transcripText="такі псевдонаукові етюди опираються на випадкові зіставлення структури назви" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="50" sampleInd="5125632" levelOfDetail="word" transcripText="такі псевдонаукові етюди опираються на випадкові зіставлення структури назви" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="52" sampleInd="5250788" levelOfDetail="word"/>
-   <syncPoint id="66" sampleInd="5256113" levelOfDetail="word" transcripText="з якимось співзвучним словом" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="66" sampleInd="5256113" levelOfDetail="word" transcripText="з якимось співзвучним словом" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="73" sampleInd="5305775" levelOfDetail="word"/>
-   <syncPoint id="90" sampleInd="5310571" levelOfDetail="word" transcripText="скажімо" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="90" sampleInd="5310571" levelOfDetail="word" transcripText="скажімо" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="43" sampleInd="5323785" levelOfDetail="word"/>
-   <syncPoint id="25" sampleInd="5331094" levelOfDetail="word" transcripText="назву села загнітків на вінниччині один автор тлумачить так" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="25" sampleInd="5331094" levelOfDetail="word" transcripText="назву села загнітків на вінниччині один автор тлумачить так" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="101" sampleInd="5432618" levelOfDetail="word"/>
-   <syncPoint id="83" sampleInd="5439167" levelOfDetail="word" transcripText="у цьому селі колись оселився козацький отаман нитка" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="83" sampleInd="5439167" levelOfDetail="word" transcripText="у цьому селі колись оселився козацький отаман нитка" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="78" sampleInd="5526518" levelOfDetail="word"/>
-   <syncPoint id="72" sampleInd="5531099" levelOfDetail="word" transcripText="зі своїм загоном" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="72" sampleInd="5531099" levelOfDetail="word" transcripText="зі своїм загоном" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="108" sampleInd="5560172" levelOfDetail="word"/>
-   <syncPoint id="109" sampleInd="5569714" levelOfDetail="word" transcripText="тому загнітків" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="109" sampleInd="5569714" levelOfDetail="word" transcripText="тому загнітків" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="59" sampleInd="5596538" levelOfDetail="word"/>
-   <syncPoint id="67" sampleInd="5603070" levelOfDetail="word" transcripText="це первісно начебто місце осідку загону нитки" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="67" sampleInd="5603070" levelOfDetail="word" transcripText="це первісно начебто місце осідку загону нитки" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="74" sampleInd="5692108" levelOfDetail="word"/>
-   <syncPoint id="88" sampleInd="5699996" levelOfDetail="word" transcripText="цю версію сміливо можемо назвати помилковою для того щоб з'ясувати походження назви загнітків" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="88" sampleInd="5699996" levelOfDetail="word" transcripText="цю версію сміливо можемо назвати помилковою для того щоб з'ясувати походження назви загнітків" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="98" sampleInd="5842798" levelOfDetail="word"/>
-   <syncPoint id="80" sampleInd="5850339" levelOfDetail="word" transcripText="її потрібно розглянути в ряді структурно споріднених назв" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="80" sampleInd="5850339" levelOfDetail="word" transcripText="її потрібно розглянути в ряді структурно споріднених назв" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="102" sampleInd="5927040" levelOfDetail="word"/>
-   <syncPoint id="117" sampleInd="5934912" levelOfDetail="word" transcripText="на зразок іванів козубів матіїв" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="117" sampleInd="5934912" levelOfDetail="word" transcripText="на зразок іванів козубів матіїв" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="29" sampleInd="5998978" levelOfDetail="word"/>
-   <syncPoint id="91" sampleInd="6006238" levelOfDetail="word" transcripText="що відразу ж підкаже нам правильний напрям пояснення топоніма" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="91" sampleInd="6006238" levelOfDetail="word" transcripText="що відразу ж підкаже нам правильний напрям пояснення топоніма" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="95" sampleInd="6090298" levelOfDetail="word"/>
-   <syncPoint id="24" sampleInd="6096863" levelOfDetail="word" transcripText="наведені назви творилися за допомогою присвійного суфікса ів від імені або прізвиська засновника чи власника певного поселення" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="24" sampleInd="6096863" levelOfDetail="word" transcripText="наведені назви творилися за допомогою присвійного суфікса ів від імені або прізвиська засновника чи власника певного поселення" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="116" sampleInd="6303334" levelOfDetail="phone" transcripText="'ня'"/>
    <syncPoint id="85" sampleInd="6303863" levelOfDetail="word"/>
-   <syncPoint id="121" sampleInd="6309304" levelOfDetail="word" transcripText="в основі назви села загнітків особове ім'я загнітко" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="121" sampleInd="6309304" levelOfDetail="word" transcripText="в основі назви села загнітків особове ім'я загнітко" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="87" sampleInd="6392124" levelOfDetail="word"/>
-   <syncPoint id="68" sampleInd="6395927" levelOfDetail="word" transcripText="на реальність побутування якого в минулому вказує сучасне українське прізвище" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="68" sampleInd="6395927" levelOfDetail="word" transcripText="на реальність побутування якого в минулому вказує сучасне українське прізвище" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="92" sampleInd="6458836" levelOfDetail="phone" transcripText="has 'v'?"/>
    <syncPoint id="60" sampleInd="6518189" levelOfDetail="word"/>
-   <syncPoint id="133" sampleInd="6523084" levelOfDetail="word" transcripText="загнітко" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="133" sampleInd="6523084" levelOfDetail="word" transcripText="загнітко" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="135" sampleInd="6539721" levelOfDetail="word"/>
-   <syncPoint id="132" sampleInd="6546402" levelOfDetail="word" transcripText="для об'єктивного пояснення власних географічних назв важливо докладно вивчити мовну історію регіону порівняти аналізовану назву зі структурно подібними топонімами в межах інших регіонів країни" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="132" sampleInd="6546402" levelOfDetail="word" transcripText="для об'єктивного пояснення власних географічних назв важливо докладно вивчити мовну історію регіону порівняти аналізовану назву зі структурно подібними топонімами в межах інших регіонів країни" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="149" sampleInd="6853685" levelOfDetail="word"/>
-   <syncPoint id="140" sampleInd="6855620" levelOfDetail="word" transcripText="а також суміжних і несуміжних земель мешканці яких у недалекому чи віддаленому минулому могли перебувати в тій місцевості" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="140" sampleInd="6855620" levelOfDetail="word" transcripText="а також суміжних і несуміжних земель мешканці яких у недалекому чи віддаленому минулому могли перебувати в тій місцевості" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="13" sampleInd="7045686" levelOfDetail="word"/>
-   <syncPoint id="154" sampleInd="7050432" levelOfDetail="word" transcripText="однак таке порівняння не має бути випадковим" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="154" sampleInd="7050432" levelOfDetail="word" transcripText="однак таке порівняння не має бути випадковим" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="77" sampleInd="7124900" levelOfDetail="word"/>
-   <syncPoint id="169" sampleInd="7129465" levelOfDetail="word" transcripText="коли зіставляють неспоріднені форми" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="169" sampleInd="7129465" levelOfDetail="word" transcripText="коли зіставляють неспоріднені форми" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="110" sampleInd="7180847" levelOfDetail="word"/>
-   <syncPoint id="160" sampleInd="7184898" levelOfDetail="word" transcripText="так один вітчизняний мовознавець" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="160" sampleInd="7184898" levelOfDetail="word" transcripText="так один вітчизняний мовознавець" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="124" sampleInd="7234395" levelOfDetail="word"/>
-   <syncPoint id="106" sampleInd="7237223" levelOfDetail="word" transcripText="нехтуючи принципами топонімічних досліджень чимало українських топонімів пояснює на основі лише випадкових звукових збігів із неслов'янськими коренями" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="106" sampleInd="7237223" levelOfDetail="word" transcripText="нехтуючи принципами топонімічних досліджень чимало українських топонімів пояснює на основі лише випадкових звукових збігів із неслов'янськими коренями" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="81" sampleInd="7469310" levelOfDetail="word"/>
-   <syncPoint id="162" sampleInd="7472436" levelOfDetail="word" transcripText="то як арабські то як кельтські то як готські та інші чужомовні" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="162" sampleInd="7472436" levelOfDetail="word" transcripText="то як арабські то як кельтські то як готські та інші чужомовні" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="57" sampleInd="7583105" levelOfDetail="word"/>
-   <syncPoint id="152" sampleInd="7589025" levelOfDetail="word" transcripText="наприклад назви низки українських поселень грабове ясеневе цей автор пов'язує з арабами грабове і ясами ясеневе" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="152" sampleInd="7589025" levelOfDetail="word" transcripText="наприклад назви низки українських поселень грабове ясеневе цей автор пов'язує з арабами грабове і ясами ясеневе" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="161" sampleInd="7812265" levelOfDetail="word"/>
-   <syncPoint id="177" sampleInd="7816631" levelOfDetail="word" transcripText="нагадаємо що яси це аланські племена які на початку нашої ери" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="177" sampleInd="7816631" levelOfDetail="word" transcripText="нагадаємо що яси це аланські племена які на початку нашої ери" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="189" sampleInd="7927846" levelOfDetail="word"/>
-   <syncPoint id="184" sampleInd="7934345" levelOfDetail="word" transcripText="проживали між нижнім дніпром і південним уралом" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="184" sampleInd="7934345" levelOfDetail="word" transcripText="проживали між нижнім дніпром і південним уралом" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="134" sampleInd="8010335" levelOfDetail="word"/>
-   <syncPoint id="32" sampleInd="8019811" levelOfDetail="word" transcripText="натомість зазначені топоніми мають прозоре пояснення" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="32" sampleInd="8019811" levelOfDetail="word" transcripText="натомість зазначені топоніми мають прозоре пояснення" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="778" sampleInd="8104880" levelOfDetail="word"/>
-   <syncPoint id="36" sampleInd="8108832" levelOfDetail="word" transcripText="їх треба розглядати в колі таких споріднених назви як березове вільхове" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="36" sampleInd="8108832" levelOfDetail="word" transcripText="їх треба розглядати в колі таких споріднених назви як березове вільхове" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="188" sampleInd="8233938" levelOfDetail="word"/>
-   <syncPoint id="199" sampleInd="8238850" levelOfDetail="word" transcripText="дубове" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="199" sampleInd="8238850" levelOfDetail="word" transcripText="дубове" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="187" sampleInd="8254990" levelOfDetail="word"/>
-   <syncPoint id="38" sampleInd="8269345" levelOfDetail="word" transcripText="в основі цих топонімів прикметники березовий" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="38" sampleInd="8269345" levelOfDetail="word" transcripText="в основі цих топонімів прикметники березовий" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="103" sampleInd="8345484" levelOfDetail="word"/>
-   <syncPoint id="209" sampleInd="8349998" levelOfDetail="word" transcripText="вільховий" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="209" sampleInd="8349998" levelOfDetail="word" transcripText="вільховий" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="153" sampleInd="8367760" levelOfDetail="word"/>
-   <syncPoint id="183" sampleInd="8371712" levelOfDetail="word" transcripText="дубовий" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="183" sampleInd="8371712" levelOfDetail="word" transcripText="дубовий" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="196" sampleInd="8389143" levelOfDetail="word"/>
-   <syncPoint id="143" sampleInd="8392765" levelOfDetail="word" transcripText="грабовий" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="143" sampleInd="8392765" levelOfDetail="word" transcripText="грабовий" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="193" sampleInd="8410691" levelOfDetail="word"/>
-   <syncPoint id="120" sampleInd="8416761" levelOfDetail="word" transcripText="ясеневий що характеризують місцевість де зафіксовано певну назву за характерною ознакою її рослинності" lang="uk" speakerBriefId="verbychsoo"/>
+   <syncPoint id="120" sampleInd="8416761" levelOfDetail="word" transcripText="ясеневий що характеризують місцевість де зафіксовано певну назву за характерною ознакою її рослинності" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="212" sampleInd="8594340" levelOfDetail="word"/>
    <syncPoint id="215" sampleInd="8595762" levelOfDetail="phone" transcripText="music"/>
    <syncPoint id="99" sampleInd="8822574" levelOfDetail="phone" transcripText="speaker=Святослав Вербич"/>
