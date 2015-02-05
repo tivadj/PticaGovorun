@@ -55,6 +55,20 @@ namespace PticaGovorun
 		return speakers_;
 	}
 
+	bool SpeechAnnotation::findSpeaker(const std::wstring& speakerBriefId, SpeakerFantom* speaker) const
+	{
+		for(const SpeakerFantom& s : speakers_)
+		{
+			if (s.BriefId == speakerBriefId)
+			{
+				if (speaker != nullptr)
+					*speaker = s;
+				return true;
+			}
+		}
+		return false;
+	}
+
 	const std::wstring SpeechAnnotation::inferRecentSpeaker(int markerInd) const
 	{
 		if (markerInd < 0 || markerInd >= frameIndMarkers_.size())
@@ -99,8 +113,11 @@ namespace PticaGovorun
 				{
 					if (marker.Language == PticaGovorun::SpeechLanguage::NotSet)
 						msgValidate << "Word marker[id=" << marker.Id << "] with text has empty language" << std::endl;
+					
 					if (marker.SpeakerBriefId.empty())
 						msgValidate << "Word marker[id=" << marker.Id << "] with text has empty speakerBriefId" << std::endl;
+					else if (!findSpeaker(marker.SpeakerBriefId))
+						msgValidate << "Word marker[id=" << marker.Id << "] with text has undefined speakerBriefId" << std::endl;
 				}
 			}
 		}

@@ -63,6 +63,8 @@ namespace PticaGovorun
 
 		void addSpeaker(const std::wstring& speakerBriefId, const std::wstring& name);
 		const std::vector<SpeakerFantom>& speakers() const;
+
+		bool findSpeaker(const std::wstring& speakerBriefId, SpeakerFantom* speaker = nullptr) const;
 		
 		// Finds the speaker who has spoken recently, starting from given marker and goes back.
 		// Returns Speaker.BriefId or empty string if the last speaker was not found.
