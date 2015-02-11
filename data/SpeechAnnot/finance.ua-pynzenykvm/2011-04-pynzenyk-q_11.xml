@@ -3,7 +3,7 @@
    <header>
       <speaker briefId="pynzenykvm" name="Пинзеник Віктор Михайлович"/>
    </header>
-   <syncPoint id="41" sampleInd="2050" levelOfDetail="word" transcripText="якшо уважно" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="41" sampleInd="2249" levelOfDetail="word" transcripText="якшо уважно" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="456" sampleInd="3886" levelOfDetail="phone" transcripText="a"/>
    <syncPoint id="212" sampleInd="4382" levelOfDetail="phone" transcripText="k"/>
    <syncPoint id="450" sampleInd="5225" levelOfDetail="phone" transcripText="sh"/>
@@ -14,30 +14,35 @@
    <syncPoint id="415" sampleInd="13411" levelOfDetail="phone"/>
    <syncPoint id="425" sampleInd="16057" levelOfDetail="phone" transcripText="o"/>
    <syncPoint id="192" sampleInd="18273" levelOfDetail="word"/>
-   <syncPoint id="104" sampleInd="19911" levelOfDetail="word" transcripText="подивитись" lang="uk" speakerBriefId="pynzenykvm"/>
-   <syncPoint id="67" sampleInd="34662" levelOfDetail="word" transcripText="е на а" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="104" sampleInd="20671" levelOfDetail="word" transcripText="подивитись" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="268" sampleInd="33058" levelOfDetail="word"/>
+   <syncPoint id="67" sampleInd="34662" levelOfDetail="phone" transcripText="е на а" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="71" sampleInd="47231" levelOfDetail="phone"/>
    <syncPoint id="228" sampleInd="48421" levelOfDetail="word" transcripText="inhale" lang="uk" speakerBriefId="pynzenykvm"/>
-   <syncPoint id="473" sampleInd="65554" levelOfDetail="word" transcripText="е" lang="uk" speakerBriefId="pynzenykvm"/>
-   <syncPoint id="334" sampleInd="73707" levelOfDetail="word" transcripText="ті питання які ми піднімались" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="473" sampleInd="65554" levelOfDetail="phone" transcripText="е" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="5" sampleInd="70912" levelOfDetail="phone"/>
+   <syncPoint id="334" sampleInd="74071" levelOfDetail="word" transcripText="ті питання які ми піднімались" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="372" sampleInd="77130" levelOfDetail="phone" transcripText="питання"/>
    <syncPoint id="100" sampleInd="87582" levelOfDetail="phone" transcripText="які ми піднімались"/>
-   <syncPoint id="369" sampleInd="111198" levelOfDetail="word"/>
-   <syncPoint id="124" sampleInd="123981" levelOfDetail="word" transcripText="то відразу зникає проблема" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="433" sampleInd="108221" levelOfDetail="phone" transcripText="'s' bounds?"/>
+   <syncPoint id="369" sampleInd="109908" levelOfDetail="word"/>
+   <syncPoint id="124" sampleInd="127752" levelOfDetail="word" transcripText="то відразу зникає проблема" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="278" sampleInd="138648" levelOfDetail="phone"/>
    <syncPoint id="158" sampleInd="139708" levelOfDetail="phone" transcripText="зникає проблема"/>
    <syncPoint id="199" sampleInd="150507" levelOfDetail="phone" transcripText="проблема"/>
-   <syncPoint id="66" sampleInd="163622" levelOfDetail="word"/>
-   <syncPoint id="162" sampleInd="164845" levelOfDetail="word" transcripText="наскільки важко прогнозувати е" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="66" sampleInd="162629" levelOfDetail="word"/>
+   <syncPoint id="162" sampleInd="166053" levelOfDetail="word" transcripText="наскільки важко прогнозувати е" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="161" sampleInd="182259" levelOfDetail="phone" transcripText="важко"/>
    <syncPoint id="260" sampleInd="191107" levelOfDetail="phone" transcripText="прогнозувати"/>
    <syncPoint id="133" sampleInd="203080" levelOfDetail="phone"/>
-   <syncPoint id="64" sampleInd="212788" levelOfDetail="word"/>
+   <syncPoint id="64" sampleInd="209811" levelOfDetail="word"/>
    <syncPoint id="448" sampleInd="237825" levelOfDetail="phone" transcripText="fill"/>
-   <syncPoint id="105" sampleInd="278689" levelOfDetail="word" transcripText="наступні роки" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="105" sampleInd="278888" levelOfDetail="word" transcripText="наступні роки" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="516" sampleInd="295988" levelOfDetail="phone" transcripText="'y'?"/>
    <syncPoint id="145" sampleInd="296368" levelOfDetail="word"/>
-   <syncPoint id="81" sampleInd="317205" levelOfDetail="word" transcripText="и дуже просте питання" lang="uk" speakerBriefId="pynzenykvm"/>
-   <syncPoint id="27" sampleInd="343053" levelOfDetail="word"/>
-   <syncPoint id="361" sampleInd="361044" levelOfDetail="word" transcripText="збирається людина яка вживає алкоголь зупинити чи ні" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="81" sampleInd="317751" levelOfDetail="word" transcripText="дуже просте питання" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="27" sampleInd="340225" levelOfDetail="word"/>
+   <syncPoint id="361" sampleInd="360765" levelOfDetail="word" transcripText="збирається людина яка вживає алкоголь зупинити чи ні" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="91" sampleInd="380493" levelOfDetail="phone" transcripText="людина яка вживає алкоголь"/>
    <syncPoint id="154" sampleInd="389937" levelOfDetail="phone" transcripText="я"/>
    <syncPoint id="184" sampleInd="391508" levelOfDetail="phone" transcripText="к"/>
@@ -47,48 +52,50 @@
    <syncPoint id="283" sampleInd="395229" levelOfDetail="phone" transcripText="иває"/>
    <syncPoint id="233" sampleInd="403515" levelOfDetail="phone"/>
    <syncPoint id="195" sampleInd="410062" levelOfDetail="phone" transcripText="зупинити чи ні"/>
-   <syncPoint id="342" sampleInd="431891" levelOfDetail="word"/>
-   <syncPoint id="236" sampleInd="486729" levelOfDetail="word" transcripText="тобто" lang="uk" speakerBriefId="pynzenykvm"/>
-   <syncPoint id="391" sampleInd="499019" levelOfDetail="word"/>
-   <syncPoint id="204" sampleInd="519095" levelOfDetail="word" transcripText="збирається перестати жити в борг" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="342" sampleInd="427891" levelOfDetail="word"/>
+   <syncPoint id="236" sampleInd="488600" levelOfDetail="word" transcripText="тобто" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="391" sampleInd="496472" levelOfDetail="word"/>
+   <syncPoint id="204" sampleInd="519095" levelOfDetail="word" transcripText="збирається перестати жити в борх" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="193" sampleInd="533334" levelOfDetail="phone" transcripText="перестати"/>
    <syncPoint id="302" sampleInd="555261" levelOfDetail="phone" transcripText="в борг"/>
-   <syncPoint id="153" sampleInd="571668" levelOfDetail="word"/>
+   <syncPoint id="505" sampleInd="569650" levelOfDetail="phone" transcripText="'kh'"/>
+   <syncPoint id="153" sampleInd="570725" levelOfDetail="word"/>
    <syncPoint id="292" sampleInd="607141" levelOfDetail="word" transcripText="якшо б" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="382" sampleInd="617807" levelOfDetail="word"/>
    <syncPoint id="221" sampleInd="625712" levelOfDetail="word" transcripText="я бачу наприклад чіткі наміри е" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="316" sampleInd="644697" levelOfDetail="phone" transcripText="чіткі наміри"/>
-   <syncPoint id="118" sampleInd="668032" levelOfDetail="word"/>
-   <syncPoint id="108" sampleInd="695153" levelOfDetail="word" transcripText="е е &lt;unk&gt;" lang="uk" speakerBriefId="pynzenykvm"/>
-   <syncPoint id="295" sampleInd="722622" levelOfDetail="word" transcripText="і чітку дорогу" lang="uk" speakerBriefId="pynzenykvm"/>
-   <syncPoint id="42" sampleInd="740416" levelOfDetail="word"/>
-   <syncPoint id="247" sampleInd="741326" levelOfDetail="word" transcripText="чіткі послідовні кроки" lang="uk" speakerBriefId="pynzenykvm"/>
-   <syncPoint id="126" sampleInd="771457" levelOfDetail="word"/>
+   <syncPoint id="118" sampleInd="663600" levelOfDetail="word"/>
+   <syncPoint id="108" sampleInd="695153" levelOfDetail="phone" transcripText="е е &lt;unk&gt;" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="295" sampleInd="722622" levelOfDetail="word" transcripText="і чітку дорогу чіткі послідовні кроки" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="42" sampleInd="740416" levelOfDetail="phone"/>
+   <syncPoint id="247" sampleInd="741326" levelOfDetail="phone" transcripText="чіткі послідовні кроки" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="126" sampleInd="770052" levelOfDetail="word"/>
    <syncPoint id="371" sampleInd="785150" levelOfDetail="word" transcripText="абсолютно очевидно можно спокійно говорити про курс" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="338" sampleInd="803408" levelOfDetail="phone" transcripText="можно спокійно"/>
    <syncPoint id="424" sampleInd="805855" levelOfDetail="phone"/>
    <syncPoint id="335" sampleInd="809676" levelOfDetail="phone"/>
    <syncPoint id="269" sampleInd="818407" levelOfDetail="phone" transcripText="говорити про курс"/>
+   <syncPoint id="363" sampleInd="834912" levelOfDetail="phone" transcripText="'s'"/>
    <syncPoint id="312" sampleInd="835921" levelOfDetail="word"/>
-   <syncPoint id="365" sampleInd="897357" levelOfDetail="word" transcripText="а а я був спокійний за курс навіть цього року" lang="uk" speakerBriefId="pynzenykvm"/>
-   <syncPoint id="299" sampleInd="902548" levelOfDetail="phone" transcripText="я був спокійний за курс навіть цього року"/>
+   <syncPoint id="365" sampleInd="903294" levelOfDetail="word" transcripText="я був спокійний за курс навіть цього(1) року" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="235" sampleInd="918822" levelOfDetail="phone" transcripText="за курс навіть цього року"/>
-   <syncPoint id="95" sampleInd="943596" levelOfDetail="word"/>
+   <syncPoint id="95" sampleInd="942753" levelOfDetail="word"/>
    <syncPoint id="294" sampleInd="945018" levelOfDetail="word" transcripText="за цей рік я пробував робити" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="303" sampleInd="955667" levelOfDetail="phone" transcripText="я пробував робити"/>
-   <syncPoint id="211" sampleInd="973149" levelOfDetail="word" transcripText="е е" lang="uk" speakerBriefId="pynzenykvm"/>
-   <syncPoint id="122" sampleInd="981649" levelOfDetail="word" transcripText="свої оцінки що курс буде близько триматись" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="211" sampleInd="973149" levelOfDetail="word" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="122" sampleInd="981831" levelOfDetail="word" transcripText="свої оцінки шо курс буде блисько триматись" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="333" sampleInd="994629" levelOfDetail="phone" transcripText="що курс буде"/>
    <syncPoint id="73" sampleInd="1006007" levelOfDetail="phone" transcripText="близько триматись"/>
-   <syncPoint id="341" sampleInd="1027805" levelOfDetail="word" transcripText="е е близько цього рівня" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="341" sampleInd="1027805" levelOfDetail="word" transcripText="е блиско цього(1) рівня" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="453" sampleInd="1032816" levelOfDetail="phone" transcripText="близько цього рівня"/>
    <syncPoint id="111" sampleInd="1054430" levelOfDetail="word"/>
-   <syncPoint id="253" sampleInd="1079104" levelOfDetail="word" transcripText="але зарас" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="253" sampleInd="1079667" levelOfDetail="word" transcripText="але зарас" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="68" sampleInd="1094649" levelOfDetail="word"/>
-   <syncPoint id="347" sampleInd="1107301" levelOfDetail="word" transcripText="е е зупинка програми е е з валютним фондом" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="380" sampleInd="1108128" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="347" sampleInd="1108343" levelOfDetail="word" transcripText="е зупинка програми е з валютним фондом" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="44" sampleInd="1133148" levelOfDetail="phone" transcripText="е е"/>
    <syncPoint id="262" sampleInd="1135266" levelOfDetail="phone" transcripText="з валютним фондом"/>
-   <syncPoint id="357" sampleInd="1157393" levelOfDetail="word"/>
+   <syncPoint id="357" sampleInd="1156186" levelOfDetail="word"/>
    <syncPoint id="37" sampleInd="1181736" levelOfDetail="word" transcripText="нy хоча юридично е" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="59" sampleInd="1202838" levelOfDetail="word"/>
    <syncPoint id="323" sampleInd="1205765" levelOfDetail="word" transcripText="зупинки ще нема" lang="uk" speakerBriefId="pynzenykvm"/>
