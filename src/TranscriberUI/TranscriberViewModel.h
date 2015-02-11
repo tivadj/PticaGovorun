@@ -16,6 +16,10 @@
 #include "SpeechAnnotation.h"
 #include "SpeechProcessing.h"
 #include "AudioMarkupNavigator.h"
+#include "PhoneticDictionaryViewModel.h"
+
+namespace PticaGovorun
+{
 
 // Specifies which frame to choose as a starting one when playing an audio segment between two markers.
 enum class SegmentStartFrameToPlayChoice
@@ -145,6 +149,8 @@ public:
 
 	void loadAudioMarkupFromXml();
 	void saveAudioMarkupToXml();
+
+	void validateAnnotationStructure();
 
 	void saveCurrentRangeAsWavRequest();
 
@@ -348,6 +354,13 @@ public:
 private:
 	std::shared_ptr<AudioMarkupNavigator> audioMarkupNavigator_;
 
+public:
+	// phonetic dictionary
+	void setPhoneticDictViewModel(std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> phoneticDictViewModel);
+	std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> phoneticDictViewModel();
+private:
+	std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> phoneticDictViewModel_;
+
 private:
 	std::vector<short> audioSamples_;
 	float audioFrameRate_; // frame (sample) rate of current audio
@@ -398,4 +411,5 @@ public:
 	float scale_;
 };
 
+}
 #endif // TRANSCRIBERVIEWMODEL_H

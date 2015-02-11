@@ -12,6 +12,7 @@
 #include <QDateTime>
 #include <QTextCodec>
 #include <QSettings>
+#include <QStringList>
 
 #include "WavUtils.h"
 #include "TranscriberViewModel.h"
@@ -20,6 +21,8 @@
 //#include "algos_amp.cpp"
 #include "InteropPython.h"
 #include "SpeechProcessing.h"
+#include "PhoneticService.h"
+#include "PresentationHelpers.h"
 
 #include <samplerate.h>
 
@@ -34,6 +37,9 @@
 #include "matrix.h" // mxArray, mxCreateLogicalArray
 #include "PticaGovorunInteropMatlab.h"
 #endif
+
+namespace PticaGovorun
+{
 
 const char* IniFileName = "TranscriberUI.ini"; // where to store settings
 const char* WavFilePath = "WavFilePath"; // last opened wav file path
@@ -415,7 +421,26 @@ void TranscriberViewModel::soundPlayerPlayCurrentSegment(SegmentStartFrameToPlay
 	// determine the frameInd to which to play audio
 	long curSegBeg;
 	long curSegEnd;
-	std::tie(curSegBeg, curSegEnd) = getSampleRangeToPlay(curFrameInd, startFrameChoice);
+	int leftMarkerind = -1;
+	std::tie(curSegBeg, curSegEnd) = getSampleRangeToPlay(curFrameInd, startFrameChoice, &leftMarkerind);
+
+	// validate current semgment
+	if (leftMarkerind != -1)
+	{
+		const TimePointMarker& marker = speechAnnot_.marker(leftMarkerind);
+		const auto& text = marker.TranscripText;
+		if (!text.isEmpty() && marker.Language == SpeechLanguage::Ukrainian)
+		{
+			QStringList validResult;
+			phoneticDictViewModel_->validateSegmentTranscription(marker.TranscripText, validResult);
+			if (!validResult.isEmpty())
+			{
+				QString msg = validResult.join('\n');
+				emit nextNotification(formatLogLineWithTime(msg));
+			}
+		}
+	}
+
 
 	soundPlayerPlay(audioSamples_.data(), curSegBeg, curSegEnd, true);
 }
@@ -525,20 +550,55 @@ void TranscriberViewModel::loadAudioMarkupFromXml()
 
 void TranscriberViewModel::saveAudioMarkupToXml()
 {
+	QString audioMarkupPathAbs = audioMarkupFilePathAbs();
+	
+	PticaGovorun::saveAudioMarkupToXml(speechAnnot_, audioMarkupPathAbs.toStdWString());
+	
+	emit nextNotification(formatLogLineWithTime("Saved xml markup."));
+}
+
+void TranscriberViewModel::validateAnnotationStructure()
+{
+	// validate markers structure
+
 	std::stringstream msgValidate;
 	speechAnnot_.validateMarkers(msgValidate);
 	if (!msgValidate.str().empty())
 		emit nextNotification(QString::fromStdString(msgValidate.str()));
 
-	QString audioMarkupPathAbs = audioMarkupFilePathAbs();
-	
-	PticaGovorun::saveAudioMarkupToXml(speechAnnot_, audioMarkupPathAbs.toStdWString());
-	
-	QString msg = QString("[%1]: Saved xml markup.").arg(QTime::currentTime().toString("hh:mm:ss"));
-	emit nextNotification(msg);
+	// validate that all pronId of entire transcript text are in the phonetic dictionary
+
+	std::vector<std::pair<const PticaGovorun::TimePointMarker*, const PticaGovorun::TimePointMarker*>> segments;
+	collectAnnotatedSegments(speechAnnot_.markers(), segments);
+	QStringList validResult;
+	for (const std::pair<const PticaGovorun::TimePointMarker*, const PticaGovorun::TimePointMarker*>& seg : segments)
+	{
+		if (seg.first->Language == SpeechLanguage::Ukrainian)
+		{
+			int sizeBefore = validResult.size();
+			phoneticDictViewModel_->validateSegmentTranscription(seg.first->TranscripText, validResult);
+			
+			int sizeAfter = validResult.size();
+			int newCount = sizeAfter - sizeBefore;
+
+			// update last few messages with info about marker
+			QString markerInfo = QString(" marker[id=%1]").arg(seg.first->Id);
+			for (int i = 0; i < newCount; ++i)
+				validResult[validResult.size() - 1 - i].append(markerInfo);
+		}
+	}
+	QString msg;
+	if (validResult.isEmpty())
+		msg = "Validation succeeded";
+	else
+	{
+		msg = QString("Validation failed (%1 errors)\n").arg(validResult.size());
+		msg.append(validResult.join('\n'));
+	}
+	emit nextNotification(formatLogLineWithTime(msg));
 }
 
-void TranscriberViewModel::saveCurrentRangeAsWavRequest()
+	void TranscriberViewModel::saveCurrentRangeAsWavRequest()
 {
 	long frameLeft;
 	long frameRight;
@@ -1205,6 +1265,17 @@ void TranscriberViewModel::setCurrentMarkerTranscriptText(const QString& text)
 			// first time initialization?
 			if (marker.SpeakerBriefId.empty())
 				marker.SpeakerBriefId = speechAnnot_.inferRecentSpeaker(currentMarkerInd_);
+		}
+
+		if (marker.Language == SpeechLanguage::Ukrainian)
+		{
+			QStringList validResult;
+			phoneticDictViewModel_->validateSegmentTranscription(text, validResult);
+			if (!validResult.isEmpty())
+			{
+				QString msg = validResult.join('\n');
+				emit nextNotification(formatLogLineWithTime(msg));
+			}
 		}
 
 		emit currentMarkerIndChanged();
@@ -2142,3 +2213,15 @@ void TranscriberViewModel::navigateToMarkerRequest()
 
 	setCurrentMarkerIndInternal(markerInd, true, true);
 }
+
+void TranscriberViewModel::setPhoneticDictViewModel(std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> phoneticDictViewModel)
+{
+	phoneticDictViewModel_ = phoneticDictViewModel;
+}
+
+std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> TranscriberViewModel::phoneticDictViewModel()
+{
+	return phoneticDictViewModel_;
+}
+
+} // namespace PticaGovorun

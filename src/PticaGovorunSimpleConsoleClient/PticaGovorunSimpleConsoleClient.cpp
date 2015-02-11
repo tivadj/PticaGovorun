@@ -10,6 +10,8 @@ namespace ResampleAudioTesterNS { void run(); }
 namespace RecognizeSpeechSphinxTester { void run(); }
 namespace EditDistanceTestsNS { void run(); }
 namespace MigrateXmlSpeechAnnotRunnerNS { void run(); }
+namespace PhoneticSpellerTestsNS { void run(); }
+namespace PronunciationChecksRunnerNS { void run(); }
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -17,9 +19,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	//MatlabTesterNS::run();
 	//ComputeSpeechMfccTesterNS::run();
 	//ResampleAudioTesterNS::run();
-	RecognizeSpeechSphinxTester::run();
+	//RecognizeSpeechSphinxTester::run();
 	//EditDistanceTestsNS::run();
 	//MigrateXmlSpeechAnnotRunnerNS::run();
+	//PhoneticSpellerTestsNS::run();
+	PronunciationChecksRunnerNS::run();
 
 	return 0;
 }

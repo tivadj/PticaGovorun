@@ -1,6 +1,8 @@
 #pragma once
 #include <array>
 #include <vector>
+#include <string>
+#include <sstream>
 #include "PticaGovorunCore.h"
 
 // temporary implementation of a slice
@@ -214,5 +216,18 @@ auto binarySearch(const RandIt& begin, const RandIt& end, long frameIndValue, It
 	auto result = binarySearch(left, right, frameIndValue, frameIndSelector);
 	return result;
 }
+
+	template <typename Iter>
+	void join(Iter begin, Iter end, const std::string& separator, std::ostringstream& result)
+	{
+		if (begin != end)
+			result << *begin;
+		
+		++begin;
+		for (; begin != end; ++begin)
+		{
+			result << separator << *begin;
+		}
+	}
 
 }

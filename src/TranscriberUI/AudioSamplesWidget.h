@@ -13,7 +13,7 @@ class AudioSamplesWidget : public QWidget
 public:
     explicit AudioSamplesWidget(QWidget *parent = 0);
 
-	void setModel(std::shared_ptr<TranscriberViewModel> transcriberModel);
+	void setModel(std::shared_ptr<PticaGovorun::TranscriberViewModel> transcriberModel);
 
 
 public:
@@ -56,12 +56,12 @@ private:
 	void drawWordSeparatorsAndNames(QPainter& painter, long firstWordSampleIndOffset, const std::vector<PticaGovorun::AlignedWord>& wordBounds, float laneOffsetDocX, int separatorTopY, int separatorBotY);
 
 	// Draws visual elements associated with the segment of samples.
-	void drawDiagramSegment(QPainter& painter, const QRect& viewportRect, const DiagramSegment& diagItem, float laneOffsetDocX);
+	void drawDiagramSegment(QPainter& painter, const QRect& viewportRect, const PticaGovorun::DiagramSegment& diagItem, float laneOffsetDocX);
 
 	// Draw diagram elements, which are associated with the range of samples.
-	void processVisibleDiagramSegments(QPainter& painter, float visibleDocLeft, float visibleDocRight, std::function<void(const DiagramSegment& diagItem)> onDiagItem);
+	void processVisibleDiagramSegments(QPainter& painter, float visibleDocLeft, float visibleDocRight, std::function<void(const PticaGovorun::DiagramSegment& diagItem)> onDiagItem);
 private:
-	std::shared_ptr<TranscriberViewModel> transcriberModel_;
+	std::shared_ptr<PticaGovorun::TranscriberViewModel> transcriberModel_;
 };
 
 #endif // AUDIOSAMPLESWIDGET_H

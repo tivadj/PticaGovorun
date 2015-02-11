@@ -63,6 +63,8 @@
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\LibSampleRate.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
+    <Import Project="..\build-config\YamlCpp.props" />
+    <Import Project="..\build-config\boost.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -74,6 +76,8 @@
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\LibSampleRate.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
+    <Import Project="..\build-config\YamlCpp.props" />
+    <Import Project="..\build-config\boost.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -85,6 +89,8 @@
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\LibSampleRate.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
+    <Import Project="..\build-config\YamlCpp.props" />
+    <Import Project="..\build-config\boost.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -96,6 +102,8 @@
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\LibSampleRate.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
+    <Import Project="..\build-config\YamlCpp.props" />
+    <Import Project="..\build-config\boost.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -198,6 +206,8 @@
     <ClCompile Include="EditDistanceTests.cpp" />
     <ClCompile Include="MatlabTester.cpp" />
     <ClCompile Include="MigrateXmlSpeechAnnotRunner.cpp" />
+    <ClCompile Include="PhoneticSpellerTests.cpp" />
+    <ClCompile Include="PronunciationChecksRunner.cpp" />
     <ClCompile Include="PticaGovorunSimpleConsoleClient.cpp" />
     <ClCompile Include="RecognizeSpeechSphinxTester.cpp" />
     <ClCompile Include="ResampleAudioTester.cpp" />

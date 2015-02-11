@@ -7,6 +7,10 @@
 #include <QSize>
 #include <QTextDocumentFragment>
 #include "SoundUtils.h"
+#include "PhoneticDictionaryDialog.h"
+
+namespace PticaGovorun
+{
 
 TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -45,6 +49,12 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
 	//
 	transcriberModel_->loadStateSettings();
 	ui->widgetSamples->setModel(transcriberModel_);
+
+	//
+
+	phoneticDictModel_ = std::make_shared<PticaGovorun::PhoneticDictionaryViewModel>();
+	transcriberModel_->setPhoneticDictViewModel(phoneticDictModel_);
+
 	updateUI();
 }
 
@@ -463,6 +473,16 @@ void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 		transcriberModel_->saveAudioMarkupToXml();
 	else if (ke->key() == Qt::Key_F5)
 		transcriberModel_->refreshRequest();
+	else if (ke->key() == Qt::Key_P && ke->modifiers().testFlag(Qt::ControlModifier))
+	{
+		PticaGovorun::PhoneticDictionaryDialog phoneticDictDlg;
+		phoneticDictDlg.setPhoneticViewModel(transcriberModel_->phoneticDictViewModel());
+		if (phoneticDictDlg.exec() == QDialog::Accepted) { }
+	}
+	else if (ke->key() == Qt::Key_B && ke->modifiers().testFlag(Qt::ControlModifier))
+	{
+		transcriberModel_->validateAnnotationStructure();
+	}
 	else
 		QWidget::keyPressEvent(ke);
 }
@@ -478,4 +498,6 @@ void TranscriberMainWindow::resizeEvent(QResizeEvent* e)
 void TranscriberMainWindow::closeEvent(QCloseEvent*)
 {
 	transcriberModel_->saveStateSettings();
+}
+
 }

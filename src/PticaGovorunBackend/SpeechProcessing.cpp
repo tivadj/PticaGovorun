@@ -43,7 +43,10 @@ namespace PticaGovorun {
 	void splitUtteranceIntoWords(const std::wstring& text, std::vector<wv::slice<const wchar_t>>& wordsAsSlices)
 	{
 		std::wsmatch matchRes;
-		static std::wregex r(LR"regex(\w+)regex"); // match words
+		// clothes clothes(1)
+		// apostrophe (eg: п'ять)
+		// dash (eg: to-do)
+		static std::wregex r(LR"regex([\w\(\)'-]+)regex"); // match words
 
 		auto wordBeg = std::cbegin(text);
 		while (std::regex_search(wordBeg, std::cend(text), matchRes, r))
@@ -252,7 +255,7 @@ namespace PticaGovorun {
 	}
 
 	std::tuple<bool, const char*> loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir, 
-		MarkerLevelOfDetail targetLevelOfDetail, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments)
+		MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments)
 	{
 		if (folderOrWavFilePath.isDir())
 		{
@@ -262,7 +265,7 @@ namespace PticaGovorun {
 			QFileInfoList items = dir.entryInfoList(QDir::Filter::Files | QDir::Filter::Dirs | QDir::Filter::NoDotAndDotDot);
 			for (const QFileInfo item : items)
 			{
-				auto subOp = loadSpeechAndAnnotation(item, wavRootDir, annotRootDir, targetLevelOfDetail, segPredBefore, segments);
+				auto subOp = loadSpeechAndAnnotation(item, wavRootDir, annotRootDir, targetLevelOfDetail, loadAudio, segPredBefore, segments);
 				if (!std::get<0>(subOp))
 					return subOp;
 			}
@@ -320,26 +323,51 @@ namespace PticaGovorun {
 				if (!segPredBefore(seg))
 					continue;
 
-				// lazy load audio samples
-				if (speechFrames.empty())
+				if (loadAudio)
 				{
-					// load wav file
-					auto readOp = readAllSamples(wavFilePath.toStdString(), speechFrames, &frameRate);
-					if (!std::get<0>(readOp))
-						return std::make_pair(false, "Can't read wav file");
+					// lazy load audio samples
+					if (speechFrames.empty())
+					{
+						// load wav file
+						auto readOp = readAllSamples(wavFilePath.toStdString(), speechFrames, &frameRate);
+						if (!std::get<0>(readOp))
+							return std::make_pair(false, "Can't read wav file");
+					}
+
+					seg.FrameRate = frameRate;
+
+					long frameStart = marker.SampleInd;
+					long frameEnd = markersOfInterest[i + 1].SampleInd;
+
+					seg.Frames = std::vector<short>(&speechFrames[frameStart], &speechFrames[frameEnd]);
 				}
-
-				seg.FrameRate = frameRate;
-
-				long frameStart = marker.SampleInd;
-				long frameEnd = markersOfInterest[i + 1].SampleInd;
-
-				seg.Frames = std::vector<short>(&speechFrames[frameStart], &speechFrames[frameEnd]);
 				segments.push_back(seg);
 			}
 		}
 
 		return std::make_pair(true, "");
+	}
+
+	void collectAnnotatedSegments(const std::vector<TimePointMarker>& markers, std::vector<std::pair<const TimePointMarker*, const TimePointMarker*>>& segments)
+	{
+		std::vector<const TimePointMarker*> markersOfInterest;
+		markersOfInterest.reserve(markers.size());
+		for (size_t markerInd = 0; markerInd < markers.size(); ++markerInd)
+		{
+			const PticaGovorun::TimePointMarker& marker = markers[markerInd];
+			if (marker.LevelOfDetail == MarkerLevelOfDetail::Word)
+				markersOfInterest.push_back(&marker);
+		}
+
+		for (size_t markerInd = 0; markerInd < markersOfInterest.size() - 1; ++markerInd)
+		{
+			const PticaGovorun::TimePointMarker* marker1 = markersOfInterest[markerInd];
+			if (!marker1->TranscripText.isEmpty())
+			{
+				const PticaGovorun::TimePointMarker* marker2 = markersOfInterest[markerInd + 1];
+				segments.push_back(std::make_pair(marker1, marker2));
+			}
+		}
 	}
 
 	// phoneNameToFeaturesVector[phone] has mfccVecLen features for one frame, then for another frame, etc.

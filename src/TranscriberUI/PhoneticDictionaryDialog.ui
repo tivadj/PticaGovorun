@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PhoneticDictDialog</class>
+ <widget class="QDialog" name="PhoneticDictDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1032</width>
+    <height>612</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Phonetic Dictionary</string>
+  </property>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>540</x>
+     <y>570</y>
+     <width>341</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEditCurrentWord">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>30</y>
+     <width>251</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QListWidget" name="listWidgetWords">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>80</y>
+     <width>251</width>
+     <height>521</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPlainTextEdit" name="plainTextEditPronunciations">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>80</y>
+     <width>321</width>
+     <height>161</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Courier New</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEditNewWord">
+   <property name="geometry">
+    <rect>
+     <x>630</x>
+     <y>48</y>
+     <width>381</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>11</x>
+     <y>13</y>
+     <width>61</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Search Dict</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>600</x>
+     <y>49</y>
+     <width>31</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Word</string>
+   </property>
+  </widget>
+  <widget class="QPlainTextEdit" name="plainTextNewWordPronunciations">
+   <property name="geometry">
+    <rect>
+     <x>600</x>
+     <y>78</y>
+     <width>411</width>
+     <height>161</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Courier New</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonAddNewWord">
+   <property name="geometry">
+    <rect>
+     <x>669</x>
+     <y>240</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Set</string>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>52</y>
+     <width>191</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string/>
+   </property>
+   <widget class="QRadioButton" name="radioButtonBrowsePersian">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>2</y>
+      <width>61</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>persian</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="radioButtonBrowseBroken">
+    <property name="geometry">
+     <rect>
+      <x>66</x>
+      <y>3</y>
+      <width>61</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>broken</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="radioButtonBrowseShrekky">
+    <property name="geometry">
+     <rect>
+      <x>123</x>
+      <y>4</y>
+      <width>61</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>shrekky</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>750</x>
+     <y>2</y>
+     <width>131</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Dict</string>
+   </property>
+   <widget class="QRadioButton" name="radioButtonNewWordPersian">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>61</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>persian</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="radioButtonNewWordBroken">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>11</y>
+      <width>61</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>broken</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QPushButton" name="pushButtonSaveDict">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
+     <y>10</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Save Dict</string>
+   </property>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>lineEditCurrentWord</tabstop>
+  <tabstop>listWidgetWords</tabstop>
+  <tabstop>plainTextEditPronunciations</tabstop>
+  <tabstop>lineEditNewWord</tabstop>
+  <tabstop>plainTextNewWordPronunciations</tabstop>
+  <tabstop>pushButtonAddNewWord</tabstop>
+  <tabstop>radioButtonBrowsePersian</tabstop>
+  <tabstop>pushButtonSaveDict</tabstop>
+  <tabstop>radioButtonBrowseBroken</tabstop>
+  <tabstop>radioButtonBrowseShrekky</tabstop>
+  <tabstop>radioButtonNewWordPersian</tabstop>
+  <tabstop>radioButtonNewWordBroken</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>PhoneticDictDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>PhoneticDictDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

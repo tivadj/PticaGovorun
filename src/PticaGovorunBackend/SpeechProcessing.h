@@ -202,7 +202,10 @@ PG_EXPORTS std::wstring speechAnnotationFilePathAbs(const std::wstring& wavFileA
 // targetLevelOfDetail=type of marker (segment) to query annotation.
 // segPredBefore=predicate to determine whether to include segment into the result set; called before actual samples are loaded
 PG_EXPORTS std::tuple<bool, const char*> loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir,
-	MarkerLevelOfDetail targetLevelOfDetail, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments);
+	MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments);
+
+// Collects the segments associated with the set of markers.
+PG_EXPORTS void collectAnnotatedSegments(const std::vector<TimePointMarker>& markers, std::vector<std::pair<const TimePointMarker*, const TimePointMarker*>>& segments);
 
 PG_EXPORTS std::tuple<bool, const char*> collectMfccFeatures(const QFileInfo& folderOrWavFilePath, int frameSize, int frameShift, int mfccVecLen, std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector);
 

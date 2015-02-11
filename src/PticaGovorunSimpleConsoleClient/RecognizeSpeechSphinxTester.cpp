@@ -169,7 +169,7 @@ namespace RecognizeSpeechSphinxTester
 		};
 		bool loadOp;
 		const char* errMsg;
-		std::tie(loadOp, errMsg) = loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, segPredBeforeFun, segments);
+		std::tie(loadOp, errMsg) = loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, true, segPredBeforeFun, segments);
 
 		//
 		const char* hmmPath       = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";

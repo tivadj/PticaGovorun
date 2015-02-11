@@ -17,7 +17,7 @@ AudioSamplesWidget::AudioSamplesWidget(QWidget *parent) :
 	setPalette(pal);    
 }
 
-void AudioSamplesWidget::setModel(std::shared_ptr<TranscriberViewModel> transcriberModel)
+void AudioSamplesWidget::setModel(std::shared_ptr<PticaGovorun::TranscriberViewModel> transcriberModel)
 {
 	transcriberModel_ = transcriberModel;
 }
@@ -92,7 +92,7 @@ void AudioSamplesWidget::drawModel(QPainter& painter, const QRect& viewportRect,
 
 		drawWaveform(painter, laneRect, docLeft, docRight);
 		
-		auto diagItemDrawFun = [=, &painter](const DiagramSegment& diagItem)
+		auto diagItemDrawFun = [=, &painter](const PticaGovorun::DiagramSegment& diagItem)
 		{
 			drawDiagramSegment(painter, laneRect, diagItem, laneStartDocX);
 		};
@@ -162,10 +162,10 @@ void AudioSamplesWidget::drawCursorSingle(QPainter& painter, const QRect& viewpo
 		return;
 
 	float curSampleDocX = transcriberModel_->sampleIndToDocPosX(cursor.first);
-	ViewportHitInfo hitInfo;
+	PticaGovorun::ViewportHitInfo hitInfo;
 	if (!transcriberModel_->docPosToViewport(curSampleDocX, hitInfo))
 		return;
-	RectY laneBnd = transcriberModel_->laneYBounds(hitInfo.LaneInd);
+	PticaGovorun::RectY laneBnd = transcriberModel_->laneYBounds(hitInfo.LaneInd);
 
 	QColor curMarkerColor(0, 0, 0);
 	painter.setPen(curMarkerColor);
@@ -211,11 +211,11 @@ void AudioSamplesWidget::drawPlayingSampleInd(QPainter& painter)
 	
 	auto sampleDocX = transcriberModel_->sampleIndToDocPosX(sampleInd);
 	
-	ViewportHitInfo hitInfo;
+	PticaGovorun::ViewportHitInfo hitInfo;
 	if (!transcriberModel_->docPosToViewport(sampleDocX, hitInfo))
 		return;
 
-	RectY yBnds = transcriberModel_->laneYBounds(hitInfo.LaneInd);
+	PticaGovorun::RectY yBnds = transcriberModel_->laneYBounds(hitInfo.LaneInd);
 
 	QColor curPlayingSampleColor(36, 96, 46); // dark green, like in Audacity
 	painter.setPen(curPlayingSampleColor);
@@ -541,7 +541,7 @@ void AudioSamplesWidget::drawWordSeparatorsAndNames(QPainter& painter, long firs
 	}
 }
 
-void AudioSamplesWidget::drawDiagramSegment(QPainter& painter, const QRect& viewportRect, const DiagramSegment& diagItem, float laneOffsetDocX)
+void AudioSamplesWidget::drawDiagramSegment(QPainter& painter, const QRect& viewportRect, const PticaGovorun::DiagramSegment& diagItem, float laneOffsetDocX)
 {
 	using namespace PticaGovorun;
 
@@ -630,10 +630,10 @@ void AudioSamplesWidget::drawDiagramSegment(QPainter& painter, const QRect& view
 }
 
 void AudioSamplesWidget::processVisibleDiagramSegments(QPainter& painter, float visibleDocLeft, float visibleDocRight,
-	std::function<void(const DiagramSegment& diagItem)> onDiagItem)
+	std::function<void(const PticaGovorun::DiagramSegment& diagItem)> onDiagItem)
 {
-	wv::slice<const DiagramSegment> diagItems = transcriberModel_->diagramSegments();
-	for (const DiagramSegment diagItem : diagItems)
+	wv::slice<const PticaGovorun::DiagramSegment> diagItems = transcriberModel_->diagramSegments();
+	for (const PticaGovorun::DiagramSegment diagItem : diagItems)
 	{
 		auto diagItemDocXBeg = transcriberModel_->sampleIndToDocPosX(diagItem.SampleIndBegin);
 		auto diagItemDocXEnd = transcriberModel_->sampleIndToDocPosX(diagItem.SampleIndEnd);

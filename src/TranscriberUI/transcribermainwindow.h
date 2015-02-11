@@ -4,10 +4,14 @@
 #include <memory>
 #include <QMainWindow>
 #include "TranscriberViewModel.h"
+#include "PhoneticDictionaryViewModel.h"
 
 namespace Ui {
 class TranscriberMainWindow;
 }
+
+namespace PticaGovorun
+{
 
 class TranscriberMainWindow : public QMainWindow
 {
@@ -53,6 +57,8 @@ private slots:
 private:
     Ui::TranscriberMainWindow *ui;
     std::shared_ptr<TranscriberViewModel> transcriberModel_;
+    std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> phoneticDictModel_;
 };
 
+}
 #endif // TRANSCRIBERMAINWINDOW_H
