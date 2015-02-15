@@ -1,0 +1,202 @@
+﻿#include "stdafx.h"
+#include "TextProcessing.h"
+#include <QChar>
+
+namespace PticaGovorun
+{
+	std::wstring toString(wv::slice<wchar_t> wordSlice)
+	{
+		return std::wstring(wordSlice.data(), wordSlice.size());
+	}
+
+	void TextParser::setInputText(wv::slice<wchar_t> text)
+	{
+		mutText_ = text;
+		charInd_ = 0;
+	}
+
+	bool TextParser::parseSentence(std::vector<wv::slice<wchar_t>>& words)
+	{
+		// entire buffer is processed, no sentences left
+		if (charInd_ >= mutText_.size())
+			return false;
+
+		wordStartInd_ = -1; // start of new word in input stream of characters
+		outCharInd_ = -1; // the chars are processed without any shifts
+
+		for (; charInd_ < mutText_.size(); ++charInd_)
+		{
+			wchar_t chw = mutText_[charInd_];
+			switch (chw)
+			{
+			case L'.':
+			case L'?':
+			case L'!':
+			case L'…': // horizontal ellipsis code=8230
+			{
+				// finish sentence
+				if (wordStartInd_ != -1)
+				{
+					finishWord(words);
+				}
+
+				// +1 to step behind the sentence break character
+				charInd_ += 1; // next unprocessed char
+				return true;
+			}
+			case L'\t':
+			case L'\r':
+			case L'\n':
+			case L' ': // space
+			case L' ': // dec=160 no-break space (weird case after long hyphen, not a space)
+			case L'_': // dec=31  us information separator one (underscore)
+			case L'#': // dec=35 number sign
+			case L'$': // dec=36 dollar sign
+			case L'%': // dec=37 percent sign
+			case L'&': // dec=38 ampersand
+			case L'+': // dec=43 plus sign
+			case L'/': // dec=47 solidus
+			case L':': // dec=58 colon
+			case L';': // dec=59 semicolon
+			case L'=': // dec=61 equals sign
+			case L'@': // dec=64 commercial at
+			case L'\\': // dec=92 reverse solidus (backslash)
+			case L'^': // dec=94 circumflex accent
+			case L'[': // dec=91 left square bracket
+			case L']':
+			case L'(':
+			case L')':
+			case L'{': // dec=123 left curly bracket
+			case L'}':
+			case L',': // dec=44 comma
+			case L'‚': // dec=8218 single low-9 quotation mark
+			case L'©': // dec=169 copyright sign
+			case L'\"': // quotation mark
+			case L'«': // dec=171 left-pointing double angle quotation mark
+			case L'»': // dec=187 right-pointing double angle quotation mark
+			case L'“': // dec=8220 left double quotation mark
+			case L'”': // right double quotation mark
+			case L'„': // dec=8222 double low-9 quotation mark
+			case L'‟': // dec=8223 double high-reversed-9 quotation mark
+			case L'–': // dec=8211 en dash (slightly longer than    dash)
+			case L'—': // dec=8212 em dash (slightly longer than en dash)
+			case L'*':
+			case L'•': // dec=8226 bullet
+			case L'№': // dec=8470 numero sign
+				onWordBreak(chw, words);
+				break;
+			case L'¬': // not sign (optional hyphen)
+				// the word should be merged, as if this mark doesn't exist
+				if (wordStartInd_ != -1) // if the word already started
+				{
+					outCharInd_ = charInd_;
+				}
+				break;
+
+			case L'-':
+				// if the dash is inside the word, then we have a compounded word
+				// otherwise it is a word separator
+				if (wordStartInd_ != -1)
+					onWordCharacter(chw);
+				else
+					onWordBreak(chw, words);
+				break;
+
+			case L'\'': // apostrophe dec=39
+			case L'’': // right single quotation mark dec=8217
+			case L'`': // grave accent (on the tilde key) dec=96
+			default:
+				// character of a word
+				onWordCharacter(chw);
+				break;
+			}
+		}
+
+		// finish the last word
+		if (wordStartInd_ != -1)
+			finishWord(words);
+
+		return true;
+	}
+
+	void TextParser::finishWord(std::vector<wv::slice<wchar_t>>& words)
+	{
+		int wordEndIndExcl;
+		if (outCharInd_ != -1) // word shifting state
+			wordEndIndExcl = outCharInd_;
+		else
+			wordEndIndExcl = charInd_;
+
+		PG_Assert(wordStartInd_ < wordEndIndExcl);
+
+		int len = wordEndIndExcl - wordStartInd_;
+		wv::slice<wchar_t> wordSlice = wv::make_view(&mutText_[wordStartInd_], len);
+		words.push_back(wordSlice);
+#if PG_DEBUG
+		std::wstring tmp = toString(wordSlice);
+#endif
+		// prepare for new word
+		wordStartInd_ = -1;
+		outCharInd_ = -1;
+	}
+
+	void TextParser::onWordCharacter(wchar_t chw)
+	{
+		if (wordStartInd_ == -1)
+		{
+			wordStartInd_ = charInd_;
+		}
+		else
+		{
+			// continue word
+		}
+
+		wchar_t outChar = chw;
+		if (chw == L'’' || chw == L'`')
+		{
+			// normalize various ways to represent apostrophe
+			outChar = L'\'';
+		}
+		else
+		{
+			// normalize, so that all words are in lower case
+			QChar qChar(chw);
+			if (!qChar.isLower())
+			{
+				outChar = qChar.toLower().unicode();
+			}
+		}
+
+		// x the character is overwritten if it is uppercase and need to be converted in a lowercase
+		// x there was an optional hypen (¬) in the word and characters after the optional hyphen must be shifted one symbol to the left
+		
+		if (outChar != chw ||
+			outCharInd_ != -1) // shifting chars
+		{
+			int putPos;
+			if (outCharInd_ != -1)
+			{
+				putPos = outCharInd_;
+				outCharInd_++;
+			}
+			else
+				putPos = charInd_;
+			mutText_[putPos] = outChar;
+		}
+	}
+
+	void TextParser::onWordBreak(wchar_t chw, std::vector<wv::slice<wchar_t>>& words)
+	{
+		if (wordStartInd_ == -1)
+		{
+			// empty space before any word, continue
+		}
+		else
+		{
+			PG_Assert(wordStartInd_ >= 0);
+			PG_Assert(wordStartInd_ < charInd_);
+			finishWord(words);
+		}
+	}
+
+}
