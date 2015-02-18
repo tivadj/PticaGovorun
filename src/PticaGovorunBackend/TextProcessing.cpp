@@ -23,6 +23,7 @@ namespace PticaGovorun
 
 		wordStartInd_ = -1; // start of new word in input stream of characters
 		outCharInd_ = -1; // the chars are processed without any shifts
+		gotApostrophe_ = false;
 
 		for (; charInd_ < mutText_.size(); ++charInd_)
 		{
@@ -35,7 +36,7 @@ namespace PticaGovorun
 			case L'…': // horizontal ellipsis code=8230
 			{
 				// finish sentence
-				if (wordStartInd_ != -1)
+				if (isWordStarted())
 				{
 					finishWord(words);
 				}
@@ -50,6 +51,7 @@ namespace PticaGovorun
 			case L' ': // space
 			case L' ': // dec=160 no-break space (weird case after long hyphen, not a space)
 			case L'_': // dec=31  us information separator one (underscore)
+			case L'\"': // dec=34 quotation mark
 			case L'#': // dec=35 number sign
 			case L'$': // dec=36 dollar sign
 			case L'%': // dec=37 percent sign
@@ -70,8 +72,8 @@ namespace PticaGovorun
 			case L'}':
 			case L',': // dec=44 comma
 			case L'‚': // dec=8218 single low-9 quotation mark
+			case L'§': // dec=167 section sign
 			case L'©': // dec=169 copyright sign
-			case L'\"': // quotation mark
 			case L'«': // dec=171 left-pointing double angle quotation mark
 			case L'»': // dec=187 right-pointing double angle quotation mark
 			case L'“': // dec=8220 left double quotation mark
@@ -87,7 +89,7 @@ namespace PticaGovorun
 				break;
 			case L'¬': // not sign (optional hyphen)
 				// the word should be merged, as if this mark doesn't exist
-				if (wordStartInd_ != -1) // if the word already started
+				if (isWordStarted()) // if the word already started
 				{
 					outCharInd_ = charInd_;
 				}
@@ -96,7 +98,7 @@ namespace PticaGovorun
 			case L'-':
 				// if the dash is inside the word, then we have a compounded word
 				// otherwise it is a word separator
-				if (wordStartInd_ != -1)
+				if (isWordStarted())
 					onWordCharacter(chw);
 				else
 					onWordBreak(chw, words);
@@ -105,9 +107,20 @@ namespace PticaGovorun
 			case L'\'': // apostrophe dec=39
 			case L'’': // right single quotation mark dec=8217
 			case L'`': // grave accent (on the tilde key) dec=96
+				// apostrophe at the word boundary is treated as a word separator
+				if (isWordStarted())
+				{
+					// character of a word
+					onWordCharacter(chw);
+					gotApostrophe_ = true;
+				}
+				else
+					onWordBreak(chw, words);
+				break;
 			default:
 				// character of a word
 				onWordCharacter(chw);
+				gotApostrophe_ = false;
 				break;
 			}
 		}
@@ -127,6 +140,10 @@ namespace PticaGovorun
 		else
 			wordEndIndExcl = charInd_;
 
+		// when word ends with apostrophe, just skip the apostrophe
+		if (gotApostrophe_)
+			wordEndIndExcl -= 1;
+
 		PG_Assert(wordStartInd_ < wordEndIndExcl);
 
 		int len = wordEndIndExcl - wordStartInd_;
@@ -138,6 +155,7 @@ namespace PticaGovorun
 		// prepare for new word
 		wordStartInd_ = -1;
 		outCharInd_ = -1;
+		gotApostrophe_ = false;
 	}
 
 	void TextParser::onWordCharacter(wchar_t chw)
@@ -183,6 +201,11 @@ namespace PticaGovorun
 				putPos = charInd_;
 			mutText_[putPos] = outChar;
 		}
+	}
+
+	bool TextParser::isWordStarted() const
+	{
+		return wordStartInd_ != -1;
 	}
 
 	void TextParser::onWordBreak(wchar_t chw, std::vector<wv::slice<wchar_t>>& words)

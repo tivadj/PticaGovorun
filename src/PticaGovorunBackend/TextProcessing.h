@@ -28,6 +28,9 @@ namespace PticaGovorun
 
 		void onWordBreak(wchar_t chw, std::vector<wv::slice<wchar_t>>& words);
 
+		// Whether the character cursor points inside some word.
+		bool isWordStarted() const;
+
 	private:
 		wv::slice<wchar_t> mutText_;
 		int charInd_;
@@ -37,5 +40,8 @@ namespace PticaGovorun
 		// When there is a character in the middle of a word which must be removed from output
 		// this index tracks the output char position
 		int outCharInd_; 
+
+		// True, if current character is an apostrophe and we expect the next character to be something different.
+		bool gotApostrophe_;
 	};
 }

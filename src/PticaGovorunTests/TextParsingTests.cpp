@@ -116,6 +116,20 @@ namespace PticaGovorun
 		REQUIRE(L"o'brien" == toString(words[1]));
 	}
 
+	TEST_CASE("apostrophe on the word boundary is treated as word separator")
+	{
+		TextParser wordsReader;
+		std::vector<wv::slice<wchar_t>> words;
+		words.reserve(64);
+		
+		std::wstring s1(L"'yin yang'");
+		wordsReader.setInputText(s1);
+		REQUIRE(wordsReader.parseSentence(words));
+		REQUIRE(L"yin"  == toString(words[0]));
+		REQUIRE(L"yang" == toString(words[1]));
+		REQUIRE(!wordsReader.parseSentence(words));
+	}
+
 	TEST_CASE("merge word split by optional hyphen")
 	{
 		TextParser wordsReader;
