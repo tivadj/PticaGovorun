@@ -26,11 +26,23 @@ namespace wv
 		struct is_array_class < std::initializer_list<T> > {
 			static bool const value = true;
 		};
+		//template<class T>
+		//struct is_array_class < std::basic_string<T> > {
+		//	static bool const value = true;
+		//};
+		template<>
+		struct is_array_class < std::wstring > {
+			static bool const value = true;
+		};
+		template<>
+		struct is_array_class < std::string > {
+			static bool const value = true;
+		};
 		// }}}
 	}
 
 	template <typename T>
-	class slice
+	class PG_EXPORTS slice
 	{
 	public:
 		typedef T value_type;
@@ -44,13 +56,20 @@ namespace wv
 		typedef ptrdiff_t difference_type;
 
 	public:
-		/*implicit*/ slice(std::vector<T>& v)
-			: data_(v.data()), dataEnd_(v.data() + v.size()), size_(v.size())
+		explicit slice()
+			: data_(nullptr), size_(0)
+		{}
+
+		template <class Array>
+		/*implicit*/ slice(Array& v)
+			: data_((pointer)v.data()), size_(v.size())
 		{}
 
 		slice(T* start, T* last)
-			: data_(start), dataEnd_(last), size_(last - start)
-		{}
+			: data_(start), size_(last - start)
+		{
+			PG_Assert(start <= last);
+		}
 
 		template<
 			class InputIterator,
@@ -62,11 +81,13 @@ namespace wv
 			>::type
 		>
 		explicit slice(InputIterator start, InputIterator last)
-		: data_(&*start._Unchecked()), dataEnd_(&*last._Unchecked()), size_(last - start)
-			{}
+		: data_(&*start._Unchecked()), size_(last - start)
+		{
+			PG_Assert(start <= last);
+		}
 
 			slice(std::initializer_list<T> const& l)
-				: data_(std::begin(l)), dataEnd_(std::end(l)), size_(l.size())
+				: data_(std::begin(l)), size_(l.size())
 			{}
 
 			/*
@@ -78,7 +99,7 @@ namespace wv
 			}
 			iterator end()
 			{
-				return dataEnd_;
+				return data_ + size_;
 			}
 			const_iterator begin() const
 			{
@@ -86,7 +107,7 @@ namespace wv
 			}
 			const_iterator end() const
 			{
-				return dataEnd_;
+				return data_ + size_;
 			}
 			const_iterator cbegin() const
 			{
@@ -102,12 +123,12 @@ namespace wv
 			*/
 			size_type size() const
 			{
-				return dataEnd_ - data_;
+				return size_;
 			}
 
 			bool empty() const
 			{
-				return dataEnd_ == data_;
+				return size_ == 0;
 			}
 			const_reference operator[](size_type const n) const
 			{
@@ -131,13 +152,12 @@ namespace wv
 			}
 			const_reference back() const
 			{
-				return *(dataEnd_ - 1);
+				return *(data_ + size_ - 1);
 			}
 
 	private:
 		size_type size_;
 		pointer data_;
-		pointer dataEnd_;
 	};
 
 	// helpers to construct view {{{
@@ -150,7 +170,8 @@ namespace wv
 	inline
 	auto make_view(Array& a)-> slice<typename Array::value_type>
 		{
-			return{ a };
+				//return{ a };
+			return make_view(std::begin(a), std::end(a));
 		}
 
 		template<class T>
@@ -220,14 +241,33 @@ auto binarySearch(const RandIt& begin, const RandIt& end, long frameIndValue, It
 	template <typename Iter>
 	void join(Iter begin, Iter end, const std::string& separator, std::ostringstream& result)
 	{
-		if (begin != end)
-			result << *begin;
+		if (begin == end)
+			return;
 		
+		result << *begin;
 		++begin;
+
 		for (; begin != end; ++begin)
 		{
 			result << separator << *begin;
 		}
 	}
 
+	template <typename Iter, typename ElemT>
+	void join(Iter begin, Iter end, 
+		const std::basic_string<ElemT>& separator,
+		std::basic_stringstream<ElemT>& result)
+	{
+		if (begin == end)
+			return;
+
+		result << *begin;
+		++begin;
+
+		for (; begin != end; ++begin)
+		{
+			result << separator << *begin;
+		}
+	}
 }
+      

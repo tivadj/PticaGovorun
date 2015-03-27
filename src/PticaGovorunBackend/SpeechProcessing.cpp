@@ -15,6 +15,7 @@
 #include "MLUtils.h"
 #include "JuliusToolNativeWrapper.h"
 #include "InteropPython.h"
+#include "PticaGovorunCore.h"
 
 namespace PticaGovorun {
 

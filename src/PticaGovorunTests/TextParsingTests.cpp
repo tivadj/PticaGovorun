@@ -12,14 +12,6 @@ namespace PticaGovorun
 		std::vector<wv::slice<wchar_t>> words;
 		words.reserve(64);
 
-		SECTION("empty string has no words") {
-			
-			std::wstring s1(L" \t\n");
-			wordsReader.setInputText(s1);
-			REQUIRE(wordsReader.parseSentence(words));
-			REQUIRE(words.size() == 0);
-			REQUIRE(!wordsReader.parseSentence(words));
-		}
 		SECTION("simple") {
 			std::wstring s1(L"john");
 			wordsReader.setInputText(s1);
@@ -60,6 +52,22 @@ namespace PticaGovorun
 			REQUIRE(words.size() == 2);
 			REQUIRE(L"one" == toString(words[0]));
 			REQUIRE(L"two" == toString(words[1]));
+			REQUIRE(!wordsReader.parseSentence(words));
+		}
+		SECTION("empty string has no words") {
+			std::wstring s1(L" \t\n");
+			wordsReader.setInputText(s1);
+			REQUIRE(wordsReader.parseSentence(words));
+			REQUIRE(words.size() == 0);
+			REQUIRE(!wordsReader.parseSentence(words));
+		}
+		SECTION("treat CR LF as a separator") {
+			std::wstring s1(L"\rpress\r\r\renter\n\n\n");
+			wordsReader.setInputText(s1);
+			REQUIRE(wordsReader.parseSentence(words));
+			REQUIRE(words.size() == 2);
+			REQUIRE(L"press" == toString(words[0]));
+			REQUIRE(L"enter" == toString(words[1]));
 			REQUIRE(!wordsReader.parseSentence(words));
 		}
 	}
@@ -127,6 +135,35 @@ namespace PticaGovorun
 		REQUIRE(wordsReader.parseSentence(words));
 		REQUIRE(L"yin"  == toString(words[0]));
 		REQUIRE(L"yang" == toString(words[1]));
+		REQUIRE(!wordsReader.parseSentence(words));
+	}
+
+	TEST_CASE("hyphen in a single word")
+	{
+		TextParser wordsReader;
+		std::vector<wv::slice<wchar_t>> words;
+		words.reserve(64);
+		
+		std::wstring s1(L"ding-dong"); // single word
+		wordsReader.setInputText(s1);
+		REQUIRE(wordsReader.parseSentence(words));
+		REQUIRE(1 == words.size());
+		REQUIRE(L"ding-dong"  == toString(words[0]));
+		REQUIRE(!wordsReader.parseSentence(words));
+	}
+
+	TEST_CASE("hyphen on a word boundary is treated as separator")
+	{
+		TextParser wordsReader;
+		std::vector<wv::slice<wchar_t>> words;
+		words.reserve(64);
+		
+		std::wstring s1(L"-suffix prefix-");
+		wordsReader.setInputText(s1);
+		REQUIRE(wordsReader.parseSentence(words));
+		REQUIRE(2 == words.size());
+		REQUIRE(L"suffix"  == toString(words[0]));
+		REQUIRE(L"prefix"  == toString(words[1]));
 		REQUIRE(!wordsReader.parseSentence(words));
 	}
 

@@ -60,6 +60,15 @@
     <ClInclude Include="SpeechAnnotation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PhoneticService.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextProcessing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LangStat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -102,6 +111,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpeechAnnotation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PhoneticService.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PhoneticSerializationYaml.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextProcessing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LangStat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LangStatSerializatinoYaml.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextProcessingSerializationXml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

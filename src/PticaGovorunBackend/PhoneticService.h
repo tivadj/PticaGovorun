@@ -2,9 +2,14 @@
 #include <string>
 #include <vector>
 #include <tuple>
+#include <unordered_set>
 #include <map>
 #include <QTextCodec>
+#include <boost/optional.hpp>
 #include "PticaGovorunCore.h"
+#include "LangStat.h"
+#include "TextProcessing.h"
+
 namespace PticaGovorun
 {
 	enum class UkrainianPhoneId
@@ -72,6 +77,38 @@ namespace PticaGovorun
 		std::vector<PronunciationFlavour> Pronunciations;
 	};
 
+	class PG_EXPORTS UkrainianPhoneticSplitter
+	{
+		template <typename T, size_t FixedSize>
+		struct ShortArray
+		{
+			std::array<T, FixedSize> Array;
+			size_t ActualSize;
+		};
+		WordsUsageInfo wordUsage_;
+		std::unordered_map<std::wstring, ShortArray<int,2>> wordStrToPartIds_; // some words, split by default
+		long totalWordParts_ = 0;
+	public:
+		void bootstrap(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWords, const std::wstring& targetWord,
+			const std::unordered_set<std::wstring>& processedWords, int& totalWordsCount);
+
+		void buildLangModel(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess = -1);
+
+		const WordsUsageInfo& wordUsage() const;
+		WordsUsageInfo& wordUsage();
+		void printSuffixUsageStatistics() const;
+		long totalWordParts() const;
+	private:
+		void doWordPhoneticSplit(const wv::slice<wchar_t>& wordSlice, std::vector<const WordPart*>& wordParts);
+
+		// split words into slices
+		void selectWordParts(const std::vector<wv::slice<wchar_t>>& words, std::vector<const WordPart*>& wordParts, long& preSplitWords);
+
+		// calculate statistics on word parts list
+		void calcLangStatistics(const std::vector<const WordPart*>& wordParts);
+	};
+
+
 	// equality by value
 	PG_EXPORTS bool operator == (const Pronunc& a, const Pronunc& b);
 	PG_EXPORTS bool operator < (const Pronunc& a, const Pronunc& b);
@@ -98,4 +135,7 @@ namespace PticaGovorun
 	PG_EXPORTS void savePhoneticDictionaryYaml(const std::vector<PhoneticWord>& phoneticDict, const std::wstring& filePath);
 	
 	PG_EXPORTS std::tuple<bool, const char*> loadPhoneticDictionaryYaml(const std::wstring& filePath, std::vector<PhoneticWord>& phoneticDict);
+
+	//
+	PG_EXPORTS int phoneticSplitOfWord(wv::slice<wchar_t> word, boost::optional<WordClass> wordClass, int* pMatchedSuffixInd = nullptr);
 }

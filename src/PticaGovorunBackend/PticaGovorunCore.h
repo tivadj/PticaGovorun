@@ -1,5 +1,6 @@
 #pragma once
 #include <cassert>
+#include <opencv2/core.hpp>
 
 namespace PticaGovorun {
 	typedef long PGFrameInd;
@@ -13,4 +14,17 @@ namespace PticaGovorun {
 #define PG_EXPORTS
 #endif
 
-#define PG_Assert(assertCond) assert(assertCond)
+//#define PG_Assert(assertCond) assert(assertCond)
+#define PG_Assert(assertCond) CV_Assert(assertCond)
+
+//#define PG_Assert(assertCond) \
+//#if defined(PG_DEBUG) \
+//	CV_Assert(assertCond) \
+//#endif
+
+//inline void PG_Assert(assertCond)
+//{
+//#if defined(PG_DEBUG)
+//	CV_Assert(assertCond)
+//#endif
+//}

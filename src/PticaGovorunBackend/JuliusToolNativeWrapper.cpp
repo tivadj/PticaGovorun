@@ -6,6 +6,7 @@
 #include "JuliusToolNativeWrapper.h"
 #include "WavUtils.h"
 #include "PhoneAlignment.h"
+#include "PticaGovorunCore.h"
 
 #include "../../ThirdParty/julius4/libjulius/include/julius/julius.h"
 #include "../../ThirdParty/julius4/julius/app.h"

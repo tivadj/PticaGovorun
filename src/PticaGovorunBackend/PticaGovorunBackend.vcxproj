@@ -64,6 +64,8 @@
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\MatlabBuild.props" />
     <Import Project="..\build-config\LibSampleRate.props" />
+    <Import Project="..\build-config\YamlCpp.props" />
+    <Import Project="..\build-config\boost.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -76,6 +78,8 @@
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\MatlabBuild.props" />
     <Import Project="..\build-config\LibSampleRate.props" />
+    <Import Project="..\build-config\YamlCpp.props" />
+    <Import Project="..\build-config\boost.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -88,6 +92,8 @@
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\MatlabBuild.props" />
     <Import Project="..\build-config\LibSampleRate.props" />
+    <Import Project="..\build-config\YamlCpp.props" />
+    <Import Project="..\build-config\boost.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -100,6 +106,8 @@
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\MatlabBuild.props" />
     <Import Project="..\build-config\LibSampleRate.props" />
+    <Import Project="..\build-config\YamlCpp.props" />
+    <Import Project="..\build-config\boost.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -187,8 +195,11 @@
     <ClInclude Include="CoreUtils.h" />
     <ClInclude Include="InteropPython.h" />
     <ClInclude Include="JuliusToolNativeWrapper.h" />
+    <ClInclude Include="LangStat.h" />
     <ClInclude Include="MLUtils.h" />
+    <ClInclude Include="TextProcessing.h" />
     <ClInclude Include="PhoneAlignment.h" />
+    <ClInclude Include="PhoneticService.h" />
     <ClInclude Include="PticaGovorunCore.h" />
     <ClInclude Include="SoundUtils.h" />
     <ClInclude Include="SpeechAnnotation.h" />
@@ -218,8 +229,13 @@
     </ClCompile>
     <ClCompile Include="InteropPython.cpp" />
     <ClCompile Include="JuliusToolNativeWrapper.cpp" />
+    <ClCompile Include="LangStat.cpp" />
+    <ClCompile Include="LangStatSerializatinoYaml.cpp" />
     <ClCompile Include="MLUtils.cpp" />
+    <ClCompile Include="TextProcessing.cpp" />
     <ClCompile Include="PhoneAlignment.cpp" />
+    <ClCompile Include="PhoneticSerializationYaml.cpp" />
+    <ClCompile Include="PhoneticService.cpp" />
     <ClCompile Include="PticaGovorunBackend.cpp" />
     <ClCompile Include="SoundUtils.cpp" />
     <ClCompile Include="SpeechAnnotation.cpp" />
@@ -230,6 +246,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TextProcessingSerializationXml.cpp" />
     <ClCompile Include="WavUtils.cpp" />
     <ClCompile Include="XmlAudioMarkup.cpp" />
   </ItemGroup>

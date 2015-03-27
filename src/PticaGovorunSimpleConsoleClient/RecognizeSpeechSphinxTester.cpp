@@ -19,6 +19,7 @@
 #include "SpeechProcessing.h"
 #include "StringUtils.h" // findEditDistance
 #include "CoreUtils.h" // timeStamp
+#include "ClnUtils.h"
 
 namespace RecognizeSpeechSphinxTester
 {
@@ -173,8 +174,10 @@ namespace RecognizeSpeechSphinxTester
 
 		//
 		const char* hmmPath       = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";
-		const char* langModelPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.lm.DMP)path";
-		const char* dictPath      = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.dic)path";
+		//const char* langModelPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.lm.DMP)path";
+		//const char* dictPath      = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.dic)path";
+		const char* langModelPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Debug\persian.lm.DMP)path";
+		const char* dictPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Debug\persianDic.txt)path";
 		cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
 			"-hmm", hmmPath,
 			"-lm", langModelPath,
@@ -287,6 +290,37 @@ namespace RecognizeSpeechSphinxTester
 				wordsActualProbs.push_back((float)prob);
 			}
 
+			// merge word parts
+
+			std::vector<std::wstring> wordsActualMerged;
+			std::vector<float> wordsActualProbsMerged;
+			if (!wordsActual.empty())
+			{
+				wordsActualMerged.push_back(wordsActual.front());
+				wordsActualProbsMerged.push_back(wordsActualProbs.front());
+			}
+			for (size_t wordInd = 1; wordInd < wordsActual.size(); ++wordInd)
+			{
+				const std::wstring& prev = wordsActualMerged.back();
+				const std::wstring& cur  = wordsActual[wordInd];
+				float prevProb = wordsActualProbsMerged.back();
+				float curProb = wordsActualProbs[wordInd];
+				if (prev.back() == L'~' && cur.front() == L'~')
+				{
+					std::wstring merged = prev;
+					merged.pop_back();
+					merged.append(cur.data() + 1, cur.size() - 1);
+
+					wordsActualMerged.back() = merged;
+					wordsActualProbsMerged.back() = prevProb * curProb;
+				}
+				else
+				{
+					wordsActualMerged.push_back(cur);
+					wordsActualProbsMerged.push_back(curProb);
+				}
+			}
+
 			// split text into words
 
 			std::vector<wv::slice<const wchar_t>> wordSlicesExpected;
@@ -304,7 +338,7 @@ namespace RecognizeSpeechSphinxTester
 
 			// skip silences for word-error computation
 			std::vector<std::wstring> wordsActualNoSil;
-			std::copy_if(std::begin(wordsActual), std::end(wordsActual), std::back_inserter(wordsActualNoSil), [](std::wstring& word)
+			std::copy_if(std::begin(wordsActualMerged), std::end(wordsActualMerged), std::back_inserter(wordsActualNoSil), [](std::wstring& word)
 			{
 				return word != std::wstring(L"<s>") && word != std::wstring(L"</s>") && word != std::wstring(L"<sil>");
 			});
@@ -324,8 +358,8 @@ namespace RecognizeSpeechSphinxTester
 			utter.Segment = seg;
 			utter.TextActual = hypWStr;
 			utter.WordsExpected = wordsExpected;
-			utter.WordsActual = wordsActual;
-			utter.WordProbs = wordsActualProbs;
+			utter.WordsActual = wordsActualMerged;
+			utter.WordProbs = wordsActualProbsMerged;
 			recogUtterances.push_back(utter);
 		}
 
@@ -353,7 +387,7 @@ namespace RecognizeSpeechSphinxTester
 
 		QTextStream dumpFileStream(&dumpFile);
 		dumpFileStream.setCodec("UTF-8");
-
+		std::wstringstream buff;
 		for (int i = 0; i < recogUtterances.size(); ++i)
 		{
 			const TwoUtterances& utter = recogUtterances[i];
@@ -361,7 +395,12 @@ namespace RecognizeSpeechSphinxTester
 				break;
 			dumpFileStream << "WordError=" << utter.ErrorWord << " " << "CharError=" << utter.ErrorChars << " SegId=" << utter.Segment.SegmentId << " " << QString::fromStdWString(utter.Segment.FilePath) <<"\n";
 			dumpFileStream << "Expect=" << QString::fromStdWString(utter.Segment.TranscriptText) << "\n";
-			dumpFileStream << "Actual=" << QString::fromStdWString(utter.TextActual) << "\n";
+
+			//dumpFileStream << "Actual=" << QString::fromStdWString(utter.TextActual) << "\n";
+			buff.str(L"");
+			const std::wstring separ(L" ");
+			PticaGovorun::join(utter.WordsActual.cbegin(), utter.WordsActual.cend(), separ, buff);
+			dumpFileStream << "Actual=" << QString::fromStdWString(buff.str()) << "\n";
 			
 			dumpFileStream << "WordProbs=";
 			for (int wordInd = 0; wordInd < utter.WordsActual.size(); ++wordInd)

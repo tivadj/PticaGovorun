@@ -9,7 +9,7 @@
 namespace
 {
 	const char* WordName = "word";
-	const char* PhonesName = "phones";
+	const char* WordUsedCountName = "phones";
 	const char* PronunciationListName = "prons";
 	const char* PronunciationAsWordName = "pronId";
 }
@@ -37,11 +37,11 @@ namespace PticaGovorun
 				yamlEmit << YAML::BeginMap;
 				yamlEmit << YAML::Key << WordName;
 				yamlEmit << YAML::Value << wordQ.toUtf8().constData();
-				yamlEmit << YAML::Key << PhonesName;
+				yamlEmit << YAML::Key << WordUsedCountName;
 
 				const std::vector<std::string>& phoneStrs = wordAndProns.Pronunciations[0].PhoneStrs;
 				phonesBuf.str("");
-				PticaGovorun::join(std::begin(phoneStrs), std::end(phoneStrs), " ", phonesBuf);
+				PticaGovorun::join(std::cbegin(phoneStrs), std::cend(phoneStrs), " ", phonesBuf);
 				yamlEmit << YAML::Value << phonesBuf.str();
 				yamlEmit << YAML::EndMap;
 				continue;
@@ -71,7 +71,7 @@ namespace PticaGovorun
 						phonesBuf.str("");
 						PticaGovorun::join(std::begin(pron.PhoneStrs), std::end(pron.PhoneStrs), " ", phonesBuf);
 
-						yamlEmit << YAML::Key << PhonesName;
+						yamlEmit << YAML::Key << WordUsedCountName;
 						yamlEmit << YAML::Value << phonesBuf.str();
 						yamlEmit << YAML::EndMap;
 					}
@@ -106,7 +106,7 @@ namespace PticaGovorun
 			wordPhoneticInfo.Word = wordW;
 
 			//
-			YAML::Node phonesNode = wordItemNode[PhonesName];
+			YAML::Node phonesNode = wordItemNode[WordUsedCountName];
 			YAML::Node pronsNode = wordItemNode[PronunciationListName];
 			bool isOne = (bool)phonesNode ^ (bool)pronsNode;
 			if (!isOne)
@@ -131,7 +131,7 @@ namespace PticaGovorun
 					std::string pronId = pronsNode[pronInd][PronunciationAsWordName].as<std::string>("");
 					QString pronIdQ = QString::fromStdString(pronId);
 
-					std::string phonesNode2 = pronsNode[pronInd][PhonesName].as<std::string>("");
+					std::string phonesNode2 = pronsNode[pronInd][WordUsedCountName].as<std::string>("");
 					
 					phoneList.clear();
 					parsePhoneListStrs(phonesNode2, phoneList);

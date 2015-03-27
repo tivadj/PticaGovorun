@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 #endif
 	
 	QApplication a(argc, argv);
-    TranscriberMainWindow w;
+    PticaGovorun::TranscriberMainWindow w;
     w.show();
 
 	int appExecOp = a.exec();

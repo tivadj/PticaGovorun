@@ -12,8 +12,12 @@ namespace EditDistanceTestsNS { void run(); }
 namespace MigrateXmlSpeechAnnotRunnerNS { void run(); }
 namespace PhoneticSpellerTestsNS { void run(); }
 namespace PronunciationChecksRunnerNS { void run(); }
+namespace RunPrepareTrainModelSphinxNS { void run(); }
+namespace PdfReaderRunnerNS { void run(); }
+namespace RunTextParserNS { void runMain(int argc, wchar_t* argv[]); }
+namespace RunBuildLanguageModelNS { void runMain(int argc, wchar_t* argv[]); }
 
-int _tmain(int argc, _TCHAR* argv[])
+int _tmain(int argc, TCHAR* argv[])
 {
 	//SliceTesterNS::run();
 	//MatlabTesterNS::run();
@@ -23,7 +27,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	//EditDistanceTestsNS::run();
 	//MigrateXmlSpeechAnnotRunnerNS::run();
 	//PhoneticSpellerTestsNS::run();
-	PronunciationChecksRunnerNS::run();
+	//PronunciationChecksRunnerNS::run();
+	//RunPrepareTrainModelSphinxNS::run();
+	//PdfReaderRunnerNS::run();
+	//RunTextParserNS::runMain(argc, argv);
+	RunBuildLanguageModelNS::runMain(argc, argv);
 
 	return 0;
 }

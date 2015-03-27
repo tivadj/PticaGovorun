@@ -4,11 +4,6 @@
 
 namespace PticaGovorun
 {
-	std::wstring toString(wv::slice<wchar_t> wordSlice)
-	{
-		return std::wstring(wordSlice.data(), wordSlice.size());
-	}
-
 	void TextParser::setInputText(wv::slice<wchar_t> text)
 	{
 		mutText_ = text;
@@ -24,6 +19,7 @@ namespace PticaGovorun
 		wordStartInd_ = -1; // start of new word in input stream of characters
 		outCharInd_ = -1; // the chars are processed without any shifts
 		gotApostrophe_ = false;
+		gotHyphen_ = false;
 
 		for (; charInd_ < mutText_.size(); ++charInd_)
 		{
@@ -60,7 +56,9 @@ namespace PticaGovorun
 			case L'/': // dec=47 solidus
 			case L':': // dec=58 colon
 			case L';': // dec=59 semicolon
+			case L'<': // dec=60 less-than sign
 			case L'=': // dec=61 equals sign
+			case L'>': // dec=62 greater-than sign
 			case L'@': // dec=64 commercial at
 			case L'\\': // dec=92 reverse solidus (backslash)
 			case L'^': // dec=94 circumflex accent
@@ -85,6 +83,7 @@ namespace PticaGovorun
 			case L'*':
 			case L'•': // dec=8226 bullet
 			case L'№': // dec=8470 numero sign
+			case L'': // dec=61449 ? (used inside xml's emphasis tag)
 				onWordBreak(chw, words);
 				break;
 			case L'¬': // not sign (optional hyphen)
@@ -99,7 +98,10 @@ namespace PticaGovorun
 				// if the dash is inside the word, then we have a compounded word
 				// otherwise it is a word separator
 				if (isWordStarted())
+				{
 					onWordCharacter(chw);
+					gotHyphen_ = true;
+				}
 				else
 					onWordBreak(chw, words);
 				break;
@@ -121,6 +123,7 @@ namespace PticaGovorun
 				// character of a word
 				onWordCharacter(chw);
 				gotApostrophe_ = false;
+				gotHyphen_ = false;
 				break;
 			}
 		}
@@ -140,11 +143,11 @@ namespace PticaGovorun
 		else
 			wordEndIndExcl = charInd_;
 
-		// when word ends with apostrophe, just skip the apostrophe
-		if (gotApostrophe_)
+		// when word ends with apostrophe or hyphen, then treat apostrophe or hyphen as a separator
+		if (gotApostrophe_ || gotHyphen_)
 			wordEndIndExcl -= 1;
 
-		PG_Assert(wordStartInd_ < wordEndIndExcl);
+		PG_Assert(wordStartInd_ < wordEndIndExcl && "Word has at least one character");
 
 		int len = wordEndIndExcl - wordStartInd_;
 		wv::slice<wchar_t> wordSlice = wv::make_view(&mutText_[wordStartInd_], len);
@@ -156,6 +159,7 @@ namespace PticaGovorun
 		wordStartInd_ = -1;
 		outCharInd_ = -1;
 		gotApostrophe_ = false;
+		gotHyphen_ = false;
 	}
 
 	void TextParser::onWordCharacter(wchar_t chw)
@@ -222,4 +226,127 @@ namespace PticaGovorun
 		}
 	}
 
+	//
+
+	std::wstring toString(wv::slice<wchar_t> wordSlice)
+	{
+		return std::wstring(wordSlice.data(), wordSlice.size());
+	}
+
+	bool isDigitChar(wchar_t ch)
+	{
+		int chCode = (int)ch;
+		bool result = chCode >= (int)L'0' && chCode <= (int)L'9';
+		return result;
+	}
+
+	bool isEnglishChar(wchar_t ch)
+	{
+		int chCode = (int)ch;
+		bool isLarge = chCode >= L'A' && chCode <= L'Z';
+		bool isSmall = chCode >= L'a' && chCode <= L'z';
+		return isSmall || isLarge;
+	}
+
+	bool isExclusiveEnglishChar(wchar_t ch)
+	{
+		return 
+			ch == L'b' ||
+			ch == L'd' || ch == L'D' ||
+			ch == L'f' || ch == L'F' ||
+			ch == L'g' || ch == L'G' ||
+			ch == L'h' ||
+			ch == L'j' || ch == L'J' ||
+			ch == L'k' ||
+			ch == L'l' || ch == L'L' ||
+			ch == L'm' ||
+			ch == L'n' || ch == L'N' ||
+			ch == L'q' || ch == L'Q' ||
+			ch == L'r' || ch == L'R' ||
+			ch == L's' || ch == L'S' ||
+			ch == L't' ||
+			ch == L'u' || ch == L'U' ||
+			ch == L'v' || ch == L'V' ||
+			ch == L'w' || ch == L'W' ||
+			ch == L'y' || ch == L'Y' ||
+			ch == L'z' || ch == L'Z';
+	}
+
+	bool isRussianChar(wchar_t ch)
+	{
+		// абвгдеёжзийклмнопрстуфхцчшщъыьэюя
+		// АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ
+		return
+			ch == L'а' || ch == L'А' ||
+			ch == L'б' || ch == L'Б' ||
+			ch == L'в' || ch == L'В' ||
+			ch == L'г' || ch == L'Г' ||
+			ch == L'д' || ch == L'Д' ||
+			ch == L'е' || ch == L'Е' ||
+			ch == L'ё' || ch == L'Ё' ||
+			ch == L'ж' || ch == L'Ж' ||
+			ch == L'з' || ch == L'З' ||
+			ch == L'и' || ch == L'И' ||
+			ch == L'й' || ch == L'Й' ||
+			ch == L'к' || ch == L'К' ||
+			ch == L'л' || ch == L'Л' ||
+			ch == L'м' || ch == L'М' ||
+			ch == L'н' || ch == L'Н' ||
+			ch == L'о' || ch == L'О' ||
+			ch == L'п' || ch == L'П' ||
+			ch == L'р' || ch == L'Р' ||
+			ch == L'с' || ch == L'С' ||
+			ch == L'т' || ch == L'Т' ||
+			ch == L'у' || ch == L'У' ||
+			ch == L'ф' || ch == L'Ф' ||
+			ch == L'х' || ch == L'Х' ||
+			ch == L'ц' || ch == L'Ц' ||
+			ch == L'ч' || ch == L'Ч' ||
+			ch == L'ш' || ch == L'Ш' ||
+			ch == L'щ' || ch == L'Щ' ||
+			ch == L'ъ' || ch == L'Ъ' ||
+			ch == L'ы' || ch == L'Ы' ||
+			ch == L'ь' || ch == L'Ь' ||
+			ch == L'э' || ch == L'Э' ||
+			ch == L'ю' || ch == L'Ю' ||
+			ch == L'я' || ch == L'Я';
+	}
+
+	bool isExclusiveRussianChar(wchar_t ch)
+	{
+		return
+			ch == L'ё' || ch == L'Ё' ||
+			ch == L'ъ' || ch == L'Ъ' ||
+			ch == L'ы' || ch == L'Ы' ||
+			ch == L'э' || ch == L'Э';
+	}
+
+	bool isUkrainianConsonant(wchar_t ch)
+	{
+		// бвгґджзйклмнпрстфхцчшщ
+		// БВГҐДЖЗЙКЛМНПРСТФХЦЧШЩ
+		return 
+			ch == L'б' || ch == L'Б' ||
+			ch == L'в' || ch == L'В' ||
+			ch == L'г' || ch == L'Г' ||
+			ch == L'ґ' || ch == L'Ґ' ||
+			ch == L'д' || ch == L'Д' ||
+			ch == L'ж' || ch == L'Ж' ||
+			ch == L'з' || ch == L'З' ||
+			ch == L'й' || ch == L'Й' ||
+			ch == L'к' || ch == L'К' ||
+			ch == L'л' || ch == L'Л' ||
+			ch == L'м' || ch == L'М' ||
+			ch == L'н' || ch == L'Н' ||
+			ch == L'п' || ch == L'П' ||
+			ch == L'р' || ch == L'Р' ||
+			ch == L'с' || ch == L'С' ||
+			ch == L'т' || ch == L'Т' ||
+			ch == L'ф' || ch == L'Ф' ||
+			ch == L'х' || ch == L'Х' ||
+			ch == L'ц' || ch == L'Ц' ||
+			ch == L'ч' || ch == L'Ч' ||
+			ch == L'ш' || ch == L'Ш' ||
+			ch == L'щ' || ch == L'Щ';
+	}
 }
