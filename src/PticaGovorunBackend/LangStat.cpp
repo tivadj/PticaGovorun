@@ -216,6 +216,17 @@ namespace PticaGovorun
 		return nullptr;
 	}
 
+	long WordsUsageInfo::getWordSequenceUsage(WordSeqKey wordIds) const
+	{
+		auto it = wordSeqKeyToUsage_.find(wordIds);
+		if (it != wordSeqKeyToUsage_.end())
+		{
+			return it->second.UsedCount;
+		}
+		// there is no usage data for given part
+		return 0;
+	}
+
 	int WordsUsageInfo::wordPartsCount() const
 	{
 		return (int)allWordParts_.size();
@@ -224,6 +235,16 @@ namespace PticaGovorun
 	int WordsUsageInfo::wordSeqCount() const
 	{
 		return (int)wordSeqKeyToUsage_.size();
+	}
+
+	void WordsUsageInfo::copyWordParts(std::vector<const WordPart*>& wordParts) const
+	{
+		wordParts.reserve(allWordParts_.size());
+		for (const auto& pair : allWordParts_)
+		{
+			const WordPart* part = &pair.second;
+			wordParts.push_back(part);
+		}
 	}
 
 	void WordsUsageInfo::copyWordSeq(std::vector<WordSeqKey>& wordSeqItems)

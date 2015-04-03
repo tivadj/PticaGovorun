@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <sstream>
+#include <ctime> // time_t, strftime
 
 namespace PticaGovorun
 {

@@ -5,6 +5,7 @@
 #include <unordered_set>
 #include <map>
 #include <QTextCodec>
+#include <QTextStream>
 #include <boost/optional.hpp>
 #include "PticaGovorunCore.h"
 #include "LangStat.h"
@@ -87,27 +88,48 @@ namespace PticaGovorun
 		};
 		WordsUsageInfo wordUsage_;
 		std::unordered_map<std::wstring, ShortArray<int,2>> wordStrToPartIds_; // some words, split by default
-		long totalWordParts_ = 0;
+		long seqOneWordCounter_ = 0;
+		long seqTwoWordsCounter_ = 0;
+		const WordPart* sentStartWordPart_;
+		const WordPart* sentEndWordPart_;
+		const WordPart* wordPartSeparator_ = nullptr;
 	public:
+		UkrainianPhoneticSplitter();
+
 		void bootstrap(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWords, const std::wstring& targetWord,
 			const std::unordered_set<std::wstring>& processedWords, int& totalWordsCount);
 
-		void buildLangModel(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess = -1);
+		void buildLangModel(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess = -1, bool outputCorpus = false);
 
 		const WordsUsageInfo& wordUsage() const;
 		WordsUsageInfo& wordUsage();
 		void printSuffixUsageStatistics() const;
-		long totalWordParts() const;
+
+		// Gets the number of sequences with 'wordSeqLength' words per sequence.
+		long wordSeqCount(int wordsPerSeq) const;
+		const WordPart* sentStartWordPart() const;
+		const WordPart* sentEndWordPart() const;
 	private:
 		void doWordPhoneticSplit(const wv::slice<wchar_t>& wordSlice, std::vector<const WordPart*>& wordParts);
 
 		// split words into slices
 		void selectWordParts(const std::vector<wv::slice<wchar_t>>& words, std::vector<const WordPart*>& wordParts, long& preSplitWords);
 
+		void calcNGramStatisticsOnWordPartsBatch(std::vector<const WordPart*>& wordParts, bool outputCorpus, QTextStream& corpusStream);
+
 		// calculate statistics on word parts list
 		void calcLangStatistics(const std::vector<const WordPart*>& wordParts);
 	};
 
+	template <typename StreatT>
+	void printWordPart(const WordPart* wordPart, StreatT& stream)
+	{
+		if (wordPart->partSide() == WordPartSide::RightPart || wordPart->partSide() == WordPartSide::MiddlePart)
+			stream << "~";
+		stream << QString::fromStdWString(wordPart->partText());
+		if (wordPart->partSide() == WordPartSide::LeftPart || wordPart->partSide() == WordPartSide::MiddlePart)
+			stream << "~";
+	}
 
 	// equality by value
 	PG_EXPORTS bool operator == (const Pronunc& a, const Pronunc& b);

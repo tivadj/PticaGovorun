@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QXmlStreamReader>
 #include <QString>
+#include "CoreUtils.h"
 
 namespace PticaGovorun
 {
@@ -521,7 +522,7 @@ namespace PticaGovorun
 				assert(false && "Letter must be processed already");
 			}
 		}
-		std::make_tuple(true, nullptr);
+		return std::make_tuple(true, nullptr);
 	}
 
 	void loadPhoneticVocabulary(const std::wstring& vocaPath, std::map<std::wstring, std::vector<std::string>>& wordToPronList)
@@ -1611,6 +1612,15 @@ namespace PticaGovorun
 		return voiceless;
 	}
 
+	UkrainianPhoneticSplitter::UkrainianPhoneticSplitter()
+	{
+		bool wasAdded = false;
+		sentStartWordPart_ = wordUsage_.getOrAddWordPart(L"<s>", WordPartSide::WholeWord, &wasAdded);
+		CV_Assert(wasAdded);
+		sentEndWordPart_ = wordUsage_.getOrAddWordPart(L"</s>", WordPartSide::WholeWord, &wasAdded);
+		CV_Assert(wasAdded);
+	}
+
 	void UkrainianPhoneticSplitter::bootstrap(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& words, const std::wstring& targetWord, const std::unordered_set<std::wstring>& processedWords, int& totalWordsCount)
 	{
 		totalWordsCount = 0;
@@ -1841,13 +1851,42 @@ namespace PticaGovorun
 		}
 	}
 
-	long UkrainianPhoneticSplitter::totalWordParts() const
+	long UkrainianPhoneticSplitter::wordSeqCount(int wordsPerSeq) const
 	{
-		return totalWordParts_;
+		PG_Assert(wordsPerSeq <= 2);
+		if (wordsPerSeq == 1)
+			return seqOneWordCounter_;
+		return seqTwoWordsCounter_;
 	}
 
-	void UkrainianPhoneticSplitter::buildLangModel(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess)
+	const WordPart* UkrainianPhoneticSplitter::sentStartWordPart() const
 	{
+		return sentStartWordPart_;
+	}
+
+	const WordPart* UkrainianPhoneticSplitter::sentEndWordPart() const
+	{
+		return sentEndWordPart_;
+	}
+
+	void UkrainianPhoneticSplitter::buildLangModel(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess, bool outputCorpus)
+	{
+		QFile corpusFile;
+		QTextStream corpusStream;
+		if (outputCorpus)
+		{
+			std::wstringstream corpusFileName;
+			corpusFileName << "persianCorpus.";
+			appendTimeStampNow(corpusFileName);
+			corpusFileName << ".txt";
+
+			corpusFile.setFileName(QString::fromStdWString(corpusFileName.str()));
+			if (!corpusFile.open(QIODevice::WriteOnly | QIODevice::Text))
+				return;
+			corpusStream.setDevice(&corpusFile);
+			corpusStream.setCodec("UTF-8");
+		}
+
 		QXmlStreamReader xml;
 		totalPreSplitWords = 0;
 
@@ -1855,7 +1894,6 @@ namespace PticaGovorun
 		words.reserve(64);
 		std::vector<const WordPart*> wordParts;
 		wordParts.reserve(1024);
-		std::vector<const WordPart*> wordPartsStraight;
 		TextParser wordsReader;
 
 		QString textFilesDirQ = QString::fromStdWString(textFilesDir);
@@ -1907,43 +1945,28 @@ namespace PticaGovorun
 						if (words.empty())
 							continue;
 
-						wordParts.clear();
-						selectWordParts(words, wordParts, totalPreSplitWords);
-						if (wordParts.empty())
-							continue;
+						{
+							// augment the sentence with start/end terminators
+							wordParts.push_back(sentStartWordPart_);
 
-						// select sequantial word parts without separator
-						size_t wordPartInd = 0;
-						auto takeWordPartsTillNull = [&wordParts,&wordPartInd](std::vector<const WordPart*>& outWordParts) -> bool
+							selectWordParts(words, wordParts, totalPreSplitWords);
+
+							// augment the sentence with start/end terminators
+							wordParts.push_back(sentEndWordPart_);
+						}
+
+						// calculate statistic only if enough word parts is accumulated
+						size_t calcStatWordPartsCount = 1000000;
+						if (wordParts.size() > calcStatWordPartsCount)
 						{
-							// returns true if result contains data
-							while (wordPartInd < wordParts.size())
-							{
-								for (; wordPartInd < wordParts.size(); ++wordPartInd)
-								{
-									const WordPart* wordPartPtr = wordParts[wordPartInd];
-									if (wordPartPtr == nullptr)
-									{
-										wordPartInd++; // skip separator
-										break;
-									}
-									outWordParts.push_back(wordPartPtr);
-								}
-								if (!outWordParts.empty())
-									return true;
-							}
-							return false;
-						};
-						while (true)
-						{
-							wordPartsStraight.clear();
-							if (!takeWordPartsTillNull(wordPartsStraight))
-								break;
-							calcLangStatistics(wordPartsStraight);
+							calcNGramStatisticsOnWordPartsBatch(wordParts, outputCorpus, corpusStream);
 						}
 					}
 				}
 			}
+			
+			// flush the word parts buffer
+			calcNGramStatisticsOnWordPartsBatch(wordParts, outputCorpus, corpusStream);
 
 			++processedFiles;
 		}
@@ -2028,7 +2051,7 @@ namespace PticaGovorun
 					::OutputDebugStringW(toString(wordSlice).c_str());
 					::OutputDebugStringW(L"\n");
 				}
-				wordParts.push_back(nullptr); // word parts separator
+				wordParts.push_back(wordPartSeparator_); // word parts separator
 				continue;
 			}
 
@@ -2054,14 +2077,80 @@ namespace PticaGovorun
 		}
 	}
 
+	void UkrainianPhoneticSplitter::calcNGramStatisticsOnWordPartsBatch(std::vector<const WordPart*>& wordParts, bool outputCorpus, QTextStream& corpusStream)
+	{
+		std::vector<const WordPart*> wordPartsStraight;
+
+		// select sequantial word parts without separator
+		size_t wordPartInd = 0;
+		auto takeWordPartsTillNull = [this, &wordParts, &wordPartInd](std::vector<const WordPart*>& outWordParts) -> bool
+		{
+			// returns true if result contains data
+			while (wordPartInd < wordParts.size())
+			{
+				for (; wordPartInd < wordParts.size(); ++wordPartInd)
+				{
+					const WordPart* wordPartPtr = wordParts[wordPartInd];
+					if (wordPartPtr == wordPartSeparator_)
+					{
+						wordPartInd++; // skip separator
+						break;
+					}
+					outWordParts.push_back(wordPartPtr);
+				}
+				if (!outWordParts.empty())
+					return true;
+			}
+			return false;
+		};
+		while (true)
+		{
+			wordPartsStraight.clear();
+			if (!takeWordPartsTillNull(wordPartsStraight))
+				break;
+
+			calcLangStatistics(wordPartsStraight);
+
+			if (outputCorpus)
+			{
+				for (const WordPart* wp : wordPartsStraight)
+				{
+					printWordPart(wp, corpusStream);
+					corpusStream << " ";
+				}
+				corpusStream << "\n";
+			}
+		}
+		// purge word parts buffer
+		wordParts.clear();
+	}
+
 	void UkrainianPhoneticSplitter::calcLangStatistics(const std::vector<const WordPart*>& wordParts)
 	{
+		const WordPart* prevWordPart = nullptr;
+
 		for (const WordPart* wordPart : wordParts)
 		{
-			WordSeqKey wordIds({ wordPart->id() });
-			WordSeqUsage* wordSeq = wordUsage_.getOrAddWordSequence(wordIds);
-			wordSeq->UsedCount++;
-			totalWordParts_++;
+			if (wordPart->partText() == L"валуванн")
+			{
+				PG_Assert(true);
+			}
+			// unimodel
+			WordSeqKey oneWordKey({ wordPart->id() });
+			WordSeqUsage* oneWordSeq = wordUsage_.getOrAddWordSequence(oneWordKey);
+			oneWordSeq->UsedCount++;
+			seqOneWordCounter_++;
+
+			// bimodel
+			if (prevWordPart != nullptr)
+			{
+				WordSeqKey twoWordsKey({ prevWordPart->id(), wordPart->id() });
+				WordSeqUsage* twoWordsSeq = wordUsage_.getOrAddWordSequence(twoWordsKey);
+				twoWordsSeq->UsedCount++;
+				seqTwoWordsCounter_++;
+			}
+
+			prevWordPart = wordPart;
 		}
 	}
 

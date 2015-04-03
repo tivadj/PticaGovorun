@@ -82,7 +82,7 @@ namespace PticaGovorun
 
 	private:
 		int nextWordPartId_ = 1;
-		std::unordered_map<int, WordPart> allWordParts_;
+		std::unordered_map<int, WordPart> allWordParts_; // TODO: wordPart as unique_ptr?
 		std::unordered_multimap<std::wstring, WordPart*> partTextToWordPart_;
 		std::unordered_map<WordSeqKey, WordSeqUsage, WordSeqKeyHasher> wordSeqKeyToUsage_;
 	public:
@@ -95,8 +95,10 @@ namespace PticaGovorun
 	public:
 		WordSeqUsage* getOrAddWordSequence(WordSeqKey wordIds, bool* wasAdded = nullptr);
 		const WordSeqUsage* getWordSequence(WordSeqKey wordIds) const;
+		long getWordSequenceUsage(WordSeqKey wordIds) const;
 		int wordPartsCount() const;
 		int wordSeqCount() const;
+		void copyWordParts(std::vector<const WordPart*>& wordParts) const;
 		void copyWordSeq(std::vector<WordSeqKey>& wordSeqItems);
 		void copyWordSeq(std::vector<WordSeqUsage*>& wordSeqItems);
 
