@@ -8,6 +8,7 @@ namespace SliceTesterNS { void run(); }
 namespace ComputeSpeechMfccTesterNS { void run(); }
 namespace ResampleAudioTesterNS { void run(); }
 namespace RecognizeSpeechSphinxTester { void run(); }
+namespace RecognizeSpeechInBatchTester { void runMain(int argc, wchar_t* argv[]); }
 namespace EditDistanceTestsNS { void run(); }
 namespace MigrateXmlSpeechAnnotRunnerNS { void run(); }
 namespace PhoneticSpellerTestsNS { void run(); }
@@ -23,7 +24,6 @@ int _tmain(int argc, TCHAR* argv[])
 	//MatlabTesterNS::run();
 	//ComputeSpeechMfccTesterNS::run();
 	//ResampleAudioTesterNS::run();
-	//RecognizeSpeechSphinxTester::run();
 	//EditDistanceTestsNS::run();
 	//MigrateXmlSpeechAnnotRunnerNS::run();
 	//PhoneticSpellerTestsNS::run();
@@ -31,7 +31,9 @@ int _tmain(int argc, TCHAR* argv[])
 	//RunPrepareTrainModelSphinxNS::run();
 	//PdfReaderRunnerNS::run();
 	//RunTextParserNS::runMain(argc, argv);
-	RunBuildLanguageModelNS::runMain(argc, argv);
+	//RunBuildLanguageModelNS::runMain(argc, argv);
+	//RecognizeSpeechSphinxTester::run();
+	RecognizeSpeechInBatchTester::runMain(argc, argv);
 
 	return 0;
 }
