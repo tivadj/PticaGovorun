@@ -173,6 +173,9 @@ struct AnnotatedSpeechSegment
 
 	// Actual samples in [FrameStart; FrameEnd) range.
 	std::vector<short> Frames;
+	
+	int StartMarkerId = -1;
+	int EndMarkerId = -1;
 };
 
 // Determines if a marker with given level of detail will stop the audio playback.
@@ -193,6 +196,7 @@ PG_EXPORTS void padSilence(const short* audioFrames, int audioFramesCount, int s
 // Merges a sequence of phone-states (such as j2,j3,j4,o2,o3...) into monophone sequence (such as j,o...)
 PG_EXPORTS void mergeSamePhoneStates(const std::vector<AlignedPhoneme>& phoneStates, std::vector<AlignedPhoneme>& monoPhones);
 
+// framEndIndex=inclusive index
 PG_EXPORTS void frameRangeToSampleRange(size_t framBegIndex, size_t framEndIndex, LastFrameSample endSampleChoice, size_t frameSize, size_t frameShift, long& sampleBeg, long& sampleEnd);
 
 // For given audio (wav) file from audio repository gives absolute path of corresponding annotation (xml) file path.

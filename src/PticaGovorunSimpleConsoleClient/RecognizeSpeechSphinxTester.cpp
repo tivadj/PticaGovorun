@@ -152,9 +152,53 @@ namespace RecognizeSpeechSphinxTester
 			return x == y ? 0 : 1;
 		}
 	};
+	
+	struct SphinxFileIdLine
+	{
+		std::wstring Line;
+		std::wstring OriginalFileNamePart;
+		int StartMarkerId;
+		int EndMarkerId;
+	};
+
+	bool readFileId(const wchar_t* fileIdPath, std::vector<SphinxFileIdLine>& fileIdLines)
+	{
+		QFile file(QString::fromWCharArray(fileIdPath));
+		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+			return false;
+		
+		QTextStream stream(&file);
+		while (!stream.atEnd())
+		{
+			QString line = stream.readLine();
+			int slashInd = line.lastIndexOf(QChar('/'));
+			PG_Assert(slashInd != -1);
+
+			int underscoreInd = line.indexOf(QChar('_'), slashInd);
+			PG_Assert(underscoreInd != -1);
+			int dashInd = line.indexOf(QChar('-'), underscoreInd);
+			PG_Assert(dashInd != -1);
+
+			QString origSpeechFileNamePart = line.mid(slashInd + 1, underscoreInd - slashInd - 1);
+			QString startMarkerIdStr = line.mid(underscoreInd + 1, dashInd - underscoreInd - 1);
+			QString endMarkerIdStr = line.mid(dashInd + 1);
+
+			SphinxFileIdLine part;
+			part.Line = line.toStdWString();
+			part.OriginalFileNamePart = origSpeechFileNamePart.toStdWString();
+			part.StartMarkerId = startMarkerIdStr.toInt();
+			part.EndMarkerId = endMarkerIdStr.toInt();
+			fileIdLines.push_back(part);
+		}
+		return true;
+	}
 
 	void testSphincDecoder()
 	{
+		const wchar_t* testFileIdPath = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian_test.fileids)path";
+		std::vector<SphinxFileIdLine> fileIdLines;
+		readFileId(testFileIdPath, fileIdLines);
+
 		const wchar_t* wavRootDir       = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAudio\)path";
 		const wchar_t* annotRootDir     = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAnnot\)path";
 		const wchar_t* wavDirToAnalyze  = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAudio\)path";
@@ -176,8 +220,8 @@ namespace RecognizeSpeechSphinxTester
 		const char* hmmPath       = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";
 		//const char* langModelPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.lm.DMP)path";
 		//const char* dictPath      = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.dic)path";
-		const char* langModelPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Debug\persian.lm.DMP)path";
-		const char* dictPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Debug\persianDic.txt)path";
+		const char* langModelPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persian.lm.DMP)path";
+		const char* dictPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persianDic.txt)path";
 		cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
 			"-hmm", hmmPath,
 			"-lm", langModelPath,
@@ -199,7 +243,9 @@ namespace RecognizeSpeechSphinxTester
 			std::wstring TextActual;
 			std::vector<std::wstring> WordsExpected;
 			std::vector<std::wstring> WordsActual;
+			std::vector<std::wstring> WordsActualMerged;
 			std::vector<float> WordProbs; // confidence of each recognized word
+			std::vector<float> WordProbsMerged;
 		};
 
 		//
@@ -207,7 +253,21 @@ namespace RecognizeSpeechSphinxTester
 		float targetFrameRate = CmuSphinxFrameRate;
 		for (int i = 0; i < segments.size(); ++i)
 		{
+			//if (i > 90)
+			//	break;
 			const AnnotatedSpeechSegment& seg = segments[i];
+			
+			// process only test speech segments
+
+			auto fileIdIt = std::find_if(fileIdLines.begin(), fileIdLines.end(), [&seg](const SphinxFileIdLine& fileIdLine)
+			{
+				return seg.FilePath.find(fileIdLine.OriginalFileNamePart) != std::wstring::npos &&
+					seg.StartMarkerId == fileIdLine.StartMarkerId &&
+					seg.EndMarkerId == fileIdLine.EndMarkerId;
+			});
+			bool isTestSeg = fileIdIt != fileIdLines.end();
+			if (!isTestSeg)
+				continue;
 
 			std::vector<short> speechFramesResamp;
 			bool requireResampling = seg.FrameRate != targetFrameRate;
@@ -358,12 +418,14 @@ namespace RecognizeSpeechSphinxTester
 			utter.Segment = seg;
 			utter.TextActual = hypWStr;
 			utter.WordsExpected = wordsExpected;
-			utter.WordsActual = wordsActualMerged;
-			utter.WordProbs = wordsActualProbsMerged;
+			utter.WordsActual = wordsActual;
+			utter.WordsActualMerged = wordsActualMerged;
+			utter.WordProbs = wordsActualProbs;
+			utter.WordProbsMerged = wordsActualProbsMerged;
 			recogUtterances.push_back(utter);
 		}
 
-		//
+		// the call may crash if phonetic dictionary was not correctly initialized (eg .dict file is empty)
 		ps_free(ps);
 
 		// order error, large to small
@@ -396,11 +458,14 @@ namespace RecognizeSpeechSphinxTester
 			dumpFileStream << "WordError=" << utter.ErrorWord << " " << "CharError=" << utter.ErrorChars << " SegId=" << utter.Segment.SegmentId << " " << QString::fromStdWString(utter.Segment.FilePath) <<"\n";
 			dumpFileStream << "Expect=" << QString::fromStdWString(utter.Segment.TranscriptText) << "\n";
 
-			//dumpFileStream << "Actual=" << QString::fromStdWString(utter.TextActual) << "\n";
-			buff.str(L"");
 			const std::wstring separ(L" ");
-			PticaGovorun::join(utter.WordsActual.cbegin(), utter.WordsActual.cend(), separ, buff);
+			buff.str(L"");
+			PticaGovorun::join(utter.WordsActualMerged.cbegin(), utter.WordsActualMerged.cend(), separ, buff);
 			dumpFileStream << "Actual=" << QString::fromStdWString(buff.str()) << "\n";
+
+			buff.str(L"");
+			PticaGovorun::join(utter.WordsActual.cbegin(), utter.WordsActual.cend(), separ, buff);
+			dumpFileStream << "ActualRaw=" << QString::fromStdWString(buff.str()) << "\n";
 			
 			dumpFileStream << "WordProbs=";
 			for (int wordInd = 0; wordInd < utter.WordsActual.size(); ++wordInd)

@@ -316,6 +316,8 @@ namespace PticaGovorun {
 			{
 				AnnotatedSpeechSegment seg;
 				seg.SegmentId = marker.Id;
+				seg.StartMarkerId = marker.Id;
+				seg.EndMarkerId = markersOfInterest[i+1].Id;
 				seg.FilePath = wavFilePath.toStdWString();
 				seg.TranscriptText = marker.TranscripText.toStdWString();
 				seg.Language = marker.Language;
