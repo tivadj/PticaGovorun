@@ -15,11 +15,22 @@ namespace PticaGovorun
 	{
 		const wchar_t Letter_Hyphen = L'-';
 		const wchar_t Letter_Apostrophe = L'\'';
+		const wchar_t Letter_A = L'а';
+		const wchar_t Letter_B = L'б';
+		const wchar_t Letter_H = L'г';
 		const wchar_t Letter_D = L'д';
-		const wchar_t Letter_JI = L'ї';
 		const wchar_t Letter_JE = L'є';
 		const wchar_t Letter_ZH = L'ж';
 		const wchar_t Letter_Z = L'з';
+		const wchar_t Letter_JI = L'ї';
+		const wchar_t Letter_K = L'к';
+		const wchar_t Letter_N = L'н';
+		const wchar_t Letter_S = L'с';
+		const wchar_t Letter_T = L'т';
+		const wchar_t Letter_U = L'у';
+		const wchar_t Letter_TS = L'ц';
+		const wchar_t Letter_CH = L'ч';
+		const wchar_t Letter_SH = L'ш';
 		const wchar_t Letter_SHCH = L'щ';
 		const wchar_t Letter_SoftSign = L'ь';
 		const wchar_t Letter_JU = L'ю';
@@ -237,6 +248,24 @@ namespace PticaGovorun
 		}
 	}
 
+	bool parsePhoneListStrs(const std::string& phonesStr, std::vector<UkrainianPhoneId>& result)
+	{
+		QStringList list = QString::fromStdString(phonesStr).split(' ');
+		for (int i = 0; i < list.size(); ++i)
+		{
+			QString phoneQ = list[i];
+			if (phoneQ.isEmpty()) // a phone can't be an empty string
+				continue;
+
+			bool parseOp = false;
+			UkrainianPhoneId phoneId = phoneStrToId(phoneQ.toStdString(), &parseOp);
+			if (!parseOp)
+				return false;
+			result.push_back(phoneId);
+		}
+		return true;
+	}
+
 	std::tuple<bool, const char*>  parsePronuncLines(const std::wstring& prons, std::vector<PronunciationFlavour>& result)
 	{
 		QString pronsQ = QString::fromStdWString(prons);
@@ -359,6 +388,75 @@ namespace PticaGovorun
 		return true;
 	}
 
+	UkrainianPhoneId phoneStrToId(const std::string& phoneStr, bool* parseSuccess)
+	{
+		if (parseSuccess != nullptr)
+			*parseSuccess = true;
+
+		if (phoneStr == "A")
+			return UkrainianPhoneId::P_A;
+		else if (phoneStr == "B")
+			return UkrainianPhoneId::P_B;
+		else if (phoneStr == "CH")
+			return UkrainianPhoneId::P_CH;
+		else if (phoneStr == "D")
+			return UkrainianPhoneId::P_D;
+		else if (phoneStr == "DZ")
+			return UkrainianPhoneId::P_DZ;
+		else if (phoneStr == "DZH")
+			return UkrainianPhoneId::P_DZH;
+		else if (phoneStr == "E")
+			return UkrainianPhoneId::P_E;
+		else if (phoneStr == "F")
+			return UkrainianPhoneId::P_F;
+		else if (phoneStr == "G")
+			return UkrainianPhoneId::P_G;
+		else if (phoneStr == "H")
+			return UkrainianPhoneId::P_H;
+		else if (phoneStr == "I")
+			return UkrainianPhoneId::P_I;
+		else if (phoneStr == "J")
+			return UkrainianPhoneId::P_J;
+		else if (phoneStr == "K")
+			return UkrainianPhoneId::P_K;
+		else if (phoneStr == "KH")
+			return UkrainianPhoneId::P_KH;
+		else if (phoneStr == "L")
+			return UkrainianPhoneId::P_L;
+		else if (phoneStr == "M")
+			return UkrainianPhoneId::P_M;
+		else if (phoneStr == "N")
+			return UkrainianPhoneId::P_N;
+		else if (phoneStr == "O")
+			return UkrainianPhoneId::P_O;
+		else if (phoneStr == "P")
+			return UkrainianPhoneId::P_P;
+		else if (phoneStr == "R")
+			return UkrainianPhoneId::P_R;
+		else if (phoneStr == "S")
+			return UkrainianPhoneId::P_S;
+		else if (phoneStr == "SH")
+			return UkrainianPhoneId::P_SH;
+		else if (phoneStr == "T")
+			return UkrainianPhoneId::P_T;
+		else if (phoneStr == "TS")
+			return UkrainianPhoneId::P_TS;
+		else if (phoneStr == "U")
+			return UkrainianPhoneId::P_U;
+		else if (phoneStr == "V")
+			return UkrainianPhoneId::P_V;
+		else if (phoneStr == "Y")
+			return UkrainianPhoneId::P_Y;
+		else if (phoneStr == "Z")
+			return UkrainianPhoneId::P_Z;
+		else if (phoneStr == "ZH")
+			return UkrainianPhoneId::P_ZH;
+		
+		if (parseSuccess != nullptr)
+			*parseSuccess = false;
+		return UkrainianPhoneId::Nil;
+	}
+
 	bool pronuncToStr(const std::vector<UkrainianPhoneId>& pron, Pronunc& result)
 	{
 		std::string str;
@@ -382,18 +480,19 @@ namespace PticaGovorun
 			wchar_t Letter;
 			UkrainianPhoneId Phone;
 		};
+		// the nil at right part of the map means, that mapping is more complex than one-one
 		//wchar_t ukAlpha[] = L"абвгґдеєжзиіїйклмнопрстуфхцчшщьюя";
 		static std::array<CharToPhone, 35> ukAlphaArray = {
 			CharToPhone{ L'а', UkrainianPhoneId::P_A },
-			CharToPhone{ L'б', UkrainianPhoneId::P_B },
+			CharToPhone{ Letter_B, UkrainianPhoneId::Nil },
 			CharToPhone{ L'в', UkrainianPhoneId::P_V },
-			CharToPhone{ L'г', UkrainianPhoneId::P_H },
+			CharToPhone{ Letter_H, UkrainianPhoneId::Nil },
 			CharToPhone{ L'ґ', UkrainianPhoneId::P_G },
 			CharToPhone{ Letter_D, UkrainianPhoneId::Nil },
 			CharToPhone{ L'е', UkrainianPhoneId::P_E },
 			CharToPhone{ Letter_JE, UkrainianPhoneId::Nil },
-			CharToPhone{ Letter_ZH, UkrainianPhoneId::P_ZH },
-			CharToPhone{ Letter_Z, UkrainianPhoneId::P_Z },
+			CharToPhone{ Letter_ZH, UkrainianPhoneId::Nil },
+			CharToPhone{ Letter_Z, UkrainianPhoneId::Nil },
 			CharToPhone{ L'и', UkrainianPhoneId::P_Y },
 			CharToPhone{ L'і', UkrainianPhoneId::P_I },
 			CharToPhone{ Letter_JI, UkrainianPhoneId::Nil },
@@ -401,18 +500,18 @@ namespace PticaGovorun
 			CharToPhone{ L'к', UkrainianPhoneId::P_K },
 			CharToPhone{ L'л', UkrainianPhoneId::P_L },
 			CharToPhone{ L'м', UkrainianPhoneId::P_M },
-			CharToPhone{ L'н', UkrainianPhoneId::P_N },
+			CharToPhone{ Letter_N, UkrainianPhoneId::Nil },
 			CharToPhone{ L'о', UkrainianPhoneId::P_O },
 			CharToPhone{ L'п', UkrainianPhoneId::P_P },
 			CharToPhone{ L'р', UkrainianPhoneId::P_R },
-			CharToPhone{ L'с', UkrainianPhoneId::P_S },
-			CharToPhone{ L'т', UkrainianPhoneId::P_T },
+			CharToPhone{ Letter_S, UkrainianPhoneId::Nil },
+			CharToPhone{ Letter_T, UkrainianPhoneId::Nil },
 			CharToPhone{ L'у', UkrainianPhoneId::P_U },
 			CharToPhone{ L'ф', UkrainianPhoneId::P_F },
 			CharToPhone{ L'х', UkrainianPhoneId::P_KH },
-			CharToPhone{ L'ц', UkrainianPhoneId::P_TS },
-			CharToPhone{ L'ч', UkrainianPhoneId::P_CH },
-			CharToPhone{ L'ш', UkrainianPhoneId::P_SH },
+			CharToPhone{ Letter_TS, UkrainianPhoneId::P_TS },
+			CharToPhone{ Letter_CH, UkrainianPhoneId::P_CH },
+			CharToPhone{ Letter_SH, UkrainianPhoneId::P_SH },
 			CharToPhone{ Letter_SHCH, UkrainianPhoneId::Nil },
 			CharToPhone{ Letter_SoftSign, UkrainianPhoneId::Nil },
 			CharToPhone{ Letter_JU, UkrainianPhoneId::Nil },
@@ -462,72 +561,400 @@ namespace PticaGovorun
 			
 			// letter is converted in more complicated way
 
-			if (letter == Letter_D)
+			bool isFirstLetter = i == 0;
+			bool isLastLetter = i + 1 == word.size();
+
+			if (letter == Letter_B || letter == Letter_H || letter == Letter_D || letter == Letter_ZH || letter == Letter_Z)
 			{
-				if (i + 1 == word.size()) // last letter?
-					phones.push_back(UkrainianPhoneId::P_D);
-				else
+				if (letter == Letter_D)
 				{
-					wchar_t nextLetter = word[i + 1];
-					if (nextLetter == Letter_Z)
+					if (isLastLetter)
 					{
-						phones.push_back(UkrainianPhoneId::P_DZ);
-						i += 1; // skip next letter
-					}
-					else if (nextLetter == Letter_ZH)
-					{
-						phones.push_back(UkrainianPhoneId::P_DZH);
-						i += 1; // skip next letter
+						phones.push_back(UkrainianPhoneId::P_D);
+						continue;
 					}
 					else
-						phones.push_back(UkrainianPhoneId::P_D);
-					continue;
+					{
+						wchar_t nextLetter = word[i + 1];
+						if (nextLetter == Letter_Z)
+						{
+							phones.push_back(UkrainianPhoneId::P_DZ);
+							i += 1; // skip next letter
+							continue;
+						}
+						else if (nextLetter == Letter_ZH)
+						{
+							phones.push_back(UkrainianPhoneId::P_DZH);
+							i += 1; // skip next letter
+							continue;
+						}
+					}
 				}
+				if (letter == Letter_Z)
+				{
+					if (i + 1 < word.size()) // size(ZH)=1
+					{
+						// Z ZH -> ZH ZH
+						// зжер [ZH ZH E R]
+						if (word[i + 1] == Letter_ZH)
+						{
+							// skip first T
+							phones.push_back(UkrainianPhoneId::P_ZH);
+							phones.push_back(UkrainianPhoneId::P_ZH);
+							i += 1;
+							continue;
+						}
+					}
+					if (i + 2 < word.size()) // size(D ZH)=2
+					{
+						// Z D ZH -> ZH DZH
+						// з'їзджають [Z J I ZH DZH A J U T]
+						if (word[i + 1] == Letter_D && word[i + 2] == Letter_ZH)
+						{
+							// skip first T
+							phones.push_back(UkrainianPhoneId::P_ZH);
+							phones.push_back(UkrainianPhoneId::P_DZH);
+							i += 2;
+							continue;
+						}
+					}
+				}
+
+				// B->P, H->KH, D->T, ZH->SH, Z->S before unvoiced sound
+				// B->P необхідно [N E O P KH I D N O]
+				// H->KH допомогти [D O P O M O KH T Y]
+				// D->T швидко [SH V Y T K O]
+				// ZH->SH дужче [D U SH CH E]
+				// Z->S безпеки [B E S P E K A]
+				bool beforeUnvoiced = false;
+				if (!isLastLetter)
+				{
+					wchar_t nextLetter = word[i + 1];
+					if (isUnvoicedCharUk(nextLetter))
+						beforeUnvoiced = true;
+					else
+					{
+						// check if the next letter is a soft sign and then the unvoiced consonant
+						if (nextLetter == Letter_SoftSign && i + 2 < word.size())
+						{
+							wchar_t nextNextLetter = word[i + 2];
+							if (isUnvoicedCharUk(nextNextLetter))
+								beforeUnvoiced = true;
+						}
+					}
+				}
+				if (!beforeUnvoiced)
+				{
+					if (letter == Letter_B)
+						phones.push_back(UkrainianPhoneId::P_B);
+					else if (letter == Letter_H)
+						phones.push_back(UkrainianPhoneId::P_H);
+					else if (letter == Letter_D)
+						phones.push_back(UkrainianPhoneId::P_D);
+					else if (letter == Letter_ZH)
+						phones.push_back(UkrainianPhoneId::P_ZH);
+					else if (letter == Letter_Z)
+						phones.push_back(UkrainianPhoneId::P_Z);
+					else PG_Assert(false);
+				}
+				else
+				{
+					if (letter == Letter_B)
+						phones.push_back(UkrainianPhoneId::P_P);
+					else if (letter == Letter_H)
+						phones.push_back(UkrainianPhoneId::P_KH);
+					else if (letter == Letter_D)
+						phones.push_back(UkrainianPhoneId::P_T);
+					else if (letter == Letter_ZH)
+						phones.push_back(UkrainianPhoneId::P_SH);
+					else if (letter == Letter_Z)
+						phones.push_back(UkrainianPhoneId::P_S);
+					else PG_Assert(false);
+				}
+				continue;
 			}
 			else if (letter == Letter_JI)
 			{
-				// Rule: letter YI always converts as J and I
-				phones.push_back(UkrainianPhoneId::P_Y);
-				phones.push_back(UkrainianPhoneId::P_I);
-			}
-			else if (letter == Letter_JE)
-			{
+				// Rule: letter JI always converts as J and I
 				phones.push_back(UkrainianPhoneId::P_J);
-				phones.push_back(UkrainianPhoneId::P_E);
+				phones.push_back(UkrainianPhoneId::P_I);
 			}
 			else if (letter == Letter_SHCH)
 			{
 				phones.push_back(UkrainianPhoneId::P_SH);
 				phones.push_back(UkrainianPhoneId::P_CH);
 			}
-			else if (letter == Letter_JU)
+			else if (letter == Letter_JE || letter == Letter_JU || letter == Letter_JA)
 			{
-				phones.push_back(UkrainianPhoneId::P_J);
-				phones.push_back(UkrainianPhoneId::P_U);
+				bool doublePhone = false;
+				if (isFirstLetter)
+					doublePhone = true;
+				else
+				{
+					wchar_t prevLetter = word[i - 1];
+					bool prevVowel = isUkrainianVowel(prevLetter);
+					if (prevVowel)
+						doublePhone = true;
+				}
+
+				if (doublePhone)
+				{
+					// First letter:
+					// єврей [J E V R E J]
+					// юнак [J U N A K]
+					// яблуко [J A B L U K O]
+					// Previous letter is the vowel:
+					// взаємно [V Z A J E M N O]
+					// настою [N A S T O J U]
+					// абияк [A B Y J A K]
+					phones.push_back(UkrainianPhoneId::P_J);
+				}
+				
+				if (letter == Letter_JE)
+				{
+					// суттєво [S U T T E V O]
+					phones.push_back(UkrainianPhoneId::P_E);
+				}
+				else if (letter == Letter_JU)
+				{
+					// олексюк [O L E K S U K]
+					// бурю [B U R U]
+					phones.push_back(UkrainianPhoneId::P_U);
+				}
+				else if (letter == Letter_JA)
+				{
+					// буря [B U R A]
+					// зоряний [Z O R A N Y J]
+					phones.push_back(UkrainianPhoneId::P_A);
+				}
+				else
+					PG_Assert(false, "Current letter=JE or JU or JA");
 			}
-			else if (letter == Letter_JA)
+			else if (letter == Letter_N)
 			{
-				phones.push_back(UkrainianPhoneId::P_J);
-				phones.push_back(UkrainianPhoneId::P_A);
+				if (i + 3 < word.size()) // size(T S T)=3
+				{
+					// N T S T -> N S T
+					if (word[i + 1] == Letter_T && word[i + 2] == Letter_S && word[i + 3] == Letter_T)
+					{
+						// skip first T
+						phones.push_back(UkrainianPhoneId::P_N);
+						phones.push_back(UkrainianPhoneId::P_S);
+						phones.push_back(UkrainianPhoneId::P_T);
+						i += 3;
+						continue;
+					}
+				}
+				if (i + 4 < word.size()) // size(T S 1 K)=4
+				{
+					// N T S 1 K -> N S1 K
+					if (word[i + 1] == Letter_T && word[i + 2] == Letter_S && word[i + 3] == Letter_SoftSign && word[i + 4] == Letter_K)
+					{
+						// skip first T
+						phones.push_back(UkrainianPhoneId::P_N);
+						phones.push_back(UkrainianPhoneId::P_S);
+						phones.push_back(UkrainianPhoneId::P_K);
+						i += 4;
+						continue;
+					}
+				}
+				phones.push_back(UkrainianPhoneId::P_N);
 			}
-			else if (
-				letter == Letter_SoftSign ||
-				letter == Letter_Apostrophe ||
-				letter == Letter_Hyphen)
+			else if (letter == Letter_S)
+			{
+				if (i + 1 < word.size()) // size(SH)=1
+				{
+					// S SH -> SH SH
+					// донісши [D O N I SH SH Y]
+					if (word[i + 1] == Letter_SH)
+					{
+						phones.push_back(UkrainianPhoneId::P_SH);
+						phones.push_back(UkrainianPhoneId::P_SH);
+						i += 1;
+						continue;
+					}
+				}
+				if (i + 2 < word.size()) // size(T D)=2
+				{
+					// S T D -> Z D
+					// шістдесят [SH I Z D E S A T]
+					if (word[i + 1] == Letter_T && word[i + 2] == Letter_D)
+					{
+						phones.push_back(UkrainianPhoneId::P_Z);
+						phones.push_back(UkrainianPhoneId::P_D);
+						i += 2;
+						continue;
+					}
+				}
+				// check STS1K group before STS group, because latter is inside the former
+				if (i + 4 < word.size()) // size(T S 1 K)=4
+				{
+					// S T S 1 K -> S1 K
+					// нацистської [N A TS Y S1 K O J I]
+					if (word[i + 1] == Letter_T && word[i + 2] == Letter_S && word[i + 3] == Letter_SoftSign && word[i + 4] == Letter_K)
+					{
+						phones.push_back(UkrainianPhoneId::P_S);
+						phones.push_back(UkrainianPhoneId::P_K);
+						i += 4;
+						continue;
+					}
+				}
+				if (i + 2 < word.size()) // size(T S)=2
+				{
+					// S T S -> S S
+					// шістсот [SH I S S O T]
+					if (word[i + 1] == Letter_T && word[i + 2] == Letter_S)
+					{
+						phones.push_back(UkrainianPhoneId::P_S);
+						phones.push_back(UkrainianPhoneId::P_S);
+						i += 2;
+						continue;
+					}
+				}
+				if (i + 2 < word.size()) // size(T TS)=2
+				{
+					// S T TS -> S TS
+					// відпустці [V I D P U S TS I]
+					if (word[i + 1] == Letter_T && word[i + 2] == Letter_TS)
+					{
+						phones.push_back(UkrainianPhoneId::P_S);
+						phones.push_back(UkrainianPhoneId::P_TS);
+						i += 2;
+						continue;
+					}
+				}
+				phones.push_back(UkrainianPhoneId::P_S);
+			}
+			else if (letter == Letter_T)
+			{
+				if (i + 1 < word.size()) // size(S)=1
+				{
+					// T S -> TS
+					// п'ятсот [P J A TS O T]
+					if (word[i + 1] == Letter_S)
+					{
+						phones.push_back(UkrainianPhoneId::P_TS);
+						i += 1;
+						continue;
+					}
+				}
+				if (i + 2 < word.size()) // size(1 S)=2
+				{
+					// T 1 S -> TS
+					// триматиметься [T R Y M A T Y M E TS A]
+					if (word[i + 1] == Letter_SoftSign && word[i + 2] == Letter_S)
+					{
+						phones.push_back(UkrainianPhoneId::P_TS);
+						phones.push_back(UkrainianPhoneId::P_TS); // тц -> TS TS
+						i += 2;
+						continue;
+					}
+				}
+				if (i + 1 < word.size()) // size(TS)=1
+				{
+					// T TS -> TS TS
+					// клітці [K L I TS TS I]
+					if (word[i + 1] == Letter_TS)
+					{
+						phones.push_back(UkrainianPhoneId::P_TS);
+						phones.push_back(UkrainianPhoneId::P_TS);
+						i += 1;
+						continue;
+					}
+				}
+				if (i + 1 < word.size()) // size(CH)=1
+				{
+					// T CH -> CH CH
+					// отче [O CH CH E]
+					if (word[i + 1] == Letter_CH)
+					{
+						phones.push_back(UkrainianPhoneId::P_CH);
+						phones.push_back(UkrainianPhoneId::P_CH);
+						i += 1;
+						continue;
+					}
+				}
+				phones.push_back(UkrainianPhoneId::P_T);
+			}
+			else if (letter == Letter_SoftSign)
+			{
+				if (!isLastLetter)
+				{
+					wchar_t nextLetter = word[i + 1];
+					if (nextLetter == Letter_JA)
+					{
+						// коньяку [K O N J A K]
+						phones.push_back(UkrainianPhoneId::P_J);
+						phones.push_back(UkrainianPhoneId::P_A);
+						i += 1; // skip next letter
+					}
+					else if (nextLetter == Letter_JE)
+					{
+						// мосьє [M O S J E]
+						phones.push_back(UkrainianPhoneId::P_J);
+						phones.push_back(UkrainianPhoneId::P_E);
+						i += 1; // skip next letter
+					}
+					else if (nextLetter == Letter_JU)
+					{
+						// нью [N J U]
+						phones.push_back(UkrainianPhoneId::P_J);
+						phones.push_back(UkrainianPhoneId::P_U);
+						i += 1; // skip next letter
+					}
+					else
+					{
+						// ignore it
+					}
+				}
+			}
+			else if (letter == Letter_Apostrophe)
+			{
+				if (isLastLetter)
+				{
+					// apostrophe is the last char when the given word is a truncated part of some complete word
+					// ignore it
+				}
+				else
+				{
+					wchar_t nextLetter = word[i + 1];
+					if (nextLetter == Letter_JA)
+					{
+						// бур'ян [B U R J A N]
+						phones.push_back(UkrainianPhoneId::P_J);
+						phones.push_back(UkrainianPhoneId::P_A);
+						i += 1; // skip next letter
+					}
+					else if (nextLetter == Letter_JE)
+					{
+						// кар'єр [K A R J E R]
+						phones.push_back(UkrainianPhoneId::P_J);
+						phones.push_back(UkrainianPhoneId::P_E);
+						i += 1; // skip next letter
+					}
+					else if (nextLetter == Letter_JU)
+					{
+						// комп'ютер [K O M P J U T E R]
+						phones.push_back(UkrainianPhoneId::P_J);
+						phones.push_back(UkrainianPhoneId::P_U);
+						i += 1; // skip next letter
+					}
+					else
+					{
+						// ignore it
+					}
+				}
+			}
+			else if (letter == Letter_Hyphen)
 			{
 				// ignore, soft sign has no pronunciation
 			}
 			else
 			{
-				assert(false && "Letter must be processed already");
+				PG_Assert(false && "Letter must be processed already");
 			}
 		}
 		return std::make_tuple(true, nullptr);
-	}
-
-	void loadPhoneticVocabulary(const std::wstring& vocaPath, std::map<std::wstring, std::vector<std::string>>& wordToPronList)
-	{
-		
 	}
 
 	//
@@ -1512,6 +1939,22 @@ namespace PticaGovorun
 		}
 
 		return -1;
+	}
+
+	bool isUnvoicedCharUk(wchar_t ch)
+	{
+		// кпстфхшцч
+		// КПСТФХШЦЧ
+		return
+			ch == L'к' || ch == L'К' ||
+			ch == L'п' || ch == L'П' ||
+			ch == L'с' || ch == L'С' ||
+			ch == L'т' || ch == L'Т' ||
+			ch == L'ф' || ch == L'Ф' ||
+			ch == L'х' || ch == L'Х' ||
+			ch == L'ш' || ch == L'Ш' ||
+			ch == L'ц' || ch == L'Ц' ||
+			ch == L'ч' || ch == L'Ч';
 	}
 
 	// Returns number of made transformations or zero if the map was not changed.

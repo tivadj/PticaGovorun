@@ -349,4 +349,21 @@ namespace PticaGovorun
 			ch == L'ш' || ch == L'Ш' ||
 			ch == L'щ' || ch == L'Щ';
 	}
+
+	bool isUkrainianVowel(wchar_t ch)
+	{
+		// аеєиіїоуюя
+		// АЕЄИІЇОУЮЯ
+		return
+			ch == L'а' || ch == L'А' ||
+			ch == L'е' || ch == L'Е' ||
+			ch == L'є' || ch == L'Є' ||
+			ch == L'и' || ch == L'И' ||
+			ch == L'і' || ch == L'І' ||
+			ch == L'ї' || ch == L'Ї' ||
+			ch == L'о' || ch == L'О' ||
+			ch == L'у' || ch == L'У' ||
+			ch == L'ю' || ch == L'Ю' ||
+			ch == L'я' || ch == L'Я';
+	}
 }

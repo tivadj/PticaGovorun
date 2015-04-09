@@ -145,12 +145,17 @@ namespace PticaGovorun
 
 	// Parses space-separated list of phones.
 	PG_EXPORTS void parsePhoneListStrs(const std::string& phonesStr, std::vector<std::string>& result);
+	PG_EXPORTS bool parsePhoneListStrs(const std::string& phonesStr, std::vector<UkrainianPhoneId>& result);
 
 	PG_EXPORTS std::tuple<bool, const char*> parsePronuncLines(const std::wstring& prons, std::vector<PronunciationFlavour>& result);
 
 	PG_EXPORTS bool phoneToStr(UkrainianPhoneId phone, std::string& result);
+	PG_EXPORTS UkrainianPhoneId phoneStrToId(const std::string& phoneStr, bool* parseSuccess = nullptr);
 	PG_EXPORTS bool pronuncToStr(const std::vector<UkrainianPhoneId>& pron, Pronunc& result);
+
+	// Performs word transcription (word is represented as a sequence of phonemes).
 	PG_EXPORTS std::tuple<bool,const char*> spellWord(const std::wstring& word, std::vector<UkrainianPhoneId>& phones);
+
 
 
 	// Saves phonetic dictionary to file in YAML format.
@@ -160,4 +165,7 @@ namespace PticaGovorun
 
 	//
 	PG_EXPORTS int phoneticSplitOfWord(wv::slice<wchar_t> word, boost::optional<WordClass> wordClass, int* pMatchedSuffixInd = nullptr);
+
+	// Checks whether the character is unvoiced (uk:глухий).
+	PG_EXPORTS inline bool isUnvoicedCharUk(wchar_t ch);
 }

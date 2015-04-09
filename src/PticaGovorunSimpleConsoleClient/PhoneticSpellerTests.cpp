@@ -1,7 +1,10 @@
 #include "stdafx.h"
 #include <iostream>
 #include <tuple>
+#include <QFile>
+#include <QTextStream>
 #include "PhoneticService.h"
+#include <CoreUtils.h>
 
 namespace PhoneticSpellerTestsNS
 {
@@ -14,6 +17,18 @@ namespace PhoneticSpellerTestsNS
 		const char* errMsg;
 		std::tie(op, errMsg) = PticaGovorun::spellWord(word, phones);
 	}
+
+	void phoneListToStr(const wv::slice<std::string>& phonesList, std::stringstream& result)
+	{
+		if (phonesList.empty())
+			return;
+		result << phonesList[0];
+		for (size_t i = 1; i < phonesList.size(); ++i)
+		{
+			result << " " << phonesList[i];
+		}
+	}
+
 	void testShrekky()
 	{
 		QTextCodec* pTextCodec = QTextCodec::codecForName("windows-1251");
@@ -26,34 +41,59 @@ namespace PhoneticSpellerTestsNS
 		if (!loadOp)
 			return;
 		normalizePronunciationVocabulary(wordToPhoneListDict);
-		
+
+		std::stringstream dumpFileName;
+		dumpFileName << "spellErrors.";
+		appendTimeStampNow(dumpFileName);
+		dumpFileName << ".txt";
+
+		QFile dumpFile(dumpFileName.str().c_str());
+		if (!dumpFile.open(QIODevice::WriteOnly | QIODevice::Text))
+		{
+			std::cerr << "Can't open ouput file" << std::endl;
+			return;
+		}
+		QTextStream dumpFileStream(&dumpFile);
+		dumpFileStream.setCodec("UTF-8");
+
+		int errorThresh = 0;
 		for (const auto& pair : wordToPhoneListDict)
 		{
 			if (pair.second.size() != 1)
 				continue;
-			if (pair.first == L"SIL" || pair.first == L"<s>" || pair.first == L"</s>")
+			const std::wstring& word = pair.first;
+			if (word == L"SIL" || word == L"<s>" || word == L"</s>")
 				continue;
 
-			const Pronunc& pron1 = pair.second[0];
+			const Pronunc& pronDict = pair.second[0];
 
 			std::vector<UkrainianPhoneId> phones;
 			bool spellOp;
-			std::tie(spellOp, errMsg) = spellWord(pair.first, phones);
+			std::tie(spellOp, errMsg) = spellWord(word, phones);
 			if (!spellOp)
 			{
-				int z = 0;
+				dumpFileStream << "ERROR: can't spell word='" << QString::fromStdWString(word) << "'" <<errMsg << "\n";
+				continue;
 			}
 
-			Pronunc pron2;
-			if (!pronuncToStr(phones, pron2))
+			Pronunc pronAutomatic;
+			if (!pronuncToStr(phones, pronAutomatic))
 			{
-				int z = 0;
+				dumpFileStream << "ERROR: pronuncToStr (Pronunc.ToString)" << "\n";
+				continue;
 			}
 
-			bool eqS = pron1 == pron2;
+			bool eqS = pronDict == pronAutomatic;
 			if (!eqS)
 			{
-				int z = 0;
+				if (false && ++errorThresh > 100)
+					break;
+				dumpFileName.str("");
+				phoneListToStr(pronDict.Phones, dumpFileName);
+
+				dumpFileStream << "Expect=" << QString::fromLatin1(dumpFileName.str().c_str()) << "\t" << QString::fromLatin1(pronDict.StrDebug.c_str()) << "\t" << QString::fromStdWString(word) << errMsg << "\n";
+				dumpFileStream << "Actual=" << QString::fromLatin1(pronAutomatic.StrDebug.c_str()) << "\n";
+				dumpFileStream << "\n";
 			}
 		}
 	}

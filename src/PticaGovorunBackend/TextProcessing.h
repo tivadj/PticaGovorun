@@ -64,6 +64,7 @@ namespace PticaGovorun
 	PG_EXPORTS inline bool isExclusiveRussianChar(wchar_t ch);
 
 	PG_EXPORTS inline bool isUkrainianConsonant(wchar_t ch);
+	PG_EXPORTS inline bool isUkrainianVowel(wchar_t ch);
 
 	enum class ActionTense
 	{
