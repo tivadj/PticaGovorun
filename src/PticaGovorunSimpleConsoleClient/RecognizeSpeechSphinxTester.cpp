@@ -20,6 +20,7 @@
 #include "StringUtils.h" // findEditDistance
 #include "CoreUtils.h" // timeStamp
 #include "ClnUtils.h"
+#include "PhoneticService.h"
 
 namespace RecognizeSpeechSphinxTester
 {
@@ -195,10 +196,34 @@ namespace RecognizeSpeechSphinxTester
 
 	void testSphincDecoder()
 	{
+		//
 		const wchar_t* testFileIdPath = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian_test.fileids)path";
 		std::vector<SphinxFileIdLine> fileIdLines;
 		readFileId(testFileIdPath, fileIdLines);
 
+		// map pronunciation as word (pronId) to corresponding word
+		const wchar_t* persianDictPath = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\phoneticKnown.yml)path";
+		std::vector<PhoneticWord> phoneticDict;
+		bool loadPhoneDict;
+		const char* errMsg = nullptr;
+		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryYaml(persianDictPath, phoneticDict);
+		if (!loadPhoneDict)
+		{
+			std::cerr << "Can't load phonetic dictionary " << errMsg << std::endl;
+			return;
+		}
+
+		std::unordered_map<std::wstring, std::wstring> pronIdToWord;
+		for (const PhoneticWord& phWord : phoneticDict)
+		{
+			if (phWord.Pronunciations.size() > 1)
+			{
+				for (const PronunciationFlavour& pronFlav : phWord.Pronunciations)
+					pronIdToWord.insert({ pronFlav.PronAsWord, phWord.Word });
+			}
+		}
+
+		//
 		const wchar_t* wavRootDir       = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAudio\)path";
 		const wchar_t* annotRootDir     = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAnnot\)path";
 		const wchar_t* wavDirToAnalyze  = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAudio\)path";
@@ -213,7 +238,6 @@ namespace RecognizeSpeechSphinxTester
 			return true;
 		};
 		bool loadOp;
-		const char* errMsg;
 		std::tie(loadOp, errMsg) = loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, true, segPredBeforeFun, segments);
 
 		//
@@ -241,7 +265,8 @@ namespace RecognizeSpeechSphinxTester
 			float ErrorChars; // edit distance between utterances as a sequence of chars
 			AnnotatedSpeechSegment Segment;
 			std::wstring TextActual;
-			std::vector<std::wstring> WordsExpected;
+			std::vector<std::wstring> PronIdsExpected; // слова(2)
+			std::vector<std::wstring> WordsExpected; // слова without any braces
 			std::vector<std::wstring> WordsActual;
 			std::vector<std::wstring> WordsActualMerged;
 			std::vector<float> WordProbs; // confidence of each recognized word
@@ -249,6 +274,8 @@ namespace RecognizeSpeechSphinxTester
 		};
 
 		//
+		int wordErrorTotalCount = 0;
+		int wordTotalCount = 0;
 		std::vector<TwoUtterances> recogUtterances;
 		float targetFrameRate = CmuSphinxFrameRate;
 		for (int i = 0; i < segments.size(); ++i)
@@ -352,18 +379,18 @@ namespace RecognizeSpeechSphinxTester
 
 			// merge word parts
 
-			std::vector<std::wstring> wordsActualMerged;
-			std::vector<float> wordsActualProbsMerged;
+			std::vector<std::wstring> pronIdsActualMerged;
+			std::vector<float> pronIdsActualProbsMerged;
 			if (!wordsActual.empty())
 			{
-				wordsActualMerged.push_back(wordsActual.front());
-				wordsActualProbsMerged.push_back(wordsActualProbs.front());
+				pronIdsActualMerged.push_back(wordsActual.front());
+				pronIdsActualProbsMerged.push_back(wordsActualProbs.front());
 			}
 			for (size_t wordInd = 1; wordInd < wordsActual.size(); ++wordInd)
 			{
-				const std::wstring& prev = wordsActualMerged.back();
+				const std::wstring& prev = pronIdsActualMerged.back();
 				const std::wstring& cur  = wordsActual[wordInd];
-				float prevProb = wordsActualProbsMerged.back();
+				float prevProb = pronIdsActualProbsMerged.back();
 				float curProb = wordsActualProbs[wordInd];
 				if (prev.back() == L'~' && cur.front() == L'~')
 				{
@@ -371,58 +398,81 @@ namespace RecognizeSpeechSphinxTester
 					merged.pop_back();
 					merged.append(cur.data() + 1, cur.size() - 1);
 
-					wordsActualMerged.back() = merged;
-					wordsActualProbsMerged.back() = prevProb * curProb;
+					pronIdsActualMerged.back() = merged;
+					pronIdsActualProbsMerged.back() = prevProb * curProb;
 				}
 				else
 				{
-					wordsActualMerged.push_back(cur);
-					wordsActualProbsMerged.push_back(curProb);
+					pronIdsActualMerged.push_back(cur);
+					pronIdsActualProbsMerged.push_back(curProb);
 				}
 			}
 
 			// split text into words
 
-			std::vector<wv::slice<const wchar_t>> wordSlicesExpected;
-			splitUtteranceIntoWords(seg.TranscriptText, wordSlicesExpected);
+			std::vector<wv::slice<const wchar_t>> pronIdSlicesExpected;
+			splitUtteranceIntoWords(seg.TranscriptText, pronIdSlicesExpected);
 			
-			auto textSliceToString = [](wv::slice<const wchar_t> wordSlice) -> std::wstring
+			auto textSliceToString = [](wv::slice<const wchar_t> pronSlice) -> std::wstring
 			{
-				std::wstring word;
-				word.assign(wordSlice.begin(), wordSlice.end());
-				return word;
+				std::wstring pronId;
+				pronId.assign(pronSlice.begin(), pronSlice.end());
+				return pronId;
 			};
 			
+			std::vector<std::wstring> pronIdsExpected;
+			std::transform(std::begin(pronIdSlicesExpected), std::end(pronIdSlicesExpected), std::back_inserter(pronIdsExpected), textSliceToString);
+
+			// map pronId -> word (eg. слова(2) -> слова)
 			std::vector<std::wstring> wordsExpected;
-			std::transform(std::begin(wordSlicesExpected), std::end(wordSlicesExpected), std::back_inserter(wordsExpected), textSliceToString);
+			std::transform(pronIdsExpected.begin(), pronIdsExpected.end(), std::back_inserter(wordsExpected), [&pronIdToWord](const std::wstring& pronId)
+			{
+				auto wordIt = pronIdToWord.find(pronId);
+				if (wordIt != pronIdToWord.end())
+				{
+					const std::wstring& word = wordIt->second;
+					return word;
+				}
+				return pronId;
+			});
 
 			// skip silences for word-error computation
 			std::vector<std::wstring> wordsActualNoSil;
-			std::copy_if(std::begin(wordsActualMerged), std::end(wordsActualMerged), std::back_inserter(wordsActualNoSil), [](std::wstring& word)
+			std::copy_if(std::begin(pronIdsActualMerged), std::end(pronIdsActualMerged), std::back_inserter(wordsActualNoSil), [](std::wstring& word)
 			{
 				return word != std::wstring(L"<s>") && word != std::wstring(L"</s>") && word != std::wstring(L"<sil>");
 			});
-
 
 			// compute word error
 			WordErrorCosts<std::wstring> c;
 			float distWord = findEditDistance(wordsExpected.begin(), wordsExpected.end(), wordsActualNoSil.begin(), wordsActualNoSil.end(), c);
 
 			// compute edit distances between whole utterances
+			std::wstringstream strBuff;
+			PticaGovorun::join(wordsExpected.begin(), wordsExpected.end(), std::wstring(L" "), strBuff);
+			std::wstring wordsExpectedStr = strBuff.str();
+			strBuff.str(L"");
+			PticaGovorun::join(wordsActualNoSil.begin(), wordsActualNoSil.end(), std::wstring(L" "), strBuff);
+			std::wstring wordsActualStr = strBuff.str();
+
 			WordErrorCosts<wchar_t> charCost;
-			float distChar = findEditDistance(std::cbegin(hypWStr), std::cend(hypWStr), std::cbegin(seg.TranscriptText), std::cend(seg.TranscriptText), charCost);
+			float distChar = findEditDistance(std::cbegin(wordsExpectedStr), std::cend(wordsExpectedStr), std::cbegin(wordsActualStr), std::cend(wordsActualStr), charCost);
 
 			TwoUtterances utter;
 			utter.ErrorWord = distWord;
 			utter.ErrorChars = distChar;
 			utter.Segment = seg;
 			utter.TextActual = hypWStr;
+			utter.PronIdsExpected = pronIdsExpected;
 			utter.WordsExpected = wordsExpected;
 			utter.WordsActual = wordsActual;
-			utter.WordsActualMerged = wordsActualMerged;
+			utter.WordsActualMerged = pronIdsActualMerged;
 			utter.WordProbs = wordsActualProbs;
-			utter.WordProbsMerged = wordsActualProbsMerged;
+			utter.WordProbsMerged = pronIdsActualProbsMerged;
 			recogUtterances.push_back(utter);
+
+			wordErrorTotalCount += (int)distWord;
+			wordTotalCount += (int)wordsExpected.size();
 		}
 
 		// the call may crash if phonetic dictionary was not correctly initialized (eg .dict file is empty)
@@ -449,19 +499,28 @@ namespace RecognizeSpeechSphinxTester
 
 		QTextStream dumpFileStream(&dumpFile);
 		dumpFileStream.setCodec("UTF-8");
+		
+		double wordErrorAvg = wordErrorTotalCount / (double)wordTotalCount;
+		dumpFileStream << "WordErrorAvg=" << wordErrorAvg <<"\n";
+
 		std::wstringstream buff;
 		for (int i = 0; i < recogUtterances.size(); ++i)
 		{
 			const TwoUtterances& utter = recogUtterances[i];
 			if (utter.ErrorWord == 0) // skip correct utterances
 				break;
-			dumpFileStream << "WordError=" << utter.ErrorWord << " " << "CharError=" << utter.ErrorChars << " SegId=" << utter.Segment.SegmentId << " " << QString::fromStdWString(utter.Segment.FilePath) <<"\n";
-			dumpFileStream << "Expect=" << QString::fromStdWString(utter.Segment.TranscriptText) << "\n";
+			dumpFileStream << "WordError=" << utter.ErrorWord << "/" <<utter.WordsExpected.size() << " " << "CharError=" << utter.ErrorChars << " SegId=" << utter.Segment.SegmentId << " " << QString::fromStdWString(utter.Segment.FilePath) <<"\n";
 
 			const std::wstring separ(L" ");
 			buff.str(L"");
+			PticaGovorun::join(utter.WordsExpected.cbegin(), utter.WordsExpected.cend(), separ, buff);
+			dumpFileStream << "ExpectWords=" << QString::fromStdWString(buff.str()) << "\n";
+
+			buff.str(L"");
 			PticaGovorun::join(utter.WordsActualMerged.cbegin(), utter.WordsActualMerged.cend(), separ, buff);
-			dumpFileStream << "Actual=" << QString::fromStdWString(buff.str()) << "\n";
+			dumpFileStream << "ActualWords=" << QString::fromStdWString(buff.str()) << "\n";
+
+			dumpFileStream << "ExpectProns=" << QString::fromStdWString(utter.Segment.TranscriptText) << "\n";
 
 			buff.str(L"");
 			PticaGovorun::join(utter.WordsActual.cbegin(), utter.WordsActual.cend(), separ, buff);
