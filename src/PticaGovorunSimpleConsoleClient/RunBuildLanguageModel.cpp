@@ -598,20 +598,25 @@ namespace RunBuildLanguageModelNS
 					// 2nd: Left or Whole are handled via back off probability
 					if (uni2.WordParts.Array[0]->partSide() == WordPartSide::RightPart)
 					{
+						NGramRow bigram;
+						bigram.LowOrderNGram = &uni1;
+						bigram.WordParts.ActualSize = 2;
+						bigram.WordParts.Array[0] = uni1.WordParts.Array[0];
+						bigram.WordParts.Array[1] = uni2.WordParts.Array[0];
+
 						WordSeqKey seqKey({ uni1.WordParts.Array[0]->id(), uni2.WordParts.Array[0]->id() });
 						long seqUsage = wordUsage.getWordSequenceUsage(seqKey);
 						if (seqUsage > 0)
 						{
 							uni1.UsageCounter += seqUsage;
-
-							NGramRow bigram;
-							bigram.LowOrderNGram = &uni1;
-							bigram.WordParts.ActualSize = 2;
-							bigram.WordParts.Array[0] = uni1.WordParts.Array[0];
-							bigram.WordParts.Array[1] = uni2.WordParts.Array[0];
 							bigram.UsageCounter = seqUsage;
-							bigrams.push_back(bigram);
 						}
+						else
+						{
+							// prohibit impossible bigram (L~,~R) by enumeration
+							bigram.LogProb = LogProbMinusInf;
+						}
+						bigrams.push_back(bigram);
 					}
 				}
 				else if (uni1.WordParts.Array[0]->partSide() == WordPartSide::RightPart ||
@@ -821,7 +826,7 @@ namespace RunBuildLanguageModelNS
 		}
 	}
 
-	void chooseSeedUnigrams(const UkrainianPhoneticSplitter& phoneticSplitter, int maxUnigramsCount, std::vector<const WordPart*>& result)
+	void chooseSeedUnigrams(const UkrainianPhoneticSplitter& phoneticSplitter, int maxUnigramsCount, bool allowPhoneticWordSplit, std::vector<const WordPart*>& result)
 	{
 		const WordsUsageInfo& wordUsage = phoneticSplitter.wordUsage();
 		
@@ -837,7 +842,7 @@ namespace RunBuildLanguageModelNS
 			// include <s>, </s> and ~Right parts
 			if (wordPart == phoneticSplitter.sentStartWordPart() ||
 				wordPart == phoneticSplitter.sentEndWordPart() ||
-				wordPart->partSide() == WordPartSide::RightPart)
+				(allowPhoneticWordSplit && wordPart->partSide() == WordPartSide::RightPart))
 			{
 				wordPartSureInclude.push_back(wordPart);
 				continue;
@@ -917,13 +922,17 @@ namespace RunBuildLanguageModelNS
 			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk02-вапнований-гіберелін-гібернація).htm.20150228213543.xml)path",
 			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk03-гібернація-дипромоній-дипрофен).htm.20150228141620.xml)path",
 			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk04-дипрофен-запорошеність-запорошення).htm.20150228220515.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk05-запорошення-іонування-іонувати)8.htm.20150301145100.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk06-іонувати-кластогенний-клатрат)8.htm.20150302001636.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk05-запорошення-іонування-іонувати).htm.20150301145100.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk06-іонувати-кластогенний-клатрат).htm.20150302001636.xml)path",
 			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk07-клатрат-макроцистис-макроцит).htm.20150316142905.xml)path",
 			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk08-макроцит-м'яшкурити-н).htm.20150325111235.xml)path",
 			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk09-н-нестравність-нестратифікований).htm.20150301230606.xml)path",
 			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk10-нестратифікований-однокенотронний-однокислотний)8.htm.20150301230840.xml)path",
 			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk11-однокислотний-поконання-поконати).htm.20150325000544.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk12-поконати-п'ять-р).htm.20150408175213.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk13-р-ряцькувати-с).htm.20150407185103.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk14-с-строщити-строювати).htm.20150407185337.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk15-строювати-тях-у).htm.20150407185443.xml)path",
 			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk16-у-чхун-ш).htm.20150301231717.xml)path",
 			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk17-ш-ящурячий-end).htm.20150301232344.xml)path",
 		};
@@ -956,7 +965,9 @@ namespace RunBuildLanguageModelNS
 		now1 = Clock::now();
 
 		int totalDeclWordsCount = -1;
+		bool allowPhoneticWordSplit = false;
 		UkrainianPhoneticSplitter phoneticSplitter;
+		phoneticSplitter.setAllowPhoneticWordSplit(allowPhoneticWordSplit);
 		phoneticSplitter.bootstrap(declinedWords, targetWord, processedWords, totalDeclWordsCount);
 		now2 = Clock::now();
 		elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
@@ -983,8 +994,6 @@ namespace RunBuildLanguageModelNS
 			long wordsPerNGram = phoneticSplitter.wordSeqCount(wordsPerSeq);
 			std::wcout << L"wordsPerNGram[" << wordsPerSeq <<"]=" << wordsPerNGram << std::endl;
 		}
-
-		uniquenessRatio = wordUsage.wordPartsCount() / (double)totalDeclWordsCount;
 		std::wcout << L" wordParts=" << wordUsage.wordPartsCount() << std::endl;
 
 		phoneticSplitter.printSuffixUsageStatistics();
@@ -992,7 +1001,8 @@ namespace RunBuildLanguageModelNS
 		//int maxUnigramsCount = 30000;
 		int maxUnigramsCount = -1;
 		std::vector<const WordPart*> seedUnigrams;
-		chooseSeedUnigrams(phoneticSplitter, maxUnigramsCount, seedUnigrams);
+		chooseSeedUnigrams(phoneticSplitter, maxUnigramsCount, allowPhoneticWordSplit, seedUnigrams);
+		std::wcout << L"seed unigrams count=" << seedUnigrams.size() << std::endl;
 
 		//
 		std::wstringstream arpaLMFileName;

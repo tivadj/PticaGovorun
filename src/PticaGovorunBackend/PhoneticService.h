@@ -90,6 +90,7 @@ namespace PticaGovorun
 		std::unordered_map<std::wstring, ShortArray<int,2>> wordStrToPartIds_; // some words, split by default
 		long seqOneWordCounter_ = 0;
 		long seqTwoWordsCounter_ = 0;
+		bool allowPhoneticWordSplit_ = false;
 		const WordPart* sentStartWordPart_;
 		const WordPart* sentEndWordPart_;
 		const WordPart* wordPartSeparator_ = nullptr;
@@ -109,6 +110,8 @@ namespace PticaGovorun
 		long wordSeqCount(int wordsPerSeq) const;
 		const WordPart* sentStartWordPart() const;
 		const WordPart* sentEndWordPart() const;
+
+		void setAllowPhoneticWordSplit(bool value);
 	private:
 		void doWordPhoneticSplit(const wv::slice<wchar_t>& wordSlice, std::vector<const WordPart*>& wordParts);
 

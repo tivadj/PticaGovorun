@@ -2077,6 +2077,15 @@ namespace PticaGovorun
 			if (!targetWord.empty() && wordGroup.Name != targetWord)
 				continue;
 
+			if (allowPhoneticWordSplit_)
+			{
+				for (const WordDeclensionForm& declWord : wordGroup.Forms)
+				{
+					const WordPart* wordPart = wordUsage_.getOrAddWordPart(declWord.Name, WordPartSide::WholeWord);
+				}
+				continue;
+			}
+
 			if (wordGroup.WordClass == WordClass::Irremovable ||
 				wordGroup.WordClass == WordClass::Preposition ||
 				wordGroup.WordClass == WordClass::Pronoun ||
@@ -2312,6 +2321,11 @@ namespace PticaGovorun
 		return sentEndWordPart_;
 	}
 
+	void UkrainianPhoneticSplitter::setAllowPhoneticWordSplit(bool value)
+	{
+		allowPhoneticWordSplit_ = value;
+	}
+
 	void UkrainianPhoneticSplitter::buildLangModel(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess, bool outputCorpus)
 	{
 		QFile corpusFile;
@@ -2500,22 +2514,30 @@ namespace PticaGovorun
 
 			std::wstring str = toString(wordSlice);
 
-			auto preSplitWordIt = wordStrToPartIds_.find(str);
-			if (preSplitWordIt != wordStrToPartIds_.end())
+			if (allowPhoneticWordSplit_)
 			{
-				preSplitWords++;
-				ShortArray<int, 2>& preSplit = preSplitWordIt->second;
-
-				for (int splitInd = 0; splitInd < preSplit.ActualSize; ++splitInd)
+				auto preSplitWordIt = wordStrToPartIds_.find(str);
+				if (preSplitWordIt != wordStrToPartIds_.end())
 				{
-					int wordPartId = preSplit.Array[splitInd];
-					const WordPart* wordPartPtr = wordUsage_.wordPartById(wordPartId);
-					wordParts.push_back(wordPartPtr);
+					preSplitWords++;
+					ShortArray<int, 2>& preSplit = preSplitWordIt->second;
+
+					for (int splitInd = 0; splitInd < preSplit.ActualSize; ++splitInd)
+					{
+						int wordPartId = preSplit.Array[splitInd];
+						const WordPart* wordPartPtr = wordUsage_.wordPartById(wordPartId);
+						wordParts.push_back(wordPartPtr);
+					}
+				}
+				else
+				{
+					doWordPhoneticSplit(str, wordParts);
 				}
 			}
 			else
 			{
-				doWordPhoneticSplit(str, wordParts);
+				const WordPart* wordPart = wordUsage_.getOrAddWordPart(str, WordPartSide::WholeWord);
+				wordParts.push_back(wordPart);
 			}
 		}
 	}
