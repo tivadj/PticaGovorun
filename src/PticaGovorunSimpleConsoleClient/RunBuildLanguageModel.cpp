@@ -16,13 +16,13 @@
 #include <QString>
 #include <QTextStream>
 #include <QTextCodec>
-#include <boost/optional.hpp>
 
 #include "TextProcessing.h"
 #include "LangStat.h"
 #include "PhoneticService.h"
 #include "PticaGovorunCore.h"
 #include "CoreUtils.h"
+#include "ArpaLanguageModel.h"
 
 namespace RunBuildLanguageModelNS
 {
@@ -260,10 +260,10 @@ namespace RunBuildLanguageModelNS
 			}
 		}
 
-		std::vector<WordSeqUsage*> wordSeq;
+		std::vector<const WordSeqUsage*> wordSeq;
 		wordSeq.reserve(splitWordsStat.wordSeqCount());
 		splitWordsStat.copyWordSeq(wordSeq);
-		std::sort(std::begin(wordSeq), std::end(wordSeq), [](WordSeqUsage* a, WordSeqUsage* b)
+		std::sort(std::begin(wordSeq), std::end(wordSeq), [](const WordSeqUsage* a, const WordSeqUsage* b)
 		{
 			return a->UsedCount > b->UsedCount;
 		});
@@ -389,7 +389,7 @@ namespace RunBuildLanguageModelNS
 		return std::make_tuple(true, nullptr);
 	}
 
-	std::tuple<bool, const char*> loadWordStatisticsXml(const std::wstring& filePath, WordsUsageInfo& wordsStat, std::vector<WordSeqUsage*>& wordSeqOrder)
+	std::tuple<bool, const char*> loadWordStatisticsXml(const std::wstring& filePath, WordsUsageInfo& wordsStat, std::vector<const WordSeqUsage*>& wordSeqOrder)
 	{
 		QFile file(QString::fromStdWString(filePath));
 		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -460,338 +460,6 @@ namespace RunBuildLanguageModelNS
 		return true;
 	}
 
-	namespace
-	{
-		template <typename T, size_t FixedSize>
-		struct ShortArray
-		{
-			std::array<T, FixedSize> Array;
-			size_t ActualSize;
-		};
-	}
-
-	// Generates ARPA (or Doug Paul) format.
-	// LM must contain </s>, otherwise Sphinx emits error on LM loading
-	// ERROR: "ngram_search.c", line 221: Language model/set does not contain </s>, recognition will fail
-	// LM must contain <s>, otherwise Sphinx emits error on samples decoding
-	// ERROR: "ngram_search.c", line 1157 : Couldn't find <s> in first frame
-	void generateArpaLanguageModel(const wchar_t* lmFilePath, wv::slice<const WordPart*> seedUnigrams, const UkrainianPhoneticSplitter& phoneticSplitter, const WordsUsageInfo& wordUsage)
-	{
-		struct NGramRow
-		{
-			ShortArray<const WordPart*, 2> WordParts;
-			long UsageCounter = 0;
-			boost::optional<float> LogProb;
-			long BackOffCounter = 0;
-			boost::optional<float> BackOffLogProb;
-			NGramRow* LowOrderNGram = nullptr; // pointer to the one part shorter n-gram
-		};
-
-		//
-
-		long unigramTotalUsageCounter = 0;
-		for (const WordPart* wordPart : seedUnigrams)
-		{
-			WordSeqKey seqKey({ wordPart->id() });
-			long seqUsage = wordUsage.getWordSequenceUsage(seqKey);
-			unigramTotalUsageCounter += seqUsage;
-		}
-
-		const double LogProbMinusInf = -99; // Interpreted as log(0)
-
-		// create unigrams
-
-		std::vector<std::unique_ptr<NGramRow>> unigrams;
-		unigrams.reserve(seedUnigrams.size());
-		for (const WordPart* wordPart : seedUnigrams)
-		{
-			WordSeqKey seqKey({ wordPart->id() });
-			long seqUsage = wordUsage.getWordSequenceUsage(seqKey);
-
-			double prob = seqUsage / (double)unigramTotalUsageCounter;
-			PG_Assert(prob >= 0 && prob <= 1);
-			double logProb = std::log10(prob);
-
-			// attempt to block isolated right parts
-			// bad, sentences become shorter even more
-			//if (wordPart->partSide() == WordPartSide::RightPart)
-			//	logProb = LogProbMinusInf; 
-
-			auto gram = std::make_unique<NGramRow>();
-			gram->WordParts.ActualSize = 1;
-			gram->WordParts.Array[0] = wordPart;
-			gram->LogProb = logProb;
-			unigrams.push_back(std::move(gram));
-		}
-
-		// assume that processed text covers P portion of the whole language
-		const float TextStatisticCover = 0.1;
-		//const float TextStatisticCover = 1;
-
-		// note, the order of bigrams must be the same as for unigrams
-
-		auto assertLeftBackOffImpossible = []() {};
-
-		long unigramTotalBackOffCounter = 0;
-		std::vector<NGramRow> bigrams;
-		bigrams.reserve(unigrams.size());
-		for (size_t uniIndex1 = 0; uniIndex1 < unigrams.size(); ++uniIndex1)
-		{
-			NGramRow& uni1 = *unigrams[uniIndex1];
-			
-			for (size_t uniIndex2 = 0; uniIndex2 < unigrams.size(); ++uniIndex2)
-			{
-				// assert: case uniIndex1 == uniIndex2 is allowed
-				// (word1,word1) combinations is necessary to exclude impossible combination of word parts, eg (~R,~R)
-
-				const NGramRow& uni2 = *unigrams[uniIndex2];
-
-				// bigram (<s>,~Right) is impossible; handled via back off
-				if (uni1.WordParts.Array[0] == phoneticSplitter.sentStartWordPart() &&
-					uni2.WordParts.Array[0]->partSide() == WordPartSide::RightPart)
-				{
-					// as <s> is ordinary word, all possible bigrams must be discarded by enumeration
-					NGramRow bigram;
-					bigram.LowOrderNGram = &uni1;
-					bigram.WordParts.ActualSize = 2;
-					bigram.WordParts.Array[0] = uni1.WordParts.Array[0];
-					bigram.WordParts.Array[1] = uni2.WordParts.Array[0];
-					bigram.LogProb = LogProbMinusInf;
-					bigrams.push_back(bigram);
-					continue;
-				}
-				// bigram (Left~,</s>) is impossible; handled via back off
-				if (uni1.WordParts.Array[0]->partSide() == WordPartSide::LeftPart &&
-					uni2.WordParts.Array[0] == phoneticSplitter.sentEndWordPart())
-				{
-					assertLeftBackOffImpossible();
-					continue;
-				}
-
-				// specific case to discard (</s>,*)
-				// (</s>,<s>) is ok
-				if (uni1.WordParts.Array[0] == phoneticSplitter.sentEndWordPart())
-				{
-					if (uni2.WordParts.Array[0] == phoneticSplitter.sentStartWordPart())
-					{
-						WordSeqKey seqKey({ uni1.WordParts.Array[0]->id(), uni2.WordParts.Array[0]->id() });
-						long seqUsage = wordUsage.getWordSequenceUsage(seqKey);
-
-						uni1.UsageCounter += seqUsage;
-
-						NGramRow bigram;
-						bigram.LowOrderNGram = &uni1;
-						bigram.WordParts.ActualSize = 2;
-						bigram.WordParts.Array[0] = uni1.WordParts.Array[0];
-						bigram.WordParts.Array[1] = uni2.WordParts.Array[0];
-						bigram.UsageCounter = seqUsage;
-						bigrams.push_back(bigram);
-					}
-
-					// bigram (</s>,*) is not possible
-					continue;
-				}
-
-				//
-				if (uni1.WordParts.Array[0]->partSide() == WordPartSide::LeftPart)
-				{
-					// 2nd: Left or Whole are handled via back off probability
-					if (uni2.WordParts.Array[0]->partSide() == WordPartSide::RightPart)
-					{
-						NGramRow bigram;
-						bigram.LowOrderNGram = &uni1;
-						bigram.WordParts.ActualSize = 2;
-						bigram.WordParts.Array[0] = uni1.WordParts.Array[0];
-						bigram.WordParts.Array[1] = uni2.WordParts.Array[0];
-
-						WordSeqKey seqKey({ uni1.WordParts.Array[0]->id(), uni2.WordParts.Array[0]->id() });
-						long seqUsage = wordUsage.getWordSequenceUsage(seqKey);
-						if (seqUsage > 0)
-						{
-							uni1.UsageCounter += seqUsage;
-							bigram.UsageCounter = seqUsage;
-						}
-						else
-						{
-							// prohibit impossible bigram (L~,~R) by enumeration
-							bigram.LogProb = LogProbMinusInf;
-						}
-						bigrams.push_back(bigram);
-					}
-				}
-				else if (uni1.WordParts.Array[0]->partSide() == WordPartSide::RightPart ||
-					     uni1.WordParts.Array[0]->partSide() == WordPartSide::WholeWord)
-				{
-					if (uni2.WordParts.Array[0]->partSide() == WordPartSide::RightPart)
-					{
-						// prohibit such case
-						NGramRow bigram;
-						bigram.LowOrderNGram = &uni1;
-						bigram.WordParts.ActualSize = 2;
-						bigram.WordParts.Array[0] = uni1.WordParts.Array[0];
-						bigram.WordParts.Array[1] = uni2.WordParts.Array[0];
-						bigram.LogProb = LogProbMinusInf;
-						bigrams.push_back(bigram);
-					}
-					else if (uni2.WordParts.Array[0]->partSide() == WordPartSide::LeftPart ||
-						     uni2.WordParts.Array[0]->partSide() == WordPartSide::WholeWord)
-					{
-						WordSeqKey seqKey({ uni1.WordParts.Array[0]->id(), uni2.WordParts.Array[0]->id() });
-						long seqUsage = wordUsage.getWordSequenceUsage(seqKey);
-						if (seqUsage > 0)
-						{
-							uni1.UsageCounter += seqUsage;
-
-							NGramRow bigram;
-							bigram.LowOrderNGram = &uni1;
-							bigram.WordParts.ActualSize = 2;
-							bigram.WordParts.Array[0] = uni1.WordParts.Array[0];
-							bigram.WordParts.Array[1] = uni2.WordParts.Array[0];
-							bigram.UsageCounter = seqUsage;
-							bigrams.push_back(bigram);
-						}
-					}
-				}
-			}
-		}
-
-		// set backoff probabilities
-		for (std::unique_ptr<NGramRow>& uniPtr : unigrams)
-		{
-			NGramRow& uni = *uniPtr;
-			PG_Assert(uni.WordParts.ActualSize == 1);
-			// unigram (<s>)
-			if (uni.WordParts.Array[0] == phoneticSplitter.sentStartWordPart())
-			{
-				//uni.LogProb = LogProbMinusInf; // start the new sentence the latest (the lowest priority)
-				
-				//double backOff = 0; // the first word of a sentence may be any word, not just specified one
-				// double backOff = 1.4124; // from CMU LM for English
-				double backOff = std::log10(1 - TextStatisticCover);
-				uni.BackOffLogProb = backOff;
-				continue;
-			}
-			// unigram (</s>)
-			//if (uni.WordParts.Array[0] == phoneticSplitter.sentEndWordPart())
-			//{
-			//	// this back off value is ignored if there is no (</s>, *) bigram
-			//	uni.BackOffLogProb = 0; // all prob are in this case
-			//	//uni.BackOffLogProb = LogProbMinusInf; // all prob are described in bigrams
-			//	continue;
-			//}
-
-			if (uni.WordParts.Array[0]->partSide() == WordPartSide::LeftPart)
-			{
-				// only right part can go after left part; other cases must be prohibited
-				assertLeftBackOffImpossible();
-				uni.BackOffLogProb = LogProbMinusInf;
-			}
-			else if (uni.WordParts.Array[0]->partSide() == WordPartSide::RightPart ||
-				     uni.WordParts.Array[0]->partSide() == WordPartSide::WholeWord)
-			{
-				// allow any word composition if text statistic is not available for some word sequence
-				//uni.BackOffLogProb = 0; // prob=100%
-				uni.BackOffLogProb = std::log10(1 - TextStatisticCover);
-			}
-			else
-			{
-				PG_Assert(false);
-				if (uni.BackOffLogProb != nullptr)
-				{
-					// back off > 0 means eg. L~ ~R which do not match
-					//PG_Assert(gram.BackOffCounter == 0);
-				}
-				else
-				{
-					PG_Assert(uni.BackOffCounter > 0);
-					double prob = uni.BackOffCounter / (double)unigramTotalBackOffCounter;
-					prob *= (1 - TextStatisticCover);
-					PG_Assert(prob > 0);
-					double logProb = std::log10(prob);
-					uni.BackOffLogProb = logProb;
-				}
-			}
-		}
-		for (NGramRow& gram : bigrams)
-		{
-			PG_Assert(gram.WordParts.ActualSize == 2);
-			if (gram.LogProb == nullptr)
-			{
-				PG_Assert(gram.LowOrderNGram != nullptr);
-				double prob = gram.UsageCounter / (double)gram.LowOrderNGram->UsageCounter;
-
-				if (gram.WordParts.Array[0]->partSide() == WordPartSide::LeftPart)
-				{
-					// Everything is concentrated in the (L~,~R) pairs; backOff(L~)=-99
-					// This way we prohibit (L~,~R) words, which are not enumerated - which is bad.
-					// But we also prohibit (L~,L~) or (L~,W) - which is good.
-					// Do not change probability!
-				}
-				else if (gram.WordParts.Array[0]->partSide() == WordPartSide::RightPart ||
-					     gram.WordParts.Array[0]->partSide() == WordPartSide::WholeWord)
-				{
-					// backOff(uni1)=log(1-TextStatisticCover), so here we should reduce max probability to TextStatisticCover
-					prob *= TextStatisticCover;
-				}
-				else if (gram.WordParts.Array[0] == phoneticSplitter.sentEndWordPart() ||
-					     gram.WordParts.Array[0] == phoneticSplitter.sentStartWordPart())
-				{
-					
-				}
-				PG_Assert(prob >= 0 && prob <= 1);
-				double logProb = std::log10(prob);
-				gram.LogProb = logProb;
-			}
-		}
-
-		QFile lmFile(QString::fromStdWString(lmFilePath));
-		if (!lmFile.open(QIODevice::WriteOnly | QIODevice::Text))
-			return;
-		QTextStream dumpFileStream(&lmFile);
-		dumpFileStream.setCodec("UTF-8");
-		dumpFileStream << R"out(\data\)out" << "\n";
-		dumpFileStream << "ngram 1=" << unigrams.size() << "\n";
-		dumpFileStream << "ngram 2=" << bigrams.size() << "\n"; // +2 for sentence start/end
-
-		auto printNGram = [&dumpFileStream](const NGramRow& gram)
-		{
-			dumpFileStream.setFieldWidth(6);
-			dumpFileStream << gram.LogProb.get();
-			dumpFileStream.setFieldWidth(0);
-			dumpFileStream << " ";
-
-			for (int partInd = 0; partInd < gram.WordParts.ActualSize; ++partInd)
-			{
-				const WordPart* oneWordPart = gram.WordParts.Array[partInd];
-				printWordPart(oneWordPart, dumpFileStream);
-				dumpFileStream << " ";
-			}
-
-			if (gram.BackOffLogProb != nullptr)
-			{
-				dumpFileStream.setFieldWidth(6);
-				dumpFileStream << gram.BackOffLogProb.get();
-				dumpFileStream.setFieldWidth(0);
-				dumpFileStream << " ";
-			}
-
-			dumpFileStream << "\n";
-		};
-
-		dumpFileStream << "\n"; // blank line
-		dumpFileStream << "\\1-grams:" << "\n";
-		for (std::unique_ptr<NGramRow>& gram : unigrams)
-			printNGram(*gram);
-
-		dumpFileStream << "\n"; // blank line
-		dumpFileStream << "\\2-grams:" << "\n";
-		for (NGramRow& gram : bigrams)
-			printNGram(gram);
-
-		dumpFileStream << "\n"; // blank line
-		dumpFileStream << R"out(\end\)out" << "\n";
-	}
-
 	void createPhoneticDictionary(const wchar_t* filePath, wv::slice<const WordPart*> seedWordParts, const UkrainianPhoneticSplitter& phoneticSplitter, const WordsUsageInfo& wordUsage)
 	{
 		QFile lmFile(QString::fromStdWString(filePath));
@@ -826,7 +494,7 @@ namespace RunBuildLanguageModelNS
 		}
 	}
 
-	void chooseSeedUnigrams(const UkrainianPhoneticSplitter& phoneticSplitter, int maxUnigramsCount, bool allowPhoneticWordSplit, std::vector<const WordPart*>& result)
+	void chooseSeedUnigrams(const UkrainianPhoneticSplitter& phoneticSplitter, int minWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, std::vector<const WordPart*>& result)
 	{
 		const WordsUsageInfo& wordUsage = phoneticSplitter.wordUsage();
 		
@@ -861,7 +529,7 @@ namespace RunBuildLanguageModelNS
 			};
 			WordSeqKey seqKey({ wordPart->id() });
 			long wordSeqUsage = wordUsage.getWordSequenceUsage(seqKey);
-			bool isFreqUsage = wordSeqUsage >= 10;
+			bool isFreqUsage = minWordPartUsage == -1 || wordSeqUsage >= minWordPartUsage;
 
 			if (isFreqUsage && canSpellFun(wordPart))
 			{
@@ -872,7 +540,7 @@ namespace RunBuildLanguageModelNS
 		//
 		if (maxUnigramsCount > 0)
 		{
-			int takeUnigrams = maxUnigramsCount - wordPartSureInclude.size();
+			int takeUnigrams = maxUnigramsCount - (int)wordPartSureInclude.size();
 			if (takeUnigrams < 0)
 				takeUnigrams = 0;
 
@@ -880,12 +548,12 @@ namespace RunBuildLanguageModelNS
 			std::sort(wordPartCandidates.begin(), wordPartCandidates.end(), [&wordUsage](const WordPart* a, const WordPart* b)
 			{
 				WordSeqKey aSeqKey({ a->id() });
-				const WordSeqUsage* aUsage = wordUsage.getWordSequence(aSeqKey);
+				long aUsageCount = wordUsage.getWordSequenceUsage(aSeqKey);
 
 				WordSeqKey bSeqKey({ b->id() });
-				const WordSeqUsage* bUsage = wordUsage.getWordSequence(aSeqKey);
+				long bUsageCount = wordUsage.getWordSequenceUsage(bSeqKey);
 
-				return aUsage->UsedCount > bUsage->UsedCount;
+				return aUsageCount > bUsageCount;
 			});
 
 			// take N most used unigrams
@@ -940,11 +608,11 @@ namespace RunBuildLanguageModelNS
 		typedef std::chrono::system_clock Clock;
 		std::chrono::time_point<Clock> now1 = Clock::now();
 
-		std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>> declinedWords;
+		std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>> declinedWordDict;
 		int declinationFileCount = 0;
 		for (auto& dictPath : dictPathArray)
 		{
-			std::tuple<bool, const char*> loadOp = loadUkrainianWordDeclensionXml(dictPath, declinedWords);
+			std::tuple<bool, const char*> loadOp = loadUkrainianWordDeclensionXml(dictPath, declinedWordDict);
 			if (!std::get<0>(loadOp))
 			{
 				std::cerr << std::get<1>(loadOp) << std::endl;
@@ -956,60 +624,73 @@ namespace RunBuildLanguageModelNS
 			if (false && declinationFileCount <= 3)
 				break;
 		}
-
 		std::chrono::time_point<Clock> now2 = Clock::now();
 		auto elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
-		std::cout << "loaded declination dict in " << elapsedSec << "s wordGroupsCount=" << declinedWords.size() << std::endl;
+		std::cout << "loaded declination dict in " << elapsedSec << "s" << std::endl;
+
+		int uniqueDeclWordsCount = uniqueDeclinedWordsCount(declinedWordDict);
+		std::cout << "wordGroupsCount=" << declinedWordDict.size() << " uniqueDeclWordsCount=" << uniqueDeclWordsCount << std::endl;
 
 		//
 		now1 = Clock::now();
 
-		int totalDeclWordsCount = -1;
 		bool allowPhoneticWordSplit = false;
 		UkrainianPhoneticSplitter phoneticSplitter;
 		phoneticSplitter.setAllowPhoneticWordSplit(allowPhoneticWordSplit);
-		phoneticSplitter.bootstrap(declinedWords, targetWord, processedWords, totalDeclWordsCount);
+
+		//
+		phoneticSplitter.bootstrap(declinedWordDict, targetWord, processedWords);
 		now2 = Clock::now();
 		elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
 		std::cout << "phonetic split of declinartion dict took=" << elapsedSec <<"s" << std::endl;
 
 		WordsUsageInfo& wordUsage = phoneticSplitter.wordUsage();
-		double uniquenessRatio = wordUsage.wordPartsCount() / (double)totalDeclWordsCount;
-		std::wcout << L"totalDeclWordsCount=" << totalDeclWordsCount
+		double uniquenessRatio = wordUsage.wordPartsCount() / (double)uniqueDeclWordsCount;
+		std::wcout << L"totalDeclWordsCount=" << uniqueDeclWordsCount
 			<< L" wordParts=" << wordUsage.wordPartsCount()
 			<< L" uniquenessRatio=" << uniquenessRatio
 			<< std::endl;
 
+		//
 		const wchar_t* txtDir = LR"path(C:\devb\PticaGovorunProj\data\textWorld\)path";
 		long totalPreSplitWords = 0;
 
 		now1 = Clock::now();
-		phoneticSplitter.buildLangModel(txtDir, totalPreSplitWords, -1, true);
+		phoneticSplitter.gatherWordPartsSequenceUsage(txtDir, totalPreSplitWords, -1, false);
 		now2 = Clock::now();
 		elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
-		std::cout << "buildLangModel took=" << elapsedSec << "s" << std::endl;
+		std::cout << "gatherWordPartsSequenceUsage took=" << elapsedSec << "s" << std::endl;
 
-		for (int wordsPerSeq = 1; wordsPerSeq <= 2; ++wordsPerSeq)
+		std::array<long, 2> wordSeqSizes;
+		wordUsage.wordSeqCountPerSeqSize(wordSeqSizes);
+		for (int seqDim = 0; seqDim < wordSeqSizes.size(); ++seqDim)
 		{
-			long wordsPerNGram = phoneticSplitter.wordSeqCount(wordsPerSeq);
-			std::wcout << L"wordsPerNGram[" << wordsPerSeq <<"]=" << wordsPerNGram << std::endl;
+			long wordsPerNGram = wordSeqSizes[seqDim];
+			std::wcout << L"wordsPerNGram[" << seqDim + 1 <<"]=" << wordsPerNGram << std::endl;
 		}
 		std::wcout << L" wordParts=" << wordUsage.wordPartsCount() << std::endl;
 
 		phoneticSplitter.printSuffixUsageStatistics();
 
-		//int maxUnigramsCount = 30000;
+		// note, the positive threshold may evict the rare words
+		//int maxWordPartUsage = 10;
+		int maxWordPartUsage = -1;
+		//int maxUnigramsCount = 10000;
 		int maxUnigramsCount = -1;
 		std::vector<const WordPart*> seedUnigrams;
-		chooseSeedUnigrams(phoneticSplitter, maxUnigramsCount, allowPhoneticWordSplit, seedUnigrams);
+		chooseSeedUnigrams(phoneticSplitter, maxWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, seedUnigrams);
 		std::wcout << L"seed unigrams count=" << seedUnigrams.size() << std::endl;
 
 		//
+		ArpaLanguageModel langModel;
+		langModel.setGramMaxDimensions(1);
+		langModel.generate(seedUnigrams, phoneticSplitter);
+
 		std::wstringstream arpaLMFileName;
 		arpaLMFileName << "persianLM.";
 		appendTimeStampNow(arpaLMFileName);
 		arpaLMFileName << ".txt";
-		generateArpaLanguageModel(arpaLMFileName.str().c_str(), seedUnigrams, phoneticSplitter, wordUsage);
+		writeArpaLanguageModel(langModel, arpaLMFileName.str().c_str());
 
 		std::wstringstream phonDictFileName;
 		phonDictFileName << "persianDic.";
@@ -1025,7 +706,7 @@ namespace RunBuildLanguageModelNS
 			txtDir = argv[1];
 
 		WordsUsageInfo wordsStat;
-		std::vector<WordSeqUsage*> wordSeqOrder; // order from most - least used
+		std::vector<const WordSeqUsage*> wordSeqOrder; // order from most - least used
 
 		const wchar_t* wordCountsPath = L"wordCounts.xml";
 		if (QFile::exists(QString::fromWCharArray(wordCountsPath)))
@@ -1054,7 +735,7 @@ namespace RunBuildLanguageModelNS
 
 			wordSeqOrder.reserve(wordsStat.wordSeqCount());
 			wordsStat.copyWordSeq(wordSeqOrder);
-			std::sort(std::begin(wordSeqOrder), std::end(wordSeqOrder), [](WordSeqUsage* a, WordSeqUsage* b)
+			std::sort(std::begin(wordSeqOrder), std::end(wordSeqOrder), [](const WordSeqUsage* a, const WordSeqUsage* b)
 			{
 				return a->UsedCount > b->UsedCount;
 			});
