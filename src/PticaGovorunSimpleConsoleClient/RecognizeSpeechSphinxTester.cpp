@@ -194,6 +194,21 @@ namespace RecognizeSpeechSphinxTester
 		return true;
 	}
 
+	template <typename T>
+	bool startsWith(wv::slice<T> items, wv::slice<T> prefix)
+	{
+		if (prefix.size() > items.size())
+			return false; // prefix will not fit the items?
+
+		for (int i = 0; i < prefix.size(); ++i)
+		{
+			if (prefix[i] == items[i])
+				continue;
+			return false;
+		}
+		return true;
+	}
+
 	void testSphincDecoder()
 	{
 		//
@@ -244,11 +259,12 @@ namespace RecognizeSpeechSphinxTester
 		const char* hmmPath       = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";
 		//const char* langModelPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.lm.DMP)path";
 		//const char* dictPath      = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.dic)path";
-		const char* langModelPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persian.lm.DMP)path";
+		//const char* langModelPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persian.lm.DMP)path";
+		const char* langModelPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persianLM.txt)path";
 		const char* dictPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persianDic.txt)path";
 		cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
 			"-hmm", hmmPath,
-			"-lm", langModelPath,
+			"-lm", langModelPath, // accepts both TXT and DMP formats
 			"-dict", dictPath,
 			nullptr);
 		if (config == nullptr)
@@ -280,8 +296,6 @@ namespace RecognizeSpeechSphinxTester
 		float targetFrameRate = CmuSphinxFrameRate;
 		for (int i = 0; i < segments.size(); ++i)
 		{
-			//if (i > 90)
-			//	break;
 			const AnnotatedSpeechSegment& seg = segments[i];
 			
 			// process only test speech segments
@@ -295,6 +309,7 @@ namespace RecognizeSpeechSphinxTester
 			bool isTestSeg = fileIdIt != fileIdLines.end();
 			if (!isTestSeg)
 				continue;
+			//if (i > 90) break;
 
 			std::vector<short> speechFramesResamp;
 			bool requireResampling = seg.FrameRate != targetFrameRate;
@@ -503,7 +518,32 @@ namespace RecognizeSpeechSphinxTester
 		double wordErrorAvg = wordErrorTotalCount / (double)wordTotalCount;
 		dumpFileStream << "WordErrorAvg=" << wordErrorAvg <<"\n";
 
+		class CharPhonationGroupCosts {
+		public:
+			typedef int CostType;
+			static int getZeroCosts() {
+				return 0;
+			}
+			inline int getInsertSymbolCost(wchar_t x) {
+				return 1;
+			}
+			inline int getRemoveSymbolCost(wchar_t x) {
+				return 1;
+			}
+			inline int getSubstituteSymbolCost(wchar_t x, wchar_t y)
+			{
+				if (x == y) return 0;
+				boost::optional<CharGroup> xClass = classifyUkrainianChar(x);
+				boost::optional<CharGroup> yClass = classifyUkrainianChar(y);
+				if (xClass && xClass == yClass) // chars from the same group
+					return 1;
+				return 99; // chars from different groups
+			}
+		};
+
 		std::wstringstream buff;
+		CharPhonationGroupCosts c;
+		EditDistance<wchar_t, CharPhonationGroupCosts> editDist;
 		for (int i = 0; i < recogUtterances.size(); ++i)
 		{
 			const TwoUtterances& utter = recogUtterances[i];
@@ -514,11 +554,23 @@ namespace RecognizeSpeechSphinxTester
 			const std::wstring separ(L" ");
 			buff.str(L"");
 			PticaGovorun::join(utter.WordsExpected.cbegin(), utter.WordsExpected.cend(), separ, buff);
-			dumpFileStream << "ExpectWords=" << QString::fromStdWString(buff.str()) << "\n";
+			std::wstring expectWords = buff.str();
+			dumpFileStream << "ExpectWords=" << QString::fromStdWString(expectWords) << "\n";
 
 			buff.str(L"");
 			PticaGovorun::join(utter.WordsActualMerged.cbegin(), utter.WordsActualMerged.cend(), separ, buff);
-			dumpFileStream << "ActualWords=" << QString::fromStdWString(buff.str()) << "\n";
+			std::wstring actualWords = buff.str();
+			dumpFileStream << "ActualWords=" << QString::fromStdWString(actualWords) << "\n";
+
+			//
+			editDist.estimateAllDistances(expectWords, actualWords, c);
+			std::vector<EditStep> editRecipe;
+			editDist.minCostRecipe(editRecipe);
+			std::vector<wchar_t> alignWord1;
+			std::vector<wchar_t> alignWord2;
+			alignWords(wv::make_view(expectWords), wv::make_view(actualWords), editRecipe, L'_', alignWord1, alignWord2);
+			dumpFileStream << "EWordsAlign=" << QString::fromStdWString(std::wstring(alignWord1.begin(), alignWord1.end())) << "\n";
+			dumpFileStream << "AWordsAlign=" << QString::fromStdWString(std::wstring(alignWord2.begin(), alignWord2.end())) << "\n";
 
 			dumpFileStream << "ExpectProns=" << QString::fromStdWString(utter.Segment.TranscriptText) << "\n";
 

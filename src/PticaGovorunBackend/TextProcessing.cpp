@@ -248,6 +248,23 @@ namespace PticaGovorun
 		return isSmall || isLarge;
 	}
 
+	bool isEnglishVowel(wchar_t ch, bool includeY)
+	{
+		// aeiouy
+		if (ch == L'a' || ch == L'A' ||
+			ch == L'e' || ch == L'E' ||
+			ch == L'i' || ch == L'I' ||
+			ch == L'o' || ch == L'O' ||
+			ch == L'u' || ch == L'U')
+			return true;
+		
+		// y is a vowel in 'cry' or 'candy'
+		// y is a consonant in 'yellow'
+		if (includeY && (ch == L'y' || ch == L'Y'))
+			return true;
+		return false;
+	}
+
 	bool isExclusiveEnglishChar(wchar_t ch)
 	{
 		return 
@@ -365,5 +382,16 @@ namespace PticaGovorun
 			ch == L'у' || ch == L'У' ||
 			ch == L'ю' || ch == L'Ю' ||
 			ch == L'я' || ch == L'Я';
+	}
+
+	boost::optional<CharGroup> classifyUkrainianChar(wchar_t ch)
+	{
+		bool isVowel = isUkrainianVowel(ch);
+		bool isCons  = isUkrainianConsonant(ch);
+		if (isVowel && !isCons)
+			return CharGroup::Vowel;
+		else if (!isVowel && isCons)
+			return CharGroup::Consonant;
+		return nullptr;
 	}
 }

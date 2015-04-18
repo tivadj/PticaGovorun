@@ -4,6 +4,7 @@
 #include <cassert>
 #include <iostream>
 #include "StringUtils.h"
+#include <TranscriberUI/PhoneticDictionaryViewModel.h>
 
 namespace EditDistanceTestsNS
 {
@@ -28,74 +29,100 @@ namespace EditDistanceTestsNS
 		}
 	};
 
-	template <typename RandIter, typename EditCosts /*= StringEditCosts<char>*/>
-	typename EditCosts::CostType findEditDistance(RandIter s1Begin, RandIter s1End, RandIter s2Begin, RandIter s2End, EditCosts& editCosts)
-	{
-		typedef typename EditCosts::CostType CostType;
+	void editRecipe1() {
+		WordErrorCosts<char> c;
+		EditDistance<char, WordErrorCosts<char>> editDist;
+		//std::string first( "eat"); // eat
+		//std::string second("et");  // e~t
+		//std::string first( "et");  // e~t
+		//std::string second("eat"); // eat
+		//std::string first( "tea"); // t~ea
+		//std::string second("toe"); // toe~
+		//std::string first( "at nose"); // at nose
+		//std::string second("etnos");   // et~nos~
+		std::string first( "rests");  // ~~rests
+		std::string second("stress"); // stres~s
+		editDist.estimateAllDistances(first, second, c);
+		float d1 = editDist.distance();
 
-		int size1 = s1End - s1Begin;
-		int size2 = s2End - s2Begin;
+		std::vector<EditStep> editRecipe;
+		editDist.minCostRecipe(editRecipe);
 
-		std::vector<std::vector<CostType>> costs(size1 + 1, std::vector<CostType>(size2 + 1, EditCosts::getZeroCosts()));
+		std::vector<char> w1;
+		std::vector<char> w2;
+		alignWords(wv::make_view(first), wv::make_view(second), editRecipe, '~', w1, w2);
 
-		// init first line
+		std::string w1Str(w1.begin(), w1.end());
+		std::string w2Str(w2.begin(), w2.end());
+		std::cout << w1Str << std::endl;
+		std::cout << w2Str << std::endl;
+	}
 
-		for (int j = 0; j<size2 + 1; j++)
-			costs[0][j] = j;
-
-		for (int i = 1; i<size1 + 1; i++)
-		{
-			costs[i][0] = i;
-
-			for (int j = 1; j<size2 + 1; j++) {
-				auto up = costs[i - 1][j] + editCosts.getRemoveSymbolCost(s1Begin[i - 1]);
-				auto left = costs[i][j - 1] + editCosts.getInsertSymbolCost(s2Begin[j - 1]);
-				auto diag = costs[i - 1][j - 1] + editCosts.getSubstituteSymbolCost(s1Begin[i - 1], s2Begin[j - 1]);
-				costs[i][j] = std::min(std::min(up, left), diag);
-			}
+	class CharPhonationGroupCosts {
+	public:
+		typedef int CostType;
+		static int getZeroCosts() {
+			return 0;
 		}
+		inline int getInsertSymbolCost(wchar_t x) {
+			return 1;
+		}
+		inline int getRemoveSymbolCost(wchar_t x) {
+			return 1;
+		}
+		inline int getSubstituteSymbolCostCore(wchar_t x, wchar_t y)
+		{
+			if (x == y) return 0;
+			boost::optional<CharGroup> xClass = classifyUkrainianChar(x);
+			boost::optional<CharGroup> yClass = classifyUkrainianChar(y);
+			if (xClass && xClass == yClass) // chars from the same group
+				return 1;
+			return 99; // chars from different groups
+		}
+		inline int getSubstituteSymbolCost(wchar_t x, wchar_t y)
+		{
+			int cost = getSubstituteSymbolCostCore(x, y);
+			std::array<wchar_t, 100> buff;
+			swprintf(buff.data(), buff.size(), L"%c %c cost=%d\n", x, y, cost);
+			std::wcout << buff.data();
+			return cost;
+		}
+	};
 
-		auto result = costs[size1][size2];
-		return result;
-	}
+	void editRecipeWide() {
+		CharPhonationGroupCosts c;
+		EditDistance<wchar_t, CharPhonationGroupCosts> editDist;
+		std::wstring first(L"наш граматичний словник містить близько ста сорока тисяч слів");
+		//////std::wstring second(L"аж граматичне словник нести безкоста залякати це слів");
+		std::wstring second(L"<s> аж граматичне словник нести безкоста залякати це слів");
+		//std::wstring first(L"наш");
+		//std::wstring second(L"<s> аж");
+		//std::wstring first(L"наш граматичний");
+		//std::wstring second(L"<s> аж граматичне");
+		//std::wstring first(L"наш граматичний словник");
+		//std::wstring second(L"<s> аж граматичне словник");
+		editDist.estimateAllDistances(first, second, c);
+		float d1 = editDist.distance();
 
-	void simpleChar() {
-		std::vector<char> s1 = {'a', '1'};
-		std::vector<char> s2 = { 'b', '1' };
+		std::vector<EditStep> editRecipe;
+		editDist.minCostRecipe(editRecipe);
 
-		WordErrorCosts<char> c;
-		int d1 = findEditDistance(s1.begin(), s1.end(), s2.begin(), s2.end(), c);
-		assert(1 == d1);
-	}
+		std::vector<wchar_t> w1;
+		std::vector<wchar_t> w2;
+		alignWords(wv::make_view(first), wv::make_view(second), editRecipe, L'~', w1, w2);
 
-	void simpleString() {
-		std::vector<std::wstring> s1 = { L"a", L"1"};
-		std::vector<std::wstring> s2 = { L"b", L"1" }; // changed
-		std::vector<std::wstring> s3 = { L"pre", L"a", L"1" }; // inserted
-		std::vector<std::wstring> s4 = { L"1" }; // removed
-
-		WordErrorCosts<std::wstring> c;
-		int d1 = findEditDistance(s1.begin(), s1.end(), s2.begin(), s2.end(), c);
-		assert(1 == d1);
-		int d3 = findEditDistance(s1.begin(), s1.end(), s3.begin(), s3.end(), c);
-		assert(1 == d3);
-		int d4 = findEditDistance(s1.begin(), s1.end(), s4.begin(), s4.end(), c);
-		assert(1 == d4);
-	}
-
-	void stringDistance1() {
-		std::vector<char> s1 = {           'r', 'e', 's', 't', 's' };
-		std::vector<char> s2 = { 's', 't', 'r', 'e', 's', 's' };
-
-		WordErrorCosts<char> c;
-		int d1 = findEditDistance(s1.begin(), s1.end(), s2.begin(), s2.end(), c);
-		assert(3, d1);
+		std::wstring w1Str(w1.begin(), w1.end());
+		std::wstring w2Str(w2.begin(), w2.end());
+		std::wcout << w1Str << std::endl;
+		std::wcout << w2Str << std::endl;
 	}
 
 	void run()
 	{
-		simpleChar();
-		simpleString();
-		stringDistance1();
+		//simpleChar();
+		//simpleString();
+		//stringDistance1();
+		//editRecipe1();
+		editRecipeWide();
 	}
 }

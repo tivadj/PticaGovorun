@@ -54,6 +54,7 @@ namespace PticaGovorun
 	PG_EXPORTS inline bool isDigitChar(wchar_t ch);
 
 	PG_EXPORTS inline bool isEnglishChar(wchar_t ch);
+	PG_EXPORTS inline bool isEnglishVowel(wchar_t ch, bool includeY);
 
 	// Returns true if the character is from latin charset and not from cyrillic.
 	PG_EXPORTS inline bool isExclusiveEnglishChar(wchar_t ch);
@@ -65,6 +66,14 @@ namespace PticaGovorun
 
 	PG_EXPORTS inline bool isUkrainianConsonant(wchar_t ch);
 	PG_EXPORTS inline bool isUkrainianVowel(wchar_t ch);
+	
+	// Vowel or consonant.
+	enum class CharGroup
+	{
+		Vowel,
+		Consonant
+	};
+	PG_EXPORTS inline boost::optional<CharGroup> classifyUkrainianChar(wchar_t ch);
 
 	enum class ActionTense
 	{
@@ -176,6 +185,8 @@ namespace PticaGovorun
 		boost::optional<WordDegree> Degree;
 		boost::optional<WordActiveOrPassive> ActiveOrPassive;
 		WordDeclensionGroup* OwningWordGroup;
+
+		inline bool isNotAvailable() const { return Name == L"-"; }
 	};
 
 	class WordDeclensionGroup
@@ -206,6 +217,9 @@ namespace PticaGovorun
 	};
 
 	PG_EXPORTS inline std::tuple<bool, const char*> loadUkrainianWordDeclensionXml(const std::wstring& declensionDictPath, std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWords);
+
+	// Calculates the number of unique word forms in the declination dictionary.
+	PG_EXPORTS int uniqueDeclinedWordsCount(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWords);
 
 	void split();
 }
