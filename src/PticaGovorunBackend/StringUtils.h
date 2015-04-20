@@ -1,5 +1,7 @@
 #include <vector>
 #include <array>
+#include <functional>
+#include <boost/optional.hpp>
 #include "ClnUtils.h"
 
 namespace PticaGovorun
@@ -29,37 +31,6 @@ namespace PticaGovorun
 		}
 	};
 
-	template <typename RandIter, typename EditCosts /*= StringEditCosts<char>*/>
-	typename EditCosts::CostType findEditDistance(RandIter s1Begin, RandIter s1End, RandIter s2Begin, RandIter s2End, EditCosts& editCosts)
-	{
-		typedef typename EditCosts::CostType CostType;
-
-		int size1 = s1End - s1Begin;
-		int size2 = s2End - s2Begin;
-
-		std::vector<std::vector<CostType>> costs(size1 + 1, std::vector<CostType>(size2 + 1, EditCosts::getZeroCosts()));
-
-		// init first line
-
-		for (int j = 0; j < size2 + 1; j++)
-			costs[0][j] = j;
-
-		for (int i = 1; i < size1 + 1; i++)
-		{
-			costs[i][0] = i;
-
-			for (int j = 1; j < size2 + 1; j++) {
-				auto up = costs[i - 1][j] + editCosts.getRemoveSymbolCost(s1Begin[i - 1]);
-				auto left = costs[i][j - 1] + editCosts.getInsertSymbolCost(s2Begin[j - 1]);
-				auto diag = costs[i - 1][j - 1] + editCosts.getSubstituteSymbolCost(s1Begin[i - 1], s2Begin[j - 1]);
-				costs[i][j] = std::min(std::min(up, left), diag);
-			}
-		}
-
-		auto result = costs[size1][size2];
-		return result;
-	}
-	
 	// the enum value is the index in the priorities array
 	enum class StringEditOp
 	{
@@ -306,90 +277,146 @@ namespace PticaGovorun
 		return result;
 	}
 
-	template <typename Letter>
-	void alignWords(const wv::slice<Letter> first, const wv::slice<Letter> second, const std::vector<EditStep>& editRecipe, Letter padChar, std::vector<Letter>& firstAligned, std::vector<Letter>& secondAligned)
+	template <typename RandIter, typename EditCosts /*= StringEditCosts<char>*/>
+	typename EditCosts::CostType findEditDistance(RandIter s1Begin, RandIter s1End, RandIter s2Begin, RandIter s2End, EditCosts& editCosts)
 	{
-		size_t commonSize = std::max(first.size(), second.size());
-		size_t firstPad = commonSize - first.size();
-		size_t secondPad = commonSize - second.size();
+		typedef typename EditCosts::CostType CostType;
 
-		std::copy(first.begin(), first.end(), std::back_inserter(firstAligned));
-		std::reverse(firstAligned.begin(), firstAligned.end());
-		for (size_t i = 0; i < firstPad; ++i)
-			firstAligned.push_back(padChar);
+		int size1 = s1End - s1Begin;
+		int size2 = s2End - s2Begin;
 
-		std::copy(second.begin(), second.end(), std::back_inserter(secondAligned));
-		std::reverse(secondAligned.begin(), secondAligned.end());
-		for (size_t i = 0; i < secondPad; ++i)
-			secondAligned.push_back(padChar);
+		std::vector<std::vector<CostType>> costs(size1 + 1, std::vector<CostType>(size2 + 1, EditCosts::getZeroCosts()));
 
-		auto shiftRight = [](std::vector<Letter>& data, size_t ind)
+		// init first line
+
+		for (int j = 0; j < size2 + 1; j++)
+			costs[0][j] = j;
+
+		for (int i = 1; i < size1 + 1; i++)
 		{
-			for (size_t i = data.size() - 1; i >= ind + 1; i--)
-				data[i] = data[i - 1];
-		};
+			costs[i][0] = i;
 
-		// assume that both words are aligned by the right side
-		size_t alignIndexDebug = commonSize; // chars starting from this are aligned
+			for (int j = 1; j < size2 + 1; j++) {
+				auto up = costs[i - 1][j] + editCosts.getRemoveSymbolCost(s1Begin[i - 1]);
+				auto left = costs[i][j - 1] + editCosts.getInsertSymbolCost(s2Begin[j - 1]);
+				auto diag = costs[i - 1][j - 1] + editCosts.getSubstituteSymbolCost(s1Begin[i - 1], s2Begin[j - 1]);
+				costs[i][j] = std::min(std::min(up, left), diag);
+			}
+		}
 
-		for (int i = 0; i < editRecipe.size(); ++i, --alignIndexDebug)
+		auto result = costs[size1][size2];
+		return result;
+	}
+
+	// Aligns two sequences of symbols. The function to convert symbol to string is given. Two string representations of symbols are separated
+	// with sepcified char. If text representation of two symbols have different size, then the shorter one is padded with 'padChar'.
+	template <typename Symbol, typename TextChar>
+	void alignWords(const wv::slice<Symbol> first, const wv::slice<Symbol> second,
+		std::function<void (Symbol, std::vector<TextChar>&)> symbolToStrFun,
+		const std::vector<EditStep>& editRecipe, TextChar padChar,
+		std::vector<TextChar>& firstAlignedStr, std::vector<TextChar>& secondAlignedStr,
+		boost::optional<TextChar> sepChar = nullptr)
+	{
+		std::vector<TextChar> charBuff1;
+		std::vector<TextChar> charBuff2;
+
+		for (size_t editInd = 0; editInd < editRecipe.size(); ++editInd)
 		{
-			const EditStep& step = editRecipe[i];
+			const EditStep& step = editRecipe[editInd];
 			if (step.Change == StringEditOp::RemoveOp)
 			{
-				size_t removePos = step.Remove.FirstRemoveInd;
-				size_t firstSuffixSize = firstPad + removePos;
-				size_t shiftPosR = firstAligned.size() - firstSuffixSize - 1; // shift pos in a reversed pos in B
+				Symbol remSymb = first[step.Remove.FirstRemoveInd];
+				
+				charBuff1.clear();
+				symbolToStrFun(remSymb, charBuff1);
+				std::reverse(charBuff1.begin(), charBuff1.end());
 
-				// shift B to the left
-				if (secondPad == 0) // extend aligned sequences
-				{
-					firstPad++;
-					firstAligned.push_back(padChar);
-					secondPad++;
-					secondAligned.push_back(padChar);
-				}
-				PG_DbgAssert(secondPad > 0 && "Must have space for shifting");
-				shiftRight(secondAligned, shiftPosR);
-				secondPad--; // shifting overwrote one pad char
-				secondAligned[shiftPosR] = padChar;
+				// append removed symbol
+				for (size_t i = 0; i < charBuff1.size(); ++i)
+					firstAlignedStr.push_back(charBuff1[i]);
+
+				// pad second sequence with size=removeSymb.str.size
+				for (size_t i = 0; i < charBuff1.size(); ++i)
+					secondAlignedStr.push_back(padChar);
 			}
 			else if (step.Change == StringEditOp::InsertOp)
 			{
-				size_t insertPos = step.Insert.FirstInsertInd;
-				size_t firstSuffixSize = firstPad + insertPos;
-				size_t shiftPosR = firstAligned.size() - firstSuffixSize - 1;
-				shiftPosR += 1; // shift pos is next to insert pos
+				Symbol insSymb = second[step.Insert.SecondSourceInd];
 
-				// shift A(0:insertPos-1) to the left by one char
-				if (firstPad == 0) // extend aligned sequences
-				{
-					firstPad++;
-					firstAligned.push_back(padChar);
-					secondPad++;
-					secondAligned.push_back(padChar);
-				}
+				charBuff1.clear();
+				symbolToStrFun(insSymb, charBuff1);
+				std::reverse(charBuff1.begin(), charBuff1.end());
 
-				PG_DbgAssert(firstPad > 0 && "Must have space for shifting");
-				shiftRight(firstAligned, shiftPosR);
-				firstPad--; // shifting overwrote one pad char
+				// pad first sequence with size=insertSymb.str.size
+				for (size_t i = 0; i < charBuff1.size(); ++i)
+					firstAlignedStr.push_back(padChar);
 
-				firstAligned[shiftPosR] = padChar;
+				// append inserter symbol
+				for (size_t i = 0; i < charBuff1.size(); ++i)
+					secondAlignedStr.push_back(charBuff1[i]);
 			}
 			else if (step.Change == StringEditOp::SubstituteOp)
 			{
+				// do aligned append
+				Symbol symb1 = first[step.Substitute.FirstInd];
+				Symbol symb2 = second[step.Substitute.SecondInd];
+
+				charBuff1.clear();
+				symbolToStrFun(symb1, charBuff1);
+				std::reverse(charBuff1.begin(), charBuff1.end());
+
+				charBuff2.clear();
+				symbolToStrFun(symb2, charBuff2);
+				std::reverse(charBuff2.begin(), charBuff2.end());
+
+				size_t symb1Size = charBuff1.size();
+				size_t symb2Size = charBuff2.size();
+
+				std::vector<TextChar>& shorterSymbStr = symb1Size < symb2Size ? firstAlignedStr : secondAlignedStr;
+				size_t padSize = symb1Size < symb2Size ? symb2Size - symb1Size : symb1Size - symb2Size;
+
+				// pad shorter sequence
+				for (size_t i = 0; i < padSize; ++i)
+					shorterSymbStr.push_back(padChar);
+
+				// append symbols
+				for (size_t i = 0; i < charBuff1.size(); ++i)
+					firstAlignedStr.push_back(charBuff1[i]);
+				for (size_t i = 0; i < charBuff2.size(); ++i)
+					secondAlignedStr.push_back(charBuff2[i]);
+			}
+			if (sepChar != nullptr && editInd < editRecipe.size() - 1)
+			{
+				firstAlignedStr.push_back(sepChar.get());
+				secondAlignedStr.push_back(sepChar.get());
 			}
 		}
-		//PG_DbgAssert(alignIndexDebug == 0 && "Must align two words");
-		std::reverse(firstAligned.begin(), firstAligned.end());
-		std::reverse(secondAligned.begin(), secondAligned.end());
+		// compensate for reversed way of construction
+		std::reverse(firstAlignedStr.begin(), firstAlignedStr.end());
+		std::reverse(secondAlignedStr.begin(), secondAlignedStr.end());
 
-		PG_DbgAssert(firstAligned.size() == secondAligned.size() && "Two words must have equal size");
-		for (size_t i = 0; i < firstAligned.size(); ++i)
+		PG_DbgAssert(firstAlignedStr.size() == secondAlignedStr.size() && "Two words must have equal size");
+	}
+
+	// overload for decltype(Symbol) = decltype(TextChar)
+	template <typename Symbol, typename TextChar, 
+		class = typename std::enable_if<
+			std::is_same<
+				Symbol, 
+				TextChar
+				>::value
+		>::type>
+	void alignWords(const wv::slice<Symbol> first, const wv::slice<Symbol> second, 
+		const std::vector<EditStep>& editRecipe, TextChar padChar, 
+		std::vector<TextChar>& firstAlignedStr, std::vector<TextChar>& secondAlignedStr,
+		boost::optional<TextChar> sepChar = nullptr)
+	{
+		// the default function just copies a symbol to an output
+		std::function<void(Symbol, std::vector<TextChar>&)> symb2str = [](Symbol value, std::vector<TextChar>& str)
 		{
-			bool bothPad = firstAligned[i] == padChar && secondAligned[i] == padChar;
-			PG_DbgAssert(!bothPad && "Two aligned chars can't be the pad char simultaneously");
-		}
+			str.push_back(value); // decltype(Symbol)=decltype(TextChar)
+		};
+		alignWords(first, second, symb2str, editRecipe, padChar, firstAlignedStr, secondAlignedStr, sepChar);
 	}
 
 	template <typename Letter, typename EditCosts>

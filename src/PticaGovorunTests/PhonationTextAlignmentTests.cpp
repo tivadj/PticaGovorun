@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 #include <iostream>
+#include <functional>
 
 #include "StringUtils.h"
 #include <TextProcessing.h>
@@ -131,5 +132,66 @@ namespace PticaGovorun
 		// ppp -> ppp~~~
 		// qqq -> ~~~qqq
 		testAlign(L"ppp", L"qqq", L"ppp~~~", L"~~~qqq", false, "SIR");
+	}
+
+	class ManhattanCosts {
+	public:
+		typedef float CostType;
+		static CostType getZeroCosts() {
+			return 0;
+		}
+		inline CostType getInsertSymbolCost(int x) {
+			return x;
+		}
+		inline int getRemoveSymbolCost(int x) {
+			return x;
+		}
+		inline CostType getSubstituteSymbolCost(int x, int y)
+		{
+			return std::abs(x - y);
+		}
+	};
+
+	void intAlignOneWay(std::initializer_list<int> w1, std::initializer_list<int> w2, const wchar_t* w1Align, const wchar_t* w2Align)
+	{
+		ManhattanCosts editCost;
+		EditDistance<int, ManhattanCosts> editDist;
+
+		std::vector<int> w1Vec(w1);
+		std::vector<int> w2Vec(w2);
+		editDist.estimateAllDistances(w1Vec, w2Vec, editCost);
+		std::vector<EditStep> editRecipe;
+		editDist.minCostRecipe(editRecipe);
+
+		std::function<void (int, std::vector<wchar_t>&)> int2str = [](int value, std::vector<wchar_t>& str)
+		{
+			std::wstringstream sbuf;
+			sbuf << value;
+			std::wstring res = sbuf.str();
+			std::copy(res.begin(), res.end(), std::back_inserter(str));
+		};
+
+		std::vector<wchar_t> align1;
+		std::vector<wchar_t> align2;
+		alignWords(wv::make_view(w1Vec), wv::make_view(w2Vec), int2str, editRecipe, L'~', align1, align2, boost::make_optional(L'~'));
+		std::wstring align1Str(align1.begin(), align1.end());
+		std::wstring align2Str(align2.begin(), align2.end());
+
+		std::wstring expect1Str(w1Align);
+		std::wstring expect2Str(w2Align);
+		REQUIRE(expect1Str == align1Str);
+		REQUIRE(expect2Str == align2Str);
+	}
+	void intAlign(std::initializer_list<int> w1, std::initializer_list<int> w2, const wchar_t* align1Str, const wchar_t* align2Str)
+	{
+		intAlignOneWay(w1, w2, align1Str, align2Str);
+		intAlignOneWay(w2, w1, align2Str, align1Str);
+	}
+
+	TEST_CASE("align int seqs")
+	{
+		// {77, 2, 79, 13}    -> ~~~77~2~~79~13
+		// {12, 66, 11, 68,6} -> 12~66~11~68~6~
+		intAlign({ 77, 2, 79, 13 }, { 12, 66, 11, 68, 6 }, L"~~~77~2~~79~13", L"12~66~11~68~6~");
 	}
 }
