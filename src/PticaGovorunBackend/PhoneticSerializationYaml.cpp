@@ -20,7 +20,7 @@ namespace PticaGovorun
 	{
 		YAML::Emitter yamlEmit;
 
-		std::ostringstream phonesBuf;
+		std::string phoneListStr;
 
 		yamlEmit << YAML::BeginSeq; // word sequence
 
@@ -39,10 +39,10 @@ namespace PticaGovorun
 				yamlEmit << YAML::Value << wordQ.toUtf8().constData();
 				yamlEmit << YAML::Key << WordUsedCountName;
 
-				const std::vector<std::string>& phoneStrs = wordAndProns.Pronunciations[0].PhoneStrs;
-				phonesBuf.str("");
-				PticaGovorun::join(std::cbegin(phoneStrs), std::cend(phoneStrs), " ", phonesBuf);
-				yamlEmit << YAML::Value << phonesBuf.str();
+				phoneListStr.clear();
+				phoneListToStr(wordAndProns.Pronunciations[0].PhoneIds, phoneListStr);
+
+				yamlEmit << YAML::Value << phoneListStr;
 				yamlEmit << YAML::EndMap;
 				continue;
 			}
@@ -67,12 +67,11 @@ namespace PticaGovorun
 						yamlEmit << YAML::Key << PronunciationAsWordName;
 						yamlEmit << YAML::Value << QString::fromStdWString(pron.PronAsWord).toUtf8().constData();
 
-						//
-						phonesBuf.str("");
-						PticaGovorun::join(std::begin(pron.PhoneStrs), std::end(pron.PhoneStrs), " ", phonesBuf);
+						phoneListStr.clear();
+						phoneListToStr(pron.PhoneIds, phoneListStr);
 
 						yamlEmit << YAML::Key << WordUsedCountName;
-						yamlEmit << YAML::Value << phonesBuf.str();
+						yamlEmit << YAML::Value << phoneListStr;
 						yamlEmit << YAML::EndMap;
 					}
 				}
@@ -91,7 +90,7 @@ namespace PticaGovorun
 	{
 		std::string filePathStd = QString::fromStdWString(filePath).toStdString();
 
-		std::vector<std::string> phoneList;
+		std::vector<UkrainianPhoneId> phoneList;
 		
 		YAML::Node wordRows = YAML::LoadFile(filePathStd);
 		for (int i = 0; i < wordRows.size(); ++i)
@@ -112,17 +111,28 @@ namespace PticaGovorun
 			if (!isOne)
 				return std::make_pair(false, "Exactly one must be defined");
 
+			auto pushWordPron = [&phoneList, &wordPhoneticInfo](const std::wstring& pronAsWord, const std::string& phoneListStrs) -> std::tuple<bool, const char*>
+			{
+				phoneList.clear();
+				bool parsePhoneOp = parsePhoneListStrs(phoneListStrs, phoneList);
+				if (!parsePhoneOp)
+					return std::make_pair(false, "Can't parse phone string");
+
+				PronunciationFlavour pron;
+				pron.PronAsWord = pronAsWord;
+				pron.PhoneIds = phoneList;
+				wordPhoneticInfo.Pronunciations.push_back(pron);
+				return std::make_pair(true, nullptr);
+			};
+
+			std::tuple<bool, const char*> parseOp;
 			if (phonesNode)
 			{
 				std::string phones = phonesNode.as<std::string>();
 
-				phoneList.clear();
-				parsePhoneListStrs(phones, phoneList);
-
-				PronunciationFlavour pron;
-				pron.PronAsWord = wordW;
-				pron.PhoneStrs = phoneList;
-				wordPhoneticInfo.Pronunciations.push_back(pron);
+				parseOp = pushWordPron(wordW, phones);
+				if (!std::get<0>(parseOp))
+					return parseOp;
 			}
 			else
 			{
@@ -131,15 +141,11 @@ namespace PticaGovorun
 					std::string pronId = pronsNode[pronInd][PronunciationAsWordName].as<std::string>("");
 					QString pronIdQ = QString::fromStdString(pronId);
 
-					std::string phonesNode2 = pronsNode[pronInd][WordUsedCountName].as<std::string>("");
+					std::string phones = pronsNode[pronInd][WordUsedCountName].as<std::string>("");
 					
-					phoneList.clear();
-					parsePhoneListStrs(phonesNode2, phoneList);
-
-					PronunciationFlavour pron;
-					pron.PronAsWord = pronIdQ.toStdWString();
-					pron.PhoneStrs = phoneList;
-					wordPhoneticInfo.Pronunciations.push_back(pron);
+					parseOp = pushWordPron(pronIdQ.toStdWString(), phones);
+					if (!std::get<0>(parseOp))
+						return parseOp;
 				}
 			}
 			phoneticDict.push_back(wordPhoneticInfo);

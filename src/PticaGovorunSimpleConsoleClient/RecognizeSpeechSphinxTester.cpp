@@ -480,15 +480,7 @@ namespace RecognizeSpeechSphinxTester
 				auto pronIdIt = pronIdToPronObj.find(pronId);
 				PG_Assert(pronIdIt != pronIdToPronObj.end() && "The pronId used in transcription must exist in manual phonetic dictionary");
 				const PronunciationFlavour& pronObj = pronIdIt->second;
-				std::transform(pronObj.PhoneStrs.begin(), pronObj.PhoneStrs.end(), std::back_inserter(expectedPhones), [](const std::string& phoneStr)
-				{
-					std::string phoneStrTrimmed;
-					trimPhoneStrExtraInfos(phoneStr, phoneStrTrimmed);
-					bool succ = false;
-					UkrainianPhoneId phoneId = phoneStrToId(phoneStrTrimmed, &succ);
-					PG_Assert(succ);
-					return phoneId;
-				});
+				std::copy(pronObj.PhoneIds.begin(), pronObj.PhoneIds.end(), std::back_inserter(expectedPhones));
 			}
 
 			std::vector<UkrainianPhoneId> actualPhones;
@@ -719,7 +711,7 @@ namespace RecognizeSpeechSphinxTester
 			return !isTestSeg;
 		});
 		
-		int trunc = -1;
+		int trunc = 51;
 		if (trunc != -1 && segments.size() > trunc)
 			segments.resize(trunc);
 

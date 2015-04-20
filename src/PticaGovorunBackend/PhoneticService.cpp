@@ -212,6 +212,7 @@ namespace PticaGovorun
 
 	void normalizePronunciationVocabulary(std::map<std::wstring, std::vector<Pronunc>>& wordToPhoneList)
 	{
+		std::string phoneStrTrimmed;
 		for (auto& pair : wordToPhoneList)
 		{
 			std::vector<Pronunc>& prons = pair.second;
@@ -219,13 +220,8 @@ namespace PticaGovorun
 			{
 				for (auto& phone : pron.Phones)
 				{
-					QString phoneStr = QString::fromStdString(phone);
-					if (phoneStr[phoneStr.size()-1].isDigit())
-					{
-						phoneStr = phoneStr.left(phoneStr.size() - 1); // remove last digit
-					}
-					phoneStr = phoneStr.toUpper();
-					phone = phoneStr.toStdString();
+					trimPhoneStrExtraInfos(phone, phoneStrTrimmed);
+					phone = phoneStrTrimmed;
 				}
 			}
 
@@ -236,16 +232,15 @@ namespace PticaGovorun
 		}
 	}
 
-	void parsePhoneListStrs(const std::string& phonesStr, std::vector<std::string>& result)
+	void trimPhoneStrExtraInfos(const std::string& phoneStdStr, std::string& phoneStrTrimmed)
 	{
-		QStringList list = QString::fromStdString(phonesStr).split(' ');
-		for (int i = 0; i < list.size(); ++i)
+		QString phoneStr = QString::fromStdString(phoneStdStr);
+		if (phoneStr[phoneStr.size() - 1].isDigit())
 		{
-			QString phoneQ = list[i];
-			if (phoneQ.isEmpty()) // a phone can't be an empty string
-				continue;
-			result.push_back(phoneQ.toStdString());
+			phoneStr = phoneStr.left(phoneStr.size() - 1); // remove last digit
 		}
+		phoneStr = phoneStr.toUpper();
+		phoneStrTrimmed = phoneStr.toStdString();
 	}
 
 	bool parsePhoneListStrs(const std::string& phonesStr, std::vector<UkrainianPhoneId>& result)
@@ -257,11 +252,15 @@ namespace PticaGovorun
 			if (phoneQ.isEmpty()) // a phone can't be an empty string
 				continue;
 
-			bool parseOp = false;
-			UkrainianPhoneId phoneId = phoneStrToId(phoneQ.toStdString(), &parseOp);
-			if (!parseOp)
+			// truncate last digit
+			QChar ch = phoneQ.at(phoneQ.size() - 1);
+			if (ch.isDigit())
+				phoneQ = phoneQ.left(phoneQ.size() - 1);
+
+			boost::optional<UkrainianPhoneId> phoneId = phoneStrToId(phoneQ.toStdString());
+			if (!phoneId)
 				return false;
-			result.push_back(phoneId);
+			result.push_back(phoneId.get());
 		}
 		return true;
 	}
@@ -280,12 +279,14 @@ namespace PticaGovorun
 			QString pronAsWord = pronLine.left(pronAsWordEndInd);
 			QString phonesStr = pronLine.mid(pronAsWordEndInd+1);
 
-			std::vector<std::string> phones;
-			parsePhoneListStrs(phonesStr.toStdString(), phones);
+			std::vector<UkrainianPhoneId> phones;
+			bool parseOp = parsePhoneListStrs(phonesStr.toStdString(), phones);
+			if (!parseOp)
+				return std::make_tuple(false, "Can't parse the list of phones");
 
 			PronunciationFlavour pron;
 			pron.PronAsWord = pronAsWord.toStdWString();
-			pron.PhoneStrs = phones;
+			pron.PhoneIds = phones;
 			result.push_back(pron);
 		}
 		return std::make_tuple(true, nullptr);
@@ -388,7 +389,7 @@ namespace PticaGovorun
 		return true;
 	}
 
-	UkrainianPhoneId phoneStrToId(const std::string& phoneStr, bool* parseSuccess)
+	UkrainianPhoneId phoneStrToIdUk(const std::string& phoneStr, bool* parseSuccess)
 	{
 		if (parseSuccess != nullptr)
 			*parseSuccess = true;
@@ -455,6 +456,38 @@ namespace PticaGovorun
 		if (parseSuccess != nullptr)
 			*parseSuccess = false;
 		return UkrainianPhoneId::Nil;
+	}
+
+	boost::optional<UkrainianPhoneId> phoneStrToId(const std::string& phoneStr)
+	{
+		bool parseOp;
+		UkrainianPhoneId ukPhId = phoneStrToIdUk(phoneStr, &parseOp);
+		if (!parseOp)
+			return nullptr;
+		if (ukPhId == UkrainianPhoneId::Nil || ukPhId == UkrainianPhoneId::P_LAST)
+			return nullptr;
+		return static_cast<UkrainianPhoneId>(ukPhId);
+	}
+
+	bool phoneListToStr(wv::slice<UkrainianPhoneId> phones, std::string& phonesListStr)
+	{
+		if (phones.empty())
+			return true;
+
+		std::string phStr;
+		if (!phoneToStr((UkrainianPhoneId)phones[0], phStr))
+			return false;
+		phonesListStr += phStr;
+
+		for (int i = 1; i < phones.size(); ++i)
+		{
+			phonesListStr.push_back(' ');
+			
+			if (!phoneToStr((UkrainianPhoneId)phones[i], phStr))
+				return false;
+			phonesListStr += phStr;
+		}
+		return true;
 	}
 
 	bool pronuncToStr(const std::vector<UkrainianPhoneId>& pron, Pronunc& result)
@@ -845,7 +878,7 @@ namespace PticaGovorun
 					if (word[i + 1] == Letter_SoftSign && word[i + 2] == Letter_S)
 					{
 						phones.push_back(UkrainianPhoneId::P_TS);
-						phones.push_back(UkrainianPhoneId::P_TS); // עצ -> TS TS
+						//phones.push_back(UkrainianPhoneId::P_TS); // if עצ -> TS TS
 						i += 2;
 						continue;
 					}
@@ -1957,6 +1990,51 @@ namespace PticaGovorun
 			ch == L'ק' || ch == L'׳';
 	}
 
+	bool isVowelDerivedUk(UkrainianPhoneId phoneId)
+	{
+		return
+			phoneId == UkrainianPhoneId::P_A ||
+			phoneId == UkrainianPhoneId::P_E ||
+			phoneId == UkrainianPhoneId::P_Y ||
+			phoneId == UkrainianPhoneId::P_I ||
+			phoneId == UkrainianPhoneId::P_O ||
+			phoneId == UkrainianPhoneId::P_U;
+	}
+
+	bool isConsonantDerivedUk(UkrainianPhoneId phoneId)
+	{
+		return
+			phoneId == UkrainianPhoneId::P_B ||
+			phoneId == UkrainianPhoneId::P_V ||
+			phoneId == UkrainianPhoneId::P_H ||
+			phoneId == UkrainianPhoneId::P_G ||
+			phoneId == UkrainianPhoneId::P_D ||
+			phoneId == UkrainianPhoneId::P_ZH ||
+			phoneId == UkrainianPhoneId::P_Z ||
+			phoneId == UkrainianPhoneId::P_K ||
+			phoneId == UkrainianPhoneId::P_L ||
+			phoneId == UkrainianPhoneId::P_M ||
+			phoneId == UkrainianPhoneId::P_N ||
+			phoneId == UkrainianPhoneId::P_P ||
+			phoneId == UkrainianPhoneId::P_R ||
+			phoneId == UkrainianPhoneId::P_S ||
+			phoneId == UkrainianPhoneId::P_T ||
+			phoneId == UkrainianPhoneId::P_F ||
+			phoneId == UkrainianPhoneId::P_KH ||
+			phoneId == UkrainianPhoneId::P_TS ||
+			phoneId == UkrainianPhoneId::P_CH ||
+			phoneId == UkrainianPhoneId::P_SH;
+	}
+
+	boost::optional<CharGroup> classifyPhoneUk(int phoneId)
+	{
+		if (isVowelDerivedUk((UkrainianPhoneId)phoneId))
+			return CharGroup::Vowel;
+		else if (isConsonantDerivedUk((UkrainianPhoneId)phoneId))
+			return CharGroup::Consonant;
+		return nullptr;
+	}
+
 	// Returns number of made transformations or zero if the map was not changed.
 	int reuseCommonPrefixesOneIteration(std::map<std::wstring, int>& mapPrefixToSize)
 	{
@@ -2064,9 +2142,8 @@ namespace PticaGovorun
 		CV_Assert(wasAdded);
 	}
 
-	void UkrainianPhoneticSplitter::bootstrap(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& words, const std::wstring& targetWord, const std::unordered_set<std::wstring>& processedWords, int& totalWordsCount)
+	void UkrainianPhoneticSplitter::bootstrap(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& words, const std::wstring& targetWord, const std::unordered_set<std::wstring>& processedWords)
 	{
-		totalWordsCount = 0;
 		for (const auto& pair : words)
 		{
 			const WordDeclensionGroup& wordGroup = *pair.second;
@@ -2077,10 +2154,12 @@ namespace PticaGovorun
 			if (!targetWord.empty() && wordGroup.Name != targetWord)
 				continue;
 
-			if (allowPhoneticWordSplit_)
+			if (!allowPhoneticWordSplit_)
 			{
+				// put all word declination forms as whole word parts
 				for (const WordDeclensionForm& declWord : wordGroup.Forms)
 				{
+					if (declWord.isNotAvailable()) continue;
 					const WordPart* wordPart = wordUsage_.getOrAddWordPart(declWord.Name, WordPartSide::WholeWord);
 				}
 				continue;
@@ -2123,7 +2202,6 @@ namespace PticaGovorun
 							newOffset = word.size();
 
 						wv::slice<wchar_t> subWord = wv::make_view(word.data() + offset, newOffset - offset);
-						totalWordsCount++;
 
 						int matchedSuffixInd = -1;
 						WordClass curWordClass = wordGroup.WordClass.get();
@@ -2326,7 +2404,7 @@ namespace PticaGovorun
 		allowPhoneticWordSplit_ = value;
 	}
 
-	void UkrainianPhoneticSplitter::buildLangModel(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess, bool outputCorpus)
+	void UkrainianPhoneticSplitter::gatherWordPartsSequenceUsage(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess, bool outputCorpus)
 	{
 		QFile corpusFile;
 		QTextStream corpusStream;

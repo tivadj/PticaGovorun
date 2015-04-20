@@ -14,12 +14,13 @@ namespace PticaGovorun
 		const char* errMsg;
 		std::tie(spellOp, errMsg) = spellWord(word, phones);
 		REQUIRE(spellOp);
+		std::vector<UkrainianPhoneId> phoneIds(phones.begin(), phones.end());
 
 		std::vector<UkrainianPhoneId> expectPhones;
 		bool parseOp = parsePhoneListStrs(expectTranscription, expectPhones);
 		REQUIRE(parseOp);
 		
-		bool ok = phones == expectPhones;
+		bool ok = phoneIds == expectPhones;
 		REQUIRE(ok);
 	}
 

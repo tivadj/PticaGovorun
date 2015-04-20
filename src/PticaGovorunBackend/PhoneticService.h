@@ -66,9 +66,8 @@ namespace PticaGovorun
 		// different pronAsWord for it even though the same sequence of phones is already assigned to some pronAsWord.
 		std::wstring PronAsWord;
 
-		// The actual phones of this pronunciation.
-		//std::vector<int> Phones;
-		std::vector<std::string> PhoneStrs;
+		// The actual phones of this pronunciation. Corresponds to UkrainianPhoneId
+		std::vector<UkrainianPhoneId> PhoneIds;
 	};
 
 	// Represents all possible pronunciations of a word.
@@ -149,13 +148,14 @@ namespace PticaGovorun
 	PG_EXPORTS void trimPhoneStrExtraInfos(const std::string& phoneStr, std::string& phoneStrTrimmed);
 
 	// Parses space-separated list of phones.
-	PG_EXPORTS void parsePhoneListStrs(const std::string& phonesStr, std::vector<std::string>& result);
 	PG_EXPORTS bool parsePhoneListStrs(const std::string& phonesStr, std::vector<UkrainianPhoneId>& result);
 
 	PG_EXPORTS std::tuple<bool, const char*> parsePronuncLines(const std::wstring& prons, std::vector<PronunciationFlavour>& result);
 
 	PG_EXPORTS bool phoneToStr(UkrainianPhoneId phone, std::string& result);
-	PG_EXPORTS UkrainianPhoneId phoneStrToId(const std::string& phoneStr, bool* parseSuccess = nullptr);
+	PG_EXPORTS UkrainianPhoneId phoneStrToIdUk(const std::string& phoneStr, bool* parseSuccess = nullptr);
+	PG_EXPORTS boost::optional<UkrainianPhoneId> phoneStrToId(const std::string& phoneStr);
+	PG_EXPORTS bool phoneListToStr(wv::slice<UkrainianPhoneId> phones, std::string& phonesListStr);
 	PG_EXPORTS bool pronuncToStr(const std::vector<UkrainianPhoneId>& pron, Pronunc& result);
 
 	// Performs word transcription (word is represented as a sequence of phonemes).

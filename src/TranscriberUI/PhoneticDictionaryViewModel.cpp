@@ -171,9 +171,10 @@ namespace PticaGovorun
 					buf.append(QString::fromStdWString(pron.PronAsWord));
 					buf.append("\t");
 
-					std::ostringstream phonesBuf;
-					PticaGovorun::join(std::begin(pron.PhoneStrs), std::end(pron.PhoneStrs), " ", phonesBuf);
-					buf.append(phonesBuf.str().c_str());
+					std::string phonesBuf;
+					phoneListToStr(pron.PhoneIds, phonesBuf);
+
+					buf.append(phonesBuf.c_str());
 
 					buf.append("\n");
 				}
