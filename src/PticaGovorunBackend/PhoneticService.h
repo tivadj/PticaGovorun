@@ -44,7 +44,8 @@ namespace PticaGovorun
 		P_V,
 		P_Y,
 		P_Z,
-		P_ZH
+		P_ZH,
+		P_LAST
 	};
 
 	struct Pronunc
@@ -98,9 +99,9 @@ namespace PticaGovorun
 		UkrainianPhoneticSplitter();
 
 		void bootstrap(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWords, const std::wstring& targetWord,
-			const std::unordered_set<std::wstring>& processedWords, int& totalWordsCount);
+			const std::unordered_set<std::wstring>& processedWords);
 
-		void buildLangModel(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess = -1, bool outputCorpus = false);
+		void gatherWordPartsSequenceUsage(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess = -1, bool outputCorpus = false);
 
 		const WordsUsageInfo& wordUsage() const;
 		WordsUsageInfo& wordUsage();
@@ -145,6 +146,7 @@ namespace PticaGovorun
 	PG_EXPORTS std::tuple<bool, const char*> loadPronunciationVocabulary(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<std::string>>& wordToPhoneList, const QTextCodec& textCodec);
 	PG_EXPORTS std::tuple<bool, const char*> loadPronunciationVocabulary2(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<Pronunc>>& wordToPhoneList, const QTextCodec& textCodec);
 	PG_EXPORTS void normalizePronunciationVocabulary(std::map<std::wstring, std::vector<Pronunc>>& wordToPhoneList);
+	PG_EXPORTS void trimPhoneStrExtraInfos(const std::string& phoneStr, std::string& phoneStrTrimmed);
 
 	// Parses space-separated list of phones.
 	PG_EXPORTS void parsePhoneListStrs(const std::string& phonesStr, std::vector<std::string>& result);
@@ -159,8 +161,6 @@ namespace PticaGovorun
 	// Performs word transcription (word is represented as a sequence of phonemes).
 	PG_EXPORTS std::tuple<bool,const char*> spellWord(const std::wstring& word, std::vector<UkrainianPhoneId>& phones);
 
-
-
 	// Saves phonetic dictionary to file in YAML format.
 	PG_EXPORTS void savePhoneticDictionaryYaml(const std::vector<PhoneticWord>& phoneticDict, const std::wstring& filePath);
 	
@@ -171,4 +171,9 @@ namespace PticaGovorun
 
 	// Checks whether the character is unvoiced (uk:глухий).
 	PG_EXPORTS inline bool isUnvoicedCharUk(wchar_t ch);
+
+	PG_EXPORTS inline bool isVowelDerivedUk(UkrainianPhoneId phoneId);
+	PG_EXPORTS inline bool isConsonantDerivedUk(UkrainianPhoneId phoneId);
+
+	PG_EXPORTS inline boost::optional<CharGroup> classifyPhoneUk(int phoneId);
 }

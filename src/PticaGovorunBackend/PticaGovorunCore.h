@@ -16,6 +16,7 @@ namespace PticaGovorun {
 
 //#define PG_Assert(assertCond) assert(assertCond)
 #define PG_Assert(assertCond) CV_Assert(assertCond)
+#define PG_DbgAssert(assertCond) CV_Assert(assertCond)
 
 //#define PG_Assert(assertCond) \
 //#if defined(PG_DEBUG) \

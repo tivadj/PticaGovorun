@@ -209,107 +209,107 @@ namespace RecognizeSpeechSphinxTester
 		return true;
 	}
 
-	void testSphincDecoder()
+	class CharPhonationGroupCosts {
+	public:
+		typedef int CostType;
+		static int getZeroCosts() {
+			return 0;
+		}
+		inline int getInsertSymbolCost(wchar_t x) {
+			return 1;
+		}
+		inline int getRemoveSymbolCost(wchar_t x) {
+			return 1;
+		}
+		inline int getSubstituteSymbolCost(wchar_t x, wchar_t y)
+		{
+			if (x == y) return 0;
+			boost::optional<CharGroup> xClass = classifyUkrainianChar(x);
+			boost::optional<CharGroup> yClass = classifyUkrainianChar(y);
+			if (xClass && xClass == yClass) // chars from the same group
+				return 1;
+			return 99; // chars from different groups
+		}
+	};
+
+	// Checks whether {a1,a2} = {b1, b2}.
+	template <typename T>
+	bool setTwoEq(T a1, T a2, T b1, T b2)
 	{
-		//
-		const wchar_t* testFileIdPath = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian_test.fileids)path";
-		std::vector<SphinxFileIdLine> fileIdLines;
-		readFileId(testFileIdPath, fileIdLines);
+		return (a1 == b1 && a2 == b2) || (a1 == b2 && a2 == b1);
+	}
 
-		// map pronunciation as word (pronId) to corresponding word
-		const wchar_t* persianDictPath = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\phoneticKnown.yml)path";
-		std::vector<PhoneticWord> phoneticDict;
-		bool loadPhoneDict;
-		const char* errMsg = nullptr;
-		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryYaml(persianDictPath, phoneticDict);
-		if (!loadPhoneDict)
-		{
-			std::cerr << "Can't load phonetic dictionary " << errMsg << std::endl;
-			return;
+	class PhoneProximityCosts {
+	public:
+		typedef float CostType;
+		static CostType getZeroCosts() {
+			return 0;
 		}
-
-		std::unordered_map<std::wstring, std::wstring> pronIdToWord;
-		for (const PhoneticWord& phWord : phoneticDict)
-		{
-			if (phWord.Pronunciations.size() > 1)
-			{
-				for (const PronunciationFlavour& pronFlav : phWord.Pronunciations)
-					pronIdToWord.insert({ pronFlav.PronAsWord, phWord.Word });
-			}
+		inline CostType getInsertSymbolCost(UkrainianPhoneId x) {
+			return 3;
 		}
-
-		//
-		const wchar_t* wavRootDir       = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAudio\)path";
-		const wchar_t* annotRootDir     = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAnnot\)path";
-		const wchar_t* wavDirToAnalyze  = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAudio\)path";
-
-		std::vector<AnnotatedSpeechSegment> segments;
-		auto segPredBeforeFun = [](const AnnotatedSpeechSegment& seg) -> bool
+		inline CostType getRemoveSymbolCost(UkrainianPhoneId x) {
+			return 3;
+		}
+		inline CostType getSubstituteSymbolCost(UkrainianPhoneId x, UkrainianPhoneId y)
 		{
-			if (seg.FilePath.find(L"pynzenykvm") != std::wstring::npos)
-				return false;
-			if (seg.Language != SpeechLanguage::Ukrainian)
-				return false;
-			return true;
-		};
-		bool loadOp;
-		std::tie(loadOp, errMsg) = loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, true, segPredBeforeFun, segments);
+			if (x == y) return 0;
+			
+			const CostType SimilarSound = 1;
+			if (setTwoEq(x, y, UkrainianPhoneId::P_B, UkrainianPhoneId::P_P))
+				return SimilarSound;
+			if (setTwoEq(x, y, UkrainianPhoneId::P_V, UkrainianPhoneId::P_F))
+				return SimilarSound;
+			if (setTwoEq(x, y, UkrainianPhoneId::P_H, UkrainianPhoneId::P_KH))
+				return SimilarSound;
+			if (setTwoEq(x, y, UkrainianPhoneId::P_H, UkrainianPhoneId::P_G))
+				return SimilarSound;
+			if (setTwoEq(x, y, UkrainianPhoneId::P_D, UkrainianPhoneId::P_T))
+				return SimilarSound;
+			if (setTwoEq(x, y, UkrainianPhoneId::P_Z, UkrainianPhoneId::P_S))
+				return SimilarSound;
+			if (setTwoEq(x, y, UkrainianPhoneId::P_ZH, UkrainianPhoneId::P_SH))
+				return SimilarSound;
 
-		//
-		const char* hmmPath       = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";
-		//const char* langModelPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.lm.DMP)path";
-		//const char* dictPath      = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.dic)path";
-		//const char* langModelPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persian.lm.DMP)path";
-		const char* langModelPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persianLM.txt)path";
-		const char* dictPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persianDic.txt)path";
-		cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
-			"-hmm", hmmPath,
-			"-lm", langModelPath, // accepts both TXT and DMP formats
-			"-dict", dictPath,
-			nullptr);
-		if (config == nullptr)
-			return;
+			// DZ DZH?
 
-		ps_decoder_t *ps = ps_init(config);
-		if (ps == nullptr)
-			return;
+			boost::optional<CharGroup> xClass = classifyPhoneUk((int)x);
+			boost::optional<CharGroup> yClass = classifyPhoneUk((int)y);
+			if (xClass && xClass == yClass) // chars from the same group
+				return 2;
+			return 99; // chars from different groups
+		}
+	};
 
-		//
-		struct TwoUtterances
-		{
-			float ErrorWord; // edit distance between utterances as a sequence of words
-			float ErrorChars; // edit distance between utterances as a sequence of chars
-			AnnotatedSpeechSegment Segment;
-			std::wstring TextActual;
-			std::vector<std::wstring> PronIdsExpected; // слова(2)
-			std::vector<std::wstring> WordsExpected; // слова without any braces
-			std::vector<std::wstring> WordsActual;
-			std::vector<std::wstring> WordsActualMerged;
-			std::vector<float> WordProbs; // confidence of each recognized word
-			std::vector<float> WordProbsMerged;
-		};
+	// Result of comparing expected text with decoded speech.
+	struct TwoUtterances
+	{
+		float ErrorWord; // edit distance between utterances as a sequence of words
+		float ErrorChars; // edit distance between utterances as a sequence of chars
+		AnnotatedSpeechSegment Segment;
+		std::wstring TextActual;
+		std::vector<std::wstring> PronIdsExpected; // слова(2)
+		std::vector<std::wstring> WordsExpected; // слова without any braces
+		std::vector<std::wstring> WordsActual;
+		std::vector<std::wstring> WordsActualMerged;
+		std::vector<float> WordProbs; // confidence of each recognized word
+		std::vector<float> WordProbsMerged;
+		std::vector<UkrainianPhoneId> PhonesExpected;
+		std::vector<UkrainianPhoneId> PhonesActual;
+		std::string PhonesExpectedAlignedStr;
+		std::string PhonesActualAlignedStr;
+	};
 
-		//
-		int wordErrorTotalCount = 0;
-		int wordTotalCount = 0;
-		std::vector<TwoUtterances> recogUtterances;
-		float targetFrameRate = CmuSphinxFrameRate;
+	void decodeSpeechSegments(const std::vector<AnnotatedSpeechSegment>& segments, ps_decoder_t *ps, float targetFrameRate, std::vector<TwoUtterances>& recogUtterances,
+		std::vector<int>& phoneConfusionMat, int phonesCount,
+		int& wordErrorTotalCount, int& wordTotalCount,
+		EditDistance<UkrainianPhoneId, PhoneProximityCosts>& phonesEditDist,
+		const std::unordered_map<std::wstring, std::wstring>& pronIdToWord,
+		const std::unordered_map<std::wstring, PronunciationFlavour>& pronIdToPronObj)
+	{
 		for (int i = 0; i < segments.size(); ++i)
 		{
 			const AnnotatedSpeechSegment& seg = segments[i];
-			
-			// process only test speech segments
-
-			auto fileIdIt = std::find_if(fileIdLines.begin(), fileIdLines.end(), [&seg](const SphinxFileIdLine& fileIdLine)
-			{
-				return seg.FilePath.find(fileIdLine.OriginalFileNamePart) != std::wstring::npos &&
-					seg.StartMarkerId == fileIdLine.StartMarkerId &&
-					seg.EndMarkerId == fileIdLine.EndMarkerId;
-			});
-			bool isTestSeg = fileIdIt != fileIdLines.end();
-			if (!isTestSeg)
-				continue;
-			//if (i > 90) break;
 
 			std::vector<short> speechFramesResamp;
 			bool requireResampling = seg.FrameRate != targetFrameRate;
@@ -369,7 +369,7 @@ namespace RecognizeSpeechSphinxTester
 				// "No hypothesis is available"
 				hyp = "";
 			}
-			
+
 			QTextCodec* textCodec = QTextCodec::codecForName("utf8");
 			std::wstring hypWStr = textCodec->toUnicode(hyp).toStdWString();
 
@@ -404,7 +404,7 @@ namespace RecognizeSpeechSphinxTester
 			for (size_t wordInd = 1; wordInd < wordsActual.size(); ++wordInd)
 			{
 				const std::wstring& prev = pronIdsActualMerged.back();
-				const std::wstring& cur  = wordsActual[wordInd];
+				const std::wstring& cur = wordsActual[wordInd];
 				float prevProb = pronIdsActualProbsMerged.back();
 				float curProb = wordsActualProbs[wordInd];
 				if (prev.back() == L'~' && cur.front() == L'~')
@@ -427,14 +427,14 @@ namespace RecognizeSpeechSphinxTester
 
 			std::vector<wv::slice<const wchar_t>> pronIdSlicesExpected;
 			splitUtteranceIntoWords(seg.TranscriptText, pronIdSlicesExpected);
-			
+
 			auto textSliceToString = [](wv::slice<const wchar_t> pronSlice) -> std::wstring
 			{
 				std::wstring pronId;
 				pronId.assign(pronSlice.begin(), pronSlice.end());
 				return pronId;
 			};
-			
+
 			std::vector<std::wstring> pronIdsExpected;
 			std::transform(std::begin(pronIdSlicesExpected), std::end(pronIdSlicesExpected), std::back_inserter(pronIdsExpected), textSliceToString);
 
@@ -473,6 +473,79 @@ namespace RecognizeSpeechSphinxTester
 			WordErrorCosts<wchar_t> charCost;
 			float distChar = findEditDistance(std::cbegin(wordsExpectedStr), std::cend(wordsExpectedStr), std::cbegin(wordsActualStr), std::cend(wordsActualStr), charCost);
 
+			// do phonetic expansion
+			std::vector<UkrainianPhoneId> expectedPhones;
+			for (const std::wstring& pronId : pronIdsExpected)
+			{
+				auto pronIdIt = pronIdToPronObj.find(pronId);
+				PG_Assert(pronIdIt != pronIdToPronObj.end() && "The pronId used in transcription must exist in manual phonetic dictionary");
+				const PronunciationFlavour& pronObj = pronIdIt->second;
+				std::transform(pronObj.PhoneStrs.begin(), pronObj.PhoneStrs.end(), std::back_inserter(expectedPhones), [](const std::string& phoneStr)
+				{
+					std::string phoneStrTrimmed;
+					trimPhoneStrExtraInfos(phoneStr, phoneStrTrimmed);
+					bool succ = false;
+					UkrainianPhoneId phoneId = phoneStrToId(phoneStrTrimmed, &succ);
+					PG_Assert(succ);
+					return phoneId;
+				});
+			}
+
+			std::vector<UkrainianPhoneId> actualPhones;
+			std::vector<UkrainianPhoneId> phonesTmp;
+			for (const std::wstring& actualWord : wordsActual)
+			{
+				bool spellOp;
+				const char* msg;
+				phonesTmp.clear();
+				std::tie(spellOp, msg) = spellWord(actualWord, phonesTmp);
+				std::copy(phonesTmp.begin(), phonesTmp.end(), std::back_inserter(actualPhones));
+			}
+			phonesEditDist.estimateAllDistances(expectedPhones, actualPhones, PhoneProximityCosts());
+			std::vector<EditStep> phoneEditRecipe;
+			phonesEditDist.minCostRecipe(phoneEditRecipe);
+
+			// update confusion matrix
+			for (const EditStep& step : phoneEditRecipe)
+			{
+				UkrainianPhoneId phoneExpect;
+				UkrainianPhoneId phoneActual;
+				if (step.Change == StringEditOp::RemoveOp)
+				{
+					phoneExpect = expectedPhones[step.Remove.FirstRemoveInd];
+					phoneActual = UkrainianPhoneId::Nil;
+				}
+				else if (step.Change == StringEditOp::InsertOp)
+				{
+					phoneExpect = UkrainianPhoneId::Nil;
+					phoneActual = actualPhones[step.Insert.SecondSourceInd];
+				}
+				else if (step.Change == StringEditOp::SubstituteOp)
+				{
+					phoneExpect = expectedPhones[step.Substitute.FirstInd];
+					phoneActual = actualPhones[step.Substitute.SecondInd];
+				}
+				int row = (int)phoneExpect;
+				int col = (int)phoneActual;
+				phoneConfusionMat[col + phonesCount*row]++;
+			}
+
+			std::function<void(UkrainianPhoneId, std::vector<char>&)> ph2StrFun = [](UkrainianPhoneId ph, std::vector<char>& phVec)
+			{
+				std::string phStr;
+				bool toStrOp = phoneToStr(ph, phStr);
+				PG_Assert(toStrOp);
+				std::copy(phStr.begin(), phStr.end(), std::back_inserter(phVec));
+			};
+
+			std::vector<char> align1;
+			std::vector<char> align2;
+			char padChar = '_';
+			alignWords(wv::make_view(expectedPhones), wv::make_view(actualPhones), ph2StrFun, phoneEditRecipe, padChar, align1, align2, boost::make_optional(padChar));
+			std::string expectedPhonesStr(align1.begin(), align1.end());
+			std::string actualPhonesStr(align2.begin(), align2.end());
+
+			//
 			TwoUtterances utter;
 			utter.ErrorWord = distWord;
 			utter.ErrorChars = distChar;
@@ -484,11 +557,203 @@ namespace RecognizeSpeechSphinxTester
 			utter.WordsActualMerged = pronIdsActualMerged;
 			utter.WordProbs = wordsActualProbs;
 			utter.WordProbsMerged = pronIdsActualProbsMerged;
+			utter.PhonesExpected = expectedPhones;
+			utter.PhonesActual = actualPhones;
+			utter.PhonesExpectedAlignedStr = expectedPhonesStr;
+			utter.PhonesActualAlignedStr = actualPhonesStr;
 			recogUtterances.push_back(utter);
 
 			wordErrorTotalCount += (int)distWord;
 			wordTotalCount += (int)wordsExpected.size();
 		}
+	}
+
+	void dumpConfusionMatrix(const std::vector<int>& phoneConfusionMat, int phonesCount, const std::string& outFilePath)
+	{
+		// find pivotal phone of high confusion
+		std::vector<int> confData;
+		for (int col = 1; col < phonesCount; ++col) // start index=1 to skip Nil phone
+			for (int row = 1; row < phonesCount; ++row)
+			{
+				if (col == row) continue; // skip no confusion at diagonal
+				int conflict = phoneConfusionMat[col + row*phonesCount];
+				confData.push_back(conflict);
+			}
+		int kHighest = 7;
+		std::nth_element(confData.begin(), confData.begin() + kHighest, confData.end(), std::greater<int>());
+		int highConfusionThresh = confData[kHighest];
+		
+
+		QFile dumpFile(outFilePath.c_str());
+		if (!dumpFile.open(QIODevice::WriteOnly | QIODevice::Text))
+		{
+			std::cerr << "Can't open ouput file" << std::endl;
+			return;
+		}
+
+		QTextStream dumpFileStream(&dumpFile);
+		dumpFileStream.setCodec("UTF-8");
+
+		auto ph2StrEx = [](UkrainianPhoneId phId, std::string& phStr) -> bool
+		{
+			if (phId == UkrainianPhoneId::Nil)
+			{
+				phStr = "nil";
+				return true;
+			}
+			return phoneToStr(phId, phStr);
+		};
+		{
+			dumpFileStream << "<table>";
+			dumpFileStream << "<th>Conf</th>"; // top-left corner cell header
+
+			// print header
+			std::string phStr;
+			for (int col = 0; col < phonesCount; ++col)
+			{
+				UkrainianPhoneId ph2 = (UkrainianPhoneId)col;
+				bool phOp = ph2StrEx(ph2, phStr);
+				PG_Assert(phOp);
+				dumpFileStream <<"<th>" << QString::fromStdString(phStr) << "</th>";
+			}
+
+			// print content
+			for (int row = 0; row < phonesCount; ++row)
+			{
+				dumpFileStream << "<tr>";
+
+				// print row header
+				UkrainianPhoneId ph1 = (UkrainianPhoneId)row;
+				bool phOp = ph2StrEx(ph1, phStr);
+				PG_Assert(phOp);
+				dumpFileStream << "<td>" << QString::fromStdString(phStr) << "</td>";
+
+				// print the row's body
+				for (int col = 0; col < phonesCount; ++col)
+				{
+					int conflict = phoneConfusionMat[col + row*phonesCount];
+
+					dumpFileStream << "<td";
+					if (conflict >= highConfusionThresh)
+					{
+						dumpFileStream << " style='color:red'";
+					}
+
+					dumpFileStream << ">";
+					dumpFileStream << conflict << "</td>";
+				}
+				
+				dumpFileStream << "</tr>";
+			}
+			dumpFileStream << "</table>";
+		}
+	}
+
+	void testSphincDecoder()
+	{
+		//
+		const wchar_t* testFileIdPath = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian_test.fileids)path";
+		std::vector<SphinxFileIdLine> fileIdLines;
+		readFileId(testFileIdPath, fileIdLines);
+
+		// map pronunciation as word (pronId) to corresponding word
+		std::vector<PhoneticWord> phoneticDict;
+		bool loadPhoneDict;
+		const char* errMsg = nullptr;
+		const wchar_t* persianDictPathK = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\phoneticKnown.yml)path";
+		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryYaml(persianDictPathK, phoneticDict);
+		if (!loadPhoneDict)
+		{
+			std::cerr << "Can't load phonetic dictionary " << errMsg << std::endl;
+			return;
+		}
+		const wchar_t* persianDictPathB = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\phoneticBroken.yml)path";
+		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryYaml(persianDictPathB, phoneticDict);
+		if (!loadPhoneDict)
+		{
+			std::cerr << "Can't load phonetic dictionary " << errMsg << std::endl;
+			return;
+		}
+
+		std::unordered_map<std::wstring, std::wstring> pronIdToWord;
+		std::unordered_map<std::wstring, PronunciationFlavour> pronIdToPronObj;
+		for (const PhoneticWord& phWord : phoneticDict)
+		{
+			for (const PronunciationFlavour& pronFlav : phWord.Pronunciations)
+			{
+				pronIdToPronObj.insert({ pronFlav.PronAsWord, pronFlav });
+
+				if (phWord.Pronunciations.size() > 1)
+					pronIdToWord.insert({ pronFlav.PronAsWord, phWord.Word });
+			}
+		}
+
+		//
+		const wchar_t* wavRootDir       = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAudio\)path";
+		const wchar_t* annotRootDir     = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAnnot\)path";
+		const wchar_t* wavDirToAnalyze  = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAudio\)path";
+
+		std::vector<AnnotatedSpeechSegment> segments;
+		auto segPredBeforeFun = [](const AnnotatedSpeechSegment& seg) -> bool
+		{
+			if (seg.FilePath.find(L"pynzenykvm") != std::wstring::npos)
+				return false;
+			if (seg.Language != SpeechLanguage::Ukrainian)
+				return false;
+			return true;
+		};
+		bool loadOp;
+		std::tie(loadOp, errMsg) = loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, true, segPredBeforeFun, segments);
+
+		// process only test speech segments
+
+		std::remove_if(segments.begin(), segments.end(), [&fileIdLines](const AnnotatedSpeechSegment& seg)
+		{
+			auto fileIdIt = std::find_if(fileIdLines.begin(), fileIdLines.end(), [&seg](const SphinxFileIdLine& fileIdLine)
+			{
+				return seg.FilePath.find(fileIdLine.OriginalFileNamePart) != std::wstring::npos &&
+					seg.StartMarkerId == fileIdLine.StartMarkerId &&
+					seg.EndMarkerId == fileIdLine.EndMarkerId;
+			});
+			bool isTestSeg = fileIdIt != fileIdLines.end();
+			return !isTestSeg;
+		});
+		
+		int trunc = -1;
+		if (trunc != -1 && segments.size() > trunc)
+			segments.resize(trunc);
+
+		//
+		const char* hmmPath       = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";
+		//const char* langModelPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.lm.DMP)path";
+		//const char* dictPath      = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.dic)path";
+		//const char* langModelPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persian.lm.DMP)path";
+		const char* langModelPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persianLM.txt)path";
+		const char* dictPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persianDic.txt)path";
+		cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
+			"-hmm", hmmPath,
+			"-lm", langModelPath, // accepts both TXT and DMP formats
+			"-dict", dictPath,
+			nullptr);
+		if (config == nullptr)
+			return;
+
+		ps_decoder_t *ps = ps_init(config);
+		if (ps == nullptr)
+			return;
+
+		//
+		PhoneProximityCosts phoneCosts;
+		EditDistance<UkrainianPhoneId, PhoneProximityCosts> phonesEditDist;
+		const static int PhonesCount = (int)UkrainianPhoneId::P_LAST;
+		std::vector<int> phoneConfusionMat(PhonesCount*PhonesCount, 0);
+
+		int wordErrorTotalCount = 0;
+		int wordTotalCount = 0;
+		float targetFrameRate = CmuSphinxFrameRate;
+		std::vector<TwoUtterances> recogUtterances;
+		decodeSpeechSegments(segments, ps, targetFrameRate, recogUtterances,
+			phoneConfusionMat, PhonesCount, wordErrorTotalCount, wordTotalCount, phonesEditDist, pronIdToWord, pronIdToPronObj);
 
 		// the call may crash if phonetic dictionary was not correctly initialized (eg .dict file is empty)
 		ps_free(ps);
@@ -499,11 +764,11 @@ namespace RecognizeSpeechSphinxTester
 			return a.ErrorWord > b.ErrorWord;
 		});
 
+		std::string timeStampStr;
+		appendTimeStampNow(timeStampStr);
 
 		std::stringstream dumpFileName;
-		dumpFileName << "wordErrorDump.";
-		appendTimeStampNow(dumpFileName);
-		dumpFileName << ".txt";
+		dumpFileName << "wordErrorDump." << timeStampStr << ".txt";
 
 		QFile dumpFile(dumpFileName.str().c_str());
 		if (!dumpFile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -516,31 +781,9 @@ namespace RecognizeSpeechSphinxTester
 		dumpFileStream.setCodec("UTF-8");
 		
 		double wordErrorAvg = wordErrorTotalCount / (double)wordTotalCount;
-		dumpFileStream << "WordErrorAvg=" << wordErrorAvg <<"\n";
+		dumpFileStream << "WordErrorAvg=" << wordErrorAvg << " UtterCount=" << segments.size() <<"\n";
 
-		class CharPhonationGroupCosts {
-		public:
-			typedef int CostType;
-			static int getZeroCosts() {
-				return 0;
-			}
-			inline int getInsertSymbolCost(wchar_t x) {
-				return 1;
-			}
-			inline int getRemoveSymbolCost(wchar_t x) {
-				return 1;
-			}
-			inline int getSubstituteSymbolCost(wchar_t x, wchar_t y)
-			{
-				if (x == y) return 0;
-				boost::optional<CharGroup> xClass = classifyUkrainianChar(x);
-				boost::optional<CharGroup> yClass = classifyUkrainianChar(y);
-				if (xClass && xClass == yClass) // chars from the same group
-					return 1;
-				return 99; // chars from different groups
-			}
-		};
-
+		const std::wstring separ(L" ");
 		std::wstringstream buff;
 		CharPhonationGroupCosts c;
 		EditDistance<wchar_t, CharPhonationGroupCosts> editDist;
@@ -551,16 +794,29 @@ namespace RecognizeSpeechSphinxTester
 				break;
 			dumpFileStream << "WordError=" << utter.ErrorWord << "/" <<utter.WordsExpected.size() << " " << "CharError=" << utter.ErrorChars << " SegId=" << utter.Segment.SegmentId << " " << QString::fromStdWString(utter.Segment.FilePath) <<"\n";
 
-			const std::wstring separ(L" ");
+			dumpFileStream << "ExpectProns=" << QString::fromStdWString(utter.Segment.TranscriptText) << "\n";
+
+			buff.str(L"");
+			PticaGovorun::join(utter.WordsActual.cbegin(), utter.WordsActual.cend(), separ, buff);
+			dumpFileStream << "ActualRaw=" << QString::fromStdWString(buff.str()) << "\n";
+
+			dumpFileStream << "WordProbs=";
+			for (int wordInd = 0; wordInd < utter.WordsActual.size(); ++wordInd)
+			{
+				dumpFileStream << QString::fromStdWString(utter.WordsActual[wordInd]) << " ";
+				dumpFileStream << QString("%1").arg(utter.WordProbs[wordInd], 0, 'f', 2) << " ";
+			}
+			dumpFileStream << "\n"; // end after last prob
+
 			buff.str(L"");
 			PticaGovorun::join(utter.WordsExpected.cbegin(), utter.WordsExpected.cend(), separ, buff);
 			std::wstring expectWords = buff.str();
-			dumpFileStream << "ExpectWords=" << QString::fromStdWString(expectWords) << "\n";
+			//dumpFileStream << "ExpectWords=" << QString::fromStdWString(expectWords) << "\n";
 
 			buff.str(L"");
 			PticaGovorun::join(utter.WordsActualMerged.cbegin(), utter.WordsActualMerged.cend(), separ, buff);
 			std::wstring actualWords = buff.str();
-			dumpFileStream << "ActualWords=" << QString::fromStdWString(actualWords) << "\n";
+			//dumpFileStream << "ActualWords=" << QString::fromStdWString(actualWords) << "\n";
 
 			//
 			editDist.estimateAllDistances(expectWords, actualWords, c);
@@ -569,25 +825,22 @@ namespace RecognizeSpeechSphinxTester
 			std::vector<wchar_t> alignWord1;
 			std::vector<wchar_t> alignWord2;
 			alignWords(wv::make_view(expectWords), wv::make_view(actualWords), editRecipe, L'_', alignWord1, alignWord2);
-			dumpFileStream << "EWordsAlign=" << QString::fromStdWString(std::wstring(alignWord1.begin(), alignWord1.end())) << "\n";
-			dumpFileStream << "AWordsAlign=" << QString::fromStdWString(std::wstring(alignWord2.begin(), alignWord2.end())) << "\n";
+			dumpFileStream << "ExpectWords=" << QString::fromStdWString(std::wstring(alignWord1.begin(), alignWord1.end())) << "\n";
+			dumpFileStream << "ActualWords=" << QString::fromStdWString(std::wstring(alignWord2.begin(), alignWord2.end())) << "\n";
 
-			dumpFileStream << "ExpectProns=" << QString::fromStdWString(utter.Segment.TranscriptText) << "\n";
 
-			buff.str(L"");
-			PticaGovorun::join(utter.WordsActual.cbegin(), utter.WordsActual.cend(), separ, buff);
-			dumpFileStream << "ActualRaw=" << QString::fromStdWString(buff.str()) << "\n";
-			
-			dumpFileStream << "WordProbs=";
-			for (int wordInd = 0; wordInd < utter.WordsActual.size(); ++wordInd)
-			{
-				dumpFileStream << QString::fromStdWString(utter.WordsActual[wordInd]) << " ";
-				dumpFileStream << QString("%1").arg(utter.WordProbs[wordInd], 0, 'f', 2) << " ";
-			}
-			dumpFileStream << "\n"; // end of last line
+			// expected-actual phones
+			dumpFileStream << "ExpectPhones=" << QString::fromStdString(utter.PhonesExpectedAlignedStr) << "\n";
+			dumpFileStream << "ActualPhones=" << QString::fromStdString(utter.PhonesActualAlignedStr) << "\n";
 
 			dumpFileStream << "\n"; // line between utterances
 		}
+
+		dumpFileName.str("");
+		dumpFileName << "wordErrorDump." << timeStampStr << ".ConfusionMat.htm";
+
+		dumpConfusionMatrix(phoneConfusionMat, PhonesCount, dumpFileName.str());
+		dumpFileStream << "\n"; // line after confusion matrix		
 	}
 
 	void run()
