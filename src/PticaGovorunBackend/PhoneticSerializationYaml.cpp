@@ -16,7 +16,7 @@ namespace
 
 namespace PticaGovorun
 {
-	void savePhoneticDictionaryYaml(const std::vector<PhoneticWord>& phoneticDict, const std::wstring& filePath)
+	void savePhoneticDictionaryYaml(const std::vector<PhoneticWord>& phoneticDict, const std::wstring& filePath, const PhoneRegistry& phoneReg)
 	{
 		YAML::Emitter yamlEmit;
 
@@ -40,7 +40,7 @@ namespace PticaGovorun
 				yamlEmit << YAML::Key << WordUsedCountName;
 
 				phoneListStr.clear();
-				phoneListToStr(wordAndProns.Pronunciations[0].PhoneIds, phoneListStr);
+				phoneListToStr(phoneReg, wordAndProns.Pronunciations[0].Phones, phoneListStr);
 
 				yamlEmit << YAML::Value << phoneListStr;
 				yamlEmit << YAML::EndMap;
@@ -68,7 +68,7 @@ namespace PticaGovorun
 						yamlEmit << YAML::Value << QString::fromStdWString(pron.PronAsWord).toUtf8().constData();
 
 						phoneListStr.clear();
-						phoneListToStr(pron.PhoneIds, phoneListStr);
+						phoneListToStr(phoneReg, pron.Phones, phoneListStr);
 
 						yamlEmit << YAML::Key << WordUsedCountName;
 						yamlEmit << YAML::Value << phoneListStr;
@@ -86,11 +86,11 @@ namespace PticaGovorun
 		fout << yamlEmit.c_str();
 	}
 
-	std::tuple<bool, const char*> loadPhoneticDictionaryYaml(const std::wstring& filePath, std::vector<PhoneticWord>& phoneticDict)
+	std::tuple<bool, const char*> loadPhoneticDictionaryYaml(const std::wstring& filePath, const PhoneRegistry& phoneReg, std::vector<PhoneticWord>& phoneticDict)
 	{
 		std::string filePathStd = QString::fromStdWString(filePath).toStdString();
 
-		std::vector<UkrainianPhoneId> phoneList;
+		std::vector<PhoneId> phoneList;
 		
 		YAML::Node wordRows = YAML::LoadFile(filePathStd);
 		for (int i = 0; i < wordRows.size(); ++i)
@@ -111,16 +111,16 @@ namespace PticaGovorun
 			if (!isOne)
 				return std::make_pair(false, "Exactly one must be defined");
 
-			auto pushWordPron = [&phoneList, &wordPhoneticInfo](const std::wstring& pronAsWord, const std::string& phoneListStrs) -> std::tuple<bool, const char*>
+			auto pushWordPron = [&phoneList, &wordPhoneticInfo, &phoneReg](const std::wstring& pronAsWord, const std::string& phoneListStrs) -> std::tuple<bool, const char*>
 			{
 				phoneList.clear();
-				bool parsePhoneOp = parsePhoneListStrs(phoneListStrs, phoneList);
+				bool parsePhoneOp = parsePhoneList(phoneReg, phoneListStrs, phoneList);
 				if (!parsePhoneOp)
 					return std::make_pair(false, "Can't parse phone string");
 
 				PronunciationFlavour pron;
 				pron.PronAsWord = pronAsWord;
-				pron.PhoneIds = phoneList;
+				pron.Phones = phoneList;
 				wordPhoneticInfo.Pronunciations.push_back(pron);
 				return std::make_pair(true, nullptr);
 			};

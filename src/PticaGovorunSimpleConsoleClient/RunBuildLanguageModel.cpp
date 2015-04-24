@@ -460,7 +460,7 @@ namespace RunBuildLanguageModelNS
 		return true;
 	}
 
-	void createPhoneticDictionary(const wchar_t* filePath, wv::slice<const WordPart*> seedWordParts, const UkrainianPhoneticSplitter& phoneticSplitter, const WordsUsageInfo& wordUsage)
+	void writePhoneticDictionary(const wchar_t* filePath, wv::slice<const WordPart*> seedWordParts, const UkrainianPhoneticSplitter& phoneticSplitter, const PhoneRegistry& phoneReg, const WordsUsageInfo& wordUsage)
 	{
 		QFile lmFile(QString::fromStdWString(filePath));
 		if (!lmFile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -469,7 +469,7 @@ namespace RunBuildLanguageModelNS
 		QTextStream dumpFileStream(&lmFile);
 		dumpFileStream.setCodec("UTF-8");
 
-		std::vector<UkrainianPhoneId> phones;
+		std::vector<PhoneId> phones;
 		for (const WordPart* wordPart : seedWordParts)
 		{
 			if (wordPart == phoneticSplitter.sentStartWordPart() || wordPart == phoneticSplitter.sentEndWordPart())
@@ -482,19 +482,19 @@ namespace RunBuildLanguageModelNS
 			phones.clear();
 			bool spellOp;
 			const char* errMsg;
-			std::tie(spellOp, errMsg) = spellWord(wordPart->partText(), phones);
+			std::tie(spellOp, errMsg) = spellWordUk(phoneReg, wordPart->partText(), phones);
 			PG_Assert(spellOp);
 
-			Pronunc pron;
-			bool pronToStrOp = pronuncToStr(phones, pron);
+			std::string phoneListStr;
+			bool pronToStrOp = phoneListToStr(phoneReg, phones, phoneListStr);
 			PG_Assert(pronToStrOp);
-			dumpFileStream << QLatin1String(pron.StrDebug.c_str());
+			dumpFileStream << QLatin1String(phoneListStr.c_str());
 
 			dumpFileStream << "\n";
 		}
 	}
 
-	void chooseSeedUnigrams(const UkrainianPhoneticSplitter& phoneticSplitter, int minWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, std::vector<const WordPart*>& result)
+	void chooseSeedUnigrams(const UkrainianPhoneticSplitter& phoneticSplitter, int minWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, const PhoneRegistry& phoneReg, std::vector<const WordPart*>& result)
 	{
 		const WordsUsageInfo& wordUsage = phoneticSplitter.wordUsage();
 		
@@ -503,7 +503,7 @@ namespace RunBuildLanguageModelNS
 
 		std::vector<const WordPart*> wordPartSureInclude;
 		std::vector<const WordPart*> wordPartCandidates;
-		std::vector<UkrainianPhoneId> phonesTmp;
+		std::vector<PhoneId> phonesTmp;
 
 		for (const WordPart* wordPart : allWordParts)
 		{
@@ -516,7 +516,7 @@ namespace RunBuildLanguageModelNS
 				continue;
 			}
 
-			auto canSpellFun = [&wordUsage, &phoneticSplitter, &phonesTmp](const WordPart* part)
+			auto canSpellFun = [&wordUsage, &phoneticSplitter, &phonesTmp, &phoneReg](const WordPart* part)
 			{
 				PG_Assert(part != phoneticSplitter.sentStartWordPart() && part != phoneticSplitter.sentEndWordPart());
 
@@ -524,7 +524,7 @@ namespace RunBuildLanguageModelNS
 				bool spellOp;
 				const char* errMsg;
 				const std::wstring& partTxt = part->partText();
-				std::tie(spellOp, errMsg) = spellWord(partTxt, phonesTmp);
+				std::tie(spellOp, errMsg) = spellWordUk(phoneReg, partTxt, phonesTmp);
 				return spellOp;
 			};
 			WordSeqKey seqKey({ wordPart->id() });
@@ -672,13 +672,18 @@ namespace RunBuildLanguageModelNS
 
 		phoneticSplitter.printSuffixUsageStatistics();
 
+		PhoneRegistry phoneReg;
+		bool allowSoftHardConsonant = false;
+		bool allowVowelStress = false;
+		initPhoneRegistryUk(phoneReg, allowSoftHardConsonant, allowVowelStress);
+
 		// note, the positive threshold may evict the rare words
 		//int maxWordPartUsage = 10;
 		int maxWordPartUsage = -1;
 		//int maxUnigramsCount = 10000;
 		int maxUnigramsCount = -1;
 		std::vector<const WordPart*> seedUnigrams;
-		chooseSeedUnigrams(phoneticSplitter, maxWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, seedUnigrams);
+		chooseSeedUnigrams(phoneticSplitter, maxWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, phoneReg, seedUnigrams);
 		std::wcout << L"seed unigrams count=" << seedUnigrams.size() << std::endl;
 
 		//
@@ -696,7 +701,7 @@ namespace RunBuildLanguageModelNS
 		phonDictFileName << "persianDic.";
 		appendTimeStampNow(phonDictFileName);
 		phonDictFileName << ".txt";
-		createPhoneticDictionary(phonDictFileName.str().c_str(), seedUnigrams, phoneticSplitter, wordUsage);
+		writePhoneticDictionary(phonDictFileName.str().c_str(), seedUnigrams, phoneticSplitter, phoneReg, wordUsage);
 	}
 
 	void tinkerWithPhoneticSplit(int argc, wchar_t* argv[])

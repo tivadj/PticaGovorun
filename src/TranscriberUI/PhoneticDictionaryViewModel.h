@@ -38,6 +38,7 @@ namespace PticaGovorun
 		std::map<std::wstring, std::vector<Pronunc>> wordToPhoneListDict_;
 		std::map<std::wstring, PhoneticWord> persianWordToPronsDict_;
 		std::map<std::wstring, PhoneticWord> brokenWordToPronsDict_;
+		std::unique_ptr<PhoneRegistry> phoneReg_;
 		QStringList matchedWords_;
 		QString wordPhoneticTrnascript_;
 		QString editedWordSourceDictionary_; // the dictId from where the current word is taken

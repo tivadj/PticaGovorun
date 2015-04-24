@@ -7,46 +7,88 @@
 #include <QTextCodec>
 #include <QTextStream>
 #include <boost/optional.hpp>
+#include "ComponentsInfrastructure.h"
 #include "PticaGovorunCore.h"
 #include "LangStat.h"
 #include "TextProcessing.h"
 
 namespace PticaGovorun
 {
-	enum class UkrainianPhoneId
+	// Soft or hard attribute (uk: тверда/м'яка). The third enum value is 'middle-tongued'.
+	enum class SoftHardConsonant
 	{
-		Nil,
-		P_A,
-		P_B,
-		P_CH,
-		P_D,
-		P_DZ,
-		P_DZH,
-		P_E,
-		P_F,
-		P_G,
-		P_H,
-		P_I,
-		P_J,
-		P_K,
-		P_KH,
-		P_L,
-		P_M,
-		P_N,
-		P_O,
-		P_P,
-		P_R,
-		P_S,
-		P_SH,
-		P_T,
-		P_TS,
-		P_U,
-		P_V,
-		P_Y,
-		P_Z,
-		P_ZH,
-		P_LAST
+		Soft,
+		Hard
 	};
+
+	// eg TS for soft consonant TS1
+	struct PG_EXPORTS BasicPhone
+	{
+		int Id;
+		std::string Name; // eg TS, CH
+		CharGroup DerivedFromChar; // the vowel/consonant it is derived from
+	};
+
+	struct PG_EXPORTS Phone
+	{
+		typedef IdWithDebugStr<int, char, 4> PhoneIdT;
+		int Id;
+		typedef IdWithDebugStr<int, char, 3> BasicPhoneIdT;
+		BasicPhoneIdT BasicPhoneId;
+		boost::optional<SoftHardConsonant> SoftHard; // valid for consonants only
+		boost::optional<bool> IsStressed; // valid for for vowels only
+	};
+
+	typedef Phone::PhoneIdT PhoneId;
+
+	// The class to enlist the phones of different configurations. We may be interested in vowel phones with stress marked
+	// or consonant phones with marked softness. So the basic vowel phone A turns into A1 under stress.
+	// The basic phone T turns into T1 when it is softened.
+	class PG_EXPORTS PhoneRegistry
+	{
+		int nextPhoneId_ = 1; // the first phone gets Id=1
+		std::vector<Phone> phoneReg_;
+		std::vector<BasicPhone> basicPhones_;
+		std::unordered_map<std::string, size_t> basicPhonesStrToId_;
+		bool allowSoftHardConsonant_ = false;
+		bool allowVowelStress_ = false;
+	public:
+		typedef Phone::BasicPhoneIdT BasicPhoneIdT;
+	private:
+		inline BasicPhoneIdT extendBasicPhoneId(int basicPhoneStrId) const;
+		BasicPhoneIdT getOrCreateBasicPhone(const std::string& basicPhoneStr, CharGroup charGroup);
+	public:
+		BasicPhoneIdT basicPhoneId(const std::string& basicPhoneStr, bool* success) const;
+		const BasicPhone* basicPhone(BasicPhoneIdT basicPhoneId) const;
+
+		PhoneId newVowelPhone(const std::string& basicPhoneStr, bool isStressed);
+		PhoneId newConsonantPhone(const std::string& basicPhoneStr, boost::optional<SoftHardConsonant> softHard);
+
+		// Augment PhoneId:int with string representation of the phone. Useful for debugging.
+		inline PhoneId extendPhoneId(int validPhoneId) const;
+		inline const Phone* phoneById(int phoneId) const;
+		inline const Phone* phoneById(PhoneId phoneId) const;
+		boost::optional<PhoneId> phoneIdSingle(const std::string& basicPhoneStr, boost::optional<SoftHardConsonant> softHard, boost::optional<bool> isStressed) const;
+		boost::optional<PhoneId> phoneIdSingle(BasicPhoneIdT basicPhoneStrId, boost::optional<SoftHardConsonant> softHard, boost::optional<bool> isStressed) const;
+
+		void findPhonesByBasicPhoneStr(const std::string& basicPhoneStr, std::vector<PhoneId>& phoneIds) const;
+
+		// assumes that phones are not removed from registry and ordered consequently
+		int phonesCount() const;
+		
+		// assume that phones are not removed from phone registry and are ordered consequently
+		inline void assumeSequentialPhoneIdsWithoutGaps() const {};
+
+		bool allowSoftHardConsonant() const;
+		bool allowVowelStress() const;
+
+		boost::optional<SoftHardConsonant> defaultSoftHardConsonant() const;
+		boost::optional<bool> defaultIsVowelStressed() const;
+	private:
+		friend PG_EXPORTS void initPhoneRegistryUk(PhoneRegistry& phoneReg, bool allowSoftHardConsonant, bool allowVowelStress);
+	};
+
+	PG_EXPORTS void initPhoneRegistryUk(PhoneRegistry& phoneReg, bool allowSoftHardConsonant, bool allowVowelStress);
 
 	struct Pronunc
 	{
@@ -66,8 +108,8 @@ namespace PticaGovorun
 		// different pronAsWord for it even though the same sequence of phones is already assigned to some pronAsWord.
 		std::wstring PronAsWord;
 
-		// The actual phones of this pronunciation. Corresponds to UkrainianPhoneId
-		std::vector<UkrainianPhoneId> PhoneIds;
+		// The actual phones of this pronunciation.
+		std::vector<PhoneId> Phones;
 	};
 
 	// Represents all possible pronunciations of a word.
@@ -144,36 +186,29 @@ namespace PticaGovorun
 	// Each word may have multiple pronunciations (1-* relation); for now we neglect it and store data into map (1-1 relation).
 	PG_EXPORTS std::tuple<bool, const char*> loadPronunciationVocabulary(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<std::string>>& wordToPhoneList, const QTextCodec& textCodec);
 	PG_EXPORTS std::tuple<bool, const char*> loadPronunciationVocabulary2(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<Pronunc>>& wordToPhoneList, const QTextCodec& textCodec);
-	PG_EXPORTS void normalizePronunciationVocabulary(std::map<std::wstring, std::vector<Pronunc>>& wordToPhoneList);
-	PG_EXPORTS void trimPhoneStrExtraInfos(const std::string& phoneStr, std::string& phoneStrTrimmed);
+	PG_EXPORTS void normalizePronunciationVocabulary(std::map<std::wstring, std::vector<Pronunc>>& wordToPhoneList, bool toUpper = true, bool trimNumbers = true);
+	PG_EXPORTS void trimPhoneStrExtraInfos(const std::string& phoneStr, std::string& phoneStrTrimmed, bool toUpper, bool trimNumbers);
+
+	PG_EXPORTS bool phoneToStr(const PhoneRegistry& phoneReg, int phoneId, std::string& result);
+	PG_EXPORTS bool phoneToStr(const PhoneRegistry& phoneReg, PhoneId phoneId, std::string& result);
+	PG_EXPORTS bool phoneListToStr(const PhoneRegistry& phoneReg, wv::slice<PhoneId> pron, std::string& result);
 
 	// Parses space-separated list of phones.
-	PG_EXPORTS bool parsePhoneListStrs(const std::string& phonesStr, std::vector<UkrainianPhoneId>& result);
-
-	PG_EXPORTS std::tuple<bool, const char*> parsePronuncLines(const std::wstring& prons, std::vector<PronunciationFlavour>& result);
-
-	PG_EXPORTS bool phoneToStr(UkrainianPhoneId phone, std::string& result);
-	PG_EXPORTS UkrainianPhoneId phoneStrToIdUk(const std::string& phoneStr, bool* parseSuccess = nullptr);
-	PG_EXPORTS boost::optional<UkrainianPhoneId> phoneStrToId(const std::string& phoneStr);
-	PG_EXPORTS bool phoneListToStr(wv::slice<UkrainianPhoneId> phones, std::string& phonesListStr);
-	PG_EXPORTS bool pronuncToStr(const std::vector<UkrainianPhoneId>& pron, Pronunc& result);
+	PG_EXPORTS boost::optional<PhoneId> parsePhoneStr(const PhoneRegistry& phoneReg, const std::string& phoneStr);
+	PG_EXPORTS bool parsePhoneList(const PhoneRegistry& phoneReg, const std::string& phonesStr, std::vector<PhoneId>& result);
+	PG_EXPORTS std::tuple<bool, const char*> parsePronuncLines(const PhoneRegistry& phoneReg, const std::wstring& prons, std::vector<PronunciationFlavour>& result);
 
 	// Performs word transcription (word is represented as a sequence of phonemes).
-	PG_EXPORTS std::tuple<bool,const char*> spellWord(const std::wstring& word, std::vector<UkrainianPhoneId>& phones);
+	PG_EXPORTS std::tuple<bool, const char*> spellWordUk(const PhoneRegistry& phoneReg, const std::wstring& word, std::vector<PhoneId>& phones);
 
 	// Saves phonetic dictionary to file in YAML format.
-	PG_EXPORTS void savePhoneticDictionaryYaml(const std::vector<PhoneticWord>& phoneticDict, const std::wstring& filePath);
+	PG_EXPORTS void savePhoneticDictionaryYaml(const std::vector<PhoneticWord>& phoneticDict, const std::wstring& filePath, const PhoneRegistry& phoneReg);
 	
-	PG_EXPORTS std::tuple<bool, const char*> loadPhoneticDictionaryYaml(const std::wstring& filePath, std::vector<PhoneticWord>& phoneticDict);
+	PG_EXPORTS std::tuple<bool, const char*> loadPhoneticDictionaryYaml(const std::wstring& filePath, const PhoneRegistry& phoneReg, std::vector<PhoneticWord>& phoneticDict);
 
 	//
 	PG_EXPORTS int phoneticSplitOfWord(wv::slice<wchar_t> word, boost::optional<WordClass> wordClass, int* pMatchedSuffixInd = nullptr);
 
 	// Checks whether the character is unvoiced (uk:глухий).
 	PG_EXPORTS inline bool isUnvoicedCharUk(wchar_t ch);
-
-	PG_EXPORTS inline bool isVowelDerivedUk(UkrainianPhoneId phoneId);
-	PG_EXPORTS inline bool isConsonantDerivedUk(UkrainianPhoneId phoneId);
-
-	PG_EXPORTS inline boost::optional<CharGroup> classifyPhoneUk(int phoneId);
 }

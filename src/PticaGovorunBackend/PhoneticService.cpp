@@ -87,6 +87,262 @@ namespace PticaGovorun
 		return false;
 	}
 
+	PhoneId PhoneRegistry::extendPhoneId(int validPhoneId) const
+	{
+		PhoneId result;
+		result.Id = validPhoneId;
+#if PG_DEBUG
+		static std::string phoneStr;
+		bool toStrOp = phoneToStr(*this, validPhoneId, phoneStr);
+		PG_DbgAssert(toStrOp && "Invalid PhoneId:int");
+		result.fillStr(phoneStr);
+#endif
+		return result;
+	}
+
+	PhoneRegistry::BasicPhoneIdT PhoneRegistry::extendBasicPhoneId(int basicPhoneId) const
+	{
+		BasicPhoneIdT result;
+		result.Id = basicPhoneId;
+#ifdef PG_DEBUG
+		int basicPhoneStrInd = basicPhoneId - 1;
+
+		PG_DbgAssert(basicPhoneStrInd >= 0 && basicPhoneStrInd < basicPhones_.size());
+		const BasicPhone& basicPhone = basicPhones_[basicPhoneStrInd];
+
+		result.fillStr(basicPhone.Name);
+#endif
+		return result;
+	}
+
+	PhoneRegistry::BasicPhoneIdT PhoneRegistry::getOrCreateBasicPhone(const std::string& basicPhoneStr, CharGroup charGroup)
+	{
+		auto it = basicPhonesStrToId_.find(basicPhoneStr);
+		if (it != basicPhonesStrToId_.end())
+			return extendBasicPhoneId(it->second);
+
+		int newId = basicPhones_.size() + 1;
+
+		BasicPhone basicPhone;
+		basicPhone.Id = newId;
+		basicPhone.Name = basicPhoneStr;
+		basicPhone.DerivedFromChar = charGroup;
+		basicPhones_.push_back(basicPhone);
+		basicPhonesStrToId_[basicPhoneStr] = newId;
+		return extendBasicPhoneId(newId);
+	}
+
+	PhoneRegistry::BasicPhoneIdT PhoneRegistry::basicPhoneId(const std::string& basicPhoneStr, bool* success) const
+	{
+		*success = false;
+
+		auto it = basicPhonesStrToId_.find(basicPhoneStr);
+		if (it != basicPhonesStrToId_.end())
+		{
+			*success = true;
+			return extendBasicPhoneId(it->second);
+		}
+		return PhoneRegistry::BasicPhoneIdT();
+	}
+
+	const BasicPhone* PhoneRegistry::basicPhone(BasicPhoneIdT basicPhoneId) const
+	{
+		int basicPhoneInd = basicPhoneId.Id - 1;
+		if (basicPhoneInd < 0 || basicPhoneInd >= basicPhones_.size())
+			return nullptr;
+		return &basicPhones_[basicPhoneInd];
+	}
+
+	PhoneId PhoneRegistry::newVowelPhone(const std::string& basicPhoneStr, bool isStressed)
+	{
+		int phoneId = nextPhoneId_++;
+
+		Phone phone;
+		phone.Id = phoneId;
+		phone.BasicPhoneId = getOrCreateBasicPhone(basicPhoneStr, CharGroup::Vowel);
+		phone.IsStressed = isStressed;
+		phoneReg_.push_back(phone);
+		return extendPhoneId(phoneId);
+	}
+
+	PhoneId PhoneRegistry::newConsonantPhone(const std::string& basicPhoneStr, boost::optional<SoftHardConsonant> softHard)
+	{
+		int phoneId = nextPhoneId_++;
+
+		Phone phone;
+		phone.Id = phoneId;
+		phone.BasicPhoneId = getOrCreateBasicPhone(basicPhoneStr, CharGroup::Consonant);
+		phone.SoftHard = softHard;
+		phoneReg_.push_back(phone);
+		return extendPhoneId(phoneId);
+	}
+
+	void PhoneRegistry::findPhonesByBasicPhoneStr(const std::string& basicPhoneStr, std::vector<PhoneId>& phoneIds) const
+	{
+		auto basicPhoneIt = basicPhonesStrToId_.find(basicPhoneStr);
+		if (basicPhoneIt == basicPhonesStrToId_.end())
+			return;
+		int basicPhoneId = basicPhoneIt->second;
+
+		for (size_t phoneInd = 0; phoneInd < phoneReg_.size(); ++phoneInd)
+		{
+			const Phone& ph = phoneReg_[phoneInd];
+			if (ph.BasicPhoneId.Id == basicPhoneId)
+				phoneIds.push_back(extendPhoneId(phoneInd + 1));
+		}
+	}
+
+	int PhoneRegistry::phonesCount() const
+	{
+		assumeSequentialPhoneIdsWithoutGaps();
+		return nextPhoneId_ - 1;
+	}
+
+	const Phone* PhoneRegistry::phoneById(int phoneId) const
+	{
+		int phoneInd = phoneId - 1;
+		if (phoneInd < 0 || phoneInd >= phoneReg_.size())
+			return nullptr;
+		return &phoneReg_[phoneInd];
+	}
+
+	const Phone* PhoneRegistry::phoneById(PhoneId phoneId) const
+	{
+		return phoneById(phoneId.Id);
+	}
+
+	boost::optional<PhoneId> PhoneRegistry::phoneIdSingle(const std::string& basicPhoneStr, boost::optional<SoftHardConsonant> softHard, boost::optional<bool> isStressed) const
+	{
+		bool suc = false;
+		auto basicPhId = basicPhoneId(basicPhoneStr, &suc);
+		if (!suc)
+			return nullptr;
+		return phoneIdSingle(basicPhId, softHard, isStressed);
+	}
+
+	boost::optional<PhoneId> PhoneRegistry::phoneIdSingle(PhoneRegistry::BasicPhoneIdT basicPhoneStrId, boost::optional<SoftHardConsonant> softHard, boost::optional<bool> isStressed) const
+	{
+		const BasicPhone* basicPh = basicPhone(basicPhoneStrId);
+		if (basicPh == nullptr)
+			return nullptr;
+		std::vector<PhoneId> candidates;
+		findPhonesByBasicPhoneStr(basicPh->Name, candidates);
+
+		if (candidates.empty())
+			return nullptr;
+		if (candidates.size() == 1)
+			return candidates.front();
+
+		std::vector<PhoneId> excactCandidates;
+		std::remove_copy_if(candidates.begin(), candidates.end(), std::back_inserter(excactCandidates), [this, softHard, isStressed](PhoneId phoneId)
+		{
+			const Phone* phone = phoneById(phoneId);
+			if (softHard != nullptr && softHard != phone->SoftHard)
+				return true;
+			if (isStressed != nullptr && isStressed != phone->IsStressed)
+				return true;
+			return false;
+		});
+
+		if (excactCandidates.size() == 1)
+			return excactCandidates.front();
+
+		// exact candidates size:
+		// = 0 then we may fallback to basic phone candidates; but there is no way to choose the best one
+		// > 1 then again the best one can't be chosen
+		return nullptr;
+	}
+
+	bool PhoneRegistry::allowSoftHardConsonant() const
+	{
+		return allowSoftHardConsonant_;
+	}
+
+	bool PhoneRegistry::allowVowelStress() const
+	{
+		return allowVowelStress_;
+	}
+
+	boost::optional<SoftHardConsonant> PhoneRegistry::defaultSoftHardConsonant() const
+	{
+		if (allowSoftHardConsonant())
+			return SoftHardConsonant::Hard;
+		return nullptr;
+	}
+
+	boost::optional<bool> PhoneRegistry::defaultIsVowelStressed() const
+	{
+		if (allowVowelStress())
+			return false;
+		return boost::none;
+	}
+
+	void initPhoneRegistryUk(PhoneRegistry& phoneReg, bool allowSoftHardConsonant, bool allowVowelStress)
+	{
+		phoneReg.allowSoftHardConsonant_ = allowSoftHardConsonant;
+		phoneReg.allowVowelStress_ = allowVowelStress;
+
+		phoneReg.newVowelPhone("A", false); // A
+		if (allowVowelStress)
+			phoneReg.newVowelPhone("A", true); // A1
+		phoneReg.newConsonantPhone("B", SoftHardConsonant::Hard); // B, hard only
+		phoneReg.newConsonantPhone("V", SoftHardConsonant::Hard); // V, hard only
+		phoneReg.newConsonantPhone("G", SoftHardConsonant::Hard); // G, hard only (gudzyk)
+		phoneReg.newConsonantPhone("H", SoftHardConsonant::Hard); // H, hard only (gluhi)
+		phoneReg.newConsonantPhone("D", SoftHardConsonant::Hard); // D
+		if (allowSoftHardConsonant)
+			phoneReg.newConsonantPhone("D", SoftHardConsonant::Soft); // D1
+		phoneReg.newConsonantPhone("DZ", SoftHardConsonant::Hard); // DZ
+		if (allowSoftHardConsonant)
+			phoneReg.newConsonantPhone("DZ", SoftHardConsonant::Soft); // DZ1
+		phoneReg.newConsonantPhone("DZH", SoftHardConsonant::Hard); // DZH
+		phoneReg.newVowelPhone("E", false); // E
+		if (allowVowelStress)
+			phoneReg.newVowelPhone("E", true); // E1
+		phoneReg.newConsonantPhone("ZH", SoftHardConsonant::Hard); // ZH, hard only
+		phoneReg.newConsonantPhone("Z", SoftHardConsonant::Hard); // Z
+		if (allowSoftHardConsonant)
+			phoneReg.newConsonantPhone("Z", SoftHardConsonant::Soft); // Z1
+		phoneReg.newVowelPhone("Y", false); // Y
+		if (allowVowelStress)
+			phoneReg.newVowelPhone("Y", true); // Y1
+		phoneReg.newVowelPhone("I", false); // I
+		if (allowVowelStress)
+			phoneReg.newVowelPhone("I", true); // I1
+		phoneReg.newConsonantPhone("J", SoftHardConsonant::Hard); // J, hard only (й)
+		phoneReg.newConsonantPhone("K", SoftHardConsonant::Hard); // K, hard only
+		phoneReg.newConsonantPhone("L", SoftHardConsonant::Hard); // L
+		if (allowSoftHardConsonant)
+			phoneReg.newConsonantPhone("L", SoftHardConsonant::Soft); // L1
+		phoneReg.newConsonantPhone("M", SoftHardConsonant::Hard); // M, hard only
+		phoneReg.newConsonantPhone("N", SoftHardConsonant::Hard); // N
+		if (allowSoftHardConsonant)
+			phoneReg.newConsonantPhone("N", SoftHardConsonant::Soft); // N1
+		phoneReg.newVowelPhone("O", false); // O
+		if (allowVowelStress)
+			phoneReg.newVowelPhone("O", true); // O1
+		phoneReg.newConsonantPhone("P", SoftHardConsonant::Hard); // P, hard only (п'ять)
+		phoneReg.newConsonantPhone("R", SoftHardConsonant::Hard); // R
+		if (allowSoftHardConsonant)
+			phoneReg.newConsonantPhone("R", SoftHardConsonant::Soft); // R1
+		phoneReg.newConsonantPhone("S", SoftHardConsonant::Hard); // S
+		if (allowSoftHardConsonant)
+			phoneReg.newConsonantPhone("S", SoftHardConsonant::Soft); // S1
+		phoneReg.newConsonantPhone("T", SoftHardConsonant::Hard); // T
+		if (allowSoftHardConsonant)
+			phoneReg.newConsonantPhone("T", SoftHardConsonant::Soft); // T1
+		phoneReg.newVowelPhone("U", false); // U
+		if (allowVowelStress)
+			phoneReg.newVowelPhone("U", true); // U1
+		phoneReg.newConsonantPhone("F", SoftHardConsonant::Hard); // F, hard only
+		phoneReg.newConsonantPhone("KH", SoftHardConsonant::Hard); // KH, hard only (х'ю)
+		phoneReg.newConsonantPhone("TS", SoftHardConsonant::Hard); // TS
+		if (allowSoftHardConsonant)
+			phoneReg.newConsonantPhone("TS", SoftHardConsonant::Soft); // TS1
+		phoneReg.newConsonantPhone("CH", SoftHardConsonant::Hard); // CH, hard only (час)
+		phoneReg.newConsonantPhone("SH", SoftHardConsonant::Hard); // SH, hard only (ш'є)
+	}
+
 	std::tuple<bool, const char*> loadPronunciationVocabulary(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<std::string>>& wordToPhoneList, const QTextCodec& textCodec)
 	{
 		// file contains text in Windows-1251 encoding
@@ -210,7 +466,22 @@ namespace PticaGovorun
 		return std::make_tuple(true, nullptr);
 	}
 
-	void normalizePronunciationVocabulary(std::map<std::wstring, std::vector<Pronunc>>& wordToPhoneList)
+	void trimPhoneStrExtraInfos(const std::string& phoneStdStr, std::string& phoneStrTrimmed, bool toUpper, bool trimNumbers)
+	{
+		QString phoneStr = QString::fromStdString(phoneStdStr);
+		if (trimNumbers)
+		{
+			if (phoneStr[phoneStr.size() - 1].isDigit())
+			{
+				phoneStr = phoneStr.left(phoneStr.size() - 1); // remove last digit
+			}
+		}
+		if (toUpper)
+			phoneStr = phoneStr.toUpper();
+		phoneStrTrimmed = phoneStr.toStdString();
+	}
+
+	void normalizePronunciationVocabulary(std::map<std::wstring, std::vector<Pronunc>>& wordToPhoneList, bool toUpper, bool trimNumbers)
 	{
 		std::string phoneStrTrimmed;
 		for (auto& pair : wordToPhoneList)
@@ -220,7 +491,7 @@ namespace PticaGovorun
 			{
 				for (auto& phone : pron.Phones)
 				{
-					trimPhoneStrExtraInfos(phone, phoneStrTrimmed);
+					trimPhoneStrExtraInfos(phone, phoneStrTrimmed, toUpper, trimNumbers);
 					phone = phoneStrTrimmed;
 				}
 			}
@@ -232,18 +503,50 @@ namespace PticaGovorun
 		}
 	}
 
-	void trimPhoneStrExtraInfos(const std::string& phoneStdStr, std::string& phoneStrTrimmed)
+	boost::optional<PhoneId> parsePhoneStr(const PhoneRegistry& phoneReg, const std::string& phoneStr)
 	{
-		QString phoneStr = QString::fromStdString(phoneStdStr);
-		if (phoneStr[phoneStr.size() - 1].isDigit())
+		if (phoneStr.empty())
+			return nullptr;
+
+		std::string basicPhoneStr = phoneStr;
+
+		// truncate last digit
+		QChar ch = phoneStr.back();
+		bool lastIsDigit = ch.isDigit();
+		if (lastIsDigit)
+			basicPhoneStr.pop_back();
+
+		bool basicOp = false;
+		PhoneRegistry::BasicPhoneIdT basicPhoneId = phoneReg.basicPhoneId(basicPhoneStr, &basicOp);
+		if (!basicOp)
+			return nullptr;
+		const BasicPhone* basicPhone = phoneReg.basicPhone(basicPhoneId);
+
+		// defaults for phone name without a number suffix
+		boost::optional<SoftHardConsonant> softHard = nullptr;
+		if (basicPhone->DerivedFromChar == CharGroup::Consonant)
+			softHard = phoneReg.defaultSoftHardConsonant();
+
+		boost::optional<bool> isStressed = nullptr;
+		if (basicPhone->DerivedFromChar == CharGroup::Vowel)
+			isStressed = phoneReg.defaultIsVowelStressed();
+
+		if (lastIsDigit)
 		{
-			phoneStr = phoneStr.left(phoneStr.size() - 1); // remove last digit
+			// number on a consonant derived phone means softness
+			if (basicPhone->DerivedFromChar == CharGroup::Consonant)
+				softHard = SoftHardConsonant::Soft;
+
+			// number on a vowel derived phone means stress
+			else if (basicPhone->DerivedFromChar == CharGroup::Vowel)
+				isStressed = true;
 		}
-		phoneStr = phoneStr.toUpper();
-		phoneStrTrimmed = phoneStr.toStdString();
+
+		boost::optional<PhoneId> result = phoneReg.phoneIdSingle(basicPhoneId, softHard, isStressed);
+		return result;
 	}
 
-	bool parsePhoneListStrs(const std::string& phonesStr, std::vector<UkrainianPhoneId>& result)
+	bool parsePhoneList(const PhoneRegistry& phoneReg, const std::string& phonesStr, std::vector<PhoneId>& result)
 	{
 		QStringList list = QString::fromStdString(phonesStr).split(' ');
 		for (int i = 0; i < list.size(); ++i)
@@ -252,20 +555,16 @@ namespace PticaGovorun
 			if (phoneQ.isEmpty()) // a phone can't be an empty string
 				continue;
 
-			// truncate last digit
-			QChar ch = phoneQ.at(phoneQ.size() - 1);
-			if (ch.isDigit())
-				phoneQ = phoneQ.left(phoneQ.size() - 1);
-
-			boost::optional<UkrainianPhoneId> phoneId = phoneStrToId(phoneQ.toStdString());
+			boost::optional<PhoneId> phoneId = parsePhoneStr(phoneReg, phoneQ.toStdString());
 			if (!phoneId)
 				return false;
+
 			result.push_back(phoneId.get());
 		}
 		return true;
 	}
 
-	std::tuple<bool, const char*>  parsePronuncLines(const std::wstring& prons, std::vector<PronunciationFlavour>& result)
+	std::tuple<bool, const char*> parsePronuncLines(const PhoneRegistry& phoneReg, const std::basic_string<wchar_t>& prons, std::vector<PronunciationFlavour>& result)
 	{
 		QString pronsQ = QString::fromStdWString(prons);
 		QStringList pronItems = pronsQ.split('\n', QString::SkipEmptyParts);
@@ -279,319 +578,177 @@ namespace PticaGovorun
 			QString pronAsWord = pronLine.left(pronAsWordEndInd);
 			QString phonesStr = pronLine.mid(pronAsWordEndInd+1);
 
-			std::vector<UkrainianPhoneId> phones;
-			bool parseOp = parsePhoneListStrs(phonesStr.toStdString(), phones);
+			std::vector<PhoneId> phones;
+			bool parseOp = parsePhoneList(phoneReg, phonesStr.toStdString(), phones);
 			if (!parseOp)
 				return std::make_tuple(false, "Can't parse the list of phones");
 
 			PronunciationFlavour pron;
 			pron.PronAsWord = pronAsWord.toStdWString();
-			pron.PhoneIds = phones;
+			pron.Phones = phones;
 			result.push_back(pron);
 		}
 		return std::make_tuple(true, nullptr);
 	}
 
-	bool phoneToStr(UkrainianPhoneId phone, std::string& result)
+	bool phoneToStr(const PhoneRegistry& phoneReg, int phoneId, std::string& result)
 	{
-		switch (phone)
-		{
-		case UkrainianPhoneId::P_A:
-			result = "A";
-			break;
-		case UkrainianPhoneId::P_B:
-			result = "B";
-			break;
-		case UkrainianPhoneId::P_CH:
-			result = "CH";
-			break;
-		case UkrainianPhoneId::P_D:
-			result = "D";
-			break;
-		case UkrainianPhoneId::P_DZ:
-			result = "DZ";
-			break;
-		case UkrainianPhoneId::P_DZH:
-			result = "DZH";
-			break;
-		case UkrainianPhoneId::P_E:
-			result = "E";
-			break;
-		case UkrainianPhoneId::P_F:
-			result = "F";
-			break;
-		case UkrainianPhoneId::P_G:
-			result = "G";
-			break;
-		case UkrainianPhoneId::P_H:
-			result = "H";
-			break;
-		case UkrainianPhoneId::P_I:
-			result = "I";
-			break;
-		case UkrainianPhoneId::P_J:
-			result = "J";
-			break;
-		case UkrainianPhoneId::P_K:
-			result = "K";
-			break;
-		case UkrainianPhoneId::P_KH:
-			result = "KH";
-			break;
-		case UkrainianPhoneId::P_L:
-			result = "L";
-			break;
-		case UkrainianPhoneId::P_M:
-			result = "M";
-			break;
-		case UkrainianPhoneId::P_N:
-			result = "N";
-			break;
-		case UkrainianPhoneId::P_O:
-			result = "O";
-			break;
-		case UkrainianPhoneId::P_P:
-			result = "P";
-			break;
-		case UkrainianPhoneId::P_R:
-			result = "R";
-			break;
-		case UkrainianPhoneId::P_S:
-			result = "S";
-			break;
-		case UkrainianPhoneId::P_SH:
-			result = "SH";
-			break;
-		case UkrainianPhoneId::P_T:
-			result = "T";
-			break;
-		case UkrainianPhoneId::P_TS:
-			result = "TS";
-			break;
-		case UkrainianPhoneId::P_U:
-			result = "U";
-			break;
-		case UkrainianPhoneId::P_V:
-			result = "V";
-			break;
-		case UkrainianPhoneId::P_Y:
-			result = "Y";
-			break;
-		case UkrainianPhoneId::P_Z:
-			result = "Z";
-			break;
-		case UkrainianPhoneId::P_ZH:
-			result = "ZH";
-			break;
-		default:
+		const Phone* phone = phoneReg.phoneById(phoneId);
+		if (phone == nullptr)
 			return false;
-		}
+		const BasicPhone* basicPh = phoneReg.basicPhone(phone->BasicPhoneId);
+		result = basicPh->Name;
+
+		if (phoneReg.allowSoftHardConsonant() && phone->SoftHard == SoftHardConsonant::Soft) // is soft consonant
+			result.push_back('1');
+		else if (phoneReg.allowVowelStress() && phone->IsStressed == true)
+			result.push_back('1');
+
 		return true;
 	}
 
-	UkrainianPhoneId phoneStrToIdUk(const std::string& phoneStr, bool* parseSuccess)
+	bool phoneToStr(const PhoneRegistry& phoneReg, PhoneId phoneId, std::string& result)
 	{
-		if (parseSuccess != nullptr)
-			*parseSuccess = true;
-
-		if (phoneStr == "A")
-			return UkrainianPhoneId::P_A;
-		else if (phoneStr == "B")
-			return UkrainianPhoneId::P_B;
-		else if (phoneStr == "CH")
-			return UkrainianPhoneId::P_CH;
-		else if (phoneStr == "D")
-			return UkrainianPhoneId::P_D;
-		else if (phoneStr == "DZ")
-			return UkrainianPhoneId::P_DZ;
-		else if (phoneStr == "DZH")
-			return UkrainianPhoneId::P_DZH;
-		else if (phoneStr == "E")
-			return UkrainianPhoneId::P_E;
-		else if (phoneStr == "F")
-			return UkrainianPhoneId::P_F;
-		else if (phoneStr == "G")
-			return UkrainianPhoneId::P_G;
-		else if (phoneStr == "H")
-			return UkrainianPhoneId::P_H;
-		else if (phoneStr == "I")
-			return UkrainianPhoneId::P_I;
-		else if (phoneStr == "J")
-			return UkrainianPhoneId::P_J;
-		else if (phoneStr == "K")
-			return UkrainianPhoneId::P_K;
-		else if (phoneStr == "KH")
-			return UkrainianPhoneId::P_KH;
-		else if (phoneStr == "L")
-			return UkrainianPhoneId::P_L;
-		else if (phoneStr == "M")
-			return UkrainianPhoneId::P_M;
-		else if (phoneStr == "N")
-			return UkrainianPhoneId::P_N;
-		else if (phoneStr == "O")
-			return UkrainianPhoneId::P_O;
-		else if (phoneStr == "P")
-			return UkrainianPhoneId::P_P;
-		else if (phoneStr == "R")
-			return UkrainianPhoneId::P_R;
-		else if (phoneStr == "S")
-			return UkrainianPhoneId::P_S;
-		else if (phoneStr == "SH")
-			return UkrainianPhoneId::P_SH;
-		else if (phoneStr == "T")
-			return UkrainianPhoneId::P_T;
-		else if (phoneStr == "TS")
-			return UkrainianPhoneId::P_TS;
-		else if (phoneStr == "U")
-			return UkrainianPhoneId::P_U;
-		else if (phoneStr == "V")
-			return UkrainianPhoneId::P_V;
-		else if (phoneStr == "Y")
-			return UkrainianPhoneId::P_Y;
-		else if (phoneStr == "Z")
-			return UkrainianPhoneId::P_Z;
-		else if (phoneStr == "ZH")
-			return UkrainianPhoneId::P_ZH;
-		
-		if (parseSuccess != nullptr)
-			*parseSuccess = false;
-		return UkrainianPhoneId::Nil;
+		return phoneToStr(phoneReg, phoneId.Id, result);
 	}
 
-	boost::optional<UkrainianPhoneId> phoneStrToId(const std::string& phoneStr)
-	{
-		bool parseOp;
-		UkrainianPhoneId ukPhId = phoneStrToIdUk(phoneStr, &parseOp);
-		if (!parseOp)
-			return nullptr;
-		if (ukPhId == UkrainianPhoneId::Nil || ukPhId == UkrainianPhoneId::P_LAST)
-			return nullptr;
-		return static_cast<UkrainianPhoneId>(ukPhId);
-	}
-
-	bool phoneListToStr(wv::slice<UkrainianPhoneId> phones, std::string& phonesListStr)
+	bool phoneListToStr(const PhoneRegistry& phoneReg, wv::slice<PhoneId> phones, std::string& result)
 	{
 		if (phones.empty())
 			return true;
 
 		std::string phStr;
-		if (!phoneToStr((UkrainianPhoneId)phones[0], phStr))
+		if (!phoneToStr(phoneReg, phones.front(), phStr))
 			return false;
-		phonesListStr += phStr;
+		result += phStr;
 
 		for (int i = 1; i < phones.size(); ++i)
 		{
-			phonesListStr.push_back(' ');
-			
-			if (!phoneToStr((UkrainianPhoneId)phones[i], phStr))
+			result.push_back(' ');
+
+			if (!phoneToStr(phoneReg, phones[i], phStr))
 				return false;
-			phonesListStr += phStr;
+			result += phStr;
 		}
 		return true;
 	}
 
-	bool pronuncToStr(const std::vector<UkrainianPhoneId>& pron, Pronunc& result)
+	std::tuple<bool, const char*> spellWordUk(const PhoneRegistry& phoneReg, const std::wstring& word, std::vector<PhoneId>& phones)
 	{
-		std::string str;
-		
-		result.Phones.clear();
-		for (int i = 0; i < pron.size(); ++i)
+		// Half made phone.
+		// The incomplete phone's data, so that complete PhoneId can't be queried from phone registry.
+		typedef decltype(static_cast<Phone*>(nullptr)->BasicPhoneId) BasicPhoneStrIdT;
+		struct PhoneBillet
 		{
-			if (!phoneToStr(pron[i], str))
-				return false; // can't convert some phone to string
-
-			result.pushBackPhone(str);
-		}
-		return true;
-	}
-
-	// Returns true if conversion was successfull
-	auto charToPhoneSimple(wchar_t letter, UkrainianPhoneId* phone) -> bool
-	{
-		struct CharToPhone
-		{
-			wchar_t Letter;
-			UkrainianPhoneId Phone;
+			BasicPhoneStrIdT BasicPhoneStrId;
+			boost::optional<CharGroup> DerivedFromChar = boost::none;
+			boost::optional<SoftHardConsonant> SoftHard = boost::none; // valid for consonants only
+			boost::optional<bool> IsStressed = boost::none; // valid for for vowels only
 		};
-		// the nil at right part of the map means, that mapping is more complex than one-one
-		//wchar_t ukAlpha[] = L"абвгґдеєжзиіїйклмнопрстуфхцчшщьюя";
-		static std::array<CharToPhone, 35> ukAlphaArray = {
-			CharToPhone{ L'а', UkrainianPhoneId::P_A },
-			CharToPhone{ Letter_B, UkrainianPhoneId::Nil },
-			CharToPhone{ L'в', UkrainianPhoneId::P_V },
-			CharToPhone{ Letter_H, UkrainianPhoneId::Nil },
-			CharToPhone{ L'ґ', UkrainianPhoneId::P_G },
-			CharToPhone{ Letter_D, UkrainianPhoneId::Nil },
-			CharToPhone{ L'е', UkrainianPhoneId::P_E },
-			CharToPhone{ Letter_JE, UkrainianPhoneId::Nil },
-			CharToPhone{ Letter_ZH, UkrainianPhoneId::Nil },
-			CharToPhone{ Letter_Z, UkrainianPhoneId::Nil },
-			CharToPhone{ L'и', UkrainianPhoneId::P_Y },
-			CharToPhone{ L'і', UkrainianPhoneId::P_I },
-			CharToPhone{ Letter_JI, UkrainianPhoneId::Nil },
-			CharToPhone{ L'й', UkrainianPhoneId::P_J },
-			CharToPhone{ L'к', UkrainianPhoneId::P_K },
-			CharToPhone{ L'л', UkrainianPhoneId::P_L },
-			CharToPhone{ L'м', UkrainianPhoneId::P_M },
-			CharToPhone{ Letter_N, UkrainianPhoneId::Nil },
-			CharToPhone{ L'о', UkrainianPhoneId::P_O },
-			CharToPhone{ L'п', UkrainianPhoneId::P_P },
-			CharToPhone{ L'р', UkrainianPhoneId::P_R },
-			CharToPhone{ Letter_S, UkrainianPhoneId::Nil },
-			CharToPhone{ Letter_T, UkrainianPhoneId::Nil },
-			CharToPhone{ L'у', UkrainianPhoneId::P_U },
-			CharToPhone{ L'ф', UkrainianPhoneId::P_F },
-			CharToPhone{ L'х', UkrainianPhoneId::P_KH },
-			CharToPhone{ Letter_TS, UkrainianPhoneId::P_TS },
-			CharToPhone{ Letter_CH, UkrainianPhoneId::P_CH },
-			CharToPhone{ Letter_SH, UkrainianPhoneId::P_SH },
-			CharToPhone{ Letter_SHCH, UkrainianPhoneId::Nil },
-			CharToPhone{ Letter_SoftSign, UkrainianPhoneId::Nil },
-			CharToPhone{ Letter_JU, UkrainianPhoneId::Nil },
-			CharToPhone{ Letter_JA, UkrainianPhoneId::Nil },
-			CharToPhone{ Letter_Hyphen, UkrainianPhoneId::Nil },
-			CharToPhone{ Letter_Apostrophe, UkrainianPhoneId::Nil },
-		};
-
-		static std::map<wchar_t, UkrainianPhoneId> charToPhoneMap;
-
-		if (charToPhoneMap.empty())
+		auto newConsonantPhone = [&phoneReg](const std::string& basicPhoneStr, boost::optional<SoftHardConsonant> SoftHard) -> PhoneBillet
 		{
-			for (size_t i = 0; i < ukAlphaArray.size(); ++i)
+			bool success = false;
+			BasicPhoneStrIdT basicId = phoneReg.basicPhoneId(basicPhoneStr, &success);
+			PG_Assert(success && "Unknown basic phone str");
+
+			PhoneBillet billet;
+			billet.BasicPhoneStrId = basicId;
+			billet.DerivedFromChar = CharGroup::Consonant;
+			billet.SoftHard = SoftHard;
+			return billet;
+		};
+		auto newVowelPhone = [&phoneReg](const std::string& basicPhoneStr, boost::optional<bool> isStressed) -> PhoneBillet
+		{
+			bool success = false;
+			BasicPhoneStrIdT basicId = phoneReg.basicPhoneId(basicPhoneStr, &success);
+			PG_Assert(success && "Unknown basic phone str");
+
+			PhoneBillet billet;
+			billet.BasicPhoneStrId = basicId;
+			billet.DerivedFromChar = CharGroup::Vowel;
+			billet.IsStressed = isStressed;
+			return billet;
+		};
+		// return true if the char was sucessfully mapped.
+		auto simpleMap = [&newVowelPhone, &newConsonantPhone](wchar_t letter, PhoneBillet& ph) -> bool
+		{
+			switch (letter)
 			{
-				const CharToPhone& c = ukAlphaArray[i];
-				//qDebug() << c.Letter << " " << (int)c.Letter;
-				charToPhoneMap[c.Letter] = c.Phone;
+			case L'а':
+				ph = newVowelPhone("A", nullptr);
+				break;
+			case L'в':
+				ph = newConsonantPhone("V", SoftHardConsonant::Hard);
+				break;
+			case L'ґ':
+				ph = newConsonantPhone("G", SoftHardConsonant::Hard);
+				break;
+			case L'е':
+				ph = newVowelPhone("E", nullptr);
+				break;
+			case L'и':
+				ph = newVowelPhone("Y", nullptr);
+				break;
+			case L'і':
+				ph = newVowelPhone("I", nullptr);
+				break;
+			case L'й':
+				ph = newConsonantPhone("J", SoftHardConsonant::Hard);
+				break;
+			case L'к':
+				ph = newConsonantPhone("K", SoftHardConsonant::Hard);
+				break;
+			case L'л':
+				ph = newConsonantPhone("L", nullptr);
+				break;
+			case L'м':
+				ph = newConsonantPhone("M", SoftHardConsonant::Hard);
+				break;
+			case L'о':
+				ph = newVowelPhone("O", nullptr);
+				break;
+			case L'п':
+				ph = newConsonantPhone("P", SoftHardConsonant::Hard);
+				break;
+			case L'р':
+				ph = newConsonantPhone("R", nullptr);
+				break;
+			case L'у':
+				ph = newVowelPhone("U", nullptr);
+				break;
+			case L'ф':
+				ph = newConsonantPhone("F", SoftHardConsonant::Hard);
+				break;
+			case L'х':
+				ph = newConsonantPhone("KH", SoftHardConsonant::Hard);
+				break;
+			case L'ц':
+				ph = newConsonantPhone("TS", nullptr);
+				break;
+			case L'ч':
+				ph = newConsonantPhone("CH", SoftHardConsonant::Hard);
+				break;
+			case L'ш':
+				ph = newConsonantPhone("SH", SoftHardConsonant::Hard);
+				break;
+			default:
+				return false;
 			}
-		}
-
-		auto it = charToPhoneMap.find(letter);
-		if (it != std::end(charToPhoneMap))
-		{
-			*phone = it->second;
 			return true;
-		}
-
-		return false;
-	}
-
-	std::tuple<bool, const char*> spellWord(const std::wstring& word, std::vector<UkrainianPhoneId>& phones)
-	{
+		};
+		std::vector<PhoneBillet> billetPhones;
 		for (size_t i = 0; i < word.size(); ++i)
 		{
 			wchar_t letter = word[i];
 
-			UkrainianPhoneId phone = UkrainianPhoneId::Nil;
-			bool convOp = charToPhoneSimple(letter, &phone);
-			if (!convOp)
-				return std::make_tuple(false, "Unknown letter");
-
-			if (phone != UkrainianPhoneId::Nil)
+			PhoneBillet phone;
+			bool mappedOk = simpleMap(letter, phone);
+			if (mappedOk)
 			{
-				phones.push_back(phone);
+				billetPhones.push_back(phone);
 				continue;
 			}
-			
+
 			// letter is converted in more complicated way
 
 			bool isFirstLetter = i == 0;
@@ -603,7 +760,7 @@ namespace PticaGovorun
 				{
 					if (isLastLetter)
 					{
-						phones.push_back(UkrainianPhoneId::P_D);
+						billetPhones.push_back(newConsonantPhone("D", nullptr));
 						continue;
 					}
 					else
@@ -611,13 +768,13 @@ namespace PticaGovorun
 						wchar_t nextLetter = word[i + 1];
 						if (nextLetter == Letter_Z)
 						{
-							phones.push_back(UkrainianPhoneId::P_DZ);
+							billetPhones.push_back(newConsonantPhone("DZ", nullptr));
 							i += 1; // skip next letter
 							continue;
 						}
 						else if (nextLetter == Letter_ZH)
 						{
-							phones.push_back(UkrainianPhoneId::P_DZH);
+							billetPhones.push_back(newConsonantPhone("DZH", SoftHardConsonant::Hard));
 							i += 1; // skip next letter
 							continue;
 						}
@@ -632,8 +789,8 @@ namespace PticaGovorun
 						if (word[i + 1] == Letter_ZH)
 						{
 							// skip first T
-							phones.push_back(UkrainianPhoneId::P_ZH);
-							phones.push_back(UkrainianPhoneId::P_ZH);
+							billetPhones.push_back(newConsonantPhone("ZH", SoftHardConsonant::Hard));
+							billetPhones.push_back(newConsonantPhone("ZH", SoftHardConsonant::Hard));
 							i += 1;
 							continue;
 						}
@@ -645,8 +802,8 @@ namespace PticaGovorun
 						if (word[i + 1] == Letter_D && word[i + 2] == Letter_ZH)
 						{
 							// skip first T
-							phones.push_back(UkrainianPhoneId::P_ZH);
-							phones.push_back(UkrainianPhoneId::P_DZH);
+							billetPhones.push_back(newConsonantPhone("ZH", SoftHardConsonant::Hard));
+							billetPhones.push_back(newConsonantPhone("DZH", SoftHardConsonant::Hard));
 							i += 2;
 							continue;
 						}
@@ -660,6 +817,7 @@ namespace PticaGovorun
 				// ZH->SH дужче [D U SH CH E]
 				// Z->S безпеки [B E S P E K A]
 				bool beforeUnvoiced = false;
+				bool isNextSoftSign = false;
 				if (!isLastLetter)
 				{
 					wchar_t nextLetter = word[i + 1];
@@ -668,54 +826,65 @@ namespace PticaGovorun
 					else
 					{
 						// check if the next letter is a soft sign and then the unvoiced consonant
-						if (nextLetter == Letter_SoftSign && i + 2 < word.size())
+						if (nextLetter == Letter_SoftSign)
 						{
-							wchar_t nextNextLetter = word[i + 2];
-							if (isUnvoicedCharUk(nextNextLetter))
-								beforeUnvoiced = true;
+							isNextSoftSign = true;
+							if (i + 2 < word.size())
+							{
+								wchar_t nextNextLetter = word[i + 2];
+								if (isUnvoicedCharUk(nextNextLetter))
+									beforeUnvoiced = true;
+							}
 						}
 					}
 				}
 				if (!beforeUnvoiced)
 				{
+					PhoneBillet ph;
 					if (letter == Letter_B)
-						phones.push_back(UkrainianPhoneId::P_B);
+						ph = newConsonantPhone("B", SoftHardConsonant::Hard);
 					else if (letter == Letter_H)
-						phones.push_back(UkrainianPhoneId::P_H);
+						ph = newConsonantPhone("H", SoftHardConsonant::Hard);
 					else if (letter == Letter_D)
-						phones.push_back(UkrainianPhoneId::P_D);
+						ph = newConsonantPhone("D", nullptr);
 					else if (letter == Letter_ZH)
-						phones.push_back(UkrainianPhoneId::P_ZH);
+						ph = newConsonantPhone("ZH", SoftHardConsonant::Hard);
 					else if (letter == Letter_Z)
-						phones.push_back(UkrainianPhoneId::P_Z);
+						ph = newConsonantPhone("Z", nullptr);
 					else PG_Assert(false);
+					billetPhones.push_back(ph);
 				}
 				else
 				{
+					PhoneBillet ph;
 					if (letter == Letter_B)
-						phones.push_back(UkrainianPhoneId::P_P);
+						ph = newConsonantPhone("P", SoftHardConsonant::Hard);
 					else if (letter == Letter_H)
-						phones.push_back(UkrainianPhoneId::P_KH);
+						ph = newConsonantPhone("KH", SoftHardConsonant::Hard);
 					else if (letter == Letter_D)
-						phones.push_back(UkrainianPhoneId::P_T);
+						ph = newConsonantPhone("T", nullptr);
 					else if (letter == Letter_ZH)
-						phones.push_back(UkrainianPhoneId::P_SH);
+						ph = newConsonantPhone("SH", SoftHardConsonant::Hard);
 					else if (letter == Letter_Z)
-						phones.push_back(UkrainianPhoneId::P_S);
+						ph = newConsonantPhone("S", nullptr);
 					else PG_Assert(false);
+
+					if (isNextSoftSign)
+						ph.SoftHard = SoftHardConsonant::Soft; // softened by soft sign
+					billetPhones.push_back(ph);
 				}
 				continue;
 			}
 			else if (letter == Letter_JI)
 			{
 				// Rule: letter JI always converts as J and I
-				phones.push_back(UkrainianPhoneId::P_J);
-				phones.push_back(UkrainianPhoneId::P_I);
+				billetPhones.push_back(newConsonantPhone("J", SoftHardConsonant::Hard));
+				billetPhones.push_back(newVowelPhone("I", nullptr));
 			}
 			else if (letter == Letter_SHCH)
 			{
-				phones.push_back(UkrainianPhoneId::P_SH);
-				phones.push_back(UkrainianPhoneId::P_CH);
+				billetPhones.push_back(newConsonantPhone("SH", SoftHardConsonant::Hard));
+				billetPhones.push_back(newConsonantPhone("CH", SoftHardConsonant::Hard));
 			}
 			else if (letter == Letter_JE || letter == Letter_JU || letter == Letter_JA)
 			{
@@ -740,25 +909,25 @@ namespace PticaGovorun
 					// взаємно [V Z A J E M N O]
 					// настою [N A S T O J U]
 					// абияк [A B Y J A K]
-					phones.push_back(UkrainianPhoneId::P_J);
+					billetPhones.push_back(newConsonantPhone("J", SoftHardConsonant::Hard));
 				}
-				
+
 				if (letter == Letter_JE)
 				{
 					// суттєво [S U T T E V O]
-					phones.push_back(UkrainianPhoneId::P_E);
+					billetPhones.push_back(newVowelPhone("E", nullptr));
 				}
 				else if (letter == Letter_JU)
 				{
 					// олексюк [O L E K S U K]
 					// бурю [B U R U]
-					phones.push_back(UkrainianPhoneId::P_U);
+					billetPhones.push_back(newVowelPhone("U", nullptr));
 				}
 				else if (letter == Letter_JA)
 				{
 					// буря [B U R A]
 					// зоряний [Z O R A N Y J]
-					phones.push_back(UkrainianPhoneId::P_A);
+					billetPhones.push_back(newVowelPhone("A", nullptr));
 				}
 				else
 					PG_Assert(false, "Current letter=JE or JU or JA");
@@ -771,9 +940,9 @@ namespace PticaGovorun
 					if (word[i + 1] == Letter_T && word[i + 2] == Letter_S && word[i + 3] == Letter_T)
 					{
 						// skip first T
-						phones.push_back(UkrainianPhoneId::P_N);
-						phones.push_back(UkrainianPhoneId::P_S);
-						phones.push_back(UkrainianPhoneId::P_T);
+						billetPhones.push_back(newConsonantPhone("N", SoftHardConsonant::Hard));
+						billetPhones.push_back(newConsonantPhone("S", SoftHardConsonant::Hard));
+						billetPhones.push_back(newConsonantPhone("T", SoftHardConsonant::Hard));
 						i += 3;
 						continue;
 					}
@@ -784,14 +953,14 @@ namespace PticaGovorun
 					if (word[i + 1] == Letter_T && word[i + 2] == Letter_S && word[i + 3] == Letter_SoftSign && word[i + 4] == Letter_K)
 					{
 						// skip first T
-						phones.push_back(UkrainianPhoneId::P_N);
-						phones.push_back(UkrainianPhoneId::P_S);
-						phones.push_back(UkrainianPhoneId::P_K);
+						billetPhones.push_back(newConsonantPhone("N", SoftHardConsonant::Hard));
+						billetPhones.push_back(newConsonantPhone("S", SoftHardConsonant::Soft));
+						billetPhones.push_back(newConsonantPhone("K", SoftHardConsonant::Hard));
 						i += 4;
 						continue;
 					}
 				}
-				phones.push_back(UkrainianPhoneId::P_N);
+				billetPhones.push_back(newConsonantPhone("N", nullptr));
 			}
 			else if (letter == Letter_S)
 			{
@@ -801,8 +970,8 @@ namespace PticaGovorun
 					// донісши [D O N I SH SH Y]
 					if (word[i + 1] == Letter_SH)
 					{
-						phones.push_back(UkrainianPhoneId::P_SH);
-						phones.push_back(UkrainianPhoneId::P_SH);
+						billetPhones.push_back(newConsonantPhone("SH", SoftHardConsonant::Hard));
+						billetPhones.push_back(newConsonantPhone("SH", SoftHardConsonant::Hard));
 						i += 1;
 						continue;
 					}
@@ -813,8 +982,8 @@ namespace PticaGovorun
 					// шістдесят [SH I Z D E S A T]
 					if (word[i + 1] == Letter_T && word[i + 2] == Letter_D)
 					{
-						phones.push_back(UkrainianPhoneId::P_Z);
-						phones.push_back(UkrainianPhoneId::P_D);
+						billetPhones.push_back(newConsonantPhone("Z", SoftHardConsonant::Hard));
+						billetPhones.push_back(newConsonantPhone("D", SoftHardConsonant::Hard));
 						i += 2;
 						continue;
 					}
@@ -826,8 +995,8 @@ namespace PticaGovorun
 					// нацистської [N A TS Y S1 K O J I]
 					if (word[i + 1] == Letter_T && word[i + 2] == Letter_S && word[i + 3] == Letter_SoftSign && word[i + 4] == Letter_K)
 					{
-						phones.push_back(UkrainianPhoneId::P_S);
-						phones.push_back(UkrainianPhoneId::P_K);
+						billetPhones.push_back(newConsonantPhone("S", SoftHardConsonant::Soft));
+						billetPhones.push_back(newConsonantPhone("K", SoftHardConsonant::Hard));
 						i += 4;
 						continue;
 					}
@@ -838,8 +1007,8 @@ namespace PticaGovorun
 					// шістсот [SH I S S O T]
 					if (word[i + 1] == Letter_T && word[i + 2] == Letter_S)
 					{
-						phones.push_back(UkrainianPhoneId::P_S);
-						phones.push_back(UkrainianPhoneId::P_S);
+						billetPhones.push_back(newConsonantPhone("S", SoftHardConsonant::Hard));
+						billetPhones.push_back(newConsonantPhone("S", SoftHardConsonant::Hard));
 						i += 2;
 						continue;
 					}
@@ -850,13 +1019,13 @@ namespace PticaGovorun
 					// відпустці [V I D P U S TS I]
 					if (word[i + 1] == Letter_T && word[i + 2] == Letter_TS)
 					{
-						phones.push_back(UkrainianPhoneId::P_S);
-						phones.push_back(UkrainianPhoneId::P_TS);
+						billetPhones.push_back(newConsonantPhone("S", SoftHardConsonant::Hard));
+						billetPhones.push_back(newConsonantPhone("TS", SoftHardConsonant::Hard));
 						i += 2;
 						continue;
 					}
 				}
-				phones.push_back(UkrainianPhoneId::P_S);
+				billetPhones.push_back(newConsonantPhone("S", nullptr));
 			}
 			else if (letter == Letter_T)
 			{
@@ -866,7 +1035,7 @@ namespace PticaGovorun
 					// п'ятсот [P J A TS O T]
 					if (word[i + 1] == Letter_S)
 					{
-						phones.push_back(UkrainianPhoneId::P_TS);
+						billetPhones.push_back(newConsonantPhone("TS", SoftHardConsonant::Hard));
 						i += 1;
 						continue;
 					}
@@ -874,11 +1043,11 @@ namespace PticaGovorun
 				if (i + 2 < word.size()) // size(1 S)=2
 				{
 					// T 1 S -> TS
-					// триматиметься [T R Y M A T Y M E TS A]
+					// триматиметься [T R Y M A T Y M E TS1 A]
 					if (word[i + 1] == Letter_SoftSign && word[i + 2] == Letter_S)
 					{
-						phones.push_back(UkrainianPhoneId::P_TS);
-						//phones.push_back(UkrainianPhoneId::P_TS); // if тц -> TS TS
+						// if тц -> TS TS
+						billetPhones.push_back(newConsonantPhone("TS", SoftHardConsonant::Soft));
 						i += 2;
 						continue;
 					}
@@ -889,8 +1058,8 @@ namespace PticaGovorun
 					// клітці [K L I TS TS I]
 					if (word[i + 1] == Letter_TS)
 					{
-						phones.push_back(UkrainianPhoneId::P_TS);
-						phones.push_back(UkrainianPhoneId::P_TS);
+						billetPhones.push_back(newConsonantPhone("TS", SoftHardConsonant::Hard));
+						billetPhones.push_back(newConsonantPhone("TS", SoftHardConsonant::Hard));
 						i += 1;
 						continue;
 					}
@@ -901,38 +1070,48 @@ namespace PticaGovorun
 					// отче [O CH CH E]
 					if (word[i + 1] == Letter_CH)
 					{
-						phones.push_back(UkrainianPhoneId::P_CH);
-						phones.push_back(UkrainianPhoneId::P_CH);
+						billetPhones.push_back(newConsonantPhone("CH", SoftHardConsonant::Hard));
+						billetPhones.push_back(newConsonantPhone("CH", SoftHardConsonant::Hard));
 						i += 1;
 						continue;
 					}
 				}
-				phones.push_back(UkrainianPhoneId::P_T);
+				billetPhones.push_back(newConsonantPhone("T", nullptr));
 			}
 			else if (letter == Letter_SoftSign)
 			{
+				// soften the previous char
+				if (!billetPhones.empty())
+				{
+					PhoneBillet& ph = billetPhones.back();
+					bool ok = ph.DerivedFromChar == CharGroup::Consonant;
+					if (!ok)
+						return std::make_tuple(false, "Only consonant can be softened");
+					ph.SoftHard = SoftHardConsonant::Soft;
+				}
+
 				if (!isLastLetter)
 				{
 					wchar_t nextLetter = word[i + 1];
 					if (nextLetter == Letter_JA)
 					{
-						// коньяку [K O N J A K]
-						phones.push_back(UkrainianPhoneId::P_J);
-						phones.push_back(UkrainianPhoneId::P_A);
+						// коньяку [K O N1 J A K]
+						billetPhones.push_back(newConsonantPhone("J", SoftHardConsonant::Hard));
+						billetPhones.push_back(newVowelPhone("A", nullptr));
 						i += 1; // skip next letter
 					}
 					else if (nextLetter == Letter_JE)
 					{
-						// мосьє [M O S J E]
-						phones.push_back(UkrainianPhoneId::P_J);
-						phones.push_back(UkrainianPhoneId::P_E);
+						// мосьє [M O S1 J E]
+						billetPhones.push_back(newConsonantPhone("J", SoftHardConsonant::Hard));
+						billetPhones.push_back(newVowelPhone("E", nullptr));
 						i += 1; // skip next letter
 					}
 					else if (nextLetter == Letter_JU)
 					{
 						// нью [N J U]
-						phones.push_back(UkrainianPhoneId::P_J);
-						phones.push_back(UkrainianPhoneId::P_U);
+						billetPhones.push_back(newConsonantPhone("J", SoftHardConsonant::Hard));
+						billetPhones.push_back(newVowelPhone("U", nullptr));
 						i += 1; // skip next letter
 					}
 					else
@@ -943,6 +1122,16 @@ namespace PticaGovorun
 			}
 			else if (letter == Letter_Apostrophe)
 			{
+				// harden the previous char
+				if (!billetPhones.empty())
+				{
+					PhoneBillet& ph = billetPhones.back();
+					bool ok = ph.DerivedFromChar == CharGroup::Consonant;
+					if (!ok)
+						return std::make_tuple(false, "Only consonant can be hardened");
+					ph.SoftHard = SoftHardConsonant::Hard;
+				}
+
 				if (isLastLetter)
 				{
 					// apostrophe is the last char when the given word is a truncated part of some complete word
@@ -954,22 +1143,22 @@ namespace PticaGovorun
 					if (nextLetter == Letter_JA)
 					{
 						// бур'ян [B U R J A N]
-						phones.push_back(UkrainianPhoneId::P_J);
-						phones.push_back(UkrainianPhoneId::P_A);
+						billetPhones.push_back(newConsonantPhone("J", SoftHardConsonant::Hard));
+						billetPhones.push_back(newVowelPhone("A", nullptr));
 						i += 1; // skip next letter
 					}
 					else if (nextLetter == Letter_JE)
 					{
 						// кар'єр [K A R J E R]
-						phones.push_back(UkrainianPhoneId::P_J);
-						phones.push_back(UkrainianPhoneId::P_E);
+						billetPhones.push_back(newConsonantPhone("J", SoftHardConsonant::Hard));
+						billetPhones.push_back(newVowelPhone("E", nullptr));
 						i += 1; // skip next letter
 					}
 					else if (nextLetter == Letter_JU)
 					{
 						// комп'ютер [K O M P J U T E R]
-						phones.push_back(UkrainianPhoneId::P_J);
-						phones.push_back(UkrainianPhoneId::P_U);
+						billetPhones.push_back(newConsonantPhone("J", SoftHardConsonant::Hard));
+						billetPhones.push_back(newVowelPhone("U", nullptr));
 						i += 1; // skip next letter
 					}
 					else
@@ -984,9 +1173,47 @@ namespace PticaGovorun
 			}
 			else
 			{
-				PG_Assert(false && "Letter must be processed already");
+				return std::make_tuple(false, "Unknown letter");
 			}
 		}
+		{
+			// rule: one vowel in a word is always stressed (not works with abbreviation eg USA)
+			int numVowels = 0;
+			PhoneBillet* lastPhone = nullptr;
+			for (PhoneBillet& ph : billetPhones)
+			{
+				if (ph.DerivedFromChar == CharGroup::Vowel)
+				{
+					numVowels++;
+					lastPhone = &ph;
+				}
+			}
+			if (numVowels == 1)
+				lastPhone->IsStressed = true;
+		}
+
+		// build phoneIds sequnces from phone billets
+		std::transform(billetPhones.cbegin(), billetPhones.cend(), std::back_inserter(phones), [&phoneReg](const PhoneBillet& ph) -> PhoneId
+		{
+			boost::optional<PhoneId> phoneId = nullptr;
+			if (ph.DerivedFromChar == CharGroup::Consonant)
+			{
+				boost::optional<SoftHardConsonant> softHard = ph.SoftHard;
+				if (softHard == nullptr)
+					softHard = phoneReg.defaultSoftHardConsonant();
+				phoneId = phoneReg.phoneIdSingle(ph.BasicPhoneStrId, softHard, nullptr);
+			}
+			else if (ph.DerivedFromChar == CharGroup::Vowel)
+			{
+				boost::optional<bool> isStressed = ph.IsStressed;
+				if (isStressed == nullptr)
+					isStressed = phoneReg.defaultIsVowelStressed();
+				phoneId = phoneReg.phoneIdSingle(ph.BasicPhoneStrId, nullptr, isStressed);
+			}
+			PG_Assert(phoneId != nullptr && "Can't map phone billet to phoneId");
+			return phoneId.get();
+		});
+
 		return std::make_tuple(true, nullptr);
 	}
 
@@ -1988,51 +2215,6 @@ namespace PticaGovorun
 			ch == L'ш' || ch == L'Ш' ||
 			ch == L'ц' || ch == L'Ц' ||
 			ch == L'ч' || ch == L'Ч';
-	}
-
-	bool isVowelDerivedUk(UkrainianPhoneId phoneId)
-	{
-		return
-			phoneId == UkrainianPhoneId::P_A ||
-			phoneId == UkrainianPhoneId::P_E ||
-			phoneId == UkrainianPhoneId::P_Y ||
-			phoneId == UkrainianPhoneId::P_I ||
-			phoneId == UkrainianPhoneId::P_O ||
-			phoneId == UkrainianPhoneId::P_U;
-	}
-
-	bool isConsonantDerivedUk(UkrainianPhoneId phoneId)
-	{
-		return
-			phoneId == UkrainianPhoneId::P_B ||
-			phoneId == UkrainianPhoneId::P_V ||
-			phoneId == UkrainianPhoneId::P_H ||
-			phoneId == UkrainianPhoneId::P_G ||
-			phoneId == UkrainianPhoneId::P_D ||
-			phoneId == UkrainianPhoneId::P_ZH ||
-			phoneId == UkrainianPhoneId::P_Z ||
-			phoneId == UkrainianPhoneId::P_K ||
-			phoneId == UkrainianPhoneId::P_L ||
-			phoneId == UkrainianPhoneId::P_M ||
-			phoneId == UkrainianPhoneId::P_N ||
-			phoneId == UkrainianPhoneId::P_P ||
-			phoneId == UkrainianPhoneId::P_R ||
-			phoneId == UkrainianPhoneId::P_S ||
-			phoneId == UkrainianPhoneId::P_T ||
-			phoneId == UkrainianPhoneId::P_F ||
-			phoneId == UkrainianPhoneId::P_KH ||
-			phoneId == UkrainianPhoneId::P_TS ||
-			phoneId == UkrainianPhoneId::P_CH ||
-			phoneId == UkrainianPhoneId::P_SH;
-	}
-
-	boost::optional<CharGroup> classifyPhoneUk(int phoneId)
-	{
-		if (isVowelDerivedUk((UkrainianPhoneId)phoneId))
-			return CharGroup::Vowel;
-		else if (isConsonantDerivedUk((UkrainianPhoneId)phoneId))
-			return CharGroup::Consonant;
-		return nullptr;
 	}
 
 	// Returns number of made transformations or zero if the map was not changed.

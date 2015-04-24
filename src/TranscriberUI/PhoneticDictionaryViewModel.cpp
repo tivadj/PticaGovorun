@@ -17,6 +17,14 @@ namespace PticaGovorun
 
 	void PhoneticDictionaryViewModel::ensureDictionaryLoaded()
 	{
+		if (phoneReg_ == nullptr)
+		{
+			phoneReg_ = std::make_unique<PhoneRegistry>();
+			bool allowSoftHardConsonant = false;
+			bool allowVowelStress = false;
+			initPhoneRegistryUk(*phoneReg_, allowSoftHardConsonant, allowVowelStress);
+		}
+
 		if (wordToPhoneListDict_.empty())
 		{
 			QTextCodec* pTextCodec = QTextCodec::codecForName("windows-1251");
@@ -33,7 +41,7 @@ namespace PticaGovorun
 			bool loadOp;
 			const char* errMsg;
 			phoneticDict.clear();
-			std::tie(loadOp, errMsg) = loadPhoneticDictionaryYaml(persianDictPath, phoneticDict);
+			std::tie(loadOp, errMsg) = loadPhoneticDictionaryYaml(persianDictPath, *phoneReg_, phoneticDict);
 			if (!loadOp)
 				qDebug(errMsg);
 			else
@@ -48,7 +56,7 @@ namespace PticaGovorun
 			const char* errMsg;
 			phoneticDict.clear();
 			brokenWordToPronsDict_.clear();
-			std::tie(loadOp, errMsg) = loadPhoneticDictionaryYaml(brokenDictPath, phoneticDict);
+			std::tie(loadOp, errMsg) = loadPhoneticDictionaryYaml(brokenDictPath, *phoneReg_, phoneticDict);
 			if (!loadOp)
 				qDebug(errMsg);
 			else
@@ -172,7 +180,7 @@ namespace PticaGovorun
 					buf.append("\t");
 
 					std::string phonesBuf;
-					phoneListToStr(pron.PhoneIds, phonesBuf);
+					phoneListToStr(*phoneReg_, pron.Phones, phonesBuf);
 
 					buf.append(phonesBuf.c_str());
 
@@ -229,7 +237,7 @@ namespace PticaGovorun
 		bool parseOp;
 		const char* errMsg;
 		std::vector<PronunciationFlavour> prons;
-		std::tie(parseOp, errMsg) = parsePronuncLines(pronLinesAsStr.toStdWString(), prons);
+		std::tie(parseOp, errMsg) = parsePronuncLines(*phoneReg_, pronLinesAsStr.toStdWString(), prons);
 		if (!parseOp)
 		{
 			qDebug() << errMsg;
@@ -259,12 +267,12 @@ namespace PticaGovorun
 
 		std::vector<PhoneticWord> words(persianWordToPronsDict_.size());
 		std::transform(std::begin(persianWordToPronsDict_), std::end(persianWordToPronsDict_), std::begin(words), selectSecondFun);
-		savePhoneticDictionaryYaml(words, persianDictPath);
+		savePhoneticDictionaryYaml(words, persianDictPath, *phoneReg_);
 
 		//
 		words.resize(brokenWordToPronsDict_.size());
 		std::transform(std::begin(brokenWordToPronsDict_), std::end(brokenWordToPronsDict_), std::begin(words), selectSecondFun);
-		savePhoneticDictionaryYaml(words, brokenDictPath);
+		savePhoneticDictionaryYaml(words, brokenDictPath, *phoneReg_);
 	}
 
 	void PhoneticDictionaryViewModel::validateSegmentTranscription(const QString& text, QStringList& resultMessages)

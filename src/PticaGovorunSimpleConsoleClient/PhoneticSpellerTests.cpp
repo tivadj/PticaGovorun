@@ -9,14 +9,6 @@
 namespace PhoneticSpellerTestsNS
 {
 	using namespace PticaGovorun;
-	void simple1()
-	{
-		std::wstring word = L"чорнобиль";
-		std::vector<UkrainianPhoneId> phones;
-		bool op;
-		const char* errMsg;
-		std::tie(op, errMsg) = PticaGovorun::spellWord(word, phones);
-	}
 
 	void phoneListToStr(const wv::slice<std::string>& phonesList, std::stringstream& result)
 	{
@@ -40,7 +32,7 @@ namespace PhoneticSpellerTestsNS
 		std::tie(loadOp, errMsg) = loadPronunciationVocabulary2(shrekkyDic, wordToPhoneListDict, *pTextCodec);
 		if (!loadOp)
 			return;
-		normalizePronunciationVocabulary(wordToPhoneListDict);
+		normalizePronunciationVocabulary(wordToPhoneListDict, true, false);
 
 		std::stringstream dumpFileName;
 		dumpFileName << "spellErrors.";
@@ -56,6 +48,9 @@ namespace PhoneticSpellerTestsNS
 		QTextStream dumpFileStream(&dumpFile);
 		dumpFileStream.setCodec("UTF-8");
 
+		PhoneRegistry phoneReg;
+		initPhoneRegistryUk(phoneReg, true, true);
+
 		int errorThresh = 0;
 		for (const auto& pair : wordToPhoneListDict)
 		{
@@ -67,32 +62,34 @@ namespace PhoneticSpellerTestsNS
 
 			const Pronunc& pronDict = pair.second[0];
 
-			std::vector<UkrainianPhoneId> phones;
+			std::vector<PhoneId> phones;
 			bool spellOp;
-			std::tie(spellOp, errMsg) = spellWord(word, phones);
+			std::tie(spellOp, errMsg) = spellWordUk(phoneReg, word, phones);
 			if (!spellOp)
 			{
 				dumpFileStream << "ERROR: can't spell word='" << QString::fromStdWString(word) << "'" <<errMsg << "\n";
 				continue;
 			}
 
-			Pronunc pronAutomatic;
-			if (!pronuncToStr(phones, pronAutomatic))
+			std::string pronAutomatic;
+			if (!phoneListToStr(phoneReg, phones, pronAutomatic))
 			{
 				dumpFileStream << "ERROR: pronuncToStr (Pronunc.ToString)" << "\n";
 				continue;
 			}
 
-			bool eqS = pronDict == pronAutomatic;
+			dumpFileName.str("");
+			phoneListToStr(pronDict.Phones, dumpFileName);
+			std::string shrekkyPhones = dumpFileName.str();
+
+			bool eqS = shrekkyPhones == pronAutomatic;
 			if (!eqS)
 			{
 				if (false && ++errorThresh > 100)
 					break;
-				dumpFileName.str("");
-				phoneListToStr(pronDict.Phones, dumpFileName);
 
-				dumpFileStream << "Expect=" << QString::fromLatin1(dumpFileName.str().c_str()) << "\t" << QString::fromLatin1(pronDict.StrDebug.c_str()) << "\t" << QString::fromStdWString(word) << errMsg << "\n";
-				dumpFileStream << "Actual=" << QString::fromLatin1(pronAutomatic.StrDebug.c_str()) << "\n";
+				dumpFileStream << "Expect=" << QString::fromLatin1(shrekkyPhones.c_str()) << "\t" << QString::fromLatin1(pronDict.StrDebug.c_str()) << "\t" << QString::fromStdWString(word) << errMsg << "\n";
+				dumpFileStream << "Actual=" << QString::fromLatin1(pronAutomatic.c_str()) << "\n";
 				dumpFileStream << "\n";
 			}
 		}

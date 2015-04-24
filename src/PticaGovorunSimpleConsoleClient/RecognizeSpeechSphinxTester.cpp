@@ -3,6 +3,7 @@
 #include <array>
 #include <iostream>
 #include <locale>
+#include <set>
 
 #include <windows.h>
 
@@ -143,13 +144,13 @@ namespace RecognizeSpeechSphinxTester
 		static CostType getZeroCosts() {
 			return 0;
 		}
-		inline CostType getInsertSymbolCost(Letter x) {
+		inline CostType getInsertSymbolCost(Letter x) const {
 			return 1;
 		}
-		inline CostType getRemoveSymbolCost(Letter x) {
+		inline CostType getRemoveSymbolCost(Letter x) const {
 			return 1;
 		}
-		inline CostType getSubstituteSymbolCost(Letter x, Letter y) {
+		inline CostType getSubstituteSymbolCost(Letter x, Letter y) const {
 			return x == y ? 0 : 1;
 		}
 	};
@@ -215,13 +216,13 @@ namespace RecognizeSpeechSphinxTester
 		static int getZeroCosts() {
 			return 0;
 		}
-		inline int getInsertSymbolCost(wchar_t x) {
+		inline int getInsertSymbolCost(wchar_t x) const {
 			return 1;
 		}
-		inline int getRemoveSymbolCost(wchar_t x) {
+		inline int getRemoveSymbolCost(wchar_t x) const {
 			return 1;
 		}
-		inline int getSubstituteSymbolCost(wchar_t x, wchar_t y)
+		inline int getSubstituteSymbolCost(wchar_t x, wchar_t y) const
 		{
 			if (x == y) return 0;
 			boost::optional<CharGroup> xClass = classifyUkrainianChar(x);
@@ -240,43 +241,105 @@ namespace RecognizeSpeechSphinxTester
 	}
 
 	class PhoneProximityCosts {
+		const PhoneRegistry& phoneReg_;
+		std::set<PhoneId> groupBP_;
+		std::set<PhoneId> groupVF_;
+		std::set<PhoneId> groupHKH_;
+		std::set<PhoneId> groupHG_;
+		std::set<PhoneId> groupDT_;
+		std::set<PhoneId> groupZS_;
+		std::set<PhoneId> groupZHSH_;
+		PhoneId consonantJ_;
 	public:
 		typedef float CostType;
+
+		PhoneProximityCosts(const PhoneRegistry& phoneReg) : phoneReg_(phoneReg)
+		{
+			consonantJ_ = phoneReg.phoneIdSingle("J", SoftHardConsonant::Hard, nullptr).get();
+
+			std::vector<PhoneId> phoneIds;
+			phoneReg.findPhonesByBasicPhoneStr("B", phoneIds);
+			phoneReg.findPhonesByBasicPhoneStr("P", phoneIds);
+			groupBP_.insert(phoneIds.begin(), phoneIds.end());
+
+			phoneIds.clear();
+			phoneReg.findPhonesByBasicPhoneStr("V", phoneIds);
+			phoneReg.findPhonesByBasicPhoneStr("F", phoneIds);
+			groupVF_.insert(phoneIds.begin(), phoneIds.end());
+
+			phoneIds.clear();
+			phoneReg.findPhonesByBasicPhoneStr("H", phoneIds);
+			phoneReg.findPhonesByBasicPhoneStr("KH", phoneIds);
+			groupHKH_.insert(phoneIds.begin(), phoneIds.end());
+
+			phoneIds.clear();
+			phoneReg.findPhonesByBasicPhoneStr("H", phoneIds);
+			phoneReg.findPhonesByBasicPhoneStr("G", phoneIds);
+			groupHG_.insert(phoneIds.begin(), phoneIds.end());
+
+			phoneIds.clear();
+			phoneReg.findPhonesByBasicPhoneStr("D", phoneIds);
+			phoneReg.findPhonesByBasicPhoneStr("T", phoneIds);
+			groupDT_.insert(phoneIds.begin(), phoneIds.end());
+
+			phoneIds.clear();
+			phoneReg.findPhonesByBasicPhoneStr("Z", phoneIds);
+			phoneReg.findPhonesByBasicPhoneStr("S", phoneIds);
+			groupZS_.insert(phoneIds.begin(), phoneIds.end());
+
+			phoneIds.clear();
+			phoneReg.findPhonesByBasicPhoneStr("ZH", phoneIds);
+			phoneReg.findPhonesByBasicPhoneStr("SH", phoneIds);
+			groupZHSH_.insert(phoneIds.begin(), phoneIds.end());
+		}
+
 		static CostType getZeroCosts() {
 			return 0;
 		}
-		inline CostType getInsertSymbolCost(UkrainianPhoneId x) {
+		inline CostType getInsertSymbolCost(const PhoneId& x) const {
 			return 3;
 		}
-		inline CostType getRemoveSymbolCost(UkrainianPhoneId x) {
+		inline CostType getRemoveSymbolCost(const PhoneId& x) const {
 			return 3;
 		}
-		inline CostType getSubstituteSymbolCost(UkrainianPhoneId x, UkrainianPhoneId y)
+		inline CostType getSubstituteSymbolCost(const PhoneId&  x, const PhoneId&  y) const
 		{
 			if (x == y) return 0;
-			
-			const CostType SimilarSound = 1;
-			if (setTwoEq(x, y, UkrainianPhoneId::P_B, UkrainianPhoneId::P_P))
-				return SimilarSound;
-			if (setTwoEq(x, y, UkrainianPhoneId::P_V, UkrainianPhoneId::P_F))
-				return SimilarSound;
-			if (setTwoEq(x, y, UkrainianPhoneId::P_H, UkrainianPhoneId::P_KH))
-				return SimilarSound;
-			if (setTwoEq(x, y, UkrainianPhoneId::P_H, UkrainianPhoneId::P_G))
-				return SimilarSound;
-			if (setTwoEq(x, y, UkrainianPhoneId::P_D, UkrainianPhoneId::P_T))
-				return SimilarSound;
-			if (setTwoEq(x, y, UkrainianPhoneId::P_Z, UkrainianPhoneId::P_S))
-				return SimilarSound;
-			if (setTwoEq(x, y, UkrainianPhoneId::P_ZH, UkrainianPhoneId::P_SH))
-				return SimilarSound;
 
+			const Phone* ph1 = phoneReg_.phoneById(x);
+			const Phone* ph2 = phoneReg_.phoneById(y);
+
+			// the same basic phone
+			if (ph1->BasicPhoneId == ph2->BasicPhoneId)
+				return 1;
+
+			// two phones sound similar
+			const CostType SimilarSound = 2;
+			if (groupBP_.find(x) != groupBP_.end() && groupBP_.find(y) != groupBP_.end())
+				return SimilarSound;
+			if (groupVF_.find(x) != groupVF_.end() && groupVF_.find(y) != groupVF_.end())
+				return SimilarSound;
+			if (groupHKH_.find(x) != groupHKH_.end() && groupHKH_.find(y) != groupHKH_.end())
+				return SimilarSound;
+			if (groupHG_.find(x) != groupHG_.end() && groupHG_.find(y) != groupHG_.end())
+				return SimilarSound;
+			if (groupDT_.find(x) != groupDT_.end() && groupDT_.find(y) != groupDT_.end())
+				return SimilarSound;
+			if (groupZS_.find(x) != groupZS_.end() && groupZS_.find(y) != groupZS_.end())
+				return SimilarSound;
+			if (groupZHSH_.find(x) != groupZHSH_.end() && groupZHSH_.find(y) != groupZHSH_.end())
+				return SimilarSound;
 			// DZ DZH?
 
-			boost::optional<CharGroup> xClass = classifyPhoneUk((int)x);
-			boost::optional<CharGroup> yClass = classifyPhoneUk((int)y);
-			if (xClass && xClass == yClass) // chars from the same group
-				return 2;
+			// though J is a consonant, better to avoid substituting it with other consonants (or vowels)
+			if (x == consonantJ_ || y == consonantJ_)
+				return 99;
+
+			//
+			const BasicPhone* basicPh1 = phoneReg_.basicPhone(ph1->BasicPhoneId);
+			const BasicPhone* basicPh2 = phoneReg_.basicPhone(ph2->BasicPhoneId);
+			if (basicPh1->DerivedFromChar == basicPh2->DerivedFromChar)
+				return 3;
 			return 99; // chars from different groups
 		}
 	};
@@ -294,8 +357,8 @@ namespace RecognizeSpeechSphinxTester
 		std::vector<std::wstring> WordsActualMerged;
 		std::vector<float> WordProbs; // confidence of each recognized word
 		std::vector<float> WordProbsMerged;
-		std::vector<UkrainianPhoneId> PhonesExpected;
-		std::vector<UkrainianPhoneId> PhonesActual;
+		std::vector<PhoneId> PhonesExpected;
+		std::vector<PhoneId> PhonesActual;
 		std::string PhonesExpectedAlignedStr;
 		std::string PhonesActualAlignedStr;
 	};
@@ -303,9 +366,11 @@ namespace RecognizeSpeechSphinxTester
 	void decodeSpeechSegments(const std::vector<AnnotatedSpeechSegment>& segments, ps_decoder_t *ps, float targetFrameRate, std::vector<TwoUtterances>& recogUtterances,
 		std::vector<int>& phoneConfusionMat, int phonesCount,
 		int& wordErrorTotalCount, int& wordTotalCount,
-		EditDistance<UkrainianPhoneId, PhoneProximityCosts>& phonesEditDist,
+		EditDistance<PhoneId, PhoneProximityCosts>& phonesEditDist,
+		const PhoneProximityCosts& editCost,
 		const std::unordered_map<std::wstring, std::wstring>& pronIdToWord,
-		const std::unordered_map<std::wstring, PronunciationFlavour>& pronIdToPronObj)
+		const std::unordered_map<std::wstring, PronunciationFlavour>& pronIdToPronObj,
+		const PhoneRegistry& phoneReg)
 	{
 		for (int i = 0; i < segments.size(); ++i)
 		{
@@ -474,58 +539,62 @@ namespace RecognizeSpeechSphinxTester
 			float distChar = findEditDistance(std::cbegin(wordsExpectedStr), std::cend(wordsExpectedStr), std::cbegin(wordsActualStr), std::cend(wordsActualStr), charCost);
 
 			// do phonetic expansion
-			std::vector<UkrainianPhoneId> expectedPhones;
+			std::vector<PhoneId> expectedPhones;
 			for (const std::wstring& pronId : pronIdsExpected)
 			{
 				auto pronIdIt = pronIdToPronObj.find(pronId);
 				PG_Assert(pronIdIt != pronIdToPronObj.end() && "The pronId used in transcription must exist in manual phonetic dictionary");
 				const PronunciationFlavour& pronObj = pronIdIt->second;
-				std::copy(pronObj.PhoneIds.begin(), pronObj.PhoneIds.end(), std::back_inserter(expectedPhones));
+				std::copy(pronObj.Phones.begin(), pronObj.Phones.end(), std::back_inserter(expectedPhones));
 			}
 
-			std::vector<UkrainianPhoneId> actualPhones;
-			std::vector<UkrainianPhoneId> phonesTmp;
-			for (const std::wstring& actualWord : wordsActual)
+			std::vector<PhoneId> actualPhones;
+			std::vector<PhoneId> phonesTmp;
+			for (const std::wstring& actualWord : wordsActualNoSil)
 			{
 				bool spellOp;
 				const char* msg;
 				phonesTmp.clear();
-				std::tie(spellOp, msg) = spellWord(actualWord, phonesTmp);
+				// TODO: first/last phone of a word can be modified by the neighbour words
+				std::tie(spellOp, msg) = spellWordUk(phoneReg,actualWord, phonesTmp);
+				PG_Assert(spellOp);
 				std::copy(phonesTmp.begin(), phonesTmp.end(), std::back_inserter(actualPhones));
 			}
-			phonesEditDist.estimateAllDistances(expectedPhones, actualPhones, PhoneProximityCosts());
+			phonesEditDist.estimateAllDistances(expectedPhones, actualPhones, editCost);
 			std::vector<EditStep> phoneEditRecipe;
 			phonesEditDist.minCostRecipe(phoneEditRecipe);
 
 			// update confusion matrix
 			for (const EditStep& step : phoneEditRecipe)
 			{
-				UkrainianPhoneId phoneExpect;
-				UkrainianPhoneId phoneActual;
+				int phoneIdExpect = -1;
+				int phoneIdActual = -1;
 				if (step.Change == StringEditOp::RemoveOp)
 				{
-					phoneExpect = expectedPhones[step.Remove.FirstRemoveInd];
-					phoneActual = UkrainianPhoneId::Nil;
+					phoneIdExpect = expectedPhones[step.Remove.FirstRemoveInd].Id;
+					phoneIdActual = 0;
 				}
 				else if (step.Change == StringEditOp::InsertOp)
 				{
-					phoneExpect = UkrainianPhoneId::Nil;
-					phoneActual = actualPhones[step.Insert.SecondSourceInd];
+					phoneIdExpect = 0;
+					phoneIdActual = actualPhones[step.Insert.SecondSourceInd].Id;
 				}
 				else if (step.Change == StringEditOp::SubstituteOp)
 				{
-					phoneExpect = expectedPhones[step.Substitute.FirstInd];
-					phoneActual = actualPhones[step.Substitute.SecondInd];
+					phoneIdExpect = expectedPhones[step.Substitute.FirstInd].Id;
+					phoneIdActual = actualPhones[step.Substitute.SecondInd].Id;
 				}
-				int row = (int)phoneExpect;
-				int col = (int)phoneActual;
+				PG_DbgAssert(phoneIdExpect != -1);
+				PG_DbgAssert(phoneIdActual != -1);
+				int row = phoneIdExpect;
+				int col = phoneIdActual;
 				phoneConfusionMat[col + phonesCount*row]++;
 			}
 
-			std::function<void(UkrainianPhoneId, std::vector<char>&)> ph2StrFun = [](UkrainianPhoneId ph, std::vector<char>& phVec)
+			std::function<void(PhoneId, std::vector<char>&)> ph2StrFun = [&phoneReg](PhoneId ph, std::vector<char>& phVec)
 			{
 				std::string phStr;
-				bool toStrOp = phoneToStr(ph, phStr);
+				bool toStrOp = phoneToStr(phoneReg, ph, phStr);
 				PG_Assert(toStrOp);
 				std::copy(phStr.begin(), phStr.end(), std::back_inserter(phVec));
 			};
@@ -560,7 +629,7 @@ namespace RecognizeSpeechSphinxTester
 		}
 	}
 
-	void dumpConfusionMatrix(const std::vector<int>& phoneConfusionMat, int phonesCount, const std::string& outFilePath)
+	void dumpConfusionMatrix(const std::vector<int>& phoneConfusionMat, int phonesCount, const std::string& outFilePath, const PhoneRegistry& phoneReg)
 	{
 		// find pivotal phone of high confusion
 		std::vector<int> confData;
@@ -586,25 +655,26 @@ namespace RecognizeSpeechSphinxTester
 		QTextStream dumpFileStream(&dumpFile);
 		dumpFileStream.setCodec("UTF-8");
 
-		auto ph2StrEx = [](UkrainianPhoneId phId, std::string& phStr) -> bool
+		auto ph2StrEx = [&phoneReg](int phoneId, std::string& phStr) -> bool
 		{
-			if (phId == UkrainianPhoneId::Nil)
+			if (phoneId == 0)
 			{
 				phStr = "nil";
 				return true;
 			}
-			return phoneToStr(phId, phStr);
+			phoneReg.assumeSequentialPhoneIdsWithoutGaps();
+			return phoneToStr(phoneReg, phoneId, phStr);
 		};
 		{
 			dumpFileStream << "<table>";
 			dumpFileStream << "<th>Conf</th>"; // top-left corner cell header
 
+			// phone id goes [0..phonesCount)  Phone with id=0 corresponds to nil
 			// print header
 			std::string phStr;
 			for (int col = 0; col < phonesCount; ++col)
 			{
-				UkrainianPhoneId ph2 = (UkrainianPhoneId)col;
-				bool phOp = ph2StrEx(ph2, phStr);
+				bool phOp = ph2StrEx(col, phStr);
 				PG_Assert(phOp);
 				dumpFileStream <<"<th>" << QString::fromStdString(phStr) << "</th>";
 			}
@@ -615,8 +685,7 @@ namespace RecognizeSpeechSphinxTester
 				dumpFileStream << "<tr>";
 
 				// print row header
-				UkrainianPhoneId ph1 = (UkrainianPhoneId)row;
-				bool phOp = ph2StrEx(ph1, phStr);
+				bool phOp = ph2StrEx(row, phStr);
 				PG_Assert(phOp);
 				dumpFileStream << "<td>" << QString::fromStdString(phStr) << "</td>";
 
@@ -648,19 +717,24 @@ namespace RecognizeSpeechSphinxTester
 		std::vector<SphinxFileIdLine> fileIdLines;
 		readFileId(testFileIdPath, fileIdLines);
 
+		PhoneRegistry phoneReg;
+		bool allowSoftHardConsonant = false;
+		bool allowVowelStress = false;
+		initPhoneRegistryUk(phoneReg, allowSoftHardConsonant, allowVowelStress);
+
 		// map pronunciation as word (pronId) to corresponding word
 		std::vector<PhoneticWord> phoneticDict;
 		bool loadPhoneDict;
 		const char* errMsg = nullptr;
 		const wchar_t* persianDictPathK = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\phoneticKnown.yml)path";
-		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryYaml(persianDictPathK, phoneticDict);
+		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryYaml(persianDictPathK, phoneReg, phoneticDict);
 		if (!loadPhoneDict)
 		{
 			std::cerr << "Can't load phonetic dictionary " << errMsg << std::endl;
 			return;
 		}
 		const wchar_t* persianDictPathB = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\phoneticBroken.yml)path";
-		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryYaml(persianDictPathB, phoneticDict);
+		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryYaml(persianDictPathB, phoneReg, phoneticDict);
 		if (!loadPhoneDict)
 		{
 			std::cerr << "Can't load phonetic dictionary " << errMsg << std::endl;
@@ -711,7 +785,7 @@ namespace RecognizeSpeechSphinxTester
 			return !isTestSeg;
 		});
 		
-		int trunc = 51;
+		int trunc = -1;
 		if (trunc != -1 && segments.size() > trunc)
 			segments.resize(trunc);
 
@@ -735,17 +809,18 @@ namespace RecognizeSpeechSphinxTester
 			return;
 
 		//
-		PhoneProximityCosts phoneCosts;
-		EditDistance<UkrainianPhoneId, PhoneProximityCosts> phonesEditDist;
-		const static int PhonesCount = (int)UkrainianPhoneId::P_LAST;
-		std::vector<int> phoneConfusionMat(PhonesCount*PhonesCount, 0);
+		PhoneProximityCosts phoneCosts(phoneReg);
+		EditDistance<PhoneId, PhoneProximityCosts> phonesEditDist;
+		int phonesCount = phoneReg.phonesCount() + 1; // +1 to keep NIL phone in the first row/column
+		phoneReg.assumeSequentialPhoneIdsWithoutGaps();
+		std::vector<int> phoneConfusionMat(phonesCount*phonesCount, 0);
 
 		int wordErrorTotalCount = 0;
 		int wordTotalCount = 0;
 		float targetFrameRate = CmuSphinxFrameRate;
 		std::vector<TwoUtterances> recogUtterances;
 		decodeSpeechSegments(segments, ps, targetFrameRate, recogUtterances,
-			phoneConfusionMat, PhonesCount, wordErrorTotalCount, wordTotalCount, phonesEditDist, pronIdToWord, pronIdToPronObj);
+			phoneConfusionMat, phonesCount, wordErrorTotalCount, wordTotalCount, phonesEditDist, phoneCosts, pronIdToWord, pronIdToPronObj, phoneReg);
 
 		// the call may crash if phonetic dictionary was not correctly initialized (eg .dict file is empty)
 		ps_free(ps);
@@ -831,7 +906,7 @@ namespace RecognizeSpeechSphinxTester
 		dumpFileName.str("");
 		dumpFileName << "wordErrorDump." << timeStampStr << ".ConfusionMat.htm";
 
-		dumpConfusionMatrix(phoneConfusionMat, PhonesCount, dumpFileName.str());
+		dumpConfusionMatrix(phoneConfusionMat, phonesCount, dumpFileName.str(), phoneReg);
 		dumpFileStream << "\n"; // line after confusion matrix		
 	}
 
