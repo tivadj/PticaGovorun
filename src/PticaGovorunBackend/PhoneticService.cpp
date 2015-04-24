@@ -19,9 +19,11 @@ namespace PticaGovorun
 		const wchar_t Letter_B = L'α';
 		const wchar_t Letter_H = L'γ';
 		const wchar_t Letter_D = L'δ';
+		const wchar_t Letter_E = L'ε';
 		const wchar_t Letter_JE = L'Ί';
 		const wchar_t Letter_ZH = L'ζ';
 		const wchar_t Letter_Z = L'η';
+		const wchar_t Letter_I = L'³';
 		const wchar_t Letter_JI = L'Ώ';
 		const wchar_t Letter_K = L'κ';
 		const wchar_t Letter_N = L'ν';
@@ -683,14 +685,8 @@ namespace PticaGovorun
 			case L'΄':
 				ph = newConsonantPhone("G", SoftHardConsonant::Hard);
 				break;
-			case L'ε':
-				ph = newVowelPhone("E", nullptr);
-				break;
 			case L'θ':
 				ph = newVowelPhone("Y", nullptr);
-				break;
-			case L'³':
-				ph = newVowelPhone("I", nullptr);
 				break;
 			case L'ι':
 				ph = newConsonantPhone("J", SoftHardConsonant::Hard);
@@ -873,6 +869,47 @@ namespace PticaGovorun
 						ph.SoftHard = SoftHardConsonant::Soft; // softened by soft sign
 					billetPhones.push_back(ph);
 				}
+				continue;
+			}
+			else if (letter == Letter_E)
+			{
+				if (!billetPhones.empty())
+				{
+					// Rule: the vowel E dictates that the previous consonant is always hard
+					PhoneBillet& prevPh = billetPhones.back();
+					if (prevPh.DerivedFromChar == CharGroup::Consonant)
+					{
+						boost::optional<SoftHardConsonant> prevValue = prevPh.SoftHard;
+						if (prevValue != nullptr)
+						{
+							bool ok = prevValue == SoftHardConsonant::Hard;
+							PG_DbgAssert(ok && "otherwise, hardening the soft consonant?");
+						}
+						prevPh.SoftHard = SoftHardConsonant::Hard;
+					}
+				}
+				billetPhones.push_back(newVowelPhone("E", nullptr));
+				continue;
+			}
+			else if (letter == Letter_I)
+			{
+				if (!billetPhones.empty())
+				{
+					// Rule: the vowel I dictates that the previous consonant is always soft
+					// TODO: what to do if the previous letter is always hard (β³λόÿμ, ο³π'ÿ)
+					PhoneBillet& prevPh = billetPhones.back();
+					if (prevPh.DerivedFromChar == CharGroup::Consonant && prevPh.SoftHard == nullptr)
+					{
+						//boost::optional<SoftHardConsonant> prevValue = prevPh.SoftHard;
+						//if (prevValue != nullptr)
+						//{
+						//	bool ok = prevValue == SoftHardConsonant::Soft;
+						//	PG_DbgAssert(ok && "otherwise, softening the hard consonant?");
+						//}
+						prevPh.SoftHard = SoftHardConsonant::Soft;
+					}
+				}
+				billetPhones.push_back(newVowelPhone("I", nullptr));
 				continue;
 			}
 			else if (letter == Letter_JI)

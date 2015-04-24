@@ -76,6 +76,13 @@ namespace PticaGovorun
 
 	TEST_CASE("spell tests")
 	{
+		SECTION("there is always hard consonant before vowel E") {
+			spellTest(L"землею", "Z E M L E J U");
+		}
+		SECTION("there is always soft consonant before vowel I") {
+			spellTest(L"імлі", "I M L1 I");
+			spellTest(L"білка", "B1 I L K A");
+		}
 		SECTION("double phone YE YU YA after apostrophe") {
 			spellTest(L"б'є", "B J E1");
 			spellTest(L"б'ю", "B J U1");
@@ -113,10 +120,10 @@ namespace PticaGovorun
 			spellTest(L"відповідає", "V I T P O V I D A J E");
 			spellTest(L"підпис", "P I T P Y S");
 			// ZH->SH
-			spellTest(L"ліжка", "L I SH K A");
+			spellTest(L"ліжка", "L1 I SH K A");
 			// Z->S
 			spellTest(L"безпосередньо", "B E S P O S E R E D N1 O");
-			spellTest(L"залізти", "Z A L I S T Y");
+			spellTest(L"залізти", "Z A L1 I S T Y");
 			spellTest(L"розповідали", "R O S P O V I D A L Y");
 			spellTest(L"розповсюджувати", "R O S P O V S U DZH U V A T Y");
 
@@ -150,7 +157,7 @@ namespace PticaGovorun
 	TEST_CASE("redundant letter S")
 	{
 		// S SH -> SH SH
-		spellTest(L"принісши", "P R Y N I SH SH Y");
+		spellTest(L"принісши", "P R Y N1 I SH SH Y");
 		spellTest(L"сша", "SH SH A1");
 		//spellTest(L"масштаб", "M A SH T A B"); // alternative=no doubling
 		// сексшоп [S E K S SH O P] two different words, no doubling
@@ -161,7 +168,7 @@ namespace PticaGovorun
 		spellTest(L"шістдесят", "SH I Z D E S A T");
 
 		// S T S 1 K -> S1 K
-		spellTest(L"модерністська", "M O D E R N I S1 K A");
+		spellTest(L"модерністська", "M O D E R N1 I S1 K A");
 		spellTest(L"нацистська", "N A TS Y S1 K A");
 		spellTest(L"фашистська", "F A SH Y S1 K A");
 
