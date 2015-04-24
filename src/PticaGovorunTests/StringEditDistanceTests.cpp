@@ -15,13 +15,13 @@ namespace PticaGovorun
 		static CostType getZeroCosts() {
 			return 0;
 		}
-		inline CostType getInsertSymbolCost(Letter x) {
+		inline CostType getInsertSymbolCost(Letter x) const {
 			return 1;
 		}
-		inline CostType getRemoveSymbolCost(Letter x) {
+		inline CostType getRemoveSymbolCost(Letter x) const {
 			return 1;
 		}
-		inline CostType getSubstituteSymbolCost(Letter x, Letter y) {
+		inline CostType getSubstituteSymbolCost(Letter x, Letter y) const {
 			return x == y ? 0 : 1;
 		}
 	};

@@ -16,13 +16,13 @@ namespace PticaGovorun
 		static int getZeroCosts() {
 			return 0;
 		}
-		inline int getInsertSymbolCost(wchar_t x) {
+		inline int getInsertSymbolCost(wchar_t x) const {
 			return 1;
 		}
-		inline int getRemoveSymbolCost(wchar_t x) {
+		inline int getRemoveSymbolCost(wchar_t x) const {
 			return 1;
 		}
-		inline int getSubstituteSymbolCost(wchar_t x, wchar_t y)
+		inline int getSubstituteSymbolCost(wchar_t x, wchar_t y) const
 		{
 			if (x == y) return 0;
 			bool isXVowel = isEnglishVowel(x, true);
@@ -140,13 +140,13 @@ namespace PticaGovorun
 		static CostType getZeroCosts() {
 			return 0;
 		}
-		inline CostType getInsertSymbolCost(int x) {
+		inline CostType getInsertSymbolCost(int x) const {
 			return x;
 		}
-		inline int getRemoveSymbolCost(int x) {
+		inline int getRemoveSymbolCost(int x) const {
 			return x;
 		}
-		inline CostType getSubstituteSymbolCost(int x, int y)
+		inline CostType getSubstituteSymbolCost(int x, int y) const
 		{
 			return std::abs(x - y);
 		}

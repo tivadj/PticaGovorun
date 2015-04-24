@@ -18,13 +18,13 @@ namespace EditDistanceTestsNS
 		static CostType getZeroCosts() {
 			return 0;
 		}
-		inline CostType getInsertSymbolCost(Letter x) {
+		inline CostType getInsertSymbolCost(Letter x) const {
 			return 1;
 		}
-		inline CostType getRemoveSymbolCost(Letter x) {
+		inline CostType getRemoveSymbolCost(Letter x) const {
 			return 1;
 		}
-		inline CostType getSubstituteSymbolCost(Letter x, Letter y) {
+		inline CostType getSubstituteSymbolCost(Letter x, Letter y) const {
 			return x == y ? 0 : 1;
 		}
 	};
@@ -64,13 +64,13 @@ namespace EditDistanceTestsNS
 		static int getZeroCosts() {
 			return 0;
 		}
-		inline int getInsertSymbolCost(wchar_t x) {
+		inline int getInsertSymbolCost(wchar_t x) const {
 			return 1;
 		}
-		inline int getRemoveSymbolCost(wchar_t x) {
+		inline int getRemoveSymbolCost(wchar_t x) const {
 			return 1;
 		}
-		inline int getSubstituteSymbolCostCore(wchar_t x, wchar_t y)
+		inline int getSubstituteSymbolCostCore(wchar_t x, wchar_t y) const
 		{
 			if (x == y) return 0;
 			boost::optional<CharGroup> xClass = classifyUkrainianChar(x);
@@ -79,7 +79,7 @@ namespace EditDistanceTestsNS
 				return 1;
 			return 99; // chars from different groups
 		}
-		inline int getSubstituteSymbolCost(wchar_t x, wchar_t y)
+		inline int getSubstituteSymbolCost(wchar_t x, wchar_t y) const
 		{
 			int cost = getSubstituteSymbolCostCore(x, y);
 			std::array<wchar_t, 100> buff;

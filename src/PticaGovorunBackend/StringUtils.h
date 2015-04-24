@@ -15,10 +15,10 @@ namespace PticaGovorun
 			return 0;
 		}
 
-		inline int getInsertSymbolCost(Letter x) {
+		inline int getInsertSymbolCost(Letter x) const {
 			return 1;
 		}
-		inline int getRemoveSymbolCost(Letter x) {
+		inline int getRemoveSymbolCost(Letter x) const {
 			return 1;
 		}
 	};
@@ -26,7 +26,7 @@ namespace PticaGovorun
 	template <typename Letter>
 	class StringEditCosts : public StringLevenshteinCosts < Letter > {
 	public:
-		inline int getSubstituteSymbolCost(Letter x, Letter y) {
+		inline int getSubstituteSymbolCost(Letter x, Letter y) const {
 			return x == y ? 0 : 2;
 		}
 	};
@@ -147,7 +147,7 @@ namespace PticaGovorun
 		}
 
 		// Fills the cost matrix for given two words.
-		void estimateAllDistances(wv::slice<Letter> first, wv::slice<Letter> second, EditCosts& editCosts)
+		void estimateAllDistances(wv::slice<Letter> first, wv::slice<Letter> second, const EditCosts& editCosts)
 		{
 			size_t sizeFirst = first.size();
 			size_t sizeSecond = second.size();
