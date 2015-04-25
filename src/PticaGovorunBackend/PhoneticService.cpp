@@ -468,6 +468,90 @@ namespace PticaGovorun
 		return std::make_tuple(true, nullptr);
 	}
 
+	std::tuple<bool, const char*> loadPhoneticDictionaryPronIdPerLine(const std::basic_string<wchar_t>& vocabFilePathAbs, const PhoneRegistry& phoneReg, const QTextCodec& textCodec, std::vector<PhoneticWord>& words, std::vector<std::basic_string<char>>& brokenLines)
+	{
+		// file contains text in Windows-1251 encoding
+		QFile file(QString::fromStdWString(vocabFilePathAbs));
+		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+			return std::make_tuple(false, "Can't open file");
+
+		// 
+		std::array<char, 1024> lineBuff;
+		PhoneticWord curPronGroup;
+		std::vector<PhoneId> phones;
+
+		// each line has a format:
+		// sure\tsh u e\n
+		while (true) {
+			auto readBytes = file.readLine(lineBuff.data(), lineBuff.size());
+			if (readBytes == -1) // EOF
+				break;
+
+			if (readBytes < 3) // 3=min length of Word->PhoneList
+				continue;
+
+			boost::string_ref line(lineBuff.data(), readBytes);
+			if (line.back() == '\n')
+				line.remove_suffix(1);
+
+			const char* DictDelim = " \t\n";
+			size_t phoneListInd = line.find_first_of(DictDelim);
+			if (phoneListInd == boost::string_ref::npos)
+				return std::make_tuple(false, "The word is too long (>1024 bytes)");
+
+			boost::string_ref wordRef(line.data(), phoneListInd);
+			if (wordRef.empty()) // empty line
+				continue;
+
+			boost::string_ref phoneListRef = line.substr(phoneListInd + 1);
+			if (phoneListRef.empty()) // word without the list of phones
+			{
+				brokenLines.push_back(lineBuff.data());
+				continue;
+			}
+			std::transform(phoneListRef.begin(), phoneListRef.end(), (char*)phoneListRef.begin(), toupper);
+
+			phones.clear();
+			bool parseOp = parsePhoneList(phoneReg, phoneListRef, phones);
+			if (!parseOp)
+			{
+				brokenLines.push_back(line.data());
+				continue;
+			}
+
+			QString word = textCodec.toUnicode(line.data(), phoneListInd);
+			std::wstring wordW = word.toStdWString();
+
+			if (curPronGroup.Word != wordW)
+			{
+				// finish previous pronunciation group
+				if (!curPronGroup.Word.empty())
+				{
+					words.push_back(curPronGroup);
+					curPronGroup.Word.clear();
+					curPronGroup.Pronunciations.clear();
+				}
+
+				// start new group
+				PG_DbgAssert(curPronGroup.Pronunciations.empty() && "Old pronunciation data must be purged");
+				curPronGroup.Word = wordW;
+			}
+
+			PronunciationFlavour pron;
+			pron.PronAsWord = wordW;
+			pron.Phones = phones;
+			curPronGroup.Pronunciations.push_back(pron);
+		}
+
+		if (!curPronGroup.Word.empty())
+		{
+			words.push_back(curPronGroup);
+			curPronGroup.Word.clear();
+			curPronGroup.Pronunciations.clear();
+		}
+		return std::make_tuple(true, nullptr);
+	}
+
 	void trimPhoneStrExtraInfos(const std::string& phoneStdStr, std::string& phoneStrTrimmed, bool toUpper, bool trimNumbers)
 	{
 		QString phoneStr = QString::fromStdString(phoneStdStr);
@@ -505,20 +589,21 @@ namespace PticaGovorun
 		}
 	}
 
-	boost::optional<PhoneId> parsePhoneStr(const PhoneRegistry& phoneReg, const std::string& phoneStr)
+	boost::optional<PhoneId> parsePhoneStr(const PhoneRegistry& phoneReg, boost::string_ref phoneStrRef)
 	{
-		if (phoneStr.empty())
+		if (phoneStrRef.empty())
 			return nullptr;
 
-		std::string basicPhoneStr = phoneStr;
+		boost::string_ref basicPhoneStrRef = phoneStrRef;
 
 		// truncate last digit
-		QChar ch = phoneStr.back();
-		bool lastIsDigit = ch.isDigit();
+		char ch = phoneStrRef.back();
+		bool lastIsDigit = ::isdigit(ch);
 		if (lastIsDigit)
-			basicPhoneStr.pop_back();
+			basicPhoneStrRef.remove_suffix(1);
 
 		bool basicOp = false;
+		std::string basicPhoneStr = std::string(basicPhoneStrRef.data(), basicPhoneStrRef.size());
 		PhoneRegistry::BasicPhoneIdT basicPhoneId = phoneReg.basicPhoneId(basicPhoneStr, &basicOp);
 		if (!basicOp)
 			return nullptr;
@@ -548,20 +633,26 @@ namespace PticaGovorun
 		return result;
 	}
 
-	bool parsePhoneList(const PhoneRegistry& phoneReg, const std::string& phonesStr, std::vector<PhoneId>& result)
+	bool parsePhoneList(const PhoneRegistry& phoneReg, boost::string_ref phoneListStr, std::vector<PhoneId>& result)
 	{
-		QStringList list = QString::fromStdString(phonesStr).split(' ');
-		for (int i = 0; i < list.size(); ++i)
+		boost::string_ref curPhonesStr = phoneListStr;
+		while (!curPhonesStr.empty())
 		{
-			QString phoneQ = list[i];
-			if (phoneQ.isEmpty()) // a phone can't be an empty string
+			size_t sepPos = curPhonesStr.find(' ');
+			if (sepPos == boost::string_ref::npos)
+				sepPos = curPhonesStr.size();
+
+			boost::string_ref phoneRef = curPhonesStr.substr(0, sepPos);
+			if (phoneRef.empty()) // a phone can't be an empty string
 				continue;
 
-			boost::optional<PhoneId> phoneId = parsePhoneStr(phoneReg, phoneQ.toStdString());
+			boost::optional<PhoneId> phoneId = parsePhoneStr(phoneReg, phoneRef);
 			if (!phoneId)
 				return false;
 
 			result.push_back(phoneId.get());
+
+			curPhonesStr.remove_prefix(sepPos + 1);
 		}
 		return true;
 	}
@@ -1252,6 +1343,38 @@ namespace PticaGovorun
 		});
 
 		return std::make_tuple(true, nullptr);
+	}
+
+	void updatePhoneModifiers(const PhoneRegistry& phoneReg, bool keepConsonantSoftness, bool keepVowelStress, std::vector<PhoneId>& phonesList)
+	{
+		for (size_t i = 0; i < phonesList.size(); ++i)
+		{
+			PhoneId phoneId = phonesList[i];
+
+			const Phone* oldPhone = phoneReg.phoneById(phoneId);
+			const BasicPhone* basicPhone = phoneReg.basicPhone(oldPhone->BasicPhoneId);
+
+			if (!keepConsonantSoftness && basicPhone->DerivedFromChar == CharGroup::Consonant)
+			{
+				if (oldPhone->SoftHard == SoftHardConsonant::Soft)
+				{
+					boost::optional<PhoneId> newPhoneId = phoneReg.phoneIdSingle(oldPhone->BasicPhoneId, SoftHardConsonant::Hard, nullptr);
+					PG_DbgAssert(newPhoneId != nullptr);
+					phonesList[i] = newPhoneId.get();
+					continue;
+				}
+			}
+			if (!keepVowelStress && basicPhone->DerivedFromChar == CharGroup::Vowel)
+			{
+				if (oldPhone->IsStressed == true)
+				{
+					boost::optional<PhoneId> newPhoneId = phoneReg.phoneIdSingle(oldPhone->BasicPhoneId, nullptr, false);
+					PG_DbgAssert(newPhoneId != nullptr);
+					phonesList[i] = newPhoneId.get();
+					continue;
+				}
+			}
+		}
 	}
 
 	//

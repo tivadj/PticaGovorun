@@ -10,29 +10,24 @@ namespace PhoneticSpellerTestsNS
 {
 	using namespace PticaGovorun;
 
-	void phoneListToStr(const wv::slice<std::string>& phonesList, std::stringstream& result)
-	{
-		if (phonesList.empty())
-			return;
-		result << phonesList[0];
-		for (size_t i = 1; i < phonesList.size(); ++i)
-		{
-			result << " " << phonesList[i];
-		}
-	}
-
 	void testShrekky()
 	{
+		PhoneRegistry phoneReg;
+		initPhoneRegistryUk(phoneReg, true, true);
+
 		QTextCodec* pTextCodec = QTextCodec::codecForName("windows-1251");
-		std::map<std::wstring, std::vector<Pronunc>> wordToPhoneListDict;
 		const wchar_t* shrekkyDic = LR"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyDic.voca)path";
 		//const wchar_t* shrekkyDic = LR"path(C:\devb\PticaGovorunProj\data\phoneticDic\test1.txt)path";
+		const wchar_t* knownDict = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\phoneticKnown.yml)path";
+
+		std::vector<PhoneticWord> wordTranscrip;
+		std::vector<std::string> brokenLines;
 		bool loadOp;
 		const char* errMsg;
-		std::tie(loadOp, errMsg) = loadPronunciationVocabulary2(shrekkyDic, wordToPhoneListDict, *pTextCodec);
+		//std::tie(loadOp, errMsg) = loadPhoneticDictionaryPronIdPerLine(shrekkyDic, phoneReg, *pTextCodec, wordTranscrip, brokenLines);
+		std::tie(loadOp, errMsg) = loadPhoneticDictionaryYaml(knownDict, phoneReg, wordTranscrip);
 		if (!loadOp)
 			return;
-		normalizePronunciationVocabulary(wordToPhoneListDict, true, false);
 
 		std::stringstream dumpFileName;
 		dumpFileName << "spellErrors.";
@@ -48,49 +43,48 @@ namespace PhoneticSpellerTestsNS
 		QTextStream dumpFileStream(&dumpFile);
 		dumpFileStream.setCodec("UTF-8");
 
-		PhoneRegistry phoneReg;
-		initPhoneRegistryUk(phoneReg, true, true);
-
 		int errorThresh = 0;
-		for (const auto& pair : wordToPhoneListDict)
+		for (const PhoneticWord& phWord : wordTranscrip)
 		{
-			if (pair.second.size() != 1)
-				continue;
-			const std::wstring& word = pair.first;
-			if (word == L"SIL" || word == L"<s>" || word == L"</s>")
-				continue;
-
-			const Pronunc& pronDict = pair.second[0];
-
-			std::vector<PhoneId> phones;
+			const std::wstring& word = phWord.Word;
+			std::vector<PhoneId> phonesAuto;
 			bool spellOp;
-			std::tie(spellOp, errMsg) = spellWordUk(phoneReg, word, phones);
+			std::tie(spellOp, errMsg) = spellWordUk(phoneReg, word, phonesAuto);
 			if (!spellOp)
 			{
-				dumpFileStream << "ERROR: can't spell word='" << QString::fromStdWString(word) << "'" <<errMsg << "\n";
+				dumpFileStream << "ERROR: can't spell word='" << QString::fromStdWString(word) << "'" << errMsg << "\n";
 				continue;
 			}
+			updatePhoneModifiers(phoneReg, true, false, phonesAuto);
 
-			std::string pronAutomatic;
-			if (!phoneListToStr(phoneReg, phones, pronAutomatic))
+			for (const PronunciationFlavour& pron : phWord.Pronunciations)
 			{
-				dumpFileStream << "ERROR: pronuncToStr (Pronunc.ToString)" << "\n";
-				continue;
-			}
+				std::vector<PhoneId> phonesDict = pron.Phones;
+				updatePhoneModifiers(phoneReg, true, false, phonesDict);
 
-			dumpFileName.str("");
-			phoneListToStr(pronDict.Phones, dumpFileName);
-			std::string shrekkyPhones = dumpFileName.str();
+				bool eqS = phonesAuto == phonesDict;
+				if (!eqS)
+				{
+					if (false && ++errorThresh > 100)
+						break;
 
-			bool eqS = shrekkyPhones == pronAutomatic;
-			if (!eqS)
-			{
-				if (false && ++errorThresh > 100)
-					break;
+					std::string pronDictStr;
+					if (!phoneListToStr(phoneReg, phonesDict, pronDictStr))
+					{
+						dumpFileStream << "ERROR: pronuncToStr (Pronunc.ToString)" << "\n";
+						continue;
+					}
+					std::string pronAutoStr;
+					if (!phoneListToStr(phoneReg, phonesAuto, pronAutoStr))
+					{
+						dumpFileStream << "ERROR: pronuncToStr (Pronunc.ToString)" << "\n";
+						continue;
+					}
 
-				dumpFileStream << "Expect=" << QString::fromLatin1(shrekkyPhones.c_str()) << "\t" << QString::fromLatin1(pronDict.StrDebug.c_str()) << "\t" << QString::fromStdWString(word) << errMsg << "\n";
-				dumpFileStream << "Actual=" << QString::fromLatin1(pronAutomatic.c_str()) << "\n";
-				dumpFileStream << "\n";
+					dumpFileStream << "Dict=" << QString::fromLatin1(pronDictStr.c_str()) << "\t" << QString::fromStdWString(pron.PronAsWord) << "\t" << QString::fromStdWString(word) << "\n";
+					dumpFileStream << "Actl=" << QString::fromLatin1(pronAutoStr.c_str()) << "\n";
+					dumpFileStream << "\n";
+				}
 			}
 		}
 	}

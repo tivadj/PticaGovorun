@@ -7,6 +7,7 @@
 #include <QTextCodec>
 #include <QTextStream>
 #include <boost/optional.hpp>
+#include <boost/utility/string_ref.hpp>
 #include "ComponentsInfrastructure.h"
 #include "PticaGovorunCore.h"
 #include "LangStat.h"
@@ -90,6 +91,7 @@ namespace PticaGovorun
 
 	PG_EXPORTS void initPhoneRegistryUk(PhoneRegistry& phoneReg, bool allowSoftHardConsonant, bool allowVowelStress);
 
+	// TODO: remove
 	struct Pronunc
 	{
 		std::string StrDebug; // debug string
@@ -184,8 +186,12 @@ namespace PticaGovorun
 	// File usually has 'voca' extension.
 	// File has Windows-1251 encodeding.
 	// Each word may have multiple pronunciations (1-* relation); for now we neglect it and store data into map (1-1 relation).
-	PG_EXPORTS std::tuple<bool, const char*> loadPronunciationVocabulary(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<std::string>>& wordToPhoneList, const QTextCodec& textCodec);
-	PG_EXPORTS std::tuple<bool, const char*> loadPronunciationVocabulary2(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<Pronunc>>& wordToPhoneList, const QTextCodec& textCodec);
+	PG_EXPORTS std::tuple<bool, const char*> loadPronunciationVocabulary(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<std::string>>& wordToPhoneList, const QTextCodec& textCodec); // TODO: remove
+	PG_EXPORTS std::tuple<bool, const char*> loadPronunciationVocabulary2(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<Pronunc>>& wordToPhoneList, const QTextCodec& textCodec); // TODO: remove
+
+	// 'brokenLines' has lines of the dictionary which can't be read.
+	std::tuple<bool, const char*> loadPhoneticDictionaryPronIdPerLine(const std::wstring& vocabFilePathAbs, const PhoneRegistry& phoneReg, const QTextCodec& textCodec, std::vector<PhoneticWord>& words, std::vector<std::string>& brokenLines);
+
 	PG_EXPORTS void normalizePronunciationVocabulary(std::map<std::wstring, std::vector<Pronunc>>& wordToPhoneList, bool toUpper = true, bool trimNumbers = true);
 	PG_EXPORTS void trimPhoneStrExtraInfos(const std::string& phoneStr, std::string& phoneStrTrimmed, bool toUpper, bool trimNumbers);
 
@@ -194,12 +200,15 @@ namespace PticaGovorun
 	PG_EXPORTS bool phoneListToStr(const PhoneRegistry& phoneReg, wv::slice<PhoneId> pron, std::string& result);
 
 	// Parses space-separated list of phones.
-	PG_EXPORTS boost::optional<PhoneId> parsePhoneStr(const PhoneRegistry& phoneReg, const std::string& phoneStr);
-	PG_EXPORTS bool parsePhoneList(const PhoneRegistry& phoneReg, const std::string& phonesStr, std::vector<PhoneId>& result);
+	PG_EXPORTS boost::optional<PhoneId> parsePhoneStr(const PhoneRegistry& phoneReg, boost::string_ref phoneStr);
+	PG_EXPORTS bool parsePhoneList(const PhoneRegistry& phoneReg, boost::string_ref phoneListStr, std::vector<PhoneId>& result);
 	PG_EXPORTS std::tuple<bool, const char*> parsePronuncLines(const PhoneRegistry& phoneReg, const std::wstring& prons, std::vector<PronunciationFlavour>& result);
 
 	// Performs word transcription (word is represented as a sequence of phonemes).
 	PG_EXPORTS std::tuple<bool, const char*> spellWordUk(const PhoneRegistry& phoneReg, const std::wstring& word, std::vector<PhoneId>& phones);
+	
+	// Removes phone modifiers.
+	PG_EXPORTS void updatePhoneModifiers(const PhoneRegistry& phoneReg, bool keepConsonantSoftness, bool keepVowelStress, std::vector<PhoneId>& phonesList);
 
 	// Saves phonetic dictionary to file in YAML format.
 	PG_EXPORTS void savePhoneticDictionaryYaml(const std::vector<PhoneticWord>& phoneticDict, const std::wstring& filePath, const PhoneRegistry& phoneReg);
