@@ -10,10 +10,11 @@ namespace PticaGovorun
 	TEST_CASE("phone list to str conversion")
 	{
 		PhoneRegistry phoneReg;
+		phoneReg.setPalatalSupport(PalatalSupport::AsPalatal);
 		initPhoneRegistryUk(phoneReg, true, true);
 
 		std::vector<PhoneId> phones;
-		std::string phonesStrIn = "S U1 T1";
+		std::string phonesStrIn = "S U1 T1 B2 I";
 		bool parseOp = parsePhoneList(phoneReg, phonesStrIn, phones);
 		REQUIRE(parseOp);
 
@@ -81,17 +82,17 @@ namespace PticaGovorun
 		}
 		SECTION("there is always soft consonant before vowel I") {
 			spellTest(L"імлі", "I M L1 I");
-			spellTest(L"білка", "B1 I L K A");
+			spellTest(L"білка", "B2 I L K A");
 		}
 		SECTION("double phone YE YU YA after apostrophe") {
 			spellTest(L"б'є", "B J E1");
 			spellTest(L"б'ю", "B J U1");
-			spellTest(L"пір'я", "P I R J A");
+			spellTest(L"пір'я", "P2 I R J A");
 		}
 		SECTION("double phone YE YU YA after soft sign") {
 			spellTest(L"досьє", "D O S1 J E");
 			spellTest(L"сьюзен", "S1 J U Z E N");
-			spellTest(L"вільям", "V I L1 J A M");
+			spellTest(L"вільям", "V2 I L1 J A M");
 		}
 		SECTION("double phone YE YU YA when it the first letter") {
 			// first letter is Є Ю Я
@@ -113,18 +114,18 @@ namespace PticaGovorun
 		}
 		SECTION("BP HKH DT ZHSH ZS before unvoiced consonant") {
 			// B->P
-			spellTest(L"необхідно", "N E O P KH I D N O");
+			spellTest(L"необхідно", "N E O P KH2 I D N O");
 			// H->KH
 			spellTest(L"легше", "L E KH SH E");
 			// D->T
-			spellTest(L"відповідає", "V I T P O V I D A J E");
-			spellTest(L"підпис", "P I T P Y S");
+			spellTest(L"відповідає", "V2 I T P O V2 I D A J E");
+			spellTest(L"підпис", "P2 I T P Y S");
 			// ZH->SH
 			spellTest(L"ліжка", "L1 I SH K A");
 			// Z->S
 			spellTest(L"безпосередньо", "B E S P O S E R E D N1 O");
 			spellTest(L"залізти", "Z A L1 I S T Y");
-			spellTest(L"розповідали", "R O S P O V I D A L Y");
+			spellTest(L"розповідали", "R O S P O V2 I D A L Y");
 			spellTest(L"розповсюджувати", "R O S P O V S U DZH U V A T Y");
 
 			SECTION("BP HKH DT ZHSH ZS before soft sign and unvoiced consonant") {
@@ -165,7 +166,7 @@ namespace PticaGovorun
 	TEST_CASE("redundant letter ST")
 	{
 		// S T D -> Z D
-		spellTest(L"шістдесят", "SH I Z D E S A T");
+		spellTest(L"шістдесят", "SH2 I Z D E S A T");
 
 		// S T S 1 K -> S1 K
 		spellTest(L"модерністська", "M O D E R N1 I S1 K A");
@@ -174,25 +175,25 @@ namespace PticaGovorun
 
 		// S T S -> S S
 		spellTest(L"постскриптум", "P O S S K R Y P T U M");
-		spellTest(L"шістсот", "SH I S S O T");
+		spellTest(L"шістсот", "SH2 I S S O T");
 
 		// S T TS -> S TS
-		spellTest(L"невістці", "N E V I S TS I");
-		spellTest(L"пастці", "P A S TS I");
+		spellTest(L"невістці", "N E V2 I S TS1 I");
+		spellTest(L"пастці", "P A S TS1 I");
 	}
 	TEST_CASE("redundant letter T")
 	{
 		// T S -> TS
 		spellTest(L"багатство", "B A H A TS T V O");
 		// T 1 S -> TS
-		spellTest(L"активізуються", "A K T Y V I Z U J U TS1 A");
+		spellTest(L"активізуються", "A K T Y V2 I Z U J U TS1 A");
 
 		// T TS -> TS TS
 		spellTest(L"отця", "O TS TS A");
-		spellTest(L"куртці", "K U R TS TS I");
+		spellTest(L"куртці", "K U R TS TS1 I");
 
 		// T CH -> CH CH
-		spellTest(L"вітчизна", "V I CH CH Y Z N A");
+		spellTest(L"вітчизна", "V2 I CH CH Y Z N A");
 		spellTest(L"льотчик", "L1 O CH CH Y K");
 	}
 
@@ -228,4 +229,20 @@ namespace PticaGovorun
 		}
 	}
 
+	TEST_CASE("palatal consonants support")
+	{
+		PhoneRegistry phoneReg;
+		bool allowSoftHardConsonant = true;
+		bool allowVowelStress = true;
+		initPhoneRegistryUk(phoneReg, allowSoftHardConsonant, allowVowelStress);
+
+		phoneReg.setPalatalSupport(PalatalSupport::AsHard);
+		spellTest(L"бій", "B I1 J", &phoneReg);
+
+		phoneReg.setPalatalSupport(PalatalSupport::AsSoft);
+		spellTest(L"бій", "B1 I1 J", &phoneReg);
+
+		phoneReg.setPalatalSupport(PalatalSupport::AsPalatal);
+		spellTest(L"бій", "B2 I1 J", &phoneReg);
+	}
 }

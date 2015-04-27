@@ -18,8 +18,9 @@ namespace PticaGovorun
 	// Soft or hard attribute (uk: тверда/м'яка). The third enum value is 'middle-tongued'.
 	enum class SoftHardConsonant
 	{
+		Hard,
+		Palatal, // =HalfSoft
 		Soft,
-		Hard
 	};
 
 	// eg TS for soft consonant TS1
@@ -30,6 +31,11 @@ namespace PticaGovorun
 		CharGroup DerivedFromChar; // the vowel/consonant it is derived from
 	};
 
+	// A  = unvoiced vowel A
+	// A1 = voiced vowel A
+	// T  = hard T
+	// T1 = soft T
+	// B2 = palatized (kind of half-soft) B
 	struct PG_EXPORTS Phone
 	{
 		typedef IdWithDebugStr<int, char, 4> PhoneIdT;
@@ -42,6 +48,19 @@ namespace PticaGovorun
 
 	typedef Phone::PhoneIdT PhoneId;
 
+	// Palatal are slightly soft consonants.
+	enum class PalatalSupport
+	{
+		// Palatalized consonant is treated as is (eg P2 -> P2)
+		AsPalatal,
+
+		// Palatalized consonant is replaced by hard consonant (eg P2 -> P)
+		AsHard,
+
+		// Palatalized consonant is replaced by soft consonant (eg P2 -> P1)
+		AsSoft,
+	};
+
 	// The class to enlist the phones of different configurations. We may be interested in vowel phones with stress marked
 	// or consonant phones with marked softness. So the basic vowel phone A turns into A1 under stress.
 	// The basic phone T turns into T1 when it is softened.
@@ -51,8 +70,9 @@ namespace PticaGovorun
 		std::vector<Phone> phoneReg_;
 		std::vector<BasicPhone> basicPhones_;
 		std::unordered_map<std::string, size_t> basicPhonesStrToId_;
-		bool allowSoftHardConsonant_ = false;
+		bool allowSoftConsonant_ = false;
 		bool allowVowelStress_ = false;
+		PalatalSupport palatalSupport_ = PalatalSupport::AsHard;
 	public:
 		typedef Phone::BasicPhoneIdT BasicPhoneIdT;
 	private:
@@ -82,14 +102,20 @@ namespace PticaGovorun
 
 		bool allowSoftHardConsonant() const;
 		bool allowVowelStress() const;
+		PalatalSupport palatalSupport() const;
+		void setPalatalSupport(PalatalSupport value);
 
 		boost::optional<SoftHardConsonant> defaultSoftHardConsonant() const;
 		boost::optional<bool> defaultIsVowelStressed() const;
 	private:
-		friend PG_EXPORTS void initPhoneRegistryUk(PhoneRegistry& phoneReg, bool allowSoftHardConsonant, bool allowVowelStress);
+		friend PG_EXPORTS void initPhoneRegistryUk(PhoneRegistry& phoneReg, bool allowSoftConsonant, bool allowVowelStress);
 	};
 
 	PG_EXPORTS void initPhoneRegistryUk(PhoneRegistry& phoneReg, bool allowSoftHardConsonant, bool allowVowelStress);
+
+	// Returns true if the basic phone becomes half-softened (palatized) in certain letter combinations (before letter I).
+	// Returns false if phone becomes soft in certain letter combinations.
+	bool usuallyHardBasicPhone(const PhoneRegistry& phoneReg, Phone::BasicPhoneIdT basicPhoneId);
 
 	// TODO: remove
 	struct Pronunc
@@ -204,11 +230,11 @@ namespace PticaGovorun
 	PG_EXPORTS bool parsePhoneList(const PhoneRegistry& phoneReg, boost::string_ref phoneListStr, std::vector<PhoneId>& result);
 	PG_EXPORTS std::tuple<bool, const char*> parsePronuncLines(const PhoneRegistry& phoneReg, const std::wstring& prons, std::vector<PronunciationFlavour>& result);
 
-	// Performs word transcription (word is represented as a sequence of phonemes).
-	PG_EXPORTS std::tuple<bool, const char*> spellWordUk(const PhoneRegistry& phoneReg, const std::wstring& word, std::vector<PhoneId>& phones);
-	
 	// Removes phone modifiers.
 	PG_EXPORTS void updatePhoneModifiers(const PhoneRegistry& phoneReg, bool keepConsonantSoftness, bool keepVowelStress, std::vector<PhoneId>& phonesList);
+
+	// Performs word transcription (word is represented as a sequence of phonemes).
+	PG_EXPORTS std::tuple<bool, const char*> spellWordUk(const PhoneRegistry& phoneReg, const std::wstring& word, std::vector<PhoneId>& phones);
 
 	// Saves phonetic dictionary to file in YAML format.
 	PG_EXPORTS void savePhoneticDictionaryYaml(const std::vector<PhoneticWord>& phoneticDict, const std::wstring& filePath, const PhoneRegistry& phoneReg);
