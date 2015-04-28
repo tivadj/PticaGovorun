@@ -117,6 +117,9 @@ namespace PticaGovorun
 	// Returns false if phone becomes soft in certain letter combinations.
 	bool usuallyHardBasicPhone(const PhoneRegistry& phoneReg, Phone::BasicPhoneIdT basicPhoneId);
 
+	// Checks whether the character is unvoiced (uk:глухий).
+	PG_EXPORTS inline bool isUnvoicedCharUk(wchar_t ch);
+
 	// TODO: remove
 	struct Pronunc
 	{
@@ -243,7 +246,4 @@ namespace PticaGovorun
 
 	//
 	PG_EXPORTS int phoneticSplitOfWord(wv::slice<wchar_t> word, boost::optional<WordClass> wordClass, int* pMatchedSuffixInd = nullptr);
-
-	// Checks whether the character is unvoiced (uk:глухий).
-	PG_EXPORTS inline bool isUnvoicedCharUk(wchar_t ch);
 }

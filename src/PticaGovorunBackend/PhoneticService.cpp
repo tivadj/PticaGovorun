@@ -13,6 +13,7 @@ namespace PticaGovorun
 {
 	namespace
 	{
+		const wchar_t Letter_Space = L' ';
 		const wchar_t Letter_Hyphen = L'-';
 		const wchar_t Letter_Apostrophe = L'\'';
 		const wchar_t Letter_A = L'а';
@@ -443,6 +444,125 @@ namespace PticaGovorun
 		return foundMatch;
 	}
 
+	bool easilySoftBasicPhone(const PhoneRegistry& phoneReg, Phone::BasicPhoneIdT basicPhoneId)
+	{
+		bool suc = true;
+		bool foundMatch = false; // whether got the match
+		auto usuallyHardPhone = [&suc, &foundMatch, &phoneReg](Phone::BasicPhoneIdT expectBasicPhoneId, const std::string& queryBasicPhoneStr) -> void
+		{
+			if (!suc || foundMatch)
+				return;
+			Phone::BasicPhoneIdT basicId = phoneReg.basicPhoneId(queryBasicPhoneStr, &suc);
+			if (suc && expectBasicPhoneId == basicId)
+				foundMatch = true;
+		};
+		usuallyHardPhone(basicPhoneId, "D");
+		usuallyHardPhone(basicPhoneId, "DZ");
+		usuallyHardPhone(basicPhoneId, "T");
+		usuallyHardPhone(basicPhoneId, "TS");
+		usuallyHardPhone(basicPhoneId, "Z");
+		usuallyHardPhone(basicPhoneId, "S");
+		usuallyHardPhone(basicPhoneId, "N");
+		usuallyHardPhone(basicPhoneId, "L");
+		usuallyHardPhone(basicPhoneId, "R");
+		PG_DbgAssert(suc);
+		return foundMatch;
+	}
+
+	bool isNoisyVoicedConsonant(const PhoneRegistry& phoneReg, Phone::BasicPhoneIdT basicPhoneId)
+	{
+		bool suc = true;
+		bool foundMatch = false; // whether got the match
+		auto match = [&suc, &foundMatch, &phoneReg](Phone::BasicPhoneIdT expectBasicPhoneId, const std::string& queryBasicPhoneStr) -> void
+		{
+			if (!suc || foundMatch)
+				return;
+			Phone::BasicPhoneIdT basicId = phoneReg.basicPhoneId(queryBasicPhoneStr, &suc);
+			if (suc && expectBasicPhoneId == basicId)
+				foundMatch = true;
+		};
+		match(basicPhoneId, "B");
+		match(basicPhoneId, "H");
+		match(basicPhoneId, "G");
+		match(basicPhoneId, "D");
+		match(basicPhoneId, "DZ");
+		match(basicPhoneId, "DZH");
+		match(basicPhoneId, "Z");
+		match(basicPhoneId, "ZH");
+		PG_DbgAssert(suc);
+		return foundMatch;
+	}
+
+	bool isNoisyUnvoicedConsonant(const PhoneRegistry& phoneReg, Phone::BasicPhoneIdT basicPhoneId)
+	{
+		bool suc = true;
+		bool foundMatch = false; // whether got the match
+		auto match = [&suc, &foundMatch, &phoneReg](Phone::BasicPhoneIdT expectBasicPhoneId, const std::string& queryBasicPhoneStr) -> void
+		{
+			if (!suc || foundMatch)
+				return;
+			Phone::BasicPhoneIdT basicId = phoneReg.basicPhoneId(queryBasicPhoneStr, &suc);
+			if (suc && expectBasicPhoneId == basicId)
+				foundMatch = true;
+		};
+		match(basicPhoneId, "P");
+		match(basicPhoneId, "KH");
+		match(basicPhoneId, "K");
+		match(basicPhoneId, "T");
+		match(basicPhoneId, "TS");
+		match(basicPhoneId, "CH");
+		match(basicPhoneId, "S");
+		match(basicPhoneId, "SH");
+		PG_DbgAssert(suc);
+		return foundMatch;
+	}
+
+	boost::optional<Phone::BasicPhoneIdT> getVoicedUnvoicedConsonantPair(const PhoneRegistry& phoneReg, Phone::BasicPhoneIdT basicPhoneId)
+	{
+		bool suc = true;
+		boost::optional<Phone::BasicPhoneIdT> partnerBasicPhoneId = nullptr;
+		auto match = [&suc, &partnerBasicPhoneId, &phoneReg](Phone::BasicPhoneIdT expectBasicPhoneId, const std::string& basicStr, const std::string& dualBasicStr) -> void
+		{
+			if (!suc || partnerBasicPhoneId != nullptr)
+				return;
+			Phone::BasicPhoneIdT basicId1 = phoneReg.basicPhoneId(basicStr, &suc);
+			if (!suc)
+				return;
+			Phone::BasicPhoneIdT basicId2 = phoneReg.basicPhoneId(dualBasicStr, &suc);
+			if (!suc)
+				return;
+			if (expectBasicPhoneId == basicId1)
+				partnerBasicPhoneId = basicId2;
+			else if (expectBasicPhoneId == basicId2)
+				partnerBasicPhoneId = basicId1;
+		};
+		match(basicPhoneId, "B", "P");
+		match(basicPhoneId, "H", "KH");
+		match(basicPhoneId, "G", "K");
+		match(basicPhoneId, "D", "T");
+		match(basicPhoneId, "DZ", "TS");
+		match(basicPhoneId, "DZH", "CH");
+		match(basicPhoneId, "Z", "S");
+		match(basicPhoneId, "ZH", "SH");
+		return partnerBasicPhoneId;
+	}
+
+	bool isUnvoicedCharUk(wchar_t ch)
+	{
+		// кпстфхшцч
+		// КПСТФХШЦЧ
+		return
+			ch == L'к' || ch == L'К' ||
+			ch == L'п' || ch == L'П' ||
+			ch == L'с' || ch == L'С' ||
+			ch == L'т' || ch == L'Т' ||
+			ch == L'ф' || ch == L'Ф' ||
+			ch == L'х' || ch == L'Х' ||
+			ch == L'ш' || ch == L'Ш' ||
+			ch == L'ц' || ch == L'Ц' ||
+			ch == L'ч' || ch == L'Ч';
+	}
+
 	std::tuple<bool, const char*> loadPronunciationVocabulary(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<std::string>>& wordToPhoneList, const QTextCodec& textCodec)
 	{
 		// file contains text in Windows-1251 encoding
@@ -850,10 +970,10 @@ namespace PticaGovorun
 
 	// Half made phone.
 	// The incomplete phone's data, so that complete PhoneId can't be queried from phone registry.
-	typedef decltype(static_cast<Phone*>(nullptr)->BasicPhoneId) BasicPhoneStrIdT;
+	typedef decltype(static_cast<Phone*>(nullptr)->BasicPhoneId) BasicPhoneIdT;
 	struct PhoneBillet
 	{
-		BasicPhoneStrIdT BasicPhoneStrId;
+		BasicPhoneIdT BasicPhoneId;
 		boost::optional<CharGroup> DerivedFromChar = boost::none;
 		boost::optional<SoftHardConsonant> SoftHard = boost::none; // valid for consonants only
 		boost::optional<bool> IsStressed = boost::none; // valid for for vowels only
@@ -886,7 +1006,7 @@ namespace PticaGovorun
 		// Maps letter to one phone when there is a reasonable phone candidate. More complicated cases are handled via rules.
 		bool makePhoneOneToOne(wchar_t letter, PhoneBillet& ph) const;
 
-		bool ruleIgnoreHyphen(); // do not require neighbourhood info
+		bool ruleIgnore(); // do not require neighbourhood info
 		bool ruleJi(); // do not require neighbourhood info
 		bool ruleShCh(); // do not require neighbourhood info
 		bool ruleDzDzh(); // progressive
@@ -899,9 +1019,17 @@ namespace PticaGovorun
 		bool ruleHardConsonantBeforeE(); // regressive
 		bool ruleSoftConsonantBeforeI(); // regressive
 		bool ruleDoubleJaJeJu(); // regressive
+		bool ruleSoftConsonantBeforeJaJeJu(); // regressive
 		bool ruleDampVoicedConsonantBeforeUnvoiced(); // progressive
 		bool ruleDefaultSimpleOneToOneMap(); // do not require neighbourhood info
-		
+
+		// Checks whether the given phone is of the kind, which mutually softens each other.
+		bool isMutuallySoftConsonant(Phone::BasicPhoneIdT basicPhoneId) const;
+		// Rule: checks that if there are two consequent phones of specific type, and the second is soft, then the first becomes soft too.
+		void postRulePairOfConsonantsSoftenEachOther();
+
+		void postRuleAmplifyUnvoicedConsonantBeforeVoiced();
+
 		bool tryRecoverStressedVowel();
 		void buildOutputPhones();
 	};
@@ -931,7 +1059,7 @@ namespace PticaGovorun
 
 			wchar_t letter = word[letterInd_];
 			
-			if (ruleIgnoreHyphen()) continue;
+			if (ruleIgnore()) continue;
 			if (ruleJi()) continue;
 			if (ruleShCh()) continue;
 			if (ruleDzDzh()) continue;
@@ -944,6 +1072,7 @@ namespace PticaGovorun
 			if (ruleHardConsonantBeforeE()) continue;
 			if (ruleSoftConsonantBeforeI()) continue;
 			if (ruleDoubleJaJeJu()) continue;
+			if (ruleSoftConsonantBeforeJaJeJu()) continue;
 			if (ruleDampVoicedConsonantBeforeUnvoiced()) continue;
 			if (!ruleDefaultSimpleOneToOneMap())
 			{
@@ -951,6 +1080,9 @@ namespace PticaGovorun
 				return;
 			}
 		}
+		
+		postRulePairOfConsonantsSoftenEachOther();
+		postRuleAmplifyUnvoicedConsonantBeforeVoiced();
 
 		tryRecoverStressedVowel();
 		buildOutputPhones();
@@ -985,9 +1117,10 @@ namespace PticaGovorun
 		return letterInd_ == word_->size() - 1;
 	}
 	
-	bool WordPhoneticTranscriber::ruleIgnoreHyphen()
+	bool WordPhoneticTranscriber::ruleIgnore()
 	{
-		return curLetter() == Letter_Hyphen;
+		wchar_t letter = curLetter();
+		return letter == Letter_Hyphen || letter == Letter_Space;
 	}
 
 	bool WordPhoneticTranscriber::ruleJi()
@@ -1300,7 +1433,7 @@ namespace PticaGovorun
 		PhoneBillet& prevPh = billetPhones_.back();
 		if (prevPh.DerivedFromChar == CharGroup::Consonant)
 		{
-			if (usuallyHardBasicPhone(*phoneReg_, prevPh.BasicPhoneStrId))
+			if (usuallyHardBasicPhone(*phoneReg_, prevPh.BasicPhoneId))
 			{
 				// Consonants (B,P,V,M,F), (H,K,KH,G), (CH,DZH,SH,ZH) become palatilized (half-softened) before sound I.
 				prevPh.SoftHard = SoftHardConsonant::Palatal;
@@ -1315,6 +1448,7 @@ namespace PticaGovorun
 		}
 		return false;
 	}
+	
 
 	bool WordPhoneticTranscriber::ruleDoubleJaJeJu()
 	{
@@ -1334,55 +1468,94 @@ namespace PticaGovorun
 		// Rule: JA -> J A when the previous letter is the soft sign
 		// коньяку[K O N1 J A K]
 		// мосьє [M O S1 J E]
-		// нью [N J U]
+		// нью [N1 J U]
+		// "будь-яка" [B U D1 J A K A]
 		// Rule: JA -> J A when the previous letter is the apostrophe
 		// бур'ян [B U R J A N]
 		// кар'єр [K A R J E R]
 		// комп'ютер [K O M P J U T E R]
-		bool doublePhone = false;
-		if (isFirstLetter())
-			doublePhone = true;
-		else
-		{
-			wchar_t prevLetter = offsetLetter(- 1);
+		auto dualPhone = [this]() ->bool {
+			if (isFirstLetter())
+				return true;
+
+			// the first letter of a compound word
+			wchar_t prevLetter = offsetLetter(-1);
+			if (prevLetter == Letter_Hyphen)
+				return true;
+
+			//
 			bool prevVowel = isUkrainianVowel(prevLetter);
 			if (prevVowel)
-				doublePhone = true;
+				return true;
+			
+			bool prevSoftSign = prevLetter == Letter_SoftSign;
+			if (prevSoftSign)
+				return true;
+
+			bool prevApostrophe = prevLetter == Letter_Apostrophe;
+			if (prevApostrophe)
+				return true;
+
+			return false;
+		};
+		bool doublePhone = dualPhone();
+		if (!doublePhone)
+			return false;
+
+		PhoneBillet curPh;
+		if (!makePhoneOneToOne(letter, curPh)) // try to create current phone before modifying the collection
+			return false;
+
+		billetPhones_.push_back(newConsonantPhone("J", SoftHardConsonant::Hard));
+		billetPhones_.push_back(curPh);
+		return true;
+	}
+
+	bool WordPhoneticTranscriber::ruleSoftConsonantBeforeJaJeJu()
+	{
+		wchar_t letter = curLetter();
+		bool accept = (letter == Letter_JU || letter == Letter_JA || letter == Letter_JE) && !billetPhones_.empty();
+		if (!accept)
+			return false;
+		// люди [L1 U D Y]
+		// олексюк [O L E K S1 U K]
+		// бурю [B U R1 U]
+		// лякати [L1 A K A T Y]
+		// буря [B U R1 A]
+		// зоряний [Z O R1 A N Y J]
+		PhoneBillet& prevPh = billetPhones_.back();
+		if (prevPh.DerivedFromChar == CharGroup::Consonant)
+		{
+			SoftHardConsonant softDegree;
+			if (usuallyHardBasicPhone(*phoneReg_, prevPh.BasicPhoneId))
+			{
+				softDegree = SoftHardConsonant::Palatal;
+			}
 			else
 			{
-				bool prevSoftSign = prevLetter == Letter_SoftSign;
-				if (prevSoftSign)
-					doublePhone = true;
-				bool prevApostrophe = prevLetter == Letter_Apostrophe;
-				if (prevApostrophe)
-					doublePhone = true;
+				// easily soft consonant
+				softDegree = SoftHardConsonant::Soft;
 			}
-		}
-		if (doublePhone)
-			billetPhones_.push_back(newConsonantPhone("J", SoftHardConsonant::Hard));
+			prevPh.SoftHard = softDegree;
 
-		if (letter == Letter_JE)
-		{
+			// ллє [L1 L1 E1]
 			// суттєво [S U T T E V O]
-			billetPhones_.push_back(newVowelPhone("E", nullptr));
+			// моделлю [M O D E L1 L1 U]
+			// ілля [I L1 L1 A]
+			int prevPrevInd = (int)billetPhones_.size() - 2;
+			if (prevPrevInd >= 0)
+			{
+				PhoneBillet& prevPrevPh = billetPhones_[prevPrevInd];
+				if (prevPrevPh.BasicPhoneId == prevPh.BasicPhoneId)
+					prevPrevPh.SoftHard = softDegree;
+			}
+
+			PhoneBillet curPh;
+			if (makePhoneOneToOne(letter, curPh))
+				return false;
+			billetPhones_.push_back(curPh);
 			return true;
 		}
-		else if (letter == Letter_JU)
-		{
-			// олексюк [O L E K S U K]
-			// бурю [B U R U]
-			billetPhones_.push_back(newVowelPhone("U", nullptr));
-			return true;
-		}
-		else if (letter == Letter_JA)
-		{
-			// буря [B U R A]
-			// зоряний [Z O R A N Y J]
-			billetPhones_.push_back(newVowelPhone("A", nullptr));
-			return true;
-		}
-		else
-			PG_Assert(false, "Current letter=JE or JU or JA");
 		return false;
 	}
 
@@ -1450,6 +1623,68 @@ namespace PticaGovorun
 		return true;
 	}
 
+	bool WordPhoneticTranscriber::isMutuallySoftConsonant(Phone::BasicPhoneIdT basicPhoneId) const
+	{
+		bool suc = true;
+		bool foundMatch = false; // whether got the match
+		auto matchPhone = [this, &suc, &foundMatch](Phone::BasicPhoneIdT expectBasicPhoneId, const std::string& queryBasicPhoneStr) -> void
+		{
+			if (!suc || foundMatch)
+				return;
+			Phone::BasicPhoneIdT basicId = phoneReg_->basicPhoneId(queryBasicPhoneStr, &suc);
+			if (suc && expectBasicPhoneId == basicId)
+				foundMatch = true;
+		};
+		matchPhone(basicPhoneId, "D");
+		matchPhone(basicPhoneId, "DZ");
+		matchPhone(basicPhoneId, "T");
+		matchPhone(basicPhoneId, "TS");
+		matchPhone(basicPhoneId, "Z");
+		matchPhone(basicPhoneId, "S");
+		matchPhone(basicPhoneId, "N");
+		matchPhone(basicPhoneId, "L");
+		PG_DbgAssert(suc);
+		return foundMatch;
+	}
+
+	void WordPhoneticTranscriber::postRulePairOfConsonantsSoftenEachOther()
+	{
+		for (size_t i = billetPhones_.size() - 1; i > 0; --i)
+		{
+			const PhoneBillet& right = billetPhones_[i];
+			PhoneBillet& left = billetPhones_[i - 1];
+			if (left.DerivedFromChar == CharGroup::Consonant &&
+				right.DerivedFromChar == CharGroup::Consonant &&
+				right.SoftHard == SoftHardConsonant::Soft &&
+				isMutuallySoftConsonant(left.BasicPhoneId) &&
+				isMutuallySoftConsonant(right.BasicPhoneId))
+			{
+				left.SoftHard = SoftHardConsonant::Soft;
+			}
+		}
+	}
+
+	void WordPhoneticTranscriber::postRuleAmplifyUnvoicedConsonantBeforeVoiced()
+	{
+		// Rule: unvoiced consonant becomes voiced before another voiced consonant
+		for (size_t phInd = billetPhones_.size() - 1; phInd > 0; phInd--)
+		{
+			PhoneBillet& prevPh = billetPhones_[phInd - 1];
+			const PhoneBillet& ph = billetPhones_[phInd];
+
+			if (isNoisyUnvoicedConsonant(*phoneReg_, prevPh.BasicPhoneId) && isNoisyVoicedConsonant(*phoneReg_, ph.BasicPhoneId))
+			{
+				boost::optional<PhoneRegistry::BasicPhoneIdT> partnerBasicPhoneId = getVoicedUnvoicedConsonantPair(*phoneReg_, prevPh.BasicPhoneId);
+				PG_Assert(partnerBasicPhoneId != nullptr && "Can't find paired consonant");
+
+				const BasicPhone* partnerBasicPhone = phoneReg_->basicPhone(partnerBasicPhoneId.get());
+
+				PhoneBillet newPhone = newConsonantPhone(partnerBasicPhone->Name, prevPh.SoftHard);
+				billetPhones_[phInd - 1] = newPhone;
+			}
+		}
+	}
+
 	bool WordPhoneticTranscriber::tryRecoverStressedVowel()
 	{
 		// rule: one vowel in a word is always stressed (not works with abbreviation eg USA)
@@ -1482,14 +1717,14 @@ namespace PticaGovorun
 				boost::optional<SoftHardConsonant> softHard = ph.SoftHard;
 				if (softHard == nullptr)
 					softHard = phoneReg_->defaultSoftHardConsonant();
-				phoneId = phoneReg_->phoneIdSingle(ph.BasicPhoneStrId, softHard, nullptr);
+				phoneId = phoneReg_->phoneIdSingle(ph.BasicPhoneId, softHard, nullptr);
 			}
 			else if (ph.DerivedFromChar == CharGroup::Vowel)
 			{
 				boost::optional<bool> isStressed = ph.IsStressed;
 				if (isStressed == nullptr)
 					isStressed = phoneReg_->defaultIsVowelStressed();
-				phoneId = phoneReg_->phoneIdSingle(ph.BasicPhoneStrId, nullptr, isStressed);
+				phoneId = phoneReg_->phoneIdSingle(ph.BasicPhoneId, nullptr, isStressed);
 			}
 			PG_Assert(phoneId != nullptr && "Can't map phone billet to phoneId");
 			return phoneId.get();
@@ -1499,11 +1734,11 @@ namespace PticaGovorun
 	PhoneBillet WordPhoneticTranscriber::newConsonantPhone(const std::string& basicPhoneStr, boost::optional<SoftHardConsonant> SoftHard) const
 	{
 		bool success = false;
-		BasicPhoneStrIdT basicId = phoneReg_->basicPhoneId(basicPhoneStr, &success);
+		BasicPhoneIdT basicId = phoneReg_->basicPhoneId(basicPhoneStr, &success);
 		PG_Assert(success && "Unknown basic phone str");
 
 		PhoneBillet billet;
-		billet.BasicPhoneStrId = basicId;
+		billet.BasicPhoneId = basicId;
 		billet.DerivedFromChar = CharGroup::Consonant;
 		billet.SoftHard = SoftHard;
 		return billet;
@@ -1512,11 +1747,11 @@ namespace PticaGovorun
 	PhoneBillet WordPhoneticTranscriber::newVowelPhone(const std::string& basicPhoneStr, boost::optional<bool> isStressed) const
 	{
 		bool success = false;
-		BasicPhoneStrIdT basicId = phoneReg_->basicPhoneId(basicPhoneStr, &success);
+		BasicPhoneIdT basicId = phoneReg_->basicPhoneId(basicPhoneStr, &success);
 		PG_Assert(success && "Unknown basic phone str");
 
 		PhoneBillet billet;
-		billet.BasicPhoneStrId = basicId;
+		billet.BasicPhoneId = basicId;
 		billet.DerivedFromChar = CharGroup::Vowel;
 		billet.IsStressed = isStressed;
 		return billet;
@@ -1545,6 +1780,7 @@ namespace PticaGovorun
 			ph = newConsonantPhone("D", nullptr);
 			break;
 		case L'е':
+		case L'є':
 			ph=  newVowelPhone("E", nullptr);
 			break;
 		case L'ж':
@@ -1557,6 +1793,7 @@ namespace PticaGovorun
 			ph = newVowelPhone("Y", nullptr);
 			break;
 		case L'і':
+		case L'ї':
 			ph = newVowelPhone("I", nullptr);
 			break;
 		case L'й':
@@ -1605,7 +1842,14 @@ namespace PticaGovorun
 			ph = newConsonantPhone("CH", SoftHardConsonant::Hard);
 			break;
 		case L'ш':
+		case L'щ':
 			ph = newConsonantPhone("SH", SoftHardConsonant::Hard);
+			break;
+		case L'ю':
+			ph = newVowelPhone("U", nullptr);
+			break;
+		case L'я':
+			ph = newVowelPhone("A", nullptr);
 			break;
 		default:
 			return false;
@@ -2637,22 +2881,6 @@ namespace PticaGovorun
 		}
 
 		return -1;
-	}
-
-	bool isUnvoicedCharUk(wchar_t ch)
-	{
-		// кпстфхшцч
-		// КПСТФХШЦЧ
-		return
-			ch == L'к' || ch == L'К' ||
-			ch == L'п' || ch == L'П' ||
-			ch == L'с' || ch == L'С' ||
-			ch == L'т' || ch == L'Т' ||
-			ch == L'ф' || ch == L'Ф' ||
-			ch == L'х' || ch == L'Х' ||
-			ch == L'ш' || ch == L'Ш' ||
-			ch == L'ц' || ch == L'Ц' ||
-			ch == L'ч' || ch == L'Ч';
 	}
 
 	// Returns number of made transformations or zero if the map was not changed.
