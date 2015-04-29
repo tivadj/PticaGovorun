@@ -260,6 +260,10 @@ namespace PticaGovorun
 		spellTest(L"λ³χα³", "L1 I DZH B2 I");
 		spellTest(L"υξχ αθ", "KH O DZH B Y");
 	}
+	TEST_CASE("apostrophe in en->uk transliteration") {
+		// he's -> υ³'η
+		spellTest(L"υ³'η", "KH2 I1 Z"); // apostrophe is ignored
+	}
 	TEST_CASE("vary phone softness and stress")
 	{
 		SECTION("no soft no stress") {

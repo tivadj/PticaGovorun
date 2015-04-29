@@ -1391,10 +1391,14 @@ namespace PticaGovorun
 		if (!billetPhones_.empty())
 		{
 			PhoneBillet& ph = billetPhones_.back();
-			bool ok = ph.DerivedFromChar == CharGroup::Consonant;
-			if (!ok)
-				return false; // Only consonant can be hardened
-			ph.SoftHard = SoftHardConsonant::Hard;
+			bool hardingConsonant = ph.DerivedFromChar == CharGroup::Consonant;
+			if (hardingConsonant)
+				ph.SoftHard = SoftHardConsonant::Hard;
+			else
+			{
+				// apostrophe after vowel may be used in uk->en transliteration eg. "he's -> õ³'ç"
+				// accept it; do no action
+			}
 			return true;
 		}
 		return false;
