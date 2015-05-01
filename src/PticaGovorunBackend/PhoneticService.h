@@ -23,6 +23,8 @@ namespace PticaGovorun
 		Soft,
 	};
 
+	void toString(SoftHardConsonant value, std::string& result);
+
 	// eg TS for soft consonant TS1
 	struct PG_EXPORTS BasicPhone
 	{
@@ -211,15 +213,24 @@ namespace PticaGovorun
 	PG_EXPORTS bool operator == (const Pronunc& a, const Pronunc& b);
 	PG_EXPORTS bool operator < (const Pronunc& a, const Pronunc& b);
 
+	PG_EXPORTS bool getStressedVowelCharIndAtMostOne(boost::wstring_ref word, int& stressedCharInd);
+	PG_EXPORTS int syllableIndToVowelCharIndUk(boost::wstring_ref word, int syllableInd);
+	PG_EXPORTS int vowelCharIndToSyllableIndUk(boost::wstring_ref word, int vowelCharInd);
+
+	// Loads stressed vowel definitions from file.
+	PG_EXPORTS std::tuple<bool, const char*> loadStressedSyllableDictionaryXml(boost::wstring_ref dictFilePath, std::unordered_map<std::wstring, int>& wordToStressedSyllableInd);
+
 	// Loads dictionary of word -> (phone list) from text file.
 	// File usually has 'voca' extension.
 	// File has Windows-1251 encodeding.
 	// Each word may have multiple pronunciations (1-* relation); for now we neglect it and store data into map (1-1 relation).
 	PG_EXPORTS std::tuple<bool, const char*> loadPronunciationVocabulary(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<std::string>>& wordToPhoneList, const QTextCodec& textCodec); // TODO: remove
 	PG_EXPORTS std::tuple<bool, const char*> loadPronunciationVocabulary2(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<Pronunc>>& wordToPhoneList, const QTextCodec& textCodec); // TODO: remove
+	PG_EXPORTS void parsePronId(const std::wstring& pronId, boost::wstring_ref& pronName);
+	PG_EXPORTS bool isWordStressAssigned(const PhoneRegistry& phoneReg, const std::vector<PhoneId>& phoneIds);
 
 	// 'brokenLines' has lines of the dictionary which can't be read.
-	std::tuple<bool, const char*> loadPhoneticDictionaryPronIdPerLine(const std::wstring& vocabFilePathAbs, const PhoneRegistry& phoneReg, const QTextCodec& textCodec, std::vector<PhoneticWord>& words, std::vector<std::string>& brokenLines);
+	PG_EXPORTS std::tuple<bool, const char*> loadPhoneticDictionaryPronIdPerLine(const std::wstring& vocabFilePathAbs, const PhoneRegistry& phoneReg, const QTextCodec& textCodec, std::vector<PhoneticWord>& words, std::vector<std::string>& brokenLines);
 
 	PG_EXPORTS void normalizePronunciationVocabulary(std::map<std::wstring, std::vector<Pronunc>>& wordToPhoneList, bool toUpper = true, bool trimNumbers = true);
 	PG_EXPORTS void trimPhoneStrExtraInfos(const std::string& phoneStr, std::string& phoneStrTrimmed, bool toUpper, bool trimNumbers);
@@ -236,8 +247,91 @@ namespace PticaGovorun
 	// Removes phone modifiers.
 	PG_EXPORTS void updatePhoneModifiers(const PhoneRegistry& phoneReg, bool keepConsonantSoftness, bool keepVowelStress, std::vector<PhoneId>& phonesList);
 
+	// Half made phone.
+	// The incomplete phone's data, so that complete PhoneId can't be queried from phone registry.
+	typedef decltype(static_cast<Phone*>(nullptr)->BasicPhoneId) BasicPhoneIdT;
+	struct PhoneBillet
+	{
+		BasicPhoneIdT BasicPhoneId;
+		boost::optional<CharGroup> DerivedFromChar = boost::none;
+		boost::optional<SoftHardConsonant> SoftHard = boost::none; // valid for consonants only
+		boost::optional<bool> IsStressed = boost::none; // valid for for vowels only
+	};
+
+	// Transforms text into sequence of phones.
+	class PG_EXPORTS WordPhoneticTranscriber
+	{
+	public:
+		typedef std::function<auto (boost::wstring_ref, std::vector<int>&) -> bool> StressedSyllableIndFunT;
+	private:
+		const PhoneRegistry* phoneReg_;
+		const std::wstring* word_;
+		std::vector<char> isLetterStressed_; // -1 not initialized, 0=false, 1=true
+		size_t letterInd_;
+		std::wstring errString_;
+		std::vector<PhoneBillet> billetPhones_;
+		std::vector<PhoneId> outputPhones_;
+		std::map<int, int> phoneIndToLetterInd_;
+		StressedSyllableIndFunT stressedSyllableIndFun_ = nullptr;
+	public:
+		void transcribe(const PhoneRegistry& phoneReg, const std::wstring& word);
+		void copyOutputPhoneIds(std::vector<PhoneId>& phoneIds) const;
+		
+		void setStressedSyllableIndFun(StressedSyllableIndFunT value);
+
+		bool hasError() const;
+		const std::wstring& errorString() const;
+	private:
+		// The current processed character of the word.
+		inline wchar_t curLetter() const;
+		inline boost::optional<bool> isCurVowelStressed() const;
+		inline wchar_t offsetLetter(int offset) const;
+		inline bool isFirstLetter() const;
+		inline bool isLastLetter() const;
+	public:
+		int getVowelLetterInd(int vowelPhoneInd) const;
+	private:
+		PhoneBillet newConsonantPhone(const std::string& basicPhoneStr, boost::optional<SoftHardConsonant> SoftHard) const;
+		PhoneBillet newVowelPhone(const std::string& basicPhoneStr, boost::optional<bool> isStressed) const;
+
+		// Maps letter to a default phone candidate. More complicated cases are handled via rules.
+		bool makePhoneFromCurLetterOneToOne(PhoneBillet& ph) const;
+
+		void addPhone(const PhoneBillet& phone);
+		void phoneBilletToStr(const PhoneBillet& phone, std::wstring& result) const;
+
+		//
+		void tryInitStressedVowels();
+		bool ruleIgnore(); // do not require neighbourhood info
+		bool ruleJi(); // do not require neighbourhood info
+		bool ruleShCh(); // do not require neighbourhood info
+		bool ruleDzDzh(); // progressive
+		bool ruleZhDzh(); // progressive
+		bool ruleNtsk(); // progressive
+		bool ruleSShEtc(); // progressive
+		bool ruleTsEtc(); // progressive
+		bool ruleSoftSign(); // regressive
+		bool ruleApostrophe(); // regressive
+		bool ruleHardConsonantBeforeE(); // regressive
+		bool ruleSoftConsonantBeforeI(); // regressive
+		bool ruleDoubleJaJeJu(); // regressive
+		bool ruleSoftConsonantBeforeJaJeJu(); // regressive
+		bool ruleDampVoicedConsonantBeforeUnvoiced(); // progressive
+		bool ruleDefaultSimpleOneToOneMap(); // do not require neighbourhood info
+
+		// Checks whether the given phone is of the kind, which mutually softens each other.
+		bool isMutuallySoftConsonant(Phone::BasicPhoneIdT basicPhoneId) const;
+		// Rule: checks that if there are two consequent phones of specific type, and the second is soft, then the first becomes soft too.
+		void postRulePairOfConsonantsSoftenEachOther();
+
+		void postRuleAmplifyUnvoicedConsonantBeforeVoiced();
+
+		void buildOutputPhones();
+	};
+
 	// Performs word transcription (word is represented as a sequence of phonemes).
-	PG_EXPORTS std::tuple<bool, const char*> spellWordUk(const PhoneRegistry& phoneReg, const std::wstring& word, std::vector<PhoneId>& phones);
+	PG_EXPORTS std::tuple<bool, const char*> spellWordUk(const PhoneRegistry& phoneReg, const std::wstring& word, std::vector<PhoneId>& phones,
+		WordPhoneticTranscriber::StressedSyllableIndFunT stressedSyllableIndFun = nullptr);
 
 	// Saves phonetic dictionary to file in YAML format.
 	PG_EXPORTS void savePhoneticDictionaryYaml(const std::vector<PhoneticWord>& phoneticDict, const std::wstring& filePath, const PhoneRegistry& phoneReg);

@@ -24,7 +24,8 @@ namespace PticaGovorun
 		REQUIRE(phonesStrIn == phonesStrOut);
 	}
 
-	inline void spellTest(const wchar_t* word, const char* expectTranscription, const PhoneRegistry* phoneRegClient = nullptr)
+	inline void spellTest(const wchar_t* word, const char* expectTranscription, const PhoneRegistry* phoneRegClient = nullptr,
+		WordPhoneticTranscriber::StressedSyllableIndFunT stressedSyllableIndFun = nullptr)
 	{
 		std::unique_ptr<PhoneRegistry> phoneRegLocal;
 		if (phoneRegClient == nullptr)
@@ -39,7 +40,7 @@ namespace PticaGovorun
 		std::vector<PhoneId> phones;
 		bool spellOp;
 		const char* errMsg;
-		std::tie(spellOp, errMsg) = spellWordUk(*phoneReg, word, phones);
+		std::tie(spellOp, errMsg) = spellWordUk(*phoneReg, word, phones, stressedSyllableIndFun);
 		REQUIRE(spellOp);
 
 		std::vector<PhoneId> expectPhones;
@@ -311,6 +312,22 @@ namespace PticaGovorun
 
 		phoneReg.setPalatalSupport(PalatalSupport::AsPalatal);
 		spellTest(L"бій", "B2 I1 J", &phoneReg);
+	}
+	TEST_CASE("external provider of stressed syllable")
+	{
+		auto getStressedSyllableIndFun = [](boost::wstring_ref word, std::vector<int>& stressedSyllableInds) -> bool
+		{
+			if (word.compare(L"тулуб") == 0)
+				stressedSyllableInds.assign({ 1 });
+			else if (word.compare(L"укртранснафта") == 0)
+				stressedSyllableInds.assign({ 0, 1, 2 });
+			else
+				return false;
+			return true;
+		};
+
+		spellTest(L"тулуб", "T U L U1 B", nullptr, getStressedSyllableIndFun);
+		spellTest(L"укртранснафта", "U1 K R T R A1 N S N A1 F T A", nullptr, getStressedSyllableIndFun);
 	}
 }
 

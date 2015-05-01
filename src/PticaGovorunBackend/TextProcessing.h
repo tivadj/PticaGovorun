@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <memory>
 #include <boost/optional.hpp>
+#include <boost/utility/string_ref.hpp>
 #include "PticaGovorunCore.h"
 #include "ClnUtils.h"
 
@@ -66,6 +67,7 @@ namespace PticaGovorun
 
 	PG_EXPORTS inline bool isUkrainianConsonant(wchar_t ch);
 	PG_EXPORTS inline bool isUkrainianVowel(wchar_t ch);
+	PG_EXPORTS int vowelsCountUk(boost::wstring_ref word);
 	
 	// Vowel or consonant.
 	enum class CharGroup

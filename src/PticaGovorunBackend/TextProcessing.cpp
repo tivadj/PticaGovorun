@@ -384,6 +384,19 @@ namespace PticaGovorun
 			ch == L'я' || ch == L'Я';
 	}
 
+	int vowelsCountUk(boost::wstring_ref word)
+	{
+		int numVowels = 0;
+		for (size_t i = 0; i < word.size(); ++i)
+		{
+			wchar_t ch = word[i];
+			if (isUkrainianVowel(ch))
+				numVowels++;
+		}
+		return numVowels;
+	}
+
+
 	boost::optional<CharGroup> classifyUkrainianChar(wchar_t ch)
 	{
 		bool isVowel = isUkrainianVowel(ch);
