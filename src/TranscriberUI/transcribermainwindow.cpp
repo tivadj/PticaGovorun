@@ -54,6 +54,11 @@ TranscriberMainWindow::TranscriberMainWindow(QWidget *parent) :
 
 	phoneticDictModel_ = std::make_shared<PticaGovorun::PhoneticDictionaryViewModel>();
 	transcriberModel_->setPhoneticDictViewModel(phoneticDictModel_);
+	
+	fileWorkspaceViewModel_ = std::make_shared<FileWorkspaceViewModel>();
+	fileWorkspaceViewModel_->setWorkingDirectory(LR"path(C:\devb\PticaGovorunProj\srcrep\data\)path");
+	ui->widgetFileWorkspace->setFileWorkspaceViewModel(fileWorkspaceViewModel_);
+	QObject::connect(fileWorkspaceViewModel_.get(), SIGNAL(openAudioFile(const std::wstring&)), this, SLOT(fileWorkspaceViewModel_openAudioFile(const std::wstring&)));
 
 	updateUI();
 }
@@ -408,7 +413,16 @@ void TranscriberMainWindow::pushButtonSegmentComposerPlay_Clicked()
 	transcriberModel_->playComposingRecipeRequest(composingRecipe);
 }
 
-void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
+	void TranscriberMainWindow::fileWorkspaceViewModel_openAudioFile(const std::wstring& filePath)
+	{
+		QString filePathQ = QString::fromStdWString(filePath);
+		ui->lineEditFileName->setText(filePathQ);
+
+		transcriberModel_->setAudioFilePath(filePathQ);
+		transcriberModel_->loadAudioFileRequest();
+	}
+
+	void TranscriberMainWindow::keyPressEvent(QKeyEvent* ke)
 {
 	if (ke->key() == Qt::Key_Space || ke->key() == Qt::Key_C)
 		transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::CurrentCursor);

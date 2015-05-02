@@ -26,15 +26,17 @@ SOURCES += main.cpp \
     TranscriberMainWindow.cpp \
     AudioSamplesWidget.cpp \
     TranscriberViewModel.cpp \
-    AudioMarkupNavigatorDialog.cpp
+    AudioMarkupNavigatorDialog.cpp \
+    FileWorkspaceWidget.cpp
 
 HEADERS  += \
     TranscriberMainWindow.h \
     AudioSamplesWidget.h \
     TranscriberViewModel.h \
-    AudioMarkupNavigatorDialog.h
+    AudioMarkupNavigatorDialog.h \
+    FileWorkspaceWidget.h
 
 FORMS    += \
     AudioSamplesWidget.ui \
-    TranscriberMainWindow.ui \
-    AudioMarkupNavigatorDialog.ui
+    AudioMarkupNavigatorDialog.ui \
+    FileWorkspaceWidget.ui

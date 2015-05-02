@@ -5,6 +5,7 @@
 #include <QMainWindow>
 #include "TranscriberViewModel.h"
 #include "PhoneticDictionaryViewModel.h"
+#include "FileWorkspaceViewModel.h"
 
 namespace Ui {
 class TranscriberMainWindow;
@@ -54,10 +55,14 @@ private slots:
 
 	// segment composer
 	void pushButtonSegmentComposerPlay_Clicked();
+
+	// file workspace
+	void fileWorkspaceViewModel_openAudioFile(const std::wstring& filePath);
 private:
     Ui::TranscriberMainWindow *ui;
     std::shared_ptr<TranscriberViewModel> transcriberModel_;
-    std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> phoneticDictModel_;
+    std::shared_ptr<PhoneticDictionaryViewModel> phoneticDictModel_;
+	std::shared_ptr<FileWorkspaceViewModel> fileWorkspaceViewModel_;
 };
 
 }

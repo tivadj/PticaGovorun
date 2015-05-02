@@ -6,484 +6,521 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1258</width>
-    <height>774</height>
+    <width>938</width>
+    <height>850</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>TranscriberMainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QWidget" name="widgetUpperPanel" native="true">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
+     <widget class="QSplitter" name="splitterWorkspaceContent">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>60</height>
-       </size>
-      </property>
-      <widget class="QPushButton" name="pushButtonLoadFileName">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>0</y>
-         <width>75</width>
-         <height>23</height>
-        </rect>
+      <widget class="PticaGovorun::FileWorkspaceWidget" name="widgetFileWorkspace" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="text">
-        <string>Load</string>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
        </property>
-       <property name="default">
-        <bool>true</bool>
+       <property name="baseSize">
+        <size>
+         <width>300</width>
+         <height>0</height>
+        </size>
        </property>
       </widget>
-      <widget class="QLineEdit" name="lineEditFileName">
-       <property name="geometry">
-        <rect>
-         <x>90</x>
-         <y>0</y>
-         <width>391</width>
-         <height>20</height>
-        </rect>
+      <widget class="QWidget" name="widgetContentPlaceholder" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="text">
-        <string>file-name.wav</string>
-       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QWidget" name="widgetUpperPanel" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>60</height>
+           </size>
+          </property>
+          <widget class="QPushButton" name="pushButtonLoadFileName">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>0</y>
+             <width>75</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Load</string>
+           </property>
+           <property name="default">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEditFileName">
+           <property name="geometry">
+            <rect>
+             <x>90</x>
+             <y>0</y>
+             <width>391</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>file-name.wav</string>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEditCursorFirstDocPosX">
+           <property name="geometry">
+            <rect>
+             <x>770</x>
+             <y>19</y>
+             <width>81</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>###</string>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEditCursorFirstFrameInd">
+           <property name="geometry">
+            <rect>
+             <x>770</x>
+             <y>-1</y>
+             <width>81</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>###</string>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label">
+           <property name="geometry">
+            <rect>
+             <x>727</x>
+             <y>20</y>
+             <width>46</width>
+             <height>13</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>DocPosX</string>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEditRecognizerName">
+           <property name="geometry">
+            <rect>
+             <x>610</x>
+             <y>-3</y>
+             <width>71</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>recog name</string>
+           </property>
+          </widget>
+          <widget class="QGroupBox" name="groupBox">
+           <property name="geometry">
+            <rect>
+             <x>1150</x>
+             <y>-2</y>
+             <width>71</width>
+             <height>41</height>
+            </rect>
+           </property>
+           <property name="title">
+            <string>Marker Level</string>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+           <property name="checkable">
+            <bool>false</bool>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+           <widget class="QRadioButton" name="radioButtonPhoneLevel">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>26</y>
+              <width>51</width>
+              <height>17</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Phone</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+           <widget class="QRadioButton" name="radioButtonWordLevel">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>11</y>
+              <width>49</width>
+              <height>17</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Word</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QLineEdit" name="lineEditMarkerText">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>38</y>
+             <width>1131</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>annotation</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_3">
+           <property name="geometry">
+            <rect>
+             <x>1040</x>
+             <y>0</y>
+             <width>51</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Marker ID</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="labelMarkerId">
+           <property name="geometry">
+            <rect>
+             <x>1096</x>
+             <y>0</y>
+             <width>41</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>###</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="pushButtonSaveAudioAnnot">
+           <property name="geometry">
+            <rect>
+             <x>486</x>
+             <y>-1</y>
+             <width>41</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Save</string>
+           </property>
+           <property name="default">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="checkBoxCurMarkerStopOnPlayback">
+           <property name="geometry">
+            <rect>
+             <x>1150</x>
+             <y>40</y>
+             <width>91</width>
+             <height>17</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Stops Playback</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_4">
+           <property name="geometry">
+            <rect>
+             <x>735</x>
+             <y>0</y>
+             <width>31</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Cursor</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="pushButtonSegmentComposerPlay">
+           <property name="geometry">
+            <rect>
+             <x>550</x>
+             <y>-4</y>
+             <width>51</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>SegPlay</string>
+           </property>
+           <property name="default">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEditCursorSecondFrameInd">
+           <property name="geometry">
+            <rect>
+             <x>856</x>
+             <y>-1</y>
+             <width>81</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>###</string>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEditCursorSecondDocPosX">
+           <property name="geometry">
+            <rect>
+             <x>856</x>
+             <y>19</y>
+             <width>81</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>###</string>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEditCursorFramesCount">
+           <property name="geometry">
+            <rect>
+             <x>942</x>
+             <y>-1</y>
+             <width>81</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>###</string>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEditCursorDocLen">
+           <property name="geometry">
+            <rect>
+             <x>942</x>
+             <y>19</y>
+             <width>81</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>###</string>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QGroupBox" name="groupBoxLang">
+           <property name="geometry">
+            <rect>
+             <x>1040</x>
+             <y>18</y>
+             <width>91</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="title">
+            <string/>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+           <property name="checkable">
+            <bool>false</bool>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+           <widget class="QRadioButton" name="radioButtonLangRu">
+            <property name="geometry">
+             <rect>
+              <x>63</x>
+              <y>0</y>
+              <width>31</width>
+              <height>17</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>ru</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+           <widget class="QRadioButton" name="radioButtonLangUk">
+            <property name="geometry">
+             <rect>
+              <x>30</x>
+              <y>0</y>
+              <width>31</width>
+              <height>17</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>uk</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+           <widget class="QRadioButton" name="radioButtonLangNone">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>31</width>
+              <height>17</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>x</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QComboBox" name="comboBoxSpeakerId">
+           <property name="geometry">
+            <rect>
+             <x>550</x>
+             <y>20</y>
+             <width>131</width>
+             <height>16</height>
+            </rect>
+           </property>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="widgetSamplesMain" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QScrollBar" name="horizontalScrollBarSamples">
+             <property name="minimum">
+              <number>0</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="AudioSamplesWidget" name="widgetSamples" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+          </layout>
+          <zorder>widgetSamples</zorder>
+          <zorder>horizontalScrollBarSamples</zorder>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="widgetBottomPanel" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QPlainTextEdit" name="plainTextEditLogger">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="undoRedoEnabled">
+              <bool>false</bool>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPlainTextEdit" name="plainTextEditAudioSegmentsComposer"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
       </widget>
-      <widget class="QLineEdit" name="lineEditCursorFirstDocPosX">
-       <property name="geometry">
-        <rect>
-         <x>770</x>
-         <y>19</y>
-         <width>81</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>###</string>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="lineEditCursorFirstFrameInd">
-       <property name="geometry">
-        <rect>
-         <x>770</x>
-         <y>-1</y>
-         <width>81</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>###</string>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label">
-       <property name="geometry">
-        <rect>
-         <x>727</x>
-         <y>20</y>
-         <width>46</width>
-         <height>13</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>DocPosX</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="lineEditRecognizerName">
-       <property name="geometry">
-        <rect>
-         <x>610</x>
-         <y>-3</y>
-         <width>71</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>recog name</string>
-       </property>
-      </widget>
-      <widget class="QGroupBox" name="groupBox">
-       <property name="geometry">
-        <rect>
-         <x>1150</x>
-         <y>-2</y>
-         <width>71</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>Marker Level</string>
-       </property>
-       <property name="flat">
-        <bool>false</bool>
-       </property>
-       <property name="checkable">
-        <bool>false</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-       <widget class="QRadioButton" name="radioButtonPhoneLevel">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>26</y>
-          <width>51</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Phone</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="radioButtonWordLevel">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>11</y>
-          <width>49</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Word</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QLineEdit" name="lineEditMarkerText">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>38</y>
-         <width>1131</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>annotation</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_3">
-       <property name="geometry">
-        <rect>
-         <x>1040</x>
-         <y>0</y>
-         <width>51</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Marker ID</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="labelMarkerId">
-       <property name="geometry">
-        <rect>
-         <x>1096</x>
-         <y>0</y>
-         <width>41</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>###</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pushButtonSaveAudioAnnot">
-       <property name="geometry">
-        <rect>
-         <x>486</x>
-         <y>-1</y>
-         <width>41</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Save</string>
-       </property>
-       <property name="default">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="checkBoxCurMarkerStopOnPlayback">
-       <property name="geometry">
-        <rect>
-         <x>1150</x>
-         <y>40</y>
-         <width>91</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Stops Playback</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_4">
-       <property name="geometry">
-        <rect>
-         <x>735</x>
-         <y>0</y>
-         <width>31</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Cursor</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pushButtonSegmentComposerPlay">
-       <property name="geometry">
-        <rect>
-         <x>550</x>
-         <y>-4</y>
-         <width>51</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>SegPlay</string>
-       </property>
-       <property name="default">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="lineEditCursorSecondFrameInd">
-       <property name="geometry">
-        <rect>
-         <x>856</x>
-         <y>-1</y>
-         <width>81</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>###</string>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="lineEditCursorSecondDocPosX">
-       <property name="geometry">
-        <rect>
-         <x>856</x>
-         <y>19</y>
-         <width>81</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>###</string>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="lineEditCursorFramesCount">
-       <property name="geometry">
-        <rect>
-         <x>942</x>
-         <y>-1</y>
-         <width>81</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>###</string>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="lineEditCursorDocLen">
-       <property name="geometry">
-        <rect>
-         <x>942</x>
-         <y>19</y>
-         <width>81</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>###</string>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QGroupBox" name="groupBoxLang">
-       <property name="geometry">
-        <rect>
-         <x>1040</x>
-         <y>18</y>
-         <width>91</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="layoutDirection">
-        <enum>Qt::LeftToRight</enum>
-       </property>
-       <property name="title">
-        <string/>
-       </property>
-       <property name="flat">
-        <bool>false</bool>
-       </property>
-       <property name="checkable">
-        <bool>false</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-       <widget class="QRadioButton" name="radioButtonLangRu">
-        <property name="geometry">
-         <rect>
-          <x>63</x>
-          <y>0</y>
-          <width>31</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>ru</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="radioButtonLangUk">
-        <property name="geometry">
-         <rect>
-          <x>30</x>
-          <y>0</y>
-          <width>31</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>uk</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="radioButtonLangNone">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>31</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>x</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QComboBox" name="comboBoxSpeakerId">
-       <property name="geometry">
-        <rect>
-         <x>550</x>
-         <y>20</y>
-         <width>131</width>
-         <height>16</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
-    </item>
-    <item>
-     <widget class="QWidget" name="widgetSamplesMain" native="true">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="QScrollBar" name="horizontalScrollBarSamples">
-         <property name="minimum">
-          <number>0</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="AudioSamplesWidget" name="widgetSamples" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-      </layout>
-      <zorder>widgetSamples</zorder>
-      <zorder>horizontalScrollBarSamples</zorder>
-     </widget>
-    </item>
-    <item>
-     <widget class="QWidget" name="widgetBottomPanel" native="true">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QPlainTextEdit" name="plainTextEditLogger">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="undoRedoEnabled">
-          <bool>false</bool>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPlainTextEdit" name="plainTextEditAudioSegmentsComposer"/>
-       </item>
-      </layout>
      </widget>
     </item>
    </layout>
@@ -493,7 +530,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1258</width>
+     <width>938</width>
      <height>21</height>
     </rect>
    </property>
@@ -516,26 +553,13 @@
    <header>AudioSamplesWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>PticaGovorun::FileWorkspaceWidget</class>
+   <extends>QWidget</extends>
+   <header>FileWorkspaceWidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>pushButtonLoadFileName</tabstop>
-  <tabstop>lineEditFileName</tabstop>
-  <tabstop>pushButtonSaveAudioAnnot</tabstop>
-  <tabstop>pushButtonSegmentComposerPlay</tabstop>
-  <tabstop>lineEditRecognizerName</tabstop>
-  <tabstop>lineEditMarkerText</tabstop>
-  <tabstop>radioButtonWordLevel</tabstop>
-  <tabstop>radioButtonPhoneLevel</tabstop>
-  <tabstop>lineEditCursorFirstDocPosX</tabstop>
-  <tabstop>checkBoxCurMarkerStopOnPlayback</tabstop>
-  <tabstop>lineEditCursorFirstFrameInd</tabstop>
-  <tabstop>plainTextEditLogger</tabstop>
-  <tabstop>plainTextEditAudioSegmentsComposer</tabstop>
-  <tabstop>lineEditCursorSecondFrameInd</tabstop>
-  <tabstop>lineEditCursorSecondDocPosX</tabstop>
-  <tabstop>lineEditCursorFramesCount</tabstop>
-  <tabstop>lineEditCursorDocLen</tabstop>
- </tabstops>
  <resources/>
  <connections/>
 </ui>
