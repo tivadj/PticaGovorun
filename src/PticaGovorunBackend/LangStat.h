@@ -41,7 +41,7 @@ namespace PticaGovorun
 
 	struct PG_EXPORTS WordSeqKey
 	{
-		std::array<int, 3> PartIds;
+		std::array<int, 2> PartIds;
 
 		int PartCount; // number of part ids
 
@@ -98,10 +98,10 @@ namespace PticaGovorun
 		long getWordSequenceUsage(WordSeqKey wordIds) const;
 		int wordPartsCount() const;
 		int wordSeqCount() const;
+		void wordSeqCountPerSeqSize(wv::slice<long> wordsSeqSizes) const;
 		void copyWordParts(std::vector<const WordPart*>& wordParts) const;
 		void copyWordSeq(std::vector<WordSeqKey>& wordSeqItems);
-		void copyWordSeq(std::vector<WordSeqUsage*>& wordSeqItems);
-
+		void copyWordSeq(std::vector<const WordSeqUsage*>& wordSeqItems) const;
 	};
 
 	//PG_EXPORTS std::tuple<bool, const char*> saveWordUsageInfoYaml(wv::slice<WordSeqUsage*> wordStats, const std::wstring& filePath);

@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 #include <ctime> // time_t, strftime
+#include "PticaGovorunCore.h"
 
 namespace PticaGovorun
 {
@@ -23,5 +24,4 @@ namespace PticaGovorun
 
 		str << buf;
 	}
-
 }

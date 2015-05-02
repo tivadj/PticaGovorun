@@ -368,8 +368,10 @@ namespace RecognizeSpeechSphinxTester
 		int& wordErrorTotalCount, int& wordTotalCount,
 		EditDistance<PhoneId, PhoneProximityCosts>& phonesEditDist,
 		const PhoneProximityCosts& editCost,
-		const std::unordered_map<std::wstring, std::wstring>& pronIdToWord,
-		const std::unordered_map<std::wstring, PronunciationFlavour>& pronIdToPronObj,
+		const std::unordered_map<std::wstring, std::wstring>& pronIdToWordTrain,
+		const std::unordered_map<std::wstring, PronunciationFlavour>& pronIdToPronObjTrain,
+		const std::unordered_map<std::wstring, std::wstring>& pronIdToWordTest,
+		const std::unordered_map<std::wstring, PronunciationFlavour>& pronIdToPronObjTest,
 		const PhoneRegistry& phoneReg)
 	{
 		for (int i = 0; i < segments.size(); ++i)
@@ -505,10 +507,10 @@ namespace RecognizeSpeechSphinxTester
 
 			// map pronId -> word (eg. слова(2) -> слова)
 			std::vector<std::wstring> wordsExpected;
-			std::transform(pronIdsExpected.begin(), pronIdsExpected.end(), std::back_inserter(wordsExpected), [&pronIdToWord](const std::wstring& pronId)
+			std::transform(pronIdsExpected.begin(), pronIdsExpected.end(), std::back_inserter(wordsExpected), [&pronIdToWordTrain](const std::wstring& pronId)
 			{
-				auto wordIt = pronIdToWord.find(pronId);
-				if (wordIt != pronIdToWord.end())
+				auto wordIt = pronIdToWordTrain.find(pronId);
+				if (wordIt != pronIdToWordTrain.end())
 				{
 					const std::wstring& word = wordIt->second;
 					return word;
@@ -521,6 +523,17 @@ namespace RecognizeSpeechSphinxTester
 			std::copy_if(std::begin(pronIdsActualMerged), std::end(pronIdsActualMerged), std::back_inserter(wordsActualNoSil), [](std::wstring& word)
 			{
 				return word != std::wstring(L"<s>") && word != std::wstring(L"</s>") && word != std::wstring(L"<sil>");
+			});
+			// map pronId -> word (eg. слова(2) -> слова)
+			std::transform(wordsActualNoSil.begin(), wordsActualNoSil.end(), wordsActualNoSil.begin(), [&pronIdToWordTest](const std::wstring& pronId)
+			{
+				auto wordIt = pronIdToWordTest.find(pronId);
+				if (wordIt != pronIdToWordTest.end())
+				{
+					const std::wstring& word = wordIt->second;
+					return word;
+				}
+				return pronId;
 			});
 
 			// compute word error
@@ -542,23 +555,29 @@ namespace RecognizeSpeechSphinxTester
 			std::vector<PhoneId> expectedPhones;
 			for (const std::wstring& pronId : pronIdsExpected)
 			{
-				auto pronIdIt = pronIdToPronObj.find(pronId);
-				PG_Assert(pronIdIt != pronIdToPronObj.end() && "The pronId used in transcription must exist in manual phonetic dictionary");
+				auto pronIdIt = pronIdToPronObjTrain.find(pronId);
+				PG_Assert(pronIdIt != pronIdToPronObjTrain.end() && "The pronId used in transcription must exist in manual phonetic dictionary");
 				const PronunciationFlavour& pronObj = pronIdIt->second;
 				std::copy(pronObj.Phones.begin(), pronObj.Phones.end(), std::back_inserter(expectedPhones));
 			}
 
 			std::vector<PhoneId> actualPhones;
-			std::vector<PhoneId> phonesTmp;
+			//std::vector<PhoneId> phonesTmp;
 			for (const std::wstring& actualWord : wordsActualNoSil)
 			{
-				bool spellOp;
-				const char* msg;
-				phonesTmp.clear();
-				// TODO: first/last phone of a word can be modified by the neighbour words
-				std::tie(spellOp, msg) = spellWordUk(phoneReg,actualWord, phonesTmp);
-				PG_Assert(spellOp);
-				std::copy(phonesTmp.begin(), phonesTmp.end(), std::back_inserter(actualPhones));
+				//bool spellOp;
+				//const char* msg;
+				//phonesTmp.clear();
+				//// TODO: first/last phone of a word can be modified by the neighbour words
+				//std::tie(spellOp, msg) = spellWordUk(phoneReg,actualWord, phonesTmp);
+				//PG_Assert(spellOp);
+				//std::copy(phonesTmp.begin(), phonesTmp.end(), std::back_inserter(actualPhones));
+
+				auto pronIdIt = pronIdToPronObjTest.find(actualWord);
+				PG_Assert(pronIdIt != pronIdToPronObjTest.end() && "The word from the output of recognition engine must exist in phonetic dictionary");
+				const PronunciationFlavour& pronObj = pronIdIt->second;
+				std::copy(pronObj.Phones.begin(), pronObj.Phones.end(), std::back_inserter(actualPhones));
+
 			}
 			phonesEditDist.estimateAllDistances(expectedPhones, actualPhones, editCost);
 			std::vector<EditStep> phoneEditRecipe;
@@ -712,6 +731,14 @@ namespace RecognizeSpeechSphinxTester
 
 	void testSphincDecoder()
 	{
+		const char* hmmPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";
+		//const char* langModelPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.lm.DMP)path";
+		//const char* dictPath      = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.dic)path";
+		//const char* langModelPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persian.lm.DMP)path";
+		const char* langModelPath   = R"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian.arpa)path";
+		const char* dictPath        = R"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian.dic)path";
+		const wchar_t* dictPathW   = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian.dic)path";
+
 		//
 		const wchar_t* testFileIdPath = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian_test.fileids)path";
 		std::vector<SphinxFileIdLine> fileIdLines;
@@ -720,39 +747,59 @@ namespace RecognizeSpeechSphinxTester
 		PhoneRegistry phoneReg;
 		bool allowSoftHardConsonant = false;
 		bool allowVowelStress = false;
+		phoneReg.setPalatalSupport(PalatalSupport::AsHard);
 		initPhoneRegistryUk(phoneReg, allowSoftHardConsonant, allowVowelStress);
 
 		// map pronunciation as word (pronId) to corresponding word
-		std::vector<PhoneticWord> phoneticDict;
+		std::vector<PhoneticWord> phoneticDictTrain;
 		bool loadPhoneDict;
 		const char* errMsg = nullptr;
 		const wchar_t* persianDictPathK = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\phoneticKnown.yml)path";
-		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryYaml(persianDictPathK, phoneReg, phoneticDict);
+		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryYaml(persianDictPathK, phoneReg, phoneticDictTrain);
 		if (!loadPhoneDict)
 		{
 			std::cerr << "Can't load phonetic dictionary " << errMsg << std::endl;
 			return;
 		}
 		const wchar_t* persianDictPathB = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\phoneticBroken.yml)path";
-		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryYaml(persianDictPathB, phoneReg, phoneticDict);
+		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryYaml(persianDictPathB, phoneReg, phoneticDictTrain);
 		if (!loadPhoneDict)
 		{
 			std::cerr << "Can't load phonetic dictionary " << errMsg << std::endl;
 			return;
 		}
 
-		std::unordered_map<std::wstring, std::wstring> pronIdToWord;
-		std::unordered_map<std::wstring, PronunciationFlavour> pronIdToPronObj;
-		for (const PhoneticWord& phWord : phoneticDict)
+		QTextCodec* pTextCodec = QTextCodec::codecForName("utf8");
+		std::vector<std::string> brokenLines;
+		std::vector<PhoneticWord> phoneticDictTest;
+		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryPronIdPerLine(dictPathW, phoneReg, *pTextCodec, phoneticDictTest, brokenLines);
+		if (!loadPhoneDict)
 		{
-			for (const PronunciationFlavour& pronFlav : phWord.Pronunciations)
-			{
-				pronIdToPronObj.insert({ pronFlav.PronAsWord, pronFlav });
-
-				if (phWord.Pronunciations.size() > 1)
-					pronIdToWord.insert({ pronFlav.PronAsWord, phWord.Word });
-			}
+			std::cerr << errMsg << std::endl;
+			return;
 		}
+
+		auto populatePhoneDict = [](const std::vector<PhoneticWord>& phoneticDict, std::unordered_map<std::wstring, std::wstring>& pronIdToWord, std::unordered_map<std::wstring, PronunciationFlavour>& pronIdToPronObj)
+		{
+			for (const PhoneticWord& phWord : phoneticDict)
+			{
+				for (const PronunciationFlavour& pronFlav : phWord.Pronunciations)
+				{
+					pronIdToPronObj.insert({ pronFlav.PronAsWord, pronFlav });
+
+					// for multiple pronunciations there are cases when pronId != word
+					//if (phWord.Pronunciations.size() > 1)
+					pronIdToWord.insert({ pronFlav.PronAsWord, phWord.Word });
+				}
+			}
+		};
+		std::unordered_map<std::wstring, std::wstring> pronIdToWordTrain;
+		std::unordered_map<std::wstring, PronunciationFlavour> pronIdToPronObjTrain;
+		populatePhoneDict(phoneticDictTrain, pronIdToWordTrain, pronIdToPronObjTrain);
+
+		std::unordered_map<std::wstring, std::wstring> pronIdToWordTest;
+		std::unordered_map<std::wstring, PronunciationFlavour> pronIdToPronObjTest;
+		populatePhoneDict(phoneticDictTest, pronIdToWordTest, pronIdToPronObjTest);
 
 		//
 		const wchar_t* wavRootDir       = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAudio\)path";
@@ -773,7 +820,7 @@ namespace RecognizeSpeechSphinxTester
 
 		// process only test speech segments
 
-		std::remove_if(segments.begin(), segments.end(), [&fileIdLines](const AnnotatedSpeechSegment& seg)
+		auto remIt = std::remove_if(segments.begin(), segments.end(), [&fileIdLines](const AnnotatedSpeechSegment& seg)
 		{
 			auto fileIdIt = std::find_if(fileIdLines.begin(), fileIdLines.end(), [&seg](const SphinxFileIdLine& fileIdLine)
 			{
@@ -784,18 +831,13 @@ namespace RecognizeSpeechSphinxTester
 			bool isTestSeg = fileIdIt != fileIdLines.end();
 			return !isTestSeg;
 		});
+		segments.erase(remIt, segments.end());
 		
 		int trunc = -1;
 		if (trunc != -1 && segments.size() > trunc)
 			segments.resize(trunc);
 
 		//
-		const char* hmmPath       = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";
-		//const char* langModelPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.lm.DMP)path";
-		//const char* dictPath      = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.dic)path";
-		//const char* langModelPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persian.lm.DMP)path";
-		const char* langModelPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persianLM.txt)path";
-		const char* dictPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persianDic.txt)path";
 		cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
 			"-hmm", hmmPath,
 			"-lm", langModelPath, // accepts both TXT and DMP formats
@@ -804,6 +846,7 @@ namespace RecognizeSpeechSphinxTester
 		if (config == nullptr)
 			return;
 
+		//
 		ps_decoder_t *ps = ps_init(config);
 		if (ps == nullptr)
 			return;
@@ -820,7 +863,9 @@ namespace RecognizeSpeechSphinxTester
 		float targetFrameRate = CmuSphinxFrameRate;
 		std::vector<TwoUtterances> recogUtterances;
 		decodeSpeechSegments(segments, ps, targetFrameRate, recogUtterances,
-			phoneConfusionMat, phonesCount, wordErrorTotalCount, wordTotalCount, phonesEditDist, phoneCosts, pronIdToWord, pronIdToPronObj, phoneReg);
+			phoneConfusionMat, phonesCount, wordErrorTotalCount, wordTotalCount, phonesEditDist, phoneCosts, 
+			pronIdToWordTrain, pronIdToPronObjTrain, 
+			pronIdToWordTest, pronIdToPronObjTest, phoneReg);
 
 		// the call may crash if phonetic dictionary was not correctly initialized (eg .dict file is empty)
 		ps_free(ps);

@@ -214,6 +214,7 @@
     <ClCompile Include="EditDistanceTests.cpp" />
     <ClCompile Include="MatlabTester.cpp" />
     <ClCompile Include="MigrateXmlSpeechAnnotRunner.cpp" />
+    <ClCompile Include="RecognizeSpeechInBatchTester.cpp" />
     <ClCompile Include="RunBuildLanguageModel.cpp" />
     <ClCompile Include="RunTextParser.cpp" />
     <ClCompile Include="PdfReaderRunner.cpp" />
@@ -230,6 +231,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StressedSyllableRunner.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

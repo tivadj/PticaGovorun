@@ -71,5 +71,11 @@
     <ClCompile Include="RunBuildLanguageModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RecognizeSpeechInBatchTester.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StressedSyllableRunner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

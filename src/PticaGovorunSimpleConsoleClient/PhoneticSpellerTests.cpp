@@ -13,21 +13,44 @@ namespace PhoneticSpellerTestsNS
 	void testShrekky()
 	{
 		PhoneRegistry phoneReg;
+		phoneReg.setPalatalSupport(PalatalSupport::AsPalatal);
 		initPhoneRegistryUk(phoneReg, true, true);
+
+		bool loadOp;
+		const char* errMsg;
+
+		const wchar_t* stressDict = LR"path(C:\devb\PticaGovorunProj\data\stressDictUk.xml)path";
+		std::unordered_map<std::wstring, int> wordToStressedSyllable;
+		std::tie(loadOp, errMsg) = loadStressedSyllableDictionaryXml(stressDict, wordToStressedSyllable);
+		if (!loadOp)
+		{
+			std::cerr << errMsg << std::endl;
+			return;
+		}
+
+		auto getStressedSyllableIndFun = [&wordToStressedSyllable](boost::wstring_ref word, std::vector<int>& stressedSyllableInds) -> bool
+		{
+			auto it = wordToStressedSyllable.find(std::wstring(word.data(), word.size()));
+			if (it == wordToStressedSyllable.end())
+				return false;
+			stressedSyllableInds.push_back(it->second);
+			return true;
+		};
 
 		QTextCodec* pTextCodec = QTextCodec::codecForName("windows-1251");
 		const wchar_t* shrekkyDic = LR"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyDic.voca)path";
 		//const wchar_t* shrekkyDic = LR"path(C:\devb\PticaGovorunProj\data\phoneticDic\test1.txt)path";
-		const wchar_t* knownDict = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\phoneticKnown.yml)path";
+		//const wchar_t* knownDict = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\phoneticKnown.yml)path";
 
 		std::vector<PhoneticWord> wordTranscrip;
 		std::vector<std::string> brokenLines;
-		bool loadOp;
-		const char* errMsg;
-		//std::tie(loadOp, errMsg) = loadPhoneticDictionaryPronIdPerLine(shrekkyDic, phoneReg, *pTextCodec, wordTranscrip, brokenLines);
-		std::tie(loadOp, errMsg) = loadPhoneticDictionaryYaml(knownDict, phoneReg, wordTranscrip);
+		std::tie(loadOp, errMsg) = loadPhoneticDictionaryPronIdPerLine(shrekkyDic, phoneReg, *pTextCodec, wordTranscrip, brokenLines);
+		//std::tie(loadOp, errMsg) = loadPhoneticDictionaryYaml(knownDict, phoneReg, wordTranscrip);
 		if (!loadOp)
+		{
+			std::cerr << errMsg << std::endl;
 			return;
+		}
 
 		std::stringstream dumpFileName;
 		dumpFileName << "spellErrors.";
@@ -43,24 +66,41 @@ namespace PhoneticSpellerTestsNS
 		QTextStream dumpFileStream(&dumpFile);
 		dumpFileStream.setCodec("UTF-8");
 
+		WordPhoneticTranscriber phoneticTranscriber;
+		phoneticTranscriber.setStressedSyllableIndFun(getStressedSyllableIndFun);
+
 		int errorThresh = 0;
 		for (const PhoneticWord& phWord : wordTranscrip)
 		{
-			const std::wstring& word = phWord.Word;
-			std::vector<PhoneId> phonesAuto;
-			bool spellOp;
-			std::tie(spellOp, errMsg) = spellWordUk(phoneReg, word, phonesAuto);
-			if (!spellOp)
-			{
-				dumpFileStream << "ERROR: can't spell word='" << QString::fromStdWString(word) << "'" << errMsg << "\n";
-				continue;
-			}
-			updatePhoneModifiers(phoneReg, true, false, phonesAuto);
-
 			for (const PronunciationFlavour& pron : phWord.Pronunciations)
 			{
+				int hasStress = isWordStressAssigned(phoneReg, pron.Phones);
+				if (!hasStress)
+				{
+					dumpFileStream << "No stress for pronAsWord=" << QString::fromStdWString(pron.PronAsWord) <<"\n";
+				}
+				
+				const std::wstring& pronAsWord = pron.PronAsWord;
+
+				boost::wstring_ref pronName;
+				parsePronId(pronAsWord, pronName);
+				std::wstring pronNameStr(pronName.data(), pronName.size());
+
+				phoneticTranscriber.transcribe(phoneReg, pronNameStr);
+				if (phoneticTranscriber.hasError())
+				{
+					dumpFileStream << "ERROR: can't spell word='" << QString::fromWCharArray(pronName.cbegin(), pronNameStr.size()) << "'" << errMsg << " ";
+					dumpFileStream << QString::fromStdWString(phoneticTranscriber.errorString()) << "\n";
+					continue;
+				}
+				std::vector<PhoneId> phonesAuto;
+				phoneticTranscriber.copyOutputPhoneIds(phonesAuto);
+
+				bool keepVowelStress = true;
+				updatePhoneModifiers(phoneReg, true, keepVowelStress, phonesAuto);
+
 				std::vector<PhoneId> phonesDict = pron.Phones;
-				updatePhoneModifiers(phoneReg, true, false, phonesDict);
+				updatePhoneModifiers(phoneReg, true, keepVowelStress, phonesDict);
 
 				bool eqS = phonesAuto == phonesDict;
 				if (!eqS)
@@ -81,7 +121,7 @@ namespace PhoneticSpellerTestsNS
 						continue;
 					}
 
-					dumpFileStream << "Dict=" << QString::fromLatin1(pronDictStr.c_str()) << "\t" << QString::fromStdWString(pron.PronAsWord) << "\t" << QString::fromStdWString(word) << "\n";
+					dumpFileStream << "Dict=" << QString::fromLatin1(pronDictStr.c_str()) << "\t" << QString::fromStdWString(pron.PronAsWord) << "\t" << QString::fromStdWString(phWord.Word) << "\n";
 					dumpFileStream << "Actl=" << QString::fromLatin1(pronAutoStr.c_str()) << "\n";
 					dumpFileStream << "\n";
 				}

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <memory>
+#include <unordered_set>
 #include <QFile>
 #include <QString>
 #include <QDomDocument>
@@ -418,5 +419,17 @@ namespace PticaGovorun
 			return std::make_tuple(true, "Error in XML stucture");
 		}
 		return std::make_tuple(true, nullptr);
+	}
+
+	int uniqueDeclinedWordsCount(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWords)
+	{
+		std::unordered_set<std::wstring> uniqueWordForms;
+		for (const auto& pair : declinedWords)
+		{
+			const WordDeclensionGroup& wordGroup = *pair.second;
+			for (const WordDeclensionForm& declForm : wordGroup.Forms)
+				uniqueWordForms.insert(declForm.Name);
+		}
+		return (int)uniqueWordForms.size();
 	}
 }

@@ -460,7 +460,8 @@ namespace RunBuildLanguageModelNS
 		return true;
 	}
 
-	void writePhoneticDictionary(const wchar_t* filePath, wv::slice<const WordPart*> seedWordParts, const UkrainianPhoneticSplitter& phoneticSplitter, const PhoneRegistry& phoneReg, const WordsUsageInfo& wordUsage)
+	void writePhoneticDictionary(const wchar_t* filePath, wv::slice<const WordPart*> seedWordParts, const UkrainianPhoneticSplitter& phoneticSplitter, 
+		const PhoneRegistry& phoneReg, WordPhoneticTranscriber& phoneticTranscriber)
 	{
 		QFile lmFile(QString::fromStdWString(filePath));
 		if (!lmFile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -480,10 +481,13 @@ namespace RunBuildLanguageModelNS
 			dumpFileStream << "\t";
 
 			phones.clear();
-			bool spellOp;
-			const char* errMsg;
-			std::tie(spellOp, errMsg) = spellWordUk(phoneReg, wordPart->partText(), phones);
-			PG_Assert(spellOp);
+			phoneticTranscriber.transcribe(phoneReg, wordPart->partText());
+			if (phoneticTranscriber.hasError())
+			{
+				std::wcerr << L"Can't transcribe word=" << wordPart->partText() << std::endl;
+				return;
+			}
+			phoneticTranscriber.copyOutputPhoneIds(phones);
 
 			std::string phoneListStr;
 			bool pronToStrOp = phoneListToStr(phoneReg, phones, phoneListStr);
@@ -675,6 +679,7 @@ namespace RunBuildLanguageModelNS
 		PhoneRegistry phoneReg;
 		bool allowSoftHardConsonant = false;
 		bool allowVowelStress = false;
+		phoneReg.setPalatalSupport(PalatalSupport::AsHard);
 		initPhoneRegistryUk(phoneReg, allowSoftHardConsonant, allowVowelStress);
 
 		// note, the positive threshold may evict the rare words
@@ -688,7 +693,7 @@ namespace RunBuildLanguageModelNS
 
 		//
 		ArpaLanguageModel langModel;
-		langModel.setGramMaxDimensions(1);
+		langModel.setGramMaxDimensions(2);
 		langModel.generate(seedUnigrams, phoneticSplitter);
 
 		std::wstringstream arpaLMFileName;
@@ -697,11 +702,35 @@ namespace RunBuildLanguageModelNS
 		arpaLMFileName << ".txt";
 		writeArpaLanguageModel(langModel, arpaLMFileName.str().c_str());
 
+		//
+		const wchar_t* stressDict = LR"path(C:\devb\PticaGovorunProj\data\stressDictUk.xml)path";
+		std::unordered_map<std::wstring, int> wordToStressedSyllable;
+		bool loadPhoneDict;
+		const char* errMsg;
+		std::tie(loadPhoneDict, errMsg) = loadStressedSyllableDictionaryXml(stressDict, wordToStressedSyllable);
+		if (!loadPhoneDict)
+		{
+			std::cerr << errMsg << std::endl;
+			return;
+		}
+
+		auto getStressedSyllableIndFun = [&wordToStressedSyllable](boost::wstring_ref word, std::vector<int>& stressedSyllableInds) -> bool
+		{
+			auto it = wordToStressedSyllable.find(std::wstring(word.data(), word.size()));
+			if (it == wordToStressedSyllable.end())
+				return false;
+			stressedSyllableInds.push_back(it->second);
+			return true;
+		};
+
+		WordPhoneticTranscriber phoneticTranscriber;
+		phoneticTranscriber.setStressedSyllableIndFun(getStressedSyllableIndFun);
+
 		std::wstringstream phonDictFileName;
 		phonDictFileName << "persianDic.";
 		appendTimeStampNow(phonDictFileName);
 		phonDictFileName << ".txt";
-		writePhoneticDictionary(phonDictFileName.str().c_str(), seedUnigrams, phoneticSplitter, phoneReg, wordUsage);
+		writePhoneticDictionary(phonDictFileName.str().c_str(), seedUnigrams, phoneticSplitter, phoneReg, phoneticTranscriber);
 	}
 
 	void tinkerWithPhoneticSplit(int argc, wchar_t* argv[])

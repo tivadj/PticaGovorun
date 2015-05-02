@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include <iostream>
 
 namespace MatlabTesterNS { void run(); }
 namespace SliceTesterNS { void run(); }
@@ -12,6 +13,7 @@ namespace RecognizeSpeechInBatchTester { void runMain(int argc, wchar_t* argv[])
 namespace EditDistanceTestsNS { void run(); }
 namespace MigrateXmlSpeechAnnotRunnerNS { void run(); }
 namespace PhoneticSpellerTestsNS { void run(); }
+namespace StressedSyllableRunnerNS { void run(); }
 namespace PronunciationChecksRunnerNS { void run(); }
 namespace RunPrepareTrainModelSphinxNS { void run(); }
 namespace PdfReaderRunnerNS { void run(); }
@@ -27,14 +29,15 @@ int _tmain(int argc, TCHAR* argv[])
 	//EditDistanceTestsNS::run();
 	//MigrateXmlSpeechAnnotRunnerNS::run();
 	//PhoneticSpellerTestsNS::run();
+	//StressedSyllableRunnerNS::run();
 	//PronunciationChecksRunnerNS::run();
 	//RunPrepareTrainModelSphinxNS::run();
 	//PdfReaderRunnerNS::run();
 	//RunTextParserNS::runMain(argc, argv);
 	//RunBuildLanguageModelNS::runMain(argc, argv);
-	//RecognizeSpeechSphinxTester::run();
-	RecognizeSpeechInBatchTester::runMain(argc, argv);
-
+	RecognizeSpeechSphinxTester::run();
+	//RecognizeSpeechInBatchTester::runMain(argc, argv);
+	std::cout << "main exit" << std::endl;
 	return 0;
 }
 

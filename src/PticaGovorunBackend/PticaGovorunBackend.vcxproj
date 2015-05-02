@@ -66,6 +66,7 @@
     <Import Project="..\build-config\LibSampleRate.props" />
     <Import Project="..\build-config\YamlCpp.props" />
     <Import Project="..\build-config\boost.props" />
+    <Import Project="..\build-config\PocketSphinx.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -80,6 +81,7 @@
     <Import Project="..\build-config\LibSampleRate.props" />
     <Import Project="..\build-config\YamlCpp.props" />
     <Import Project="..\build-config\boost.props" />
+    <Import Project="..\build-config\PocketSphinx.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -94,6 +96,7 @@
     <Import Project="..\build-config\LibSampleRate.props" />
     <Import Project="..\build-config\YamlCpp.props" />
     <Import Project="..\build-config\boost.props" />
+    <Import Project="..\build-config\PocketSphinx.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -108,6 +111,7 @@
     <Import Project="..\build-config\LibSampleRate.props" />
     <Import Project="..\build-config\YamlCpp.props" />
     <Import Project="..\build-config\boost.props" />
+    <Import Project="..\build-config\PocketSphinx.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -191,7 +195,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ArpaLanguageModel.h" />
+    <ClInclude Include="AudioSpeechDecoder.h" />
     <ClInclude Include="ClnUtils.h" />
+    <ClInclude Include="ComponentsInfrastructure.h" />
     <ClInclude Include="CoreUtils.h" />
     <ClInclude Include="InteropPython.h" />
     <ClInclude Include="JuliusToolNativeWrapper.h" />
@@ -211,6 +218,8 @@
     <ClInclude Include="XmlAudioMarkup.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ArpaLanguageModel.cpp" />
+    <ClCompile Include="AudioSpeechDecoder.cpp" />
     <ClCompile Include="ClnUtils.cpp" />
     <ClCompile Include="CoreUtils.cpp" />
     <ClCompile Include="dllmain.cpp">
@@ -232,6 +241,7 @@
     <ClCompile Include="LangStat.cpp" />
     <ClCompile Include="LangStatSerializatinoYaml.cpp" />
     <ClCompile Include="MLUtils.cpp" />
+    <ClCompile Include="PhoneticStress.cpp" />
     <ClCompile Include="TextProcessing.cpp" />
     <ClCompile Include="PhoneAlignment.cpp" />
     <ClCompile Include="PhoneticSerializationYaml.cpp" />

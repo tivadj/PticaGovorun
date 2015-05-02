@@ -69,6 +69,15 @@
     <ClInclude Include="LangStat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AudioSpeechDecoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ArpaLanguageModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentsInfrastructure.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -129,6 +138,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TextProcessingSerializationXml.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioSpeechDecoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ArpaLanguageModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PhoneticStress.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
