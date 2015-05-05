@@ -32,4 +32,13 @@ namespace PticaGovorun
 	{
 		return x.Id < y.Id;
 	}
+
+	template <typename T>
+	struct NoDeleteFunctor
+	{
+		void operator()(T* pObj) const
+		{
+			// no op
+		}
+	};
 }

@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QDir>
 #include <portaudio.h>
-#include "transcribermainwindow.h"
+#include "AnnotationToolWidget.h"
 
 #if HAS_MATLAB
 #include "PticaGovorunInteropMatlab.h"
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 #endif
 	
 	QApplication a(argc, argv);
-    PticaGovorun::TranscriberMainWindow w;
+    PticaGovorun::AnnotationToolMainWindow w;
     w.show();
 
 	int appExecOp = a.exec();

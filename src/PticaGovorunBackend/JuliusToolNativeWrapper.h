@@ -5,7 +5,7 @@
 #include <string>
 #include <QTextCodec>
 #include "SpeechProcessing.h"
-#include "ClnUtils.h"
+#include "ComponentsInfrastructure.h"
 
 namespace PticaGovorun {
 

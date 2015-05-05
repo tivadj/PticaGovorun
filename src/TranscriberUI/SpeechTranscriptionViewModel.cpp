@@ -14,16 +14,6 @@
 #include <QSettings>
 #include <QStringList>
 
-#include "WavUtils.h"
-#include "TranscriberViewModel.h"
-#include "PticaGovorunCore.h"
-#include "ClnUtils.h"
-//#include "algos_amp.cpp"
-#include "InteropPython.h"
-#include "SpeechProcessing.h"
-#include "PhoneticService.h"
-#include "PresentationHelpers.h"
-
 #include <samplerate.h>
 
 #if HAS_POCKETSPHINX
@@ -38,34 +28,35 @@
 #include "PticaGovorunInteropMatlab.h"
 #endif
 
+#include "WavUtils.h"
+#include "SpeechTranscriptionViewModel.h"
+#include "PticaGovorunCore.h"
+#include "ClnUtils.h"
+//#include "algos_amp.cpp"
+#include "InteropPython.h"
+#include "SpeechProcessing.h"
+#include "PhoneticService.h"
+#include "PresentationHelpers.h"
+#include "SharedServiceProvider.h"
+
 namespace PticaGovorun
 {
 
 const char* IniFileName = "TranscriberUI.ini"; // where to store settings
-const char* WavFilePath = "WavFilePath"; // last opened wav file path
 static const decltype(paComplete) SoundPlayerCompleteOrAbortTechnique = paComplete; // paComplete or paAbort
 
-TranscriberViewModel::TranscriberViewModel()
+SpeechTranscriptionViewModel::SpeechTranscriptionViewModel()
 {
 }
 
-void TranscriberViewModel::loadStateSettings()
-{
-	QSettings settings(IniFileName, QSettings::IniFormat);
-	QString speechWavDirVar = settings.value(WavFilePath, QString("")).toString();
-	audioFilePathAbs_ = speechWavDirVar;
+	void SpeechTranscriptionViewModel::init(std::shared_ptr<SharedServiceProvider> serviceProvider)
+	{
+		notificationService_ = serviceProvider->notificationService();
+		recognizerNameHintProvider_ = serviceProvider->recognizerNameHintProvider();
+		juliusRecognizerProvider_ = serviceProvider->juliusRecognizerProvider();
+	}
 
-	curRecognizerName_ = "shrekky";
-}
-
-void TranscriberViewModel::saveStateSettings()
-{
-	QSettings settings(IniFileName, QSettings::IniFormat);
-	settings.setValue(WavFilePath, audioFilePathAbs_);
-	settings.sync();
-}
-
-void TranscriberViewModel::loadAudioFileRequest()
+	void SpeechTranscriptionViewModel::loadAudioFileRequest()
 {
 	using namespace PticaGovorun;
 	audioSamples_.clear();
@@ -75,11 +66,11 @@ void TranscriberViewModel::loadAudioFileRequest()
 	if (!std::get<0>(readOp))
 	{
 		auto msg = std::get<1>(readOp);
-		emit nextNotification(QString::fromStdString(msg));
+		nextNotification(QString::fromStdString(msg));
 		return;
     }
 	if (audioFrameRate_ != SampleRate)
-		emit nextNotification("WARN: FrameRate != 22050. Perhaps other parameters (FrameSize, FrameShift) should be changed");
+		nextNotification("WARN: FrameRate != 22050. Perhaps other parameters (FrameSize, FrameShift) should be changed");
 
 	//
 	docOffsetX_ = 0;
@@ -96,7 +87,7 @@ void TranscriberViewModel::loadAudioFileRequest()
 	emit audioSamplesChanged();
 
 	QString msg = QString("Loaded '%1' FrameRate=%2 FramesCount=%3").arg(audioFilePathAbs_).arg(audioFrameRate_).arg(audioSamples_.size());
-	emit nextNotification(msg);
+	nextNotification(msg);
 
 	//
 	loadAudioMarkupFromXml();
@@ -106,7 +97,7 @@ void TranscriberViewModel::loadAudioFileRequest()
 	emit audioSamplesLoaded();
 }
 
-void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPlayingFrameInd, long finishPlayingFrameInd, bool restoreCurFrameInd)
+void SpeechTranscriptionViewModel::soundPlayerPlay(const short* audioSouce, long startPlayingFrameInd, long finishPlayingFrameInd, bool restoreCurFrameInd)
 {
 	using namespace PticaGovorun;
 	assert(startPlayingFrameInd <= finishPlayingFrameInd && "Must play start <= end");
@@ -149,7 +140,7 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 		if (!data.allowPlaying)
 			return paAbort;
 
-		TranscriberViewModel& transcriberViewModel = *data.transcriberViewModel;
+		SpeechTranscriptionViewModel& transcriberViewModel = *data.transcriberViewModel;
 
 		long sampleInd = data.CurPlayingFrameInd;
 		long sampleEnd = std::min((long)data.FinishPlayingFrameInd, sampleInd + (long)framesPerBuffer);
@@ -195,7 +186,7 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 			return paComplete;
 		}
 
-		TranscriberViewModel& transcriberViewModel = *data.transcriberViewModel;
+		SpeechTranscriptionViewModel& transcriberViewModel = *data.transcriberViewModel;
 
 		long sampleInd = data.CurPlayingFrameInd;
 		long sampleEnd = std::min(data.FinishPlayingFrameInd, sampleInd + (long)framesPerBuffer);
@@ -309,7 +300,7 @@ void TranscriberViewModel::soundPlayerPlay(const short* audioSouce, long startPl
 }
 
 template <typename MarkerPred>
-void TranscriberViewModel::transformMarkersIf(const std::vector<PticaGovorun::TimePointMarker>& markers, std::vector<MarkerRefToOrigin>& markersOfInterest, MarkerPred canSelectMarker)
+void SpeechTranscriptionViewModel::transformMarkersIf(const std::vector<PticaGovorun::TimePointMarker>& markers, std::vector<MarkerRefToOrigin>& markersOfInterest, MarkerPred canSelectMarker)
 {
 	markersOfInterest.reserve(markers.size());
 	for (size_t i = 0; i < markers.size(); ++i)
@@ -325,7 +316,7 @@ void TranscriberViewModel::transformMarkersIf(const std::vector<PticaGovorun::Ti
 	}
 }
 
-std::tuple<long, long> TranscriberViewModel::getSampleRangeToPlay(long curSampleInd, SegmentStartFrameToPlayChoice startFrameChoice, int* outLeftMarkerInd)
+std::tuple<long, long> SpeechTranscriptionViewModel::getSampleRangeToPlay(long curSampleInd, SegmentStartFrameToPlayChoice startFrameChoice, int* outLeftMarkerInd)
 {
 	PG_Assert(!audioSamples_.empty() && "Audio samples must be loaded");
 
@@ -408,7 +399,7 @@ std::tuple<long, long> TranscriberViewModel::getSampleRangeToPlay(long curSample
 	return std::tuple<long,long>(startPlayFrameInd, endPlayFrameInd);
 }
 
-void TranscriberViewModel::soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice startFrameChoice)
+void SpeechTranscriptionViewModel::soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice startFrameChoice)
 {
 	if (audioSamples_.empty())
 		return;
@@ -436,7 +427,7 @@ void TranscriberViewModel::soundPlayerPlayCurrentSegment(SegmentStartFrameToPlay
 			if (!validResult.isEmpty())
 			{
 				QString msg = validResult.join('\n');
-				emit nextNotification(formatLogLineWithTime(msg));
+				nextNotification(formatLogLineWithTime(msg));
 			}
 		}
 	}
@@ -445,7 +436,7 @@ void TranscriberViewModel::soundPlayerPlayCurrentSegment(SegmentStartFrameToPlay
 	soundPlayerPlay(audioSamples_.data(), curSegBeg, curSegEnd, true);
 }
 
-void TranscriberViewModel::soundPlayerPause()
+void SpeechTranscriptionViewModel::soundPlayerPause()
 {
 	qDebug() << "Pause. Stopping stream";
 	soundPlayerData_.allowPlaying = false;
@@ -458,7 +449,7 @@ void TranscriberViewModel::soundPlayerPause()
 	// note, stream is closed in the Pa_SetStreamFinishedCallback
 }
 
-void TranscriberViewModel::soundPlayerPlay()
+void SpeechTranscriptionViewModel::soundPlayerPlay()
 {
 	if (audioSamples_.empty())
 		return;
@@ -470,7 +461,7 @@ void TranscriberViewModel::soundPlayerPlay()
 	soundPlayerPlay(audioSamples_.data(), curFrameInd, audioSamples_.size() - 1, false);
 }
 
-void TranscriberViewModel::soundPlayerTogglePlayPause()
+void SpeechTranscriptionViewModel::soundPlayerTogglePlayPause()
 {
 	qDebug() << "soundPlayerTogglePlayPause{ isPlaying=" << isPlaying_;
 	if (isPlaying_)
@@ -480,17 +471,17 @@ void TranscriberViewModel::soundPlayerTogglePlayPause()
 	qDebug() << "soundPlayerTogglePlayPause} isPlaying=" << isPlaying_;
 }
 
-bool TranscriberViewModel::soundPlayerIsPlaying() const
+bool SpeechTranscriptionViewModel::soundPlayerIsPlaying() const
 {
 	return isPlaying_;
 }
 
-long TranscriberViewModel::playingSampleInd() const
+long SpeechTranscriptionViewModel::playingSampleInd() const
 {
 	return playingSampleInd_;
 }
 
-void TranscriberViewModel::setPlayingSampleInd(long value, bool updateViewportOffset)
+void SpeechTranscriptionViewModel::setPlayingSampleInd(long value, bool updateViewportOffset)
 {
 	if (playingSampleInd_ != value)
 	{
@@ -515,7 +506,7 @@ void TranscriberViewModel::setPlayingSampleInd(long value, bool updateViewportOf
 	}
 }
 
-QString TranscriberViewModel::audioMarkupFilePathAbs() const
+QString SpeechTranscriptionViewModel::audioMarkupFilePathAbs() const
 {
 	QSettings settings(IniFileName, QSettings::IniFormat);
 	QString speechWavDirStr = settings.value("SpeechWavDir", QString(".\\")).toString();
@@ -527,12 +518,12 @@ QString TranscriberViewModel::audioMarkupFilePathAbs() const
 	return annotPathAbs;
 }
 
-void TranscriberViewModel::loadAudioMarkupFromXml()
+void SpeechTranscriptionViewModel::loadAudioMarkupFromXml()
 {
 	QString audioMarkupPathAbs = audioMarkupFilePathAbs();
 	if (!QFileInfo::exists(audioMarkupPathAbs))
 	{
-		emit nextNotification(QString("Can' find annotation file '%1'").arg(audioMarkupPathAbs));
+		nextNotification(QString("Can' find annotation file '%1'").arg(audioMarkupPathAbs));
 		return;
 	}
 	
@@ -543,28 +534,28 @@ void TranscriberViewModel::loadAudioMarkupFromXml()
 	std::tie(loadOp, errMsg) = PticaGovorun::loadAudioMarkupFromXml(audioMarkupPathAbs.toStdWString(), speechAnnot_);
 	if (!loadOp)
 	{
-		emit nextNotification(errMsg);
+		nextNotification(errMsg);
 		return;
 	}
 }
 
-void TranscriberViewModel::saveAudioMarkupToXml()
+void SpeechTranscriptionViewModel::saveAudioMarkupToXml()
 {
 	QString audioMarkupPathAbs = audioMarkupFilePathAbs();
 	
 	PticaGovorun::saveAudioMarkupToXml(speechAnnot_, audioMarkupPathAbs.toStdWString());
 	
-	emit nextNotification(formatLogLineWithTime("Saved xml markup."));
+	nextNotification(formatLogLineWithTime("Saved xml markup."));
 }
 
-void TranscriberViewModel::validateAnnotationStructure()
+void SpeechTranscriptionViewModel::validateAnnotationStructure()
 {
 	// validate markers structure
 
 	std::stringstream msgValidate;
 	speechAnnot_.validateMarkers(msgValidate);
 	if (!msgValidate.str().empty())
-		emit nextNotification(QString::fromStdString(msgValidate.str()));
+		nextNotification(QString::fromStdString(msgValidate.str()));
 
 	// validate that all pronId of entire transcript text are in the phonetic dictionary
 
@@ -595,10 +586,10 @@ void TranscriberViewModel::validateAnnotationStructure()
 		msg = QString("Validation failed (%1 errors)\n").arg(validResult.size());
 		msg.append(validResult.join('\n'));
 	}
-	emit nextNotification(formatLogLineWithTime(msg));
+	nextNotification(formatLogLineWithTime(msg));
 }
 
-	void TranscriberViewModel::saveCurrentRangeAsWavRequest()
+	void SpeechTranscriptionViewModel::saveCurrentRangeAsWavRequest()
 {
 	long frameLeft;
 	long frameRight;
@@ -613,39 +604,44 @@ void TranscriberViewModel::validateAnnotationStructure()
 	tie(writeOp, msg) = PticaGovorun::writeAllSamplesWav(&audioSamples_[frameLeft], len, "currentRange.wav", audioFrameRate_);
 	if (!writeOp)
 	{
-		emit nextNotification(QString::fromStdString(msg));
+		nextNotification(QString::fromStdString(msg));
 		return;
 	}
-	emit nextNotification(QString("Wrote %1 frames to file").arg(len));
+	nextNotification(QString("Wrote %1 frames to file").arg(len));
 }
 
+	QString SpeechTranscriptionViewModel::modelShortName() const
+	{
+		QFileInfo audioFileInfo(audioFilePathAbs_);
+		return audioFileInfo.baseName();
+	}
 
-QString TranscriberViewModel::audioFilePath() const
+	QString SpeechTranscriptionViewModel::audioFilePath() const
 {
     return audioFilePathAbs_;
 }
 
-void TranscriberViewModel::setAudioFilePath(const QString& filePath)
+void SpeechTranscriptionViewModel::setAudioFilePath(const QString& filePath)
 {
     audioFilePathAbs_ = filePath;
 }
 
-float TranscriberViewModel::pixelsPerSample() const
+float SpeechTranscriptionViewModel::pixelsPerSample() const
 {
 	return scale_;
 }
 
-float TranscriberViewModel::docPaddingX() const
+float SpeechTranscriptionViewModel::docPaddingX() const
 {
 	return docPaddingPix_;
 }
 
-float TranscriberViewModel::docOffsetX() const
+float SpeechTranscriptionViewModel::docOffsetX() const
 {
     return docOffsetX_;
 }
 
-void TranscriberViewModel::setDocOffsetX(float value)
+void SpeechTranscriptionViewModel::setDocOffsetX(float value)
 {
     if (docOffsetX_ != value)
     {
@@ -654,40 +650,40 @@ void TranscriberViewModel::setDocOffsetX(float value)
     }
 }
 
-float TranscriberViewModel::docWidthPix() const
+float SpeechTranscriptionViewModel::docWidthPix() const
 {
     return audioSamples_.size() * scale_ + 2 * docPaddingPix_;
 }
 
-bool TranscriberViewModel::phoneRulerVisible() const
+bool SpeechTranscriptionViewModel::phoneRulerVisible() const
 {
 	return phoneRulerVisible_;
 }
 
-void TranscriberViewModel::scrollDocumentEndRequest()
+void SpeechTranscriptionViewModel::scrollDocumentEndRequest()
 {
 	float maxDocWidth = docWidthPix();\
 	scrollPageWithLimits(maxDocWidth);
 }
 
-void TranscriberViewModel::scrollDocumentStartRequest()
+void SpeechTranscriptionViewModel::scrollDocumentStartRequest()
 {
 	scrollPageWithLimits(0);
 }
 \
-void TranscriberViewModel::scrollPageForwardRequest()
+void SpeechTranscriptionViewModel::scrollPageForwardRequest()
 {
 	static const float PageWidthPix = 500;
 	scrollPageWithLimits(docOffsetX_ + PageWidthPix);
 }
 
-void TranscriberViewModel::scrollPageBackwardRequest()
+void SpeechTranscriptionViewModel::scrollPageBackwardRequest()
 {
 	static const float PageWidthPix = 500;
 	scrollPageWithLimits(docOffsetX_ - PageWidthPix);
 }
 
-void TranscriberViewModel::scrollPageWithLimits(float newDocOffsetX)
+void SpeechTranscriptionViewModel::scrollPageWithLimits(float newDocOffsetX)
 {
 	float maxDocWidth = docWidthPix();
 	if (newDocOffsetX > maxDocWidth)
@@ -697,12 +693,12 @@ void TranscriberViewModel::scrollPageWithLimits(float newDocOffsetX)
 	setDocOffsetX(newDocOffsetX);
 }
 
-int TranscriberViewModel::lanesCount() const
+int SpeechTranscriptionViewModel::lanesCount() const
 {
 	return lanesCount_;
 }
 
-void TranscriberViewModel::setLanesCount(int lanesCount)
+void SpeechTranscriptionViewModel::setLanesCount(int lanesCount)
 {
 	if (lanesCount_ != lanesCount && lanesCount > 0)
 	{
@@ -711,39 +707,39 @@ void TranscriberViewModel::setLanesCount(int lanesCount)
 	}
 }
 
-void TranscriberViewModel::increaseLanesCountRequest()
+void SpeechTranscriptionViewModel::increaseLanesCountRequest()
 {
 	int newLanesCount = lanesCount() + 1;
 	setLanesCount(newLanesCount);
 }
-void TranscriberViewModel::decreaseLanesCountRequest()
+void SpeechTranscriptionViewModel::decreaseLanesCountRequest()
 {
 	int newLanesCount = lanesCount() - 1;
 	setLanesCount(newLanesCount);
 }
 
 
-QSizeF TranscriberViewModel::viewportSize() const
+QSizeF SpeechTranscriptionViewModel::viewportSize() const
 {
 	return viewportSize_;
 }
 
-void TranscriberViewModel::setViewportSize(float viewportWidth, float viewportHeight)
+void SpeechTranscriptionViewModel::setViewportSize(float viewportWidth, float viewportHeight)
 {
 	viewportSize_ = QSizeF(viewportWidth, viewportHeight);
 }
 
-float TranscriberViewModel::docPosXToSampleInd(float docPosX) const
+float SpeechTranscriptionViewModel::docPosXToSampleInd(float docPosX) const
 {
 	return (docPosX - docPaddingPix_) / scale_;
 }
 
-float TranscriberViewModel::sampleIndToDocPosX(long sampleInd) const
+float SpeechTranscriptionViewModel::sampleIndToDocPosX(long sampleInd) const
 {
 	return docPaddingPix_ + sampleInd * scale_;
 }
 
-bool TranscriberViewModel::viewportPosToLocalDocPosX(const QPointF& pos, float& docPosX) const
+bool SpeechTranscriptionViewModel::viewportPosToLocalDocPosX(const QPointF& pos, float& docPosX) const
 {
 	if (pos.x() < 0 || pos.y() < 0 || pos.x() >= viewportSize_.width() || pos.y() >= viewportSize_.height())
 		return false;
@@ -760,7 +756,7 @@ bool TranscriberViewModel::viewportPosToLocalDocPosX(const QPointF& pos, float& 
 	return true;
 }
 
-bool TranscriberViewModel::docPosToViewport(float docX, ViewportHitInfo& hitInfo) const
+bool SpeechTranscriptionViewModel::docPosToViewport(float docX, ViewportHitInfo& hitInfo) const
 {
 	// to the left of viewport?
 	if (docX < docOffsetX_)
@@ -787,7 +783,7 @@ bool TranscriberViewModel::docPosToViewport(float docX, ViewportHitInfo& hitInfo
 	return true;
 }
 
-RectY TranscriberViewModel::laneYBounds(int laneInd) const
+RectY SpeechTranscriptionViewModel::laneYBounds(int laneInd) const
 {
 	float laneHeight = viewportSize_.height() / lanesCount();
 
@@ -798,7 +794,7 @@ RectY TranscriberViewModel::laneYBounds(int laneInd) const
 	return bnd;
 }
 
-void TranscriberViewModel::deleteRequest(bool isControl)
+void SpeechTranscriptionViewModel::deleteRequest(bool isControl)
 {
 	// delete current marker?
 
@@ -836,23 +832,23 @@ void TranscriberViewModel::deleteRequest(bool isControl)
 		return;
 }
 
-void TranscriberViewModel::refreshRequest()
+void SpeechTranscriptionViewModel::refreshRequest()
 {
 	loadAuxiliaryPhoneticDictionaryRequest();
 }
 
-const std::vector<short>& TranscriberViewModel::audioSamples() const
+const std::vector<short>& SpeechTranscriptionViewModel::audioSamples() const
 {
 	return audioSamples_;
 }
 
-const wv::slice<const DiagramSegment> TranscriberViewModel::diagramSegments() const
+const wv::slice<const DiagramSegment> SpeechTranscriptionViewModel::diagramSegments() const
 {
 	//return wv::make_view(diagramSegments_);
 	return wv::make_view(diagramSegments_.data(), diagramSegments_.size());
 }
 
-void TranscriberViewModel::collectDiagramSegmentIndsOverlappingRange(std::pair<long, long> samplesRange, std::vector<int>& diagElemInds)
+void SpeechTranscriptionViewModel::collectDiagramSegmentIndsOverlappingRange(std::pair<long, long> samplesRange, std::vector<int>& diagElemInds)
 {
 	int i = -1;
 	for (const DiagramSegment diagItem : diagramSegments_)
@@ -876,7 +872,7 @@ void TranscriberViewModel::collectDiagramSegmentIndsOverlappingRange(std::pair<l
 	}
 }
 
-bool TranscriberViewModel::deleteDiagramSegmentsAtCursor(std::pair<long, long> samplesRange)
+bool SpeechTranscriptionViewModel::deleteDiagramSegmentsAtCursor(std::pair<long, long> samplesRange)
 {
 	if (samplesRange.first == PticaGovorun::NullSampleInd)
 		return false;
@@ -901,17 +897,17 @@ bool TranscriberViewModel::deleteDiagramSegmentsAtCursor(std::pair<long, long> s
 	return true;
 }
 
-const PticaGovorun::SpeechAnnotation& TranscriberViewModel::speechAnnotation() const
+const PticaGovorun::SpeechAnnotation& SpeechTranscriptionViewModel::speechAnnotation() const
 {
 	return speechAnnot_;
 }
 
-const std::vector<PticaGovorun::TimePointMarker>& TranscriberViewModel::frameIndMarkers() const
+const std::vector<PticaGovorun::TimePointMarker>& SpeechTranscriptionViewModel::frameIndMarkers() const
 {
 	return speechAnnot_.markers();
 }
 
-void TranscriberViewModel::setCurrentMarkerSpeaker(const std::wstring& speakerBriefId)
+void SpeechTranscriptionViewModel::setCurrentMarkerSpeaker(const std::wstring& speakerBriefId)
 {
 	if (currentMarkerInd_ == -1)
 		return;
@@ -922,26 +918,26 @@ void TranscriberViewModel::setCurrentMarkerSpeaker(const std::wstring& speakerBr
 	if (oldValue != speakerBriefId)
 	{
 		m.SpeakerBriefId = speakerBriefId;
-		emit nextNotification(QString("Marker[id=%1].SpeakerBriefId=%2").arg(m.Id).arg(QString::fromStdWString(speakerBriefId)));
+		nextNotification(QString("Marker[id=%1].SpeakerBriefId=%2").arg(m.Id).arg(QString::fromStdWString(speakerBriefId)));
 	}
 }
 
-void TranscriberViewModel::setTemplateMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail)
+void SpeechTranscriptionViewModel::setTemplateMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail)
 {
 	templateMarkerLevelOfDetail_ = levelOfDetail;
 }
 
-PticaGovorun::MarkerLevelOfDetail TranscriberViewModel::templateMarkerLevelOfDetail() const
+PticaGovorun::MarkerLevelOfDetail SpeechTranscriptionViewModel::templateMarkerLevelOfDetail() const
 {
 	return templateMarkerLevelOfDetail_;
 }
 
-PticaGovorun::SpeechLanguage TranscriberViewModel::templateMarkerSpeechLanguage() const
+PticaGovorun::SpeechLanguage SpeechTranscriptionViewModel::templateMarkerSpeechLanguage() const
 {
 	return templateMarkerSpeechLanguage_;
 }
 
-void TranscriberViewModel::dragMarkerStart(const QPointF& localPos, int markerInd)
+void SpeechTranscriptionViewModel::dragMarkerStart(const QPointF& localPos, int markerInd)
 {
 	qDebug() << "dragMarkerStart";
 	draggingMarkerInd_ = markerInd;
@@ -949,7 +945,7 @@ void TranscriberViewModel::dragMarkerStart(const QPointF& localPos, int markerIn
 	draggingLastViewportPos_ = localPos;
 }
 
-void TranscriberViewModel::dragMarkerStop()
+void SpeechTranscriptionViewModel::dragMarkerStop()
 {
 	if (isDraggingMarker_)
 	{
@@ -959,7 +955,7 @@ void TranscriberViewModel::dragMarkerStop()
 	}
 }
 
-void TranscriberViewModel::dragMarkerContinue(const QPointF& localPos)
+void SpeechTranscriptionViewModel::dragMarkerContinue(const QPointF& localPos)
 {
 	if (isDraggingMarker_ && draggingLastViewportPos_ != localPos)
 	{
@@ -980,7 +976,7 @@ void TranscriberViewModel::dragMarkerContinue(const QPointF& localPos)
 	}
 }
 
-void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos, bool isShiftPressed)
+void SpeechTranscriptionViewModel::setLastMousePressPos(const QPointF& localPos, bool isShiftPressed)
 {
 	float mousePressDocPosX = -1;
 	if (!viewportPosToLocalDocPosX(localPos, mousePressDocPosX))
@@ -1039,12 +1035,12 @@ void TranscriberViewModel::setLastMousePressPos(const QPointF& localPos, bool is
 	emit lastMouseDocPosXChanged(mousePressDocPosX);
 }
 
-long TranscriberViewModel::currentSampleInd() const
+long SpeechTranscriptionViewModel::currentSampleInd() const
 {
 	return cursor_.first;
 }
 
-void TranscriberViewModel::setCursorInternal(long curSampleInd, bool updateCurrentMarkerInd, bool updateViewportOffset)
+void SpeechTranscriptionViewModel::setCursorInternal(long curSampleInd, bool updateCurrentMarkerInd, bool updateViewportOffset)
 {
 	auto cursor = cursor_;
 	cursor.first = curSampleInd;
@@ -1053,7 +1049,7 @@ void TranscriberViewModel::setCursorInternal(long curSampleInd, bool updateCurre
 	setCursorInternal(cursor, updateCurrentMarkerInd, updateViewportOffset);
 }
 
-void TranscriberViewModel::setCursorInternal(std::pair<long,long> value, bool updateCurrentMarkerInd, bool updateViewportOffset)
+void SpeechTranscriptionViewModel::setCursorInternal(std::pair<long,long> value, bool updateCurrentMarkerInd, bool updateViewportOffset)
 {
 	if (cursor_ != value)
 	{
@@ -1104,12 +1100,12 @@ void TranscriberViewModel::setCursorInternal(std::pair<long,long> value, bool up
 	}
 }
 
-std::pair<long, long> TranscriberViewModel::cursor() const
+std::pair<long, long> SpeechTranscriptionViewModel::cursor() const
 {
 	return cursor_;
 }
 
-std::pair<long, long> TranscriberViewModel::cursorOrdered() const
+std::pair<long, long> SpeechTranscriptionViewModel::cursorOrdered() const
 {
 	assert(cursorKind() == TranscriberCursorKind::Range);
 	long start = std::min(cursor_.first, cursor_.second);
@@ -1117,7 +1113,7 @@ std::pair<long, long> TranscriberViewModel::cursorOrdered() const
 	return std::make_pair(start,end);
 }
 
-TranscriberCursorKind TranscriberViewModel::cursorKind() const
+TranscriberCursorKind SpeechTranscriptionViewModel::cursorKind() const
 {
 	if (cursor_.first != PticaGovorun::NullSampleInd)
 	{
@@ -1133,7 +1129,7 @@ TranscriberCursorKind TranscriberViewModel::cursorKind() const
 	}
 }
 
-void TranscriberViewModel::insertNewMarkerAtCursorRequest()
+void SpeechTranscriptionViewModel::insertNewMarkerAtCursorRequest()
 {
 	long curFrameInd = currentSampleInd();
 	if (curFrameInd == PticaGovorun::NullSampleInd)
@@ -1149,7 +1145,7 @@ void TranscriberViewModel::insertNewMarkerAtCursorRequest()
 	insertNewMarker(newMarker, true, false);
 }
 
-void TranscriberViewModel::insertNewMarker(const PticaGovorun::TimePointMarker& marker, bool updateCursor, bool updateViewportOffset)
+void SpeechTranscriptionViewModel::insertNewMarker(const PticaGovorun::TimePointMarker& marker, bool updateCursor, bool updateViewportOffset)
 {
 	int newMarkerInd = speechAnnot_.insertMarker(marker);
 
@@ -1159,7 +1155,7 @@ void TranscriberViewModel::insertNewMarker(const PticaGovorun::TimePointMarker& 
 	emit audioSamplesChanged();
 }
 
-bool TranscriberViewModel::deleteMarker(int markerInd)
+bool SpeechTranscriptionViewModel::deleteMarker(int markerInd)
 {
 	bool delOp = speechAnnot_.deleteMarker(markerInd);
 	if (delOp)
@@ -1168,7 +1164,7 @@ bool TranscriberViewModel::deleteMarker(int markerInd)
 	return delOp;
 }
 
-void TranscriberViewModel::selectMarkerClosestToCurrentCursorRequest()
+void SpeechTranscriptionViewModel::selectMarkerClosestToCurrentCursorRequest()
 {
 	long curFrameInd = currentSampleInd();
 
@@ -1178,17 +1174,17 @@ void TranscriberViewModel::selectMarkerClosestToCurrentCursorRequest()
 	setCurrentMarkerIndInternal(closestMarkerInd, true, false);
 }
 
-void TranscriberViewModel::selectMarkerForward()
+void SpeechTranscriptionViewModel::selectMarkerForward()
 {
 	selectMarkerInternal(true);
 }
 
-void TranscriberViewModel::selectMarkerBackward()
+void SpeechTranscriptionViewModel::selectMarkerBackward()
 {
 	selectMarkerInternal(false);
 }
 
-void TranscriberViewModel::selectMarkerInternal(bool moveForward)
+void SpeechTranscriptionViewModel::selectMarkerInternal(bool moveForward)
 {
 	long curSampleInd = cursor().first;
 	if (curSampleInd == PticaGovorun::NullSampleInd)
@@ -1224,7 +1220,7 @@ void TranscriberViewModel::selectMarkerInternal(bool moveForward)
 		setCurrentMarkerIndInternal(nextMarkerInd, true, true);
 }
 
-void TranscriberViewModel::setCurrentMarkerIndInternal(int markerInd, bool updateCursor, bool updateViewportOffset)
+void SpeechTranscriptionViewModel::setCurrentMarkerIndInternal(int markerInd, bool updateCursor, bool updateViewportOffset)
 {
 	if (currentMarkerInd_ != markerInd)
 	{
@@ -1241,12 +1237,12 @@ void TranscriberViewModel::setCurrentMarkerIndInternal(int markerInd, bool updat
 	}
 }
 
-int TranscriberViewModel::currentMarkerInd() const
+int SpeechTranscriptionViewModel::currentMarkerInd() const
 {
 	return currentMarkerInd_;
 }
 
-void TranscriberViewModel::setCurrentMarkerTranscriptText(const QString& text)
+void SpeechTranscriptionViewModel::setCurrentMarkerTranscriptText(const QString& text)
 {
 	if (currentMarkerInd_ != -1)
 	{
@@ -1274,7 +1270,7 @@ void TranscriberViewModel::setCurrentMarkerTranscriptText(const QString& text)
 			if (!validResult.isEmpty())
 			{
 				QString msg = validResult.join('\n');
-				emit nextNotification(formatLogLineWithTime(msg));
+				nextNotification(formatLogLineWithTime(msg));
 			}
 		}
 
@@ -1284,7 +1280,7 @@ void TranscriberViewModel::setCurrentMarkerTranscriptText(const QString& text)
 		cursorTextToAlign_ = text;
 }
 
-void TranscriberViewModel::setCurrentMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail)
+void SpeechTranscriptionViewModel::setCurrentMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail)
 {
 	if (currentMarkerInd_ == -1)
 	{
@@ -1301,14 +1297,14 @@ void TranscriberViewModel::setCurrentMarkerLevelOfDetail(PticaGovorun::MarkerLev
 	}
 }
 
-void TranscriberViewModel::setCurrentMarkerStopOnPlayback(bool stopsPlayback)
+void SpeechTranscriptionViewModel::setCurrentMarkerStopOnPlayback(bool stopsPlayback)
 {
 	if (currentMarkerInd_ == -1)
 		return;
 	speechAnnot_.marker(currentMarkerInd_).StopsPlayback = stopsPlayback;
 }
 
-void TranscriberViewModel::setCurrentMarkerLang(PticaGovorun::SpeechLanguage lang)
+void SpeechTranscriptionViewModel::setCurrentMarkerLang(PticaGovorun::SpeechLanguage lang)
 {
 	std::string langStr = speechLanguageToStr(lang);
 	if (currentMarkerInd_ == -1)
@@ -1317,7 +1313,7 @@ void TranscriberViewModel::setCurrentMarkerLang(PticaGovorun::SpeechLanguage lan
 		if (templateMarkerSpeechLanguage_ != lang)
 		{
 			templateMarkerSpeechLanguage_ = lang;
-			emit nextNotification(QString("Speech language for new markers=%1").arg(langStr.c_str()));
+			nextNotification(QString("Speech language for new markers=%1").arg(langStr.c_str()));
 		}
 	}
 	else
@@ -1328,44 +1324,27 @@ void TranscriberViewModel::setCurrentMarkerLang(PticaGovorun::SpeechLanguage lan
 		if (oldLang != lang)
 		{
 			m.Language = lang;
-			emit nextNotification(QString("Marker[id=%1].Language=%2").arg(m.Id).arg(langStr.c_str()));
+			nextNotification(QString("Marker[id=%1].Language=%2").arg(m.Id).arg(langStr.c_str()));
 		}
 	}
 }
 
-void TranscriberViewModel::ensureRecognizerIsCreated()
+void SpeechTranscriptionViewModel::ensureRecognizerIsCreated()
 {
-	using namespace PticaGovorun;
-
-	std::string recogName = curRecognizerName_.toStdString();
-
 	// initialize the recognizer lazily
 	if (recognizer_ == nullptr)
 	{
-		RecognizerSettings rs;
-		if (!initRecognizerConfiguration(recogName, rs))
+		std::string recogName = recognizerNameHintProvider_->recognizerNameHint();
+		recognizer_ = juliusRecognizerProvider_->instance(recogName);
+		if (recognizer_ == nullptr)
 		{
-			emit nextNotification("Can't find speech recognizer configuration");
+			nextNotification("Can't find speech recognizer");
 			return;
 		}
-
-		QTextCodec* pTextCodec = QTextCodec::codecForName(PGEncodingStr);
-		auto textCodec = std::unique_ptr<QTextCodec, NoDeleteFunctor<QTextCodec>>(pTextCodec);
-
-		std::tuple<bool, std::string, std::unique_ptr<JuliusToolWrapper>> newRecogOp =
-			createJuliusRecognizer(rs, std::move(textCodec));
-		if (!std::get<0>(newRecogOp))
-		{
-			auto err = std::get<1>(newRecogOp);
-			emit nextNotification(QString::fromStdString(err));
-			return;
-		}
-
-		recognizer_ = std::move(std::get<2>(newRecogOp));
 	}
 }
 
-void TranscriberViewModel::recognizeCurrentSegmentJuliusRequest()
+void SpeechTranscriptionViewModel::recognizeCurrentSegmentJuliusRequest()
 {
 	using namespace PticaGovorun;
 	ensureRecognizerIsCreated();
@@ -1387,7 +1366,7 @@ void TranscriberViewModel::recognizeCurrentSegmentJuliusRequest()
 		auto oldLen = len;
 		len = maxFrames;
 		curSegEnd = curSegBeg + len;
-		emit nextNotification(QString("WARN: Segment is too large. Limiting it from %1 to %2 samles").arg(oldLen).arg(len));
+		nextNotification(QString("WARN: Segment is too large. Limiting it from %1 to %2 samles").arg(oldLen).arg(len));
 	}
 
 	// pad the audio with silince
@@ -1398,12 +1377,12 @@ void TranscriberViewModel::recognizeCurrentSegmentJuliusRequest()
 	if (!std::get<0>(recogOp))
 	{
 		auto err = std::get<1>(recogOp);
-		emit nextNotification(QString::fromStdString(err));
+		nextNotification(QString::fromStdString(err));
 		return;
 	}
 
 	if (!recogResult.AlignmentErrorMessage.empty())
-		emit nextNotification(QString::fromStdString(recogResult.AlignmentErrorMessage));
+		nextNotification(QString::fromStdString(recogResult.AlignmentErrorMessage));
 
 #if PG_DEBUG // TODO: take sampleInd from curSegBeg
 	long markerOffset = curSegBeg - silencePadAudioSamplesCount_;
@@ -1441,11 +1420,11 @@ void TranscriberViewModel::recognizeCurrentSegmentJuliusRequest()
 	emit audioSamplesChanged();
 
 	// push the text to log so a user can copy it
-	emit nextNotification(diagSeg.RecogSegmentWords);
+	nextNotification(diagSeg.RecogSegmentWords);
 }
 
 #if HAS_POCKETSPHINX
-void TranscriberViewModel::recognizeCurrentSegmentSphinxRequest()
+void SpeechTranscriptionViewModel::recognizeCurrentSegmentSphinxRequest()
 {
 	using namespace PticaGovorun;
 
@@ -1526,7 +1505,7 @@ void TranscriberViewModel::recognizeCurrentSegmentSphinxRequest()
 	if (hyp == nullptr)
 	{
 		QString msg("No hypothesis is available");
-		emit nextNotification(msg);
+		nextNotification(msg);
 		return;
 	}
 
@@ -1578,7 +1557,7 @@ void TranscriberViewModel::recognizeCurrentSegmentSphinxRequest()
 	diagramSegments_.push_back(diagSeg);
 
 	// push the text to log so a user can copy it
-	emit nextNotification(hypQStr);
+	nextNotification(hypQStr);
 
 	// redraw current segment
 	emit audioSamplesChanged();
@@ -1586,7 +1565,7 @@ void TranscriberViewModel::recognizeCurrentSegmentSphinxRequest()
 
 #endif
 
-void TranscriberViewModel::dumpSilence(long i1, long i2)
+void SpeechTranscriptionViewModel::dumpSilence(long i1, long i2)
 {
 	using namespace PticaGovorun;
 	long len = i2 - i1;
@@ -1618,7 +1597,7 @@ void TranscriberViewModel::dumpSilence(long i1, long i2)
 	std::cout << "Magnitude2=" << avgMag2 << std::endl; 
 }
 
-void TranscriberViewModel::dumpSilence()
+void SpeechTranscriptionViewModel::dumpSilence()
 {
 	using namespace PticaGovorun;
 	if (cursorKind() != TranscriberCursorKind::Range)
@@ -1628,7 +1607,7 @@ void TranscriberViewModel::dumpSilence()
 	dumpSilence(start, end);
 }
 
-void TranscriberViewModel::analyzeUnlabeledSpeech()
+void SpeechTranscriptionViewModel::analyzeUnlabeledSpeech()
 {
 	using namespace PticaGovorun;
 	// get segments, ignoring auto markers
@@ -1726,7 +1705,7 @@ void TranscriberViewModel::analyzeUnlabeledSpeech()
 	std::cout << std::endl;
 }
 
-void TranscriberViewModel::ensureWordToPhoneListVocabularyLoaded()
+void SpeechTranscriptionViewModel::ensureWordToPhoneListVocabularyLoaded()
 {
 	using namespace PticaGovorun;
 
@@ -1743,17 +1722,17 @@ void TranscriberViewModel::ensureWordToPhoneListVocabularyLoaded()
 		double elapsedTime1 = static_cast<double>(clock() - startTime) / CLOCKS_PER_SEC;
 		if (!std::get<0>(loadOp))
 		{
-			emit nextNotification(QString(std::get<1>(loadOp)));
+			nextNotification(QString(std::get<1>(loadOp)));
 			return;
 		}
-		emit nextNotification(QString("Loaded pronunciation dictionary in %1 secs").arg(elapsedTime1, 2));
+		nextNotification(QString("Loaded pronunciation dictionary in %1 secs").arg(elapsedTime1, 2));
 	}
 
 	if (wordToPhoneListAuxiliaryDict_.empty())
 		loadAuxiliaryPhoneticDictionaryRequest();
 }
 
-void TranscriberViewModel::loadAuxiliaryPhoneticDictionaryRequest()
+void SpeechTranscriptionViewModel::loadAuxiliaryPhoneticDictionaryRequest()
 {
 	using namespace PticaGovorun;
 	QTextCodec* pTextCodec = QTextCodec::codecForName(PGEncodingStr);
@@ -1763,7 +1742,7 @@ void TranscriberViewModel::loadAuxiliaryPhoneticDictionaryRequest()
 	QString dicPath = QString(dicPatCStr);
 	if (dicPath.isEmpty())
 	{
-		emit nextNotification("Specify path PG_AUX_DICT_PATH to auxiliary dictionary");
+		nextNotification("Specify path PG_AUX_DICT_PATH to auxiliary dictionary");
 		return;
 	}
 
@@ -1773,13 +1752,13 @@ void TranscriberViewModel::loadAuxiliaryPhoneticDictionaryRequest()
 	double elapsedTime1 = static_cast<double>(clock() - startTime) / CLOCKS_PER_SEC;
 	if (!std::get<0>(loadOp))
 	{
-		emit nextNotification(QString(std::get<1>(loadOp)));
+		nextNotification(QString(std::get<1>(loadOp)));
 		return;
 	}
-	emit nextNotification(QString("Loaded pronunciation AX dictionary in %1 secs").arg(elapsedTime1, 2));
+	nextNotification(QString("Loaded pronunciation AX dictionary in %1 secs").arg(elapsedTime1, 2));
 }
 
-void TranscriberViewModel::alignPhonesForCurrentSegmentRequest()
+void SpeechTranscriptionViewModel::alignPhonesForCurrentSegmentRequest()
 {
 	using namespace PticaGovorun;
 	ensureRecognizerIsCreated();
@@ -1836,7 +1815,7 @@ void TranscriberViewModel::alignPhonesForCurrentSegmentRequest()
 	if (!std::get<0>(convOp))
 	{
 		std::wstring errMsg = std::get<1>(convOp);
-		emit nextNotification(QString::fromStdWString(errMsg));
+		nextNotification(QString::fromStdWString(errMsg));
 		return;
 	}
 
@@ -1861,28 +1840,18 @@ void TranscriberViewModel::alignPhonesForCurrentSegmentRequest()
 	diagSeg.TranscripTextPhones = alignmentResult;
 	diagramSegments_.push_back(diagSeg);
 
-	emit nextNotification(QString("Alignment score=%1").arg(alignmentResult.AlignmentScore));
+	nextNotification(QString("Alignment score=%1").arg(alignmentResult.AlignmentScore));
 
 	// redraw current segment
 	emit audioSamplesChanged();
 }
 
-size_t TranscriberViewModel::silencePadAudioFramesCount() const
+size_t SpeechTranscriptionViewModel::silencePadAudioFramesCount() const
 {
 	return silencePadAudioSamplesCount_;
 }
 
-QString TranscriberViewModel::recognizerName() const
-{
-	return curRecognizerName_;
-}
-
-void TranscriberViewModel::setRecognizerName(const QString& filePath)
-{
-	curRecognizerName_ = filePath;
-}
-
-void TranscriberViewModel::computeMfccRequest()
+void SpeechTranscriptionViewModel::computeMfccRequest()
 {
 	using namespace PticaGovorun;
 	ensureRecognizerIsCreated();
@@ -1897,7 +1866,7 @@ void TranscriberViewModel::computeMfccRequest()
 	auto featsOp = PticaGovorun::collectMfccFeatures(wavFolder, FrameSize, FrameShift, MfccVecLen, phoneNameToFeaturesVector_);
 	if (!std::get<0>(featsOp))
 	{
-		emit nextNotification(QString::fromStdString(std::get<1>(featsOp)));
+		nextNotification(QString::fromStdString(std::get<1>(featsOp)));
 		return;
 	}
 
@@ -1908,14 +1877,14 @@ void TranscriberViewModel::computeMfccRequest()
 	auto trainOp = PticaGovorun::trainMonophoneClassifier(phoneNameToFeaturesVector_, MfccVecLen, nclusters, phoneNameToEMObj_);
 	if (!std::get<0>(trainOp))
 	{
-		emit nextNotification(QString::fromStdString(std::get<1>(trainOp)));
+		nextNotification(QString::fromStdString(std::get<1>(trainOp)));
 		return;
 	}
 
-	emit nextNotification("Done training phone classifiers");
+	nextNotification("Done training phone classifiers");
 }
 
-void TranscriberViewModel::testMfccRequest()
+void SpeechTranscriptionViewModel::testMfccRequest()
 {
 	using namespace PticaGovorun;
 	ensureRecognizerIsCreated();
@@ -1942,7 +1911,7 @@ void TranscriberViewModel::testMfccRequest()
 	auto mfccFeatsOp = PticaGovorun::computeMfccFeaturesPub(&audioSamples_[curSegBeg], len, FrameSize, FrameShift, mfccVecLen, mfccFeatures, framesCount);
 	if (!std::get<0>(mfccFeatsOp))
 	{
-		emit nextNotification(QString::fromStdString(std::get<1>(mfccFeatsOp)));
+		nextNotification(QString::fromStdString(std::get<1>(mfccFeatsOp)));
 		return;
 	}
 
@@ -2003,7 +1972,7 @@ void TranscriberViewModel::testMfccRequest()
 	qDebug() << "Recog: " << msg.str().c_str();
 }
 
-void TranscriberViewModel::classifyMfccIntoPhones()
+void SpeechTranscriptionViewModel::classifyMfccIntoPhones()
 {
 	using namespace PticaGovorun;
 
@@ -2106,7 +2075,7 @@ void TranscriberViewModel::classifyMfccIntoPhones()
 #endif
 }
 
-void TranscriberViewModel::playComposingRecipeRequest(QString recipe)
+void SpeechTranscriptionViewModel::playComposingRecipeRequest(QString recipe)
 {
 	composedAudio_.clear();
 
@@ -2116,6 +2085,7 @@ void TranscriberViewModel::playComposingRecipeRequest(QString recipe)
 	// 1 section has format 3-15 meaning play audio from markerId=3 to markerId=15
 	// R3 means repeat this section 3 times
 	// empty lines are ignored
+	// eg: "test.wav;3-15;R3" means, play from markerId=3 to markerId=15 three times
 
 	QStringList lines = recipe.split('\n', QString::SkipEmptyParts);
 	for (QString line : lines)
@@ -2145,13 +2115,13 @@ void TranscriberViewModel::playComposingRecipeRequest(QString recipe)
 		int fromMarkerId = fromMarkerIdStr.toInt(&parseOp);
 		if (!parseOp)
 		{
-			emit nextNotification("Can't parse fromMarkerInd=" + fromMarkerIdStr);
+			nextNotification("Can't parse fromMarkerInd=" + fromMarkerIdStr);
 			return;
 		}
 		int toMarkerId = toMarkerIdStr.toInt(&parseOp);
 		if (!parseOp)
 		{
-			emit nextNotification("Can't parse toMarkerInd=" + fromMarkerIdStr);
+			nextNotification("Can't parse toMarkerInd=" + fromMarkerIdStr);
 			return;
 		}
 
@@ -2192,12 +2162,12 @@ void TranscriberViewModel::playComposingRecipeRequest(QString recipe)
 	soundPlayerPlay(composedAudio_.data(), 0, composedAudio_.size(), false);
 }
 
-void TranscriberViewModel::setAudioMarkupNavigator(std::shared_ptr<AudioMarkupNavigator> audioMarkupNavigator)
+void SpeechTranscriptionViewModel::setAudioMarkupNavigator(std::shared_ptr<AudioMarkupNavigator> audioMarkupNavigator)
 {
 	audioMarkupNavigator_ = audioMarkupNavigator;
 }
 
-void TranscriberViewModel::navigateToMarkerRequest()
+void SpeechTranscriptionViewModel::navigateToMarkerRequest()
 {
 	if (audioMarkupNavigator_ == nullptr)
 		return;
@@ -2214,14 +2184,24 @@ void TranscriberViewModel::navigateToMarkerRequest()
 	setCurrentMarkerIndInternal(markerInd, true, true);
 }
 
-void TranscriberViewModel::setPhoneticDictViewModel(std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> phoneticDictViewModel)
+void SpeechTranscriptionViewModel::setPhoneticDictViewModel(std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> phoneticDictViewModel)
 {
 	phoneticDictViewModel_ = phoneticDictViewModel;
 }
 
-std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> TranscriberViewModel::phoneticDictViewModel()
+std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> SpeechTranscriptionViewModel::phoneticDictViewModel()
 {
 	return phoneticDictViewModel_;
 }
 
+	void SpeechTranscriptionViewModel::setNotificationService(std::shared_ptr<VisualNotificationService> _)
+	{
+		notificationService_ = _;
+	}
+
+	void SpeechTranscriptionViewModel::nextNotification(const QString& message) const
+	{
+		if (notificationService_ != nullptr)
+			notificationService_->nextNotification(message);
+	}
 } // namespace PticaGovorun

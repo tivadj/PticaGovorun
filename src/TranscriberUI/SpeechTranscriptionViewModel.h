@@ -17,11 +17,14 @@
 #include "SpeechProcessing.h"
 #include "AudioMarkupNavigator.h"
 #include "PhoneticDictionaryViewModel.h"
+#include "VisualNotificationService.h"
+#include "JuliusRecognizerProvider.h"
 
 namespace PticaGovorun
 {
+	class SharedServiceProvider;
 
-// Specifies which frame to choose as a starting one when playing an audio segment between two markers.
+	// Specifies which frame to choose as a starting one when playing an audio segment between two markers.
 enum class SegmentStartFrameToPlayChoice
 {
 	// Starts playing from the current cursor.
@@ -90,14 +93,13 @@ enum class TranscriberCursorKind
 // A user can specify samples of interest using a cursor. The sample is specified with a sample index.
 // The range of samples is specified with indices of two boundary samples.
 // When playing audio, the current playing sample is shown.
-class TranscriberViewModel : public QObject
+class SpeechTranscriptionViewModel : public QObject
 {
     Q_OBJECT
 public:
 signals :
 	// Occurs when audio samples where successfully loaded from a file.
 	void audioSamplesLoaded();
-    void nextNotification(const QString& message);
     void audioSamplesChanged();
 	void docOffsetXChanged();
 	void lastMouseDocPosXChanged(float mouseDocPosX);
@@ -111,13 +113,8 @@ signals :
 	// Occurs when the index of current playing sample changes.
 	void playingSampleIndChanged(long oldPlayingSampleInd);
 public:
-    TranscriberViewModel();
-
-	// Loads UI state.
-	void loadStateSettings();
-
-	// Saves UI state.
-	void saveStateSettings();
+	SpeechTranscriptionViewModel();
+	void init(std::shared_ptr<SharedServiceProvider> serviceProvider);
 
     void loadAudioFileRequest();
 
@@ -154,6 +151,7 @@ public:
 
 	void saveCurrentRangeAsWavRequest();
 
+	QString modelShortName() const;
 	QString audioFilePath() const;
     void setAudioFilePath(const QString& filePath);
 
@@ -329,8 +327,6 @@ public:	// recongizer
 
 	void alignPhonesForCurrentSegmentRequest();
 	size_t silencePadAudioFramesCount() const;
-	QString recognizerName() const;
-	void setRecognizerName(const QString& filePath);
 	
 	void computeMfccRequest();
 	void testMfccRequest();
@@ -360,6 +356,12 @@ public:
 	std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> phoneticDictViewModel();
 private:
 	std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> phoneticDictViewModel_;
+	
+public:
+	void setNotificationService(std::shared_ptr<VisualNotificationService>);
+private:
+	void nextNotification(const QString& message) const;
+	std::shared_ptr<VisualNotificationService> notificationService_;
 
 private:
 	std::vector<short> audioSamples_;
@@ -370,7 +372,7 @@ private:
 	// The range (StartPlayingFrameInd;FinishPlayingFrameInd) of frames is played.
 	struct SoundPlayerData
 	{
-		TranscriberViewModel* transcriberViewModel;
+		SpeechTranscriptionViewModel* transcriberViewModel;
 		const short* AudioSouce;
 		long CurPlayingFrameInd;
 
@@ -393,8 +395,9 @@ private:
 	long playingSampleInd_ = PticaGovorun::NullSampleInd; // the plyaing sample or -1 if audio is not playing
 
 	// recognition
-	QString curRecognizerName_;
-	std::unique_ptr<PticaGovorun::JuliusToolWrapper> recognizer_;
+	std::shared_ptr<RecognizerNameHintProvider> recognizerNameHintProvider_;
+	std::shared_ptr<JuliusRecognizerProvider> juliusRecognizerProvider_;
+	JuliusToolWrapper* recognizer_ = nullptr;
 	std::map<std::wstring, std::vector<std::string>> wordToPhoneListDict_;
 	std::map<std::wstring, std::vector<std::string>> wordToPhoneListAuxiliaryDict_;
 	std::vector<short> audioSegmentBuffer_; // the buffer to keep the padded audio segments

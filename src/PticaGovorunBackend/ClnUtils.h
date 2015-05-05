@@ -190,17 +190,6 @@ namespace wv
 
 namespace PticaGovorun {
 
-template <typename T>
-struct NoDeleteFunctor
-{
-	void operator()(T* pObj) const
-	{
-		// no op
-	}
-};
-
-//
-
 PG_EXPORTS void linearSpace(float min, float max, int numPoints, wv::slice<float> points);
 
 

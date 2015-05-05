@@ -5,15 +5,15 @@
 #include <functional>
 #include <QWidget>
 #include <QMouseEvent>
-#include "TranscriberViewModel.h"
+#include "SpeechTranscriptionViewModel.h"
 
-class AudioSamplesWidget : public QWidget
+class SpeechTranscriptionPaintWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit AudioSamplesWidget(QWidget *parent = 0);
+    explicit SpeechTranscriptionPaintWidget(QWidget *parent = 0);
 
-	void setModel(std::shared_ptr<PticaGovorun::TranscriberViewModel> transcriberModel);
+	void setModel(std::shared_ptr<PticaGovorun::SpeechTranscriptionViewModel> transcriberModel);
 
 
 public:
@@ -61,7 +61,7 @@ private:
 	// Draw diagram elements, which are associated with the range of samples.
 	void processVisibleDiagramSegments(QPainter& painter, float visibleDocLeft, float visibleDocRight, std::function<void(const PticaGovorun::DiagramSegment& diagItem)> onDiagItem);
 private:
-	std::shared_ptr<PticaGovorun::TranscriberViewModel> transcriberModel_;
+	std::shared_ptr<PticaGovorun::SpeechTranscriptionViewModel> transcriberModel_;
 };
 
 #endif // AUDIOSAMPLESWIDGET_H

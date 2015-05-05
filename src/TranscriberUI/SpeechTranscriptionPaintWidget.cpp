@@ -1,10 +1,10 @@
-#include "AudioSamplesWidget.h"
+#include "SpeechTranscriptionPaintWidget.h"
 #include <QPainter>
 #include <QBrush>
 #include <QDebug>
 #include "InteropPython.h"
 
-AudioSamplesWidget::AudioSamplesWidget(QWidget *parent) :
+SpeechTranscriptionPaintWidget::SpeechTranscriptionPaintWidget(QWidget *parent) :
     QWidget(parent)
 {
 	setFocusPolicy(Qt::WheelFocus);
@@ -17,12 +17,12 @@ AudioSamplesWidget::AudioSamplesWidget(QWidget *parent) :
 	setPalette(pal);    
 }
 
-void AudioSamplesWidget::setModel(std::shared_ptr<PticaGovorun::TranscriberViewModel> transcriberModel)
+void SpeechTranscriptionPaintWidget::setModel(std::shared_ptr<PticaGovorun::SpeechTranscriptionViewModel> transcriberModel)
 {
 	transcriberModel_ = transcriberModel;
 }
 
-void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
+void SpeechTranscriptionPaintWidget::paintEvent(QPaintEvent* pe)
 {
 	QRect invalidRect = pe->rect();
 	//qDebug() << "paintEvent" <<pe->rect();
@@ -43,7 +43,7 @@ void AudioSamplesWidget::paintEvent(QPaintEvent* pe)
 	drawModel(painter, QRect(0, 0, canvasWidth, canvasHeight), invalidRect);
 }
 
-void AudioSamplesWidget::drawModel(QPainter& painter, const QRect& viewportRect, const QRect& invalidRect)
+void SpeechTranscriptionPaintWidget::drawModel(QPainter& painter, const QRect& viewportRect, const QRect& invalidRect)
 {
 	if (transcriberModel_ == nullptr)
 		return;
@@ -110,7 +110,7 @@ void AudioSamplesWidget::drawModel(QPainter& painter, const QRect& viewportRect,
 	drawPlayingSampleInd(painter);
 }
 
-void AudioSamplesWidget::drawWaveform(QPainter& painter, const QRect& viewportRect, float visibleDocLeft, float visibleDocRight)
+void SpeechTranscriptionPaintWidget::drawWaveform(QPainter& painter, const QRect& viewportRect, float visibleDocLeft, float visibleDocRight)
 {
 	const float XNull = -1;
 	float prevX = XNull;
@@ -154,7 +154,7 @@ void AudioSamplesWidget::drawWaveform(QPainter& painter, const QRect& viewportRe
 	}
 }
 
-void AudioSamplesWidget::drawCursorSingle(QPainter& painter, const QRect& viewportRect, float docLeft)
+void SpeechTranscriptionPaintWidget::drawCursorSingle(QPainter& painter, const QRect& viewportRect, float docLeft)
 {
 	std::pair<long,long> cursor =  transcriberModel_->cursor();
 	
@@ -172,7 +172,7 @@ void AudioSamplesWidget::drawCursorSingle(QPainter& painter, const QRect& viewpo
 	painter.drawLine(hitInfo.DocXInsideLane, laneBnd.Top, hitInfo.DocXInsideLane, laneBnd.Top + laneBnd.Height);
 }
 
-void AudioSamplesWidget::drawCursorRange(QPainter& painter, const QRect& viewportRect, float docLeft, float docRight)
+void SpeechTranscriptionPaintWidget::drawCursorRange(QPainter& painter, const QRect& viewportRect, float docLeft, float docRight)
 {
 	std::pair<long, long> cursor = transcriberModel_->cursor();
 	if (cursor.second == PticaGovorun::NullSampleInd) // there is no 'range' of samples
@@ -203,7 +203,7 @@ void AudioSamplesWidget::drawCursorRange(QPainter& painter, const QRect& viewpor
 	painter.drawRect(curLeftDocX, viewportRect.top(), curRightDocX - curLeftDocX, viewportRect.height());
 }
 
-void AudioSamplesWidget::drawPlayingSampleInd(QPainter& painter)
+void SpeechTranscriptionPaintWidget::drawPlayingSampleInd(QPainter& painter)
 {
 	long sampleInd = transcriberModel_->playingSampleInd();
 	if (sampleInd == PticaGovorun::NullSampleInd)
@@ -222,7 +222,7 @@ void AudioSamplesWidget::drawPlayingSampleInd(QPainter& painter)
 	painter.drawLine(hitInfo.DocXInsideLane, yBnds.Top, hitInfo.DocXInsideLane, yBnds.Top + yBnds.Height);
 }
 
-void AudioSamplesWidget::drawMarkers(QPainter& painter, const QRect& viewportRect, float docLeft, float docRight)
+void SpeechTranscriptionPaintWidget::drawMarkers(QPainter& painter, const QRect& viewportRect, float docLeft, float docRight)
 {
 	int visibleMarkerInd = -1;
 
@@ -305,7 +305,7 @@ void AudioSamplesWidget::drawMarkers(QPainter& painter, const QRect& viewportRec
 	}
 }
 
-void AudioSamplesWidget::drawShiftedFramesRuler(QPainter& painter, int phonemesBottomLine, int ruleBegSample, int rulerEndSample, int phoneRowHeight, int phoneRowsCount, float laneOffsetDocX, int frameSize, int frameShift)
+void SpeechTranscriptionPaintWidget::drawShiftedFramesRuler(QPainter& painter, int phonemesBottomLine, int ruleBegSample, int rulerEndSample, int phoneRowHeight, int phoneRowsCount, float laneOffsetDocX, int frameSize, int frameShift)
 {
 	using namespace PticaGovorun;
 	int curY = phonemesBottomLine;
@@ -336,7 +336,7 @@ void AudioSamplesWidget::drawShiftedFramesRuler(QPainter& painter, int phonemesB
 	}
 }
 
-void AudioSamplesWidget::drawPhoneSeparatorsAndNames(QPainter& painter, long phonesOffsetSampleInd, const std::vector<PticaGovorun::AlignedPhoneme>& markerPhones, float laneOffsetDocX, int markerBottomY, int maxPhoneMarkerHeight, int phoneTextY)
+void SpeechTranscriptionPaintWidget::drawPhoneSeparatorsAndNames(QPainter& painter, long phonesOffsetSampleInd, const std::vector<PticaGovorun::AlignedPhoneme>& markerPhones, float laneOffsetDocX, int markerBottomY, int maxPhoneMarkerHeight, int phoneTextY)
 {
 	if (markerPhones.empty())
 		return;
@@ -391,7 +391,7 @@ void AudioSamplesWidget::drawPhoneSeparatorsAndNames(QPainter& painter, long pho
 	}
 }
 
-void AudioSamplesWidget::drawClassifiedPhonesGrid(QPainter& painter, long phonesOffsetSampleInd, const std::vector<PticaGovorun::ClassifiedSpeechSegment>& markerPhones, float laneOffsetDocX, int gridTopY, int gridBottomY)
+void SpeechTranscriptionPaintWidget::drawClassifiedPhonesGrid(QPainter& painter, long phonesOffsetSampleInd, const std::vector<PticaGovorun::ClassifiedSpeechSegment>& markerPhones, float laneOffsetDocX, int gridTopY, int gridBottomY)
 {
 	// y is directed from top to bottom
 
@@ -486,7 +486,7 @@ void AudioSamplesWidget::drawClassifiedPhonesGrid(QPainter& painter, long phones
 	}
 }
 
-void AudioSamplesWidget::drawWordSeparatorsAndNames(QPainter& painter, long firstWordSampleIndOffset, const std::vector<PticaGovorun::AlignedWord>& wordBounds, float laneOffsetDocX, int separatorTopY, int separatorBotY)
+void SpeechTranscriptionPaintWidget::drawWordSeparatorsAndNames(QPainter& painter, long firstWordSampleIndOffset, const std::vector<PticaGovorun::AlignedWord>& wordBounds, float laneOffsetDocX, int separatorTopY, int separatorBotY)
 {
 	if (wordBounds.empty())
 		return;
@@ -541,7 +541,7 @@ void AudioSamplesWidget::drawWordSeparatorsAndNames(QPainter& painter, long firs
 	}
 }
 
-void AudioSamplesWidget::drawDiagramSegment(QPainter& painter, const QRect& viewportRect, const PticaGovorun::DiagramSegment& diagItem, float laneOffsetDocX)
+void SpeechTranscriptionPaintWidget::drawDiagramSegment(QPainter& painter, const QRect& viewportRect, const PticaGovorun::DiagramSegment& diagItem, float laneOffsetDocX)
 {
 	using namespace PticaGovorun;
 
@@ -629,7 +629,7 @@ void AudioSamplesWidget::drawDiagramSegment(QPainter& painter, const QRect& view
 	}
 }
 
-void AudioSamplesWidget::processVisibleDiagramSegments(QPainter& painter, float visibleDocLeft, float visibleDocRight,
+void SpeechTranscriptionPaintWidget::processVisibleDiagramSegments(QPainter& painter, float visibleDocLeft, float visibleDocRight,
 	std::function<void(const PticaGovorun::DiagramSegment& diagItem)> onDiagItem)
 {
 	wv::slice<const PticaGovorun::DiagramSegment> diagItems = transcriberModel_->diagramSegments();
@@ -654,19 +654,19 @@ void AudioSamplesWidget::processVisibleDiagramSegments(QPainter& painter, float 
 	}
 }
 
-void AudioSamplesWidget::mousePressEvent(QMouseEvent* me)
+void SpeechTranscriptionPaintWidget::mousePressEvent(QMouseEvent* me)
 {
 	const QPointF& pos = me->localPos();
 	bool isShiftPressed = me->modifiers().testFlag(Qt::ShiftModifier);
 	transcriberModel_->setLastMousePressPos(pos, isShiftPressed);
 }
 
-void AudioSamplesWidget::mouseReleaseEvent(QMouseEvent*)
+void SpeechTranscriptionPaintWidget::mouseReleaseEvent(QMouseEvent*)
 {
 	transcriberModel_->dragMarkerStop();
 }
 
-void AudioSamplesWidget::mouseMoveEvent(QMouseEvent* me)
+void SpeechTranscriptionPaintWidget::mouseMoveEvent(QMouseEvent* me)
 {
 	const QPointF& pos = me->localPos();
 	transcriberModel_->dragMarkerContinue(pos);
