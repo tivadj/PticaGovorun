@@ -301,6 +301,7 @@ public:
 	void setCurrentMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail);
 	void setCurrentMarkerStopOnPlayback(bool stopsPlayback);
 	void setCurrentMarkerLang(PticaGovorun::SpeechLanguage lang);
+	QString currentMarkerPhoneListString() const;
 
 	void setTemplateMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail);
 	PticaGovorun::MarkerLevelOfDetail templateMarkerLevelOfDetail() const;
@@ -313,7 +314,6 @@ private:
 	void setCurrentMarkerIndInternal(int markerInd, bool updateCursor, bool updateViewportOffset);
 
 public:	// recongizer
-
 	void ensureRecognizerIsCreated();
 	void recognizeCurrentSegmentJuliusRequest();
 #if HAS_POCKETSPHINX

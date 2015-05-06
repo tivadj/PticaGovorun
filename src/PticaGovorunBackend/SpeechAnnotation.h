@@ -57,6 +57,7 @@ namespace PticaGovorun
 		const std::vector<TimePointMarker>& markers() const;
 
 		TimePointMarker& marker(int markerInd);
+		const TimePointMarker& marker(int markerInd) const;
 		int markerIndByMarkerId(int markerId);
 
 		int getClosestMarkerInd(long frameInd, long* dist);

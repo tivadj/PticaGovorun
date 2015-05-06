@@ -171,6 +171,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GrowOnlyPinArenaTests.cpp" />
     <ClCompile Include="PhonationTextAlignmentTests.cpp" />
     <ClCompile Include="StringEditDistanceTests.cpp" />
     <ClCompile Include="main.cpp" />

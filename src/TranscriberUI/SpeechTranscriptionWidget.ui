@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1163</width>
-    <height>381</height>
+    <width>694</width>
+    <height>440</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,7 +25,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>60</height>
+       <height>41</height>
       </size>
      </property>
      <widget class="QLineEdit" name="lineEditCursorFirstDocPosX">
@@ -126,24 +126,6 @@
         <bool>true</bool>
        </property>
       </widget>
-     </widget>
-     <widget class="QLineEdit" name="lineEditMarkerText">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>40</y>
-        <width>1131</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>annotation</string>
-      </property>
      </widget>
      <widget class="QLabel" name="label_3">
       <property name="geometry">
@@ -344,6 +326,33 @@
        </rect>
       </property>
      </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="lineEditMarkerText">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>annotation</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="lineEditMarkerPhoneList">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>A N N O T A1 T1 I O N</string>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>

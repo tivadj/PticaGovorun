@@ -20,13 +20,13 @@ namespace PronunciationChecksRunnerNS
 	{
 		QTextCodec* pTextCodec = QTextCodec::codecForName("windows-1251");
 		std::map<std::wstring, std::vector<Pronunc>> wordToPhoneListDict;
-		const wchar_t* shrekkyDic = LR"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyDic.voca)path";
+		//const wchar_t* shrekkyDic = LR"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyDic.voca)path";
 		//const wchar_t* shrekkyDic = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\newvoca_pynz.voca)path";
 		bool loadOp;
 		const char* errMsg;
-		std::tie(loadOp, errMsg) = loadPronunciationVocabulary2(shrekkyDic, wordToPhoneListDict, *pTextCodec);
-		if (!loadOp)
-			return;
+		//std::tie(loadOp, errMsg) = loadPronunciationVocabulary2(shrekkyDic, wordToPhoneListDict, *pTextCodec); // TODO:
+		//if (!loadOp)
+		//	return;
 
 		//const wchar_t* outDict = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\phoneticKnown.yml)path";
 		//std::vector<PhoneticWord> phoneticDict;

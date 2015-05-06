@@ -267,6 +267,7 @@ namespace PticaGovorun
 		langButton->setChecked(true);
 
 		ui->lineEditMarkerText->setText(uiMarkerTranscriptStr);
+		ui->lineEditMarkerPhoneList->setText(transcriberModel_->currentMarkerPhoneListString());
 		ui->checkBoxCurMarkerStopOnPlayback->setEnabled(uiMarkerStopsPlaybackEnabled);
 		ui->checkBoxCurMarkerStopOnPlayback->setChecked(uiMarkerStopsPlayback);
 

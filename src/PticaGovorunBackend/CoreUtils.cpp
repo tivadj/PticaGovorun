@@ -29,4 +29,21 @@ void appendTimeStampNow(std::stringstream& str)
 	str << buf;
 }
 
+boost::wstring_ref toStringRef(const QString& str, std::vector<wchar_t>& buff)
+{
+	buff.resize(str.size());
+	str.toWCharArray(buff.data());
+	return boost::wstring_ref(buff.data(), str.size());
+}
+
+QString toQString(boost::wstring_ref text)
+{
+	return QString::fromWCharArray(text.data(), (int)text.size());
+}
+
+std::wstring toStdWString(boost::wstring_ref text)
+{
+	return std::wstring(text.data(), text.size());
+}
+
 }

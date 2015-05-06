@@ -23,6 +23,11 @@ namespace PticaGovorun
 		return frameIndMarkers_[markerInd];
 	}
 
+	const TimePointMarker& SpeechAnnotation::marker(int markerInd) const
+	{
+		return frameIndMarkers_[markerInd];
+	}
+
 	int SpeechAnnotation::markerIndByMarkerId(int markerId)
 	{
 		for (size_t i = 0; i < frameIndMarkers_.size(); ++i)

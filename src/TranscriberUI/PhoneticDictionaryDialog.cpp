@@ -81,7 +81,7 @@ namespace PticaGovorun
 		QString browseDictStr = currentBrowsedDictId();
 		QString text = ui->lineEditCurrentWord->text();
 
-		phoneticDictViewModel_->setCurrentWord(browseDictStr, text);
+		phoneticDictViewModel_->updateSuggesedWordsList(browseDictStr, text);
 	}
 
 	void PhoneticDictionaryDialog::phoneticDictViewModel_matchedWordsChanged()

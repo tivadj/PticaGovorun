@@ -209,7 +209,10 @@ namespace PticaGovorun
 		{
 			const Phone& ph = phoneReg_[phoneInd];
 			if (ph.BasicPhoneId.Id == basicPhoneId)
-				phoneIds.push_back(extendPhoneId(phoneInd + 1));
+			{
+				PhoneId pid = extendPhoneId(phoneInd + 1);
+				phoneIds.push_back(pid);
+			}
 		}
 	}
 
@@ -246,7 +249,8 @@ namespace PticaGovorun
 		const BasicPhone* basicPh = basicPhone(basicPhoneStrId);
 		if (basicPh == nullptr)
 			return nullptr;
-		std::vector<PhoneId> candidates;
+		static std::vector<PhoneId> candidates;
+		candidates.clear();
 		findPhonesByBasicPhoneStr(basicPh->Name, candidates);
 
 		if (candidates.empty())
@@ -267,6 +271,20 @@ namespace PticaGovorun
 						softHardFixed = SoftHardConsonant::Soft;
 					else if (palatalSupport() == PalatalSupport::AsPalatal)
 						softHardFixed = SoftHardConsonant::Palatal;
+				}
+				else if (softHardRequested == SoftHardConsonant::Soft)
+				{
+					     if (palatalSupport() == PalatalSupport::AsHard)
+						softHardFixed = SoftHardConsonant::Hard;
+					else if (palatalSupport() == PalatalSupport::AsSoft)
+						softHardFixed = SoftHardConsonant::Soft;
+					else if (palatalSupport() == PalatalSupport::AsPalatal)
+					{
+						if (usuallyHardBasicPhone(*this, basicPhoneStrId))
+							softHardFixed = SoftHardConsonant::Palatal; // B1->B2
+						else
+							softHardFixed = SoftHardConsonant::Soft; // L1 -> L1
+					}
 				}
 			}
 		}
@@ -636,74 +654,6 @@ namespace PticaGovorun
 		return std::make_tuple(true, nullptr);
 	}
 
-	std::tuple<bool, const char*> loadPronunciationVocabulary2(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<Pronunc>>& wordToPhoneList, const QTextCodec& textCodec)
-	{
-		// file contains text in Windows-1251 encoding
-		QFile file(QString::fromStdWString(vocabFilePathAbs));
-		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-			return std::make_tuple(false, "Can't open file");
-
-		// 
-		std::array<char, 1024> lineBuff;
-
-		// each line has a format:
-		// sure\tsh u e\n
-		while (true) {
-			auto readBytes = file.readLine(lineBuff.data(), lineBuff.size());
-			if (readBytes == -1) // EOF
-			{
-				break;
-			}
-			//if (rand() % 50 >= 1) // filter for speed
-			//	continue;
-
-			// read the first word
-
-			char* pMutStr = lineBuff.data(); // note, strtok modifies the buffer
-			char* pMutStrNext = nullptr;
-
-			const char* DictDelim = " \t\n";
-
-			// strtok seems to be quicker than std::regex or QString::split approaches
-			pMutStr = strtok_s(pMutStr, DictDelim, &pMutStrNext);
-			if (pMutStr == nullptr)
-			{
-				// the line contains only the whitespace
-				continue;
-			}
-
-			QString word = textCodec.toUnicode(pMutStr);
-
-			// read the tail of phones
-			std::vector<std::string> phones;
-			while (true)
-			{
-				pMutStr = strtok_s(nullptr, DictDelim, &pMutStrNext);
-				if (pMutStr == nullptr)
-					break;
-
-				auto len = strlen(pMutStr);
-				std::string phoneStr(pMutStr, len);
-				phones.push_back(std::move(phoneStr));
-			}
-
-			std::wstring wordW = word.toStdWString();
-			auto it = wordToPhoneList.find(wordW);
-			if (it == std::end(wordToPhoneList))
-			{
-				std::vector<Pronunc> prons;
-				wordToPhoneList.insert({ wordW, prons });
-				it = wordToPhoneList.find(wordW);
-				assert(it != std::end(wordToPhoneList) && "Element must be in the map");
-			}
-			Pronunc pron;
-			pron.setPhones(phones);
-			it->second.push_back(std::move(pron));
-		}
-
-		return std::make_tuple(true, nullptr);
-	}
-
 	void parsePronId(const std::wstring& pronId, boost::wstring_ref& pronName)
 	{
 		boost::wstring_ref pronIdRef = pronId;
@@ -803,6 +753,112 @@ namespace PticaGovorun
 
 			PronunciationFlavour pron;
 			pron.PronAsWord = wordW;
+			pron.Phones = phones;
+			curPronGroup.Pronunciations.push_back(pron);
+		}
+
+		if (!curPronGroup.Word.empty())
+		{
+			words.push_back(curPronGroup);
+			curPronGroup.Word.clear();
+			curPronGroup.Pronunciations.clear();
+		}
+		return std::make_tuple(true, nullptr);
+	}
+
+	std::tuple<bool, const char*> loadPhoneticDictionaryPronIdPerLineNew(const std::basic_string<wchar_t>& vocabFilePathAbs, const PhoneRegistry& phoneReg,
+		const QTextCodec& textCodec, std::vector<PhoneticWordNew>& words, std::vector<std::string>& brokenLines,
+		GrowOnlyPinArena<wchar_t>& stringArena)
+	{
+		// file contains text in Windows-1251 encoding
+		QFile file(QString::fromStdWString(vocabFilePathAbs));
+		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+			return std::make_tuple(false, "Can't open file");
+
+		// 
+		std::array<char, 1024> lineBuff;
+		std::array<wchar_t, 64> wordBuff;
+		PhoneticWordNew curPronGroup;
+		std::vector<PhoneId> phones;
+
+		// each line has a format:
+		// sure\tsh u e\n
+		while (true) {
+			auto readBytes = file.readLine(lineBuff.data(), lineBuff.size());
+			if (readBytes == -1) // EOF
+				break;
+
+			if (readBytes < 3) // 3=min length of Word->PhoneList
+				continue;
+
+			boost::string_ref line(lineBuff.data(), readBytes);
+			if (line.back() == '\n')
+				line.remove_suffix(1);
+
+			const char* DictDelim = " \t\n";
+			size_t phoneListInd = line.find_first_of(DictDelim);
+			if (phoneListInd == boost::string_ref::npos)
+				return std::make_tuple(false, "The word is too long (>1024 bytes)");
+
+			int wordSize = phoneListInd;
+			if (wordSize == 0) // empty line
+				continue;
+
+			boost::string_ref phoneListRef;
+			auto isBrokenLine = [&]() -> bool
+			{
+				if (wordSize > wordBuff.size()) // word buff can't fit the word
+					return true;
+
+				phoneListRef = line.substr(phoneListInd + 1);
+				if (phoneListRef.empty()) // word without the list of phones
+					return true;
+
+				// parsing requires phone list to be uppercase
+				std::transform(phoneListRef.begin(), phoneListRef.end(), (char*)phoneListRef.begin(), toupper);
+
+				phones.clear();
+				bool parseOp = parsePhoneList(phoneReg, phoneListRef, phones);
+				if (!parseOp)
+					return true;
+				return false;
+			};
+
+			if (isBrokenLine())
+			{
+				brokenLines.push_back(lineBuff.data());
+				continue;
+			}
+
+			QString word = textCodec.toUnicode(line.data(), phoneListInd);
+			int copiedSize = word.toWCharArray(wordBuff.data());
+			PG_DbgAssert(copiedSize == word.size());
+
+			boost::wstring_ref wordRef = boost::wstring_ref(wordBuff.data(), word.size());
+			boost::wstring_ref arenaWordRef;
+			if (!registerWord(wordRef, stringArena, arenaWordRef))
+			{
+				brokenLines.push_back(lineBuff.data());
+				continue;
+			}
+
+			if (curPronGroup.Word.compare(wordRef) != 0)
+			{
+				// finish previous pronunciation group
+				if (!curPronGroup.Word.empty())
+				{
+					words.push_back(curPronGroup);
+					curPronGroup.Word.clear();
+					curPronGroup.Pronunciations.clear();
+				}
+
+				// start new group
+				PG_DbgAssert(curPronGroup.Pronunciations.empty() && "Old pronunciation data must be purged");
+				curPronGroup.Word = arenaWordRef;
+			}
+
+			PronunciationFlavourNew pron;
+			pron.PronCode = arenaWordRef;
 			pron.Phones = phones;
 			curPronGroup.Pronunciations.push_back(pron);
 		}
@@ -930,7 +986,7 @@ namespace PticaGovorun
 		return true;
 	}
 
-	std::tuple<bool, const char*> parsePronuncLines(const PhoneRegistry& phoneReg, const std::basic_string<wchar_t>& prons, std::vector<PronunciationFlavour>& result)
+	std::tuple<bool, const char*> parsePronuncLines(const PhoneRegistry& phoneReg, const std::wstring& prons, std::vector<PronunciationFlavour>& result)
 	{
 		QString pronsQ = QString::fromStdWString(prons);
 		QStringList pronItems = pronsQ.split('\n', QString::SkipEmptyParts);
@@ -952,6 +1008,38 @@ namespace PticaGovorun
 			PronunciationFlavour pron;
 			pron.PronAsWord = pronAsWord.toStdWString();
 			pron.Phones = phones;
+			result.push_back(pron);
+		}
+		return std::make_tuple(true, nullptr);
+	}
+
+	std::tuple<bool, const char*> parsePronuncLinesNew(const PhoneRegistry& phoneReg, const std::wstring& prons, std::vector<PronunciationFlavourNew>& result, GrowOnlyPinArena<wchar_t>& stringArena)
+	{
+		QString pronsQ = QString::fromStdWString(prons);
+		QStringList pronItems = pronsQ.split('\n', QString::SkipEmptyParts);
+		for (int pronInd = 0; pronInd < pronItems.size(); ++pronInd)
+		{
+			QString pronLine = pronItems[pronInd];
+			int pronAsWordEndInd = pronLine.indexOf('\t');
+			if (pronAsWordEndInd == -1)
+				return std::make_tuple(false, "First part of line doesn't contain pronunciation id");
+
+			QString pronAsWord = pronLine.left(pronAsWordEndInd);
+			boost::wstring_ref arenaPronAsWord;
+			if (!registerWord(pronAsWord, stringArena, arenaPronAsWord))
+				return std::make_tuple(false, "Can't allocate word");
+
+			//
+			QString phonesStr = pronLine.mid(pronAsWordEndInd + 1);
+
+			std::vector<PhoneId> phones;
+			bool parseOp = parsePhoneList(phoneReg, phonesStr.toStdString(), phones);
+			if (!parseOp)
+				return std::make_tuple(false, "Can't parse the list of phones");
+
+			PronunciationFlavourNew pron;
+			pron.PronCode = arenaPronAsWord;
+			pron.Phones = std::move(phones);
 			result.push_back(pron);
 		}
 		return std::make_tuple(true, nullptr);

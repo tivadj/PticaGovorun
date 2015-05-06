@@ -1329,7 +1329,30 @@ void SpeechTranscriptionViewModel::setCurrentMarkerLang(PticaGovorun::SpeechLang
 	}
 }
 
-void SpeechTranscriptionViewModel::ensureRecognizerIsCreated()
+	QString SpeechTranscriptionViewModel::currentMarkerPhoneListString() const
+	{
+		if (currentMarkerInd_ == -1)
+			return QString();
+		const TimePointMarker& marker = speechAnnot_.marker(currentMarkerInd_);
+		QString text = marker.TranscripText;
+
+		std::vector<wchar_t> textBuff;
+		boost::wstring_ref textRef = toStringRef(text, textBuff);
+
+		std::string phoneListString;
+		bool convOp;
+		const char* errMsg;
+		std::tie(convOp, errMsg) = phoneticDictViewModel_->convertTextToPhoneListString(textRef, phoneListString);
+		if (!convOp)
+		{
+			nextNotification(QString::fromLatin1(errMsg));
+			return QString();
+		}
+
+		return QString::fromStdString(phoneListString);
+	}
+
+	void SpeechTranscriptionViewModel::ensureRecognizerIsCreated()
 {
 	// initialize the recognizer lazily
 	if (recognizer_ == nullptr)

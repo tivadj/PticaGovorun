@@ -1,7 +1,12 @@
 #pragma once
 #include <string>
 #include <sstream>
+#include <vector>
 #include <ctime> // time_t, strftime
+#include <QString>
+
+#include <boost/utility/string_ref.hpp>
+
 #include "PticaGovorunCore.h"
 
 namespace PticaGovorun
@@ -24,4 +29,10 @@ namespace PticaGovorun
 
 		str << buf;
 	}
+
+	// Copyies string into buffer and returns reference to it.
+	PG_EXPORTS boost::wstring_ref toStringRef(const QString& str, std::vector<wchar_t>& buff);
+
+	PG_EXPORTS QString toQString(boost::wstring_ref text);
+	PG_EXPORTS std::wstring toStdWString(boost::wstring_ref text);
 }
