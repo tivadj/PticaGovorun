@@ -31,6 +31,7 @@ namespace PticaGovorun
 		void phoneticDictViewModel_phoneticTrnascriptChanged();
 		void groupBoxBrowseDict_toggled(bool checked);
 		void listWidgetWords_itemSelectionChanged();
+		void lineEditNewWord_textChanged(const QString & text);
 		void pushButtonAddNewWord_clicked();
 		void pushButtonSaveDict_clicked();
 

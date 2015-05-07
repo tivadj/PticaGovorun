@@ -17,6 +17,7 @@ namespace PticaGovorun
 		QObject::connect(ui->radioButtonBrowsePersian, SIGNAL(toggled(bool)), this, SLOT(groupBoxBrowseDict_toggled(bool)));
 		QObject::connect(ui->radioButtonBrowseBroken, SIGNAL(toggled(bool)), this, SLOT(groupBoxBrowseDict_toggled(bool)));
 		QObject::connect(ui->radioButtonBrowseShrekky, SIGNAL(toggled(bool)), this, SLOT(groupBoxBrowseDict_toggled(bool)));
+		QObject::connect(ui->lineEditNewWord, SIGNAL(textChanged(const QString&)), this, SLOT(lineEditNewWord_textChanged(const QString&)));
 		QObject::connect(ui->pushButtonAddNewWord, SIGNAL(clicked()), this, SLOT(pushButtonAddNewWord_clicked()));
 		QObject::connect(ui->pushButtonSaveDict, SIGNAL(clicked()), this, SLOT(pushButtonSaveDict_clicked()));
 	}
@@ -130,6 +131,13 @@ namespace PticaGovorun
 		std::wstring word = currentItem->text().toStdWString();
 
 		phoneticDictViewModel_->showWordPhoneticTranscription(dictId, word);
+	}
+
+	void PhoneticDictionaryDialog::lineEditNewWord_textChanged(const QString & text)
+	{
+		QString curWord = text;
+		QString pronStr = phoneticDictViewModel_->getWordAutoTranscription(curWord);
+		ui->lineEditWordTranscriptionAuto->setText(pronStr);
 	}
 
 	void PhoneticDictionaryDialog::phoneticDictViewModel_phoneticTrnascriptChanged()

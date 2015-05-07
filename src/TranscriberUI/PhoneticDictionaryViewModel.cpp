@@ -422,6 +422,20 @@ namespace PticaGovorun
 		return found1 || found2;
 	}
 
+	QString PhoneticDictionaryViewModel::getWordAutoTranscription(const QString& word) const
+	{
+		std::vector<PhoneId> phones;
+		bool spellOp;
+		const char* errMsg;
+		std::tie(spellOp, errMsg) = spellWordUk(*phoneReg_, word.toStdWString(), phones, nullptr);
+		if (!spellOp)
+			return QString::fromLatin1(errMsg);
+		std::string wordTranscr;
+		if (!phoneListToStr(*phoneReg_, phones, wordTranscr))
+			return QString::fromStdWString(L"Can't convert phone list to string");
+		return QString::fromStdString(wordTranscr);
+	}
+
 	bool PhoneticDictionaryViewModel::findPronAsWordPhoneticExpansions(const std::map<boost::wstring_ref, PhoneticWordNew>& phoneticDict, boost::wstring_ref pronCode, std::vector<PronunciationFlavourNew>& prons)
 	{
 		bool found = false;

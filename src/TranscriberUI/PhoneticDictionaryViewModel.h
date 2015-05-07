@@ -36,6 +36,8 @@ namespace PticaGovorun
 
 		std::tuple<bool, const char*> convertTextToPhoneListString(boost::wstring_ref text, std::string& speechPhonesString);
 		bool findPronAsWordPhoneticExpansions(boost::wstring_ref pronAsWord, std::vector<PronunciationFlavourNew>& prons);
+
+		QString getWordAutoTranscription(const QString& word) const;
 	private:
 		bool findPronAsWordPhoneticExpansions(const std::map<boost::wstring_ref, PhoneticWordNew>& phoneticDict, boost::wstring_ref pronCode, std::vector<PronunciationFlavourNew>& prons);
 	private:
