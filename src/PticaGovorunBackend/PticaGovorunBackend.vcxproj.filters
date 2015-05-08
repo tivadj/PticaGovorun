@@ -125,16 +125,10 @@
     <ClCompile Include="PhoneticService.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PhoneticSerializationYaml.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TextProcessing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LangStat.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LangStatSerializatinoYaml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TextProcessingSerializationXml.cpp">
@@ -147,6 +141,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PhoneticStress.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PhoneticSerializationXml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

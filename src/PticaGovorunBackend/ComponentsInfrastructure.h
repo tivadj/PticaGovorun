@@ -126,7 +126,7 @@ namespace PticaGovorun
 	inline bool registerWord(QString word, GrowOnlyPinArena<wchar_t>& stringArena, boost::wstring_ref& arenaWord)
 	{
 		std::vector<wchar_t> wordBuff;
-		boost::wstring_ref wordRef = toStringRef(word, wordBuff);
+		boost::wstring_ref wordRef = toWStringRef(word, wordBuff);
 		return registerWord(wordRef, stringArena, arenaWord);
 	};
 

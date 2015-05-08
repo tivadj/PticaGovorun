@@ -22,7 +22,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build-config", "build-confi
 		PortAudio.props = PortAudio.props
 		PticaGovorunCommon.props = PticaGovorunCommon.props
 		Qt.props = Qt.props
-		YamlCpp.props = YamlCpp.props
 		zlib.props = zlib.props
 	EndProjectSection
 EndProject

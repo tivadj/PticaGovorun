@@ -1337,7 +1337,7 @@ void SpeechTranscriptionViewModel::setCurrentMarkerLang(PticaGovorun::SpeechLang
 		QString text = marker.TranscripText;
 
 		std::vector<wchar_t> textBuff;
-		boost::wstring_ref textRef = toStringRef(text, textBuff);
+		boost::wstring_ref textRef = toWStringRef(text, textBuff);
 
 		std::string phoneListString;
 		bool convOp;

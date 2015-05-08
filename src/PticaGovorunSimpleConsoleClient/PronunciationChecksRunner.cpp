@@ -9,8 +9,6 @@
 #include "SpeechProcessing.h"
 #include "PhoneticService.h"
 #include <CoreUtils.h>
-#include <QTextStream>
-#include <yaml-cpp/yaml.h>
 
 namespace PronunciationChecksRunnerNS
 {
@@ -20,31 +18,8 @@ namespace PronunciationChecksRunnerNS
 	{
 		QTextCodec* pTextCodec = QTextCodec::codecForName("windows-1251");
 		std::map<std::wstring, std::vector<Pronunc>> wordToPhoneListDict;
-		//const wchar_t* shrekkyDic = LR"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyDic.voca)path";
-		//const wchar_t* shrekkyDic = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\newvoca_pynz.voca)path";
 		bool loadOp;
 		const char* errMsg;
-		//std::tie(loadOp, errMsg) = loadPronunciationVocabulary2(shrekkyDic, wordToPhoneListDict, *pTextCodec); // TODO:
-		//if (!loadOp)
-		//	return;
-
-		//const wchar_t* outDict = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\phoneticKnown.yml)path";
-		//std::vector<PhoneticWord> phoneticDict;
-		//for (auto& pair : wordToPhoneListDict)
-		//{
-		//	PhoneticWord pw;
-		//	pw.Word = pair.first;
-
-		//	std::vector<std::string> phonesStr;
-		//	parsePhoneListStrs(QString::fromStdString(pair.second[0].StrDebug).toUpper().toStdString(), phonesStr);
-		//	
-		//	PronunciationFlavour pron;
-		//	pron.PronAsWord = pair.first;
-		//	pron.PhoneStrs = phonesStr;
-		//	pw.Pronunciations = {pron};
-		//	phoneticDict.push_back(pw);
-		//}
-		//savePhoneticDictionaryYaml(phoneticDict, outDict);
 
 		normalizePronunciationVocabulary(wordToPhoneListDict);
 
@@ -114,9 +89,6 @@ namespace PronunciationChecksRunnerNS
 
 	void run()
 	{
-		//testYaml();
-		//testYamlEmitter();
-		//testLoadYaml();
 		checkWordUniquenessPronunciation();
 	}
 }

@@ -654,16 +654,15 @@ namespace PticaGovorun
 		return std::make_tuple(true, nullptr);
 	}
 
-	void parsePronId(const std::wstring& pronId, boost::wstring_ref& pronName)
+	void parsePronId(boost::wstring_ref pronId, boost::wstring_ref& pronName)
 	{
-		boost::wstring_ref pronIdRef = pronId;
-		size_t openBraceInd = pronIdRef.find(L'(');
+		size_t openBraceInd = pronId.find(L'(');
 		if (openBraceInd == boost::wstring_ref::npos)
 		{
-			pronName = pronIdRef;
+			pronName = pronId;
 			return;
 		}
-		pronName = pronIdRef.substr(0, openBraceInd);
+		pronName = pronId.substr(0, openBraceInd);
 	}
 
 	bool isWordStressAssigned(const PhoneRegistry& phoneReg, const std::vector<PhoneId>& phoneIds)
@@ -682,92 +681,8 @@ namespace PticaGovorun
 		return numStressedVowels > 0 || numVowels == 0;
 	}
 
-	std::tuple<bool, const char*> loadPhoneticDictionaryPronIdPerLine(const std::basic_string<wchar_t>& vocabFilePathAbs, const PhoneRegistry& phoneReg, const QTextCodec& textCodec, std::vector<PhoneticWord>& words, std::vector<std::string>& brokenLines)
-	{
-		// file contains text in Windows-1251 encoding
-		QFile file(QString::fromStdWString(vocabFilePathAbs));
-		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-			return std::make_tuple(false, "Can't open file");
-
-		// 
-		std::array<char, 1024> lineBuff;
-		PhoneticWord curPronGroup;
-		std::vector<PhoneId> phones;
-
-		// each line has a format:
-		// sure\tsh u e\n
-		while (true) {
-			auto readBytes = file.readLine(lineBuff.data(), lineBuff.size());
-			if (readBytes == -1) // EOF
-				break;
-
-			if (readBytes < 3) // 3=min length of Word->PhoneList
-				continue;
-
-			boost::string_ref line(lineBuff.data(), readBytes);
-			if (line.back() == '\n')
-				line.remove_suffix(1);
-
-			const char* DictDelim = " \t\n";
-			size_t phoneListInd = line.find_first_of(DictDelim);
-			if (phoneListInd == boost::string_ref::npos)
-				return std::make_tuple(false, "The word is too long (>1024 bytes)");
-
-			boost::string_ref wordRef(line.data(), phoneListInd);
-			if (wordRef.empty()) // empty line
-				continue;
-
-			boost::string_ref phoneListRef = line.substr(phoneListInd + 1);
-			if (phoneListRef.empty()) // word without the list of phones
-			{
-				brokenLines.push_back(lineBuff.data());
-				continue;
-			}
-			std::transform(phoneListRef.begin(), phoneListRef.end(), (char*)phoneListRef.begin(), toupper);
-
-			phones.clear();
-			bool parseOp = parsePhoneList(phoneReg, phoneListRef, phones);
-			if (!parseOp)
-			{
-				brokenLines.push_back(line.data());
-				continue;
-			}
-
-			QString word = textCodec.toUnicode(line.data(), phoneListInd);
-			std::wstring wordW = word.toStdWString();
-
-			if (curPronGroup.Word != wordW)
-			{
-				// finish previous pronunciation group
-				if (!curPronGroup.Word.empty())
-				{
-					words.push_back(curPronGroup);
-					curPronGroup.Word.clear();
-					curPronGroup.Pronunciations.clear();
-				}
-
-				// start new group
-				PG_DbgAssert(curPronGroup.Pronunciations.empty() && "Old pronunciation data must be purged");
-				curPronGroup.Word = wordW;
-			}
-
-			PronunciationFlavour pron;
-			pron.PronAsWord = wordW;
-			pron.Phones = phones;
-			curPronGroup.Pronunciations.push_back(pron);
-		}
-
-		if (!curPronGroup.Word.empty())
-		{
-			words.push_back(curPronGroup);
-			curPronGroup.Word.clear();
-			curPronGroup.Pronunciations.clear();
-		}
-		return std::make_tuple(true, nullptr);
-	}
-
-	std::tuple<bool, const char*> loadPhoneticDictionaryPronIdPerLineNew(const std::basic_string<wchar_t>& vocabFilePathAbs, const PhoneRegistry& phoneReg,
-		const QTextCodec& textCodec, std::vector<PhoneticWordNew>& words, std::vector<std::string>& brokenLines,
+	std::tuple<bool, const char*> loadPhoneticDictionaryPronIdPerLine(const std::basic_string<wchar_t>& vocabFilePathAbs, const PhoneRegistry& phoneReg,
+		const QTextCodec& textCodec, std::vector<PhoneticWord>& words, std::vector<std::string>& brokenLines,
 		GrowOnlyPinArena<wchar_t>& stringArena)
 	{
 		// file contains text in Windows-1251 encoding
@@ -778,7 +693,7 @@ namespace PticaGovorun
 		// 
 		std::array<char, 1024> lineBuff;
 		std::array<wchar_t, 64> wordBuff;
-		PhoneticWordNew curPronGroup;
+		PhoneticWord curPronGroup;
 		std::vector<PhoneId> phones;
 
 		// each line has a format:
@@ -857,7 +772,7 @@ namespace PticaGovorun
 				curPronGroup.Word = arenaWordRef;
 			}
 
-			PronunciationFlavourNew pron;
+			PronunciationFlavour pron;
 			pron.PronCode = arenaWordRef;
 			pron.Phones = phones;
 			curPronGroup.Pronunciations.push_back(pron);
@@ -986,34 +901,7 @@ namespace PticaGovorun
 		return true;
 	}
 
-	std::tuple<bool, const char*> parsePronuncLines(const PhoneRegistry& phoneReg, const std::wstring& prons, std::vector<PronunciationFlavour>& result)
-	{
-		QString pronsQ = QString::fromStdWString(prons);
-		QStringList pronItems = pronsQ.split('\n', QString::SkipEmptyParts);
-		for (int pronInd = 0; pronInd < pronItems.size(); ++pronInd)
-		{
-			QString pronLine = pronItems[pronInd];
-			int pronAsWordEndInd = pronLine.indexOf('\t');
-			if (pronAsWordEndInd == -1)
-				return std::make_tuple(false, "First part of line doesn't contain pronunciation id");
-
-			QString pronAsWord = pronLine.left(pronAsWordEndInd);
-			QString phonesStr = pronLine.mid(pronAsWordEndInd + 1);
-
-			std::vector<PhoneId> phones;
-			bool parseOp = parsePhoneList(phoneReg, phonesStr.toStdString(), phones);
-			if (!parseOp)
-				return std::make_tuple(false, "Can't parse the list of phones");
-
-			PronunciationFlavour pron;
-			pron.PronAsWord = pronAsWord.toStdWString();
-			pron.Phones = phones;
-			result.push_back(pron);
-		}
-		return std::make_tuple(true, nullptr);
-	}
-
-	std::tuple<bool, const char*> parsePronuncLinesNew(const PhoneRegistry& phoneReg, const std::wstring& prons, std::vector<PronunciationFlavourNew>& result, GrowOnlyPinArena<wchar_t>& stringArena)
+	std::tuple<bool, const char*> parsePronuncLinesNew(const PhoneRegistry& phoneReg, const std::wstring& prons, std::vector<PronunciationFlavour>& result, GrowOnlyPinArena<wchar_t>& stringArena)
 	{
 		QString pronsQ = QString::fromStdWString(prons);
 		QStringList pronItems = pronsQ.split('\n', QString::SkipEmptyParts);
@@ -1037,7 +925,7 @@ namespace PticaGovorun
 			if (!parseOp)
 				return std::make_tuple(false, "Can't parse the list of phones");
 
-			PronunciationFlavourNew pron;
+			PronunciationFlavour pron;
 			pron.PronCode = arenaPronAsWord;
 			pron.Phones = std::move(phones);
 			result.push_back(pron);

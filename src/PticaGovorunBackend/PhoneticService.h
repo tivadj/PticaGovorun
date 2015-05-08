@@ -139,7 +139,7 @@ namespace PticaGovorun
 		// Sphinx uses 'clothes(1)' or 'clothes(2)' as unique pronunciation names for the word 'clothes'.
 		// Seems like it is not unique. If some word is pronounced differently then temporary we can assign
 		// different pronAsWord for it even though the same sequence of phones is already assigned to some pronAsWord.
-		std::wstring PronAsWord;
+		boost::wstring_ref PronCode;
 
 		// The actual phones of this pronunciation.
 		std::vector<PhoneId> Phones;
@@ -149,25 +149,8 @@ namespace PticaGovorun
 	// The word 'clothes' may be pronounced as clothes(1)='K L OW1 DH Z' or clothes(2)='K L OW1 Z'
 	struct PhoneticWord
 	{
-		std::wstring Word;
-		std::vector<PronunciationFlavour> Pronunciations;
-	};
-
-	struct PronunciationFlavourNew
-	{
-		// The id of pronunciation. It must be unique among all pronunciations of corresponding word.
-		// Sphinx uses 'clothes(1)' or 'clothes(2)' as unique pronunciation names for the word 'clothes'.
-		// Seems like it is not unique. If some word is pronounced differently then temporary we can assign
-		// different pronAsWord for it even though the same sequence of phones is already assigned to some pronAsWord.
-		boost::wstring_ref PronCode;
-
-		// The actual phones of this pronunciation.
-		std::vector<PhoneId> Phones;
-	};
-	struct PhoneticWordNew
-	{
 		boost::wstring_ref Word;
-		std::vector<PronunciationFlavourNew> Pronunciations;
+		std::vector<PronunciationFlavour> Pronunciations;
 	};
 
 	class PG_EXPORTS UkrainianPhoneticSplitter
@@ -242,14 +225,17 @@ namespace PticaGovorun
 	// File has Windows-1251 encodeding.
 	// Each word may have multiple pronunciations (1-* relation); for now we neglect it and store data into map (1-1 relation).
 	PG_EXPORTS std::tuple<bool, const char*> loadPronunciationVocabulary(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<std::string>>& wordToPhoneList, const QTextCodec& textCodec); // TODO: remove
-	PG_EXPORTS void parsePronId(const std::wstring& pronId, boost::wstring_ref& pronName);
+	PG_EXPORTS void parsePronId(boost::wstring_ref pronId, boost::wstring_ref& pronName);
 	PG_EXPORTS bool isWordStressAssigned(const PhoneRegistry& phoneReg, const std::vector<PhoneId>& phoneIds);
 
 	// 'brokenLines' has lines of the dictionary which can't be read.
-	PG_EXPORTS std::tuple<bool, const char*> loadPhoneticDictionaryPronIdPerLine(const std::wstring& vocabFilePathAbs, const PhoneRegistry& phoneReg, const QTextCodec& textCodec, std::vector<PhoneticWord>& words, std::vector<std::string>& brokenLines);
-	PG_EXPORTS std::tuple<bool, const char*> loadPhoneticDictionaryPronIdPerLineNew(const std::basic_string<wchar_t>& vocabFilePathAbs, const PhoneRegistry& phoneReg,
-		const QTextCodec& textCodec, std::vector<PhoneticWordNew>& words, std::vector<std::string>& brokenLines,
+	PG_EXPORTS std::tuple<bool, const char*> loadPhoneticDictionaryPronIdPerLine(const std::basic_string<wchar_t>& vocabFilePathAbs, const PhoneRegistry& phoneReg,
+		const QTextCodec& textCodec, std::vector<PhoneticWord>& words, std::vector<std::string>& brokenLines,
 		GrowOnlyPinArena<wchar_t>& stringArena);
+
+	PG_EXPORTS std::tuple<bool, const char*> loadPhoneticDictionaryXml(boost::wstring_ref filePath, const PhoneRegistry& phoneReg, std::vector<PhoneticWord>& phoneticDict, GrowOnlyPinArena<wchar_t>& stringArena);
+	PG_EXPORTS std::tuple<bool, const char*> savePhoneticDictionaryXml(const std::vector<PhoneticWord>& phoneticDict, boost::wstring_ref filePath, const PhoneRegistry& phoneReg);
+
 
 	PG_EXPORTS void normalizePronunciationVocabulary(std::map<std::wstring, std::vector<Pronunc>>& wordToPhoneList, bool toUpper = true, bool trimNumbers = true);
 	PG_EXPORTS void trimPhoneStrExtraInfos(const std::string& phoneStr, std::string& phoneStrTrimmed, bool toUpper, bool trimNumbers);
@@ -261,8 +247,7 @@ namespace PticaGovorun
 	// Parses space-separated list of phones.
 	PG_EXPORTS boost::optional<PhoneId> parsePhoneStr(const PhoneRegistry& phoneReg, boost::string_ref phoneStr);
 	PG_EXPORTS bool parsePhoneList(const PhoneRegistry& phoneReg, boost::string_ref phoneListStr, std::vector<PhoneId>& result);
-	PG_EXPORTS std::tuple<bool, const char*> parsePronuncLines(const PhoneRegistry& phoneReg, const std::wstring& prons, std::vector<PronunciationFlavour>& result);
-	PG_EXPORTS std::tuple<bool, const char*> parsePronuncLinesNew(const PhoneRegistry& phoneReg, const std::wstring& prons, std::vector<PronunciationFlavourNew>& result, GrowOnlyPinArena<wchar_t>& stringArena);
+	PG_EXPORTS std::tuple<bool, const char*> parsePronuncLinesNew(const PhoneRegistry& phoneReg, const std::wstring& prons, std::vector<PronunciationFlavour>& result, GrowOnlyPinArena<wchar_t>& stringArena);
 
 	// Removes phone modifiers.
 	PG_EXPORTS void updatePhoneModifiers(const PhoneRegistry& phoneReg, bool keepConsonantSoftness, bool keepVowelStress, std::vector<PhoneId>& phonesList);
@@ -353,17 +338,10 @@ namespace PticaGovorun
 	PG_EXPORTS std::tuple<bool, const char*> spellWordUk(const PhoneRegistry& phoneReg, const std::wstring& word, std::vector<PhoneId>& phones,
 		WordPhoneticTranscriber::StressedSyllableIndFunT stressedSyllableIndFun = nullptr);
 
-	// Saves phonetic dictionary to file in YAML format.
-	PG_EXPORTS void savePhoneticDictionaryYaml(const std::vector<PhoneticWord>& phoneticDict, const std::wstring& filePath, const PhoneRegistry& phoneReg);
-	PG_EXPORTS void savePhoneticDictionaryYamlNew(const std::vector<PhoneticWordNew>& phoneticDict, const std::wstring& filePath, const PhoneRegistry& phoneReg);
-	
-	PG_EXPORTS std::tuple<bool, const char*> loadPhoneticDictionaryYaml(const std::wstring& filePath, const PhoneRegistry& phoneReg, std::vector<PhoneticWord>& phoneticDict);
-	PG_EXPORTS std::tuple<bool, const char*> loadPhoneticDictionaryYamlNew(const std::wstring& filePath, const PhoneRegistry& phoneReg, std::vector<PhoneticWordNew>& phoneticDict, GrowOnlyPinArena<wchar_t>& stringArena);
-
 	template <typename MapT>
-	void reshapeAsDict(const std::vector<PhoneticWordNew>& phoneticDictWordsList, MapT& phoneticDict)
+	void reshapeAsDict(const std::vector<PhoneticWord>& phoneticDictWordsList, MapT& phoneticDict)
 	{
-		for (const PhoneticWordNew& item : phoneticDictWordsList)
+		for (const PhoneticWord& item : phoneticDictWordsList)
 		{
 			boost::wstring_ref w = item.Word; // IMPORTANT: the word must not move in memory
 			phoneticDict[w] = item;

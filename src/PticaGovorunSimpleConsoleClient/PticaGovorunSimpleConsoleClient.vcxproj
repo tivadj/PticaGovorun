@@ -63,7 +63,6 @@
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\LibSampleRate.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
-    <Import Project="..\build-config\YamlCpp.props" />
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\PoDoFo.props" />
     <Import Project="..\build-config\JsonCpp.props" />
@@ -78,7 +77,6 @@
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\LibSampleRate.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
-    <Import Project="..\build-config\YamlCpp.props" />
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\PoDoFo.props" />
     <Import Project="..\build-config\JsonCpp.props" />
@@ -93,7 +91,6 @@
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\LibSampleRate.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
-    <Import Project="..\build-config\YamlCpp.props" />
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\PoDoFo.props" />
     <Import Project="..\build-config\JsonCpp.props" />
@@ -108,7 +105,6 @@
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\LibSampleRate.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
-    <Import Project="..\build-config\YamlCpp.props" />
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\PoDoFo.props" />
     <Import Project="..\build-config\JsonCpp.props" />

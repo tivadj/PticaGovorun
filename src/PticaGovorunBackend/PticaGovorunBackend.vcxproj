@@ -64,7 +64,6 @@
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\MatlabBuild.props" />
     <Import Project="..\build-config\LibSampleRate.props" />
-    <Import Project="..\build-config\YamlCpp.props" />
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
   </ImportGroup>
@@ -79,7 +78,6 @@
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\MatlabBuild.props" />
     <Import Project="..\build-config\LibSampleRate.props" />
-    <Import Project="..\build-config\YamlCpp.props" />
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
   </ImportGroup>
@@ -94,7 +92,6 @@
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\MatlabBuild.props" />
     <Import Project="..\build-config\LibSampleRate.props" />
-    <Import Project="..\build-config\YamlCpp.props" />
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
   </ImportGroup>
@@ -109,7 +106,6 @@
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\MatlabBuild.props" />
     <Import Project="..\build-config\LibSampleRate.props" />
-    <Import Project="..\build-config\YamlCpp.props" />
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
   </ImportGroup>
@@ -239,12 +235,11 @@
     <ClCompile Include="InteropPython.cpp" />
     <ClCompile Include="JuliusToolNativeWrapper.cpp" />
     <ClCompile Include="LangStat.cpp" />
-    <ClCompile Include="LangStatSerializatinoYaml.cpp" />
     <ClCompile Include="MLUtils.cpp" />
+    <ClCompile Include="PhoneticSerializationXml.cpp" />
     <ClCompile Include="PhoneticStress.cpp" />
     <ClCompile Include="TextProcessing.cpp" />
     <ClCompile Include="PhoneAlignment.cpp" />
-    <ClCompile Include="PhoneticSerializationYaml.cpp" />
     <ClCompile Include="PhoneticService.cpp" />
     <ClCompile Include="PticaGovorunBackend.cpp" />
     <ClCompile Include="SoundUtils.cpp" />

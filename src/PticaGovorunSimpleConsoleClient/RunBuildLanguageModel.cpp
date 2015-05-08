@@ -287,62 +287,6 @@ namespace RunBuildLanguageModelNS
 			partsFreqStream << " " << wordStat->UsedCount << endl;
 		}
 		std::cout << "wrote successfully" << std::endl;
-		return;
-
-		//// 
-		//// find which pronounced words are not in parsed text
-		//const wchar_t* persianDictPath = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\phoneticKnown.yml)path";
-		//std::vector<PhoneticWord> phoneticDict;
-		//bool loadPhoneDict;
-		//const char* errMsg;
-		//std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryYaml(persianDictPath, phoneticDict);
-		//if (!loadPhoneDict)
-		//{
-		//	std::cerr << "Can't load phonetic dictionary " << errMsg << std::endl;
-		//	return;
-		//}
-
-		//QTextCodec* pTextCodec = QTextCodec::codecForName("windows-1251");
-		//std::map<std::wstring, std::vector<Pronunc>> shrekkyPhoneticDict;
-		//const wchar_t* shrekkyDic = LR"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyDic.voca)path";
-		////const wchar_t* shrekkyDic = LR"path(C:\devb\PticaGovorunProj\data\phoneticDic\test1.txt)path";
-		//bool loadOp;
-		//std::tie(loadOp, errMsg) = loadPronunciationVocabulary2(shrekkyDic, shrekkyPhoneticDict, *pTextCodec);
-		//if (!loadOp)
-		//{
-		//	std::cerr << "Can't load shrekky dict: " << errMsg << std::endl;
-		//	return;
-		//}
-
-
-		//// words set=persian+shrekky
-		//std::set<std::wstring> langModelWords;
-		//for (const PhoneticWord& w : phoneticDict)
-		//	langModelWords.insert(w.Word);
-		//for (const auto& pair : shrekkyPhoneticDict)
-		//{
-		//	const std::wstring &word = pair.first;
-		//	if (langModelWords.find(word) != std::end(langModelWords))
-		//		continue;
-
-		//	langModelWords.insert(word);
-		//}
-
-		////
-		//int noLangStatWordsCount = 0;
-		//for (const auto& word : langModelWords)
-		//{
-		//	auto wordStatIt = wordSeqToCount.find(word);
-		//	if (wordStatIt == std::end(wordSeqToCount))
-		//	{
-		//		// the statistics for the word is not available
-		//		::OutputDebugStringW(word.c_str());
-		//		::OutputDebugStringW(L"\n");
-		//		noLangStatWordsCount++;
-		//	}
-		//}
-
-		//std::cout << "can't find LangModel statistics for " << noLangStatWordsCount << " words" << std::endl;
 	}
 
 

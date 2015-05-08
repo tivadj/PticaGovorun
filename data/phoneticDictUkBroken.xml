@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phoneticDict>
+   <word name="ани" phones="A1 N Y"/>
+   <word name="близько">
+      <pron code="блиско" phones="B L Y1 S1 K O"/>
+   </word>
+   <word name="бюдже" phones="B2 U DZH E"/>
+   <word name="відповідає">
+      <pron code="повідає" phones="P O V I D A1 J E"/>
+   </word>
+   <word name="відповідять" phones="V I T P O V I D A1 T1"/>
+   <word name="значeння">
+      <pron code="значіння" phones="Z N A CH I1 N1 N1 A"/>
+   </word>
+   <word name="значень">
+      <pron code="значинь" phones="Z N A1 CH Y N1"/>
+   </word>
+   <word name="комунікаці" phones="K O M U N I K A1 TS I"/>
+   <word name="кількісь" phones="K2 I1 L1 K2 I S1"/>
+   <word name="любимий" phones="L1 U B Y1 M Y J"/>
+   <word name="мовами">
+      <pron code="мом" phones="M O1 M"/>
+   </word>
+   <word name="оскіки" phones="O S K I1 K Y"/>
+   <word name="пропозиції">
+      <pron code="пропозиці" phones="P R O P O Z Y1 TS1 I"/>
+   </word>
+   <word name="пропонова" phones="P R O P O N O1 V A"/>
+   <word name="підтверджені">
+      <pron code="підтведжені" phones="P I D T V E R D ZH E N1 I"/>
+   </word>
+   <word name="способу">
+      <pron code="спосу" phones="S P O1 S U"/>
+   </word>
+   <word name="уважна" phones="U V A ZH N A"/>
+   <word name="українські" phones="U K R A J I1 N1 S1 K2 I"/>
+   <word name="цього">
+      <pron code="цьо" phones="TS1 O"/>
+   </word>
+   <word name="яни" phones="J A1 N Y"/>
+   <word name="яскрави" phones="J A S K R A1 V Y"/>
+   <word name="інших">
+      <pron code="инших" phones="Y1 N SH Y KH"/>
+   </word>
+   <word name="історик">
+      <pron code="історік" phones="I S T O R I K"/>
+   </word>
+</phoneticDict>

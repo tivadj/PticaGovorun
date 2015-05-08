@@ -101,20 +101,20 @@ namespace StressedSyllableRunnerNS
 	public:
 		void extractStressedSyllables();
 	private:
-		bool inferSpelling(const PhoneticWord& phWord, std::vector<int>& firstStressedVowelInds, std::wstring& firstWord);
-		void printPron(const std::vector<PhoneId>& phonesDict, const std::wstring& pronAsWord, const std::wstring& word, const std::vector<PhoneId>* phonesAuto);
+		bool inferSpelling(const PhoneticWord& phWord, std::vector<int>& firstStressedVowelInds, boost::wstring_ref& firstWord);
+		void printPron(const std::vector<PhoneId>& phonesDict, boost::wstring_ref pronAsWord, boost::wstring_ref word, const std::vector<PhoneId>* phonesAuto);
 	};
 
-	bool PronuncStressedSyllableExtractor::inferSpelling(const PhoneticWord& phWord, std::vector<int>& firstStressedVowelInds, std::wstring& firstWord)
+	bool PronuncStressedSyllableExtractor::inferSpelling(const PhoneticWord& phWord, std::vector<int>& firstStressedVowelInds, boost::wstring_ref& firstWord)
 	{
 		// the result is a success if at least one word pronunciation can be processed
 
 		for (const PronunciationFlavour& pron : phWord.Pronunciations)
 		{
-			phoneticTranscriber.transcribe(phoneReg, pron.PronAsWord);
+			phoneticTranscriber.transcribe(phoneReg, toStdWString(pron.PronCode));
 			if (phoneticTranscriber.hasError())
 			{
-				logFileStream << "Warn: can't transcribe" << QString::fromStdWString(phoneticTranscriber.errorString()) << " pronId=" << QString::fromStdWString(pron.PronAsWord) << " word=" << QString::fromStdWString(phWord.Word) << "\n";
+				logFileStream << "Warn: can't transcribe" << QString::fromStdWString(phoneticTranscriber.errorString()) << " pronId=" << toQString(pron.PronCode) << " word=" << toQString(phWord.Word) << "\n";
 				continue;
 			}
 
@@ -126,7 +126,7 @@ namespace StressedSyllableRunnerNS
 			if (!gotStressInds)
 			{
 				logFileStream << "Warn: can't infer stressed vowel" << "\n";
-				printPron(pron.Phones, pron.PronAsWord, phWord.Word, &phonesAuto);
+				printPron(pron.Phones, pron.PronCode, phWord.Word, &phonesAuto);
 				continue;
 			}
 
@@ -134,13 +134,13 @@ namespace StressedSyllableRunnerNS
 			if (isFirst)
 			{
 				firstStressedVowelInds = charInds;
-				firstWord = pron.PronAsWord;
+				firstWord = pron.PronCode;
 			}
 			else
 			{
 				if (charInds != firstStressedVowelInds)
 				{
-					logFileStream << "Warn: Multiple stress specs defined. pronId=" << QString::fromStdWString(pron.PronAsWord) << "\t" << QString::fromStdWString(phWord.Word) << "\n";
+					logFileStream << "Warn: Multiple stress specs defined. pronId=" << toQString(pron.PronCode) << "\t" << toQString(phWord.Word) << "\n";
 					return false;
 				}
 			}
@@ -148,7 +148,7 @@ namespace StressedSyllableRunnerNS
 		return !firstStressedVowelInds.empty();
 	}
 	
-	void PronuncStressedSyllableExtractor::printPron(const std::vector<PhoneId>& phonesDict, const std::wstring& pronAsWord, const std::wstring& word,
+	void PronuncStressedSyllableExtractor::printPron(const std::vector<PhoneId>& phonesDict, boost::wstring_ref pronAsWord, boost::wstring_ref word,
 		const std::vector<PhoneId>* phonesAuto)
 	{
 		std::string pronDictStr;
@@ -165,7 +165,7 @@ namespace StressedSyllableRunnerNS
 				return;
 			}
 
-		logFileStream << "Dict=" << QString::fromLatin1(pronDictStr.c_str()) << "\t" << QString::fromStdWString(pronAsWord) << "\t" << QString::fromStdWString(word) << "\n";
+		logFileStream << "Dict=" << QString::fromLatin1(pronDictStr.c_str()) << "\t" << toQString(pronAsWord) << "\t" << toQString(word) << "\n";
 		if (phonesAuto != nullptr)
 			logFileStream << "Auto=" << QString::fromLatin1(pronAutoStr.c_str()) << "\n";
 	};
@@ -177,15 +177,13 @@ namespace StressedSyllableRunnerNS
 
 		QTextCodec* pTextCodec = QTextCodec::codecForName("windows-1251");
 		const wchar_t* shrekkyDic = LR"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyDic2.voca)path";
-		//const wchar_t* shrekkyDic = LR"path(C:\devb\PticaGovorunProj\data\phoneticDic\test1.txt)path";
-		//const wchar_t* knownDict = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\phoneticKnown.yml)path";
 
+		GrowOnlyPinArena<wchar_t> stringArena(10000);
 		std::vector<PhoneticWord> wordTranscrip;
 		std::vector<std::string> brokenLines;
 		bool loadOp;
 		const char* errMsg;
-		std::tie(loadOp, errMsg) = loadPhoneticDictionaryPronIdPerLine(shrekkyDic, phoneReg, *pTextCodec, wordTranscrip, brokenLines);
-		//std::tie(loadOp, errMsg) = loadPhoneticDictionaryYaml(knownDict, phoneReg, wordTranscrip);
+		std::tie(loadOp, errMsg) = loadPhoneticDictionaryPronIdPerLine(shrekkyDic, phoneReg, *pTextCodec, wordTranscrip, brokenLines, stringArena);
 		if (!loadOp)
 		{
 			std::cerr << errMsg << std::endl;
@@ -225,7 +223,7 @@ namespace StressedSyllableRunnerNS
 		xmlWriter.writeStartElement("stressDict");
 
 		std::vector<int> firstStressedVowelInds;
-		std::wstring firstWord;
+		boost::wstring_ref firstWord;
 		int extractError = 0;
 		for (const PhoneticWord& phWord : wordTranscrip)
 		{
@@ -241,7 +239,7 @@ namespace StressedSyllableRunnerNS
 				extractError++;
 				for (const auto& pron : phWord.Pronunciations)
 				{
-					printPron(pron.Phones, pron.PronAsWord, phWord.Word, nullptr);
+					printPron(pron.Phones, pron.PronCode, phWord.Word, nullptr);
 				}
 				logFileStream << "\n";
 				continue;
@@ -262,7 +260,7 @@ namespace StressedSyllableRunnerNS
 				PticaGovorun::join(vowelOrder.begin(), vowelOrder.end(), std::string(" "), stressIndsBuf);
 
 				xmlWriter.writeStartElement("word");
-				xmlWriter.writeAttribute("name", QString::fromStdWString(phWord.Word));
+				xmlWriter.writeAttribute("name", toQString(phWord.Word));
 				xmlWriter.writeAttribute("stressedSyllable", QString::fromStdString(stressIndsBuf.str()));
 				xmlWriter.writeEndElement();
 			}

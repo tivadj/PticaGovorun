@@ -40,12 +40,14 @@ namespace PhoneticSpellerTestsNS
 		QTextCodec* pTextCodec = QTextCodec::codecForName("windows-1251");
 		const wchar_t* shrekkyDic = LR"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyDic.voca)path";
 		//const wchar_t* shrekkyDic = LR"path(C:\devb\PticaGovorunProj\data\phoneticDic\test1.txt)path";
-		//const wchar_t* knownDict = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\phoneticKnown.yml)path";
+		const wchar_t* knownDict = LR"path(C:\devb\PticaGovorunProj\srcrep\data\phoneticDictUkKnown.xml)path";
+		//const wchar_t* knownDict = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\phoneticDictUkBroken.yml)path";
 
+		GrowOnlyPinArena<wchar_t> stringArena(10000);
 		std::vector<PhoneticWord> wordTranscrip;
 		std::vector<std::string> brokenLines;
-		std::tie(loadOp, errMsg) = loadPhoneticDictionaryPronIdPerLine(shrekkyDic, phoneReg, *pTextCodec, wordTranscrip, brokenLines);
-		//std::tie(loadOp, errMsg) = loadPhoneticDictionaryYaml(knownDict, phoneReg, wordTranscrip);
+		//std::tie(loadOp, errMsg) = loadPhoneticDictionaryPronIdPerLine(shrekkyDic, phoneReg, *pTextCodec, wordTranscrip, brokenLines);
+		std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(knownDict, phoneReg, wordTranscrip, stringArena);
 		if (!loadOp)
 		{
 			std::cerr << errMsg << std::endl;
@@ -77,10 +79,10 @@ namespace PhoneticSpellerTestsNS
 				int hasStress = isWordStressAssigned(phoneReg, pron.Phones);
 				if (!hasStress)
 				{
-					dumpFileStream << "No stress for pronAsWord=" << QString::fromStdWString(pron.PronAsWord) <<"\n";
+					dumpFileStream << "No stress for pronAsWord=" << toQString(pron.PronCode) <<"\n";
 				}
 				
-				const std::wstring& pronAsWord = pron.PronAsWord;
+				boost::wstring_ref pronAsWord = pron.PronCode;
 
 				boost::wstring_ref pronName;
 				parsePronId(pronAsWord, pronName);
@@ -121,7 +123,7 @@ namespace PhoneticSpellerTestsNS
 						continue;
 					}
 
-					dumpFileStream << "Dict=" << QString::fromLatin1(pronDictStr.c_str()) << "\t" << QString::fromStdWString(pron.PronAsWord) << "\t" << QString::fromStdWString(phWord.Word) << "\n";
+					dumpFileStream << "Dict=" << QString::fromLatin1(pronDictStr.c_str()) << "\t" << toQString(pron.PronCode) << "\t" << toQString(phWord.Word) << "\n";
 					dumpFileStream << "Actl=" << QString::fromLatin1(pronAutoStr.c_str()) << "\n";
 					dumpFileStream << "\n";
 				}

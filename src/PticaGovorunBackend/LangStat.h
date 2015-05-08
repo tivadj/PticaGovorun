@@ -103,8 +103,5 @@ namespace PticaGovorun
 		void copyWordSeq(std::vector<WordSeqKey>& wordSeqItems);
 		void copyWordSeq(std::vector<const WordSeqUsage*>& wordSeqItems) const;
 	};
-
-	//PG_EXPORTS std::tuple<bool, const char*> saveWordUsageInfoYaml(wv::slice<WordSeqUsage*> wordStats, const std::wstring& filePath);
-	//PG_EXPORTS std::tuple<bool, const char*> loadWordUsageFromYaml(const std::wstring& filePath, std::hash_map<std::wstring, WordSeqUsage>& wordStats, std::vector<WordSeqUsage*>& nodePtrs);
 }
 

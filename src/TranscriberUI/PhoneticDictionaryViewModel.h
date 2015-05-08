@@ -35,18 +35,18 @@ namespace PticaGovorun
 		void validateSegmentTranscription(const QString& text, QStringList& resultMessages);
 
 		std::tuple<bool, const char*> convertTextToPhoneListString(boost::wstring_ref text, std::string& speechPhonesString);
-		bool findPronAsWordPhoneticExpansions(boost::wstring_ref pronAsWord, std::vector<PronunciationFlavourNew>& prons);
+		bool findPronAsWordPhoneticExpansions(boost::wstring_ref pronAsWord, std::vector<PronunciationFlavour>& prons);
 
 		QString getWordAutoTranscription(const QString& word) const;
 	private:
-		bool findPronAsWordPhoneticExpansions(const std::map<boost::wstring_ref, PhoneticWordNew>& phoneticDict, boost::wstring_ref pronCode, std::vector<PronunciationFlavourNew>& prons);
+		bool findPronAsWordPhoneticExpansions(const std::map<boost::wstring_ref, PhoneticWord>& phoneticDict, boost::wstring_ref pronCode, std::vector<PronunciationFlavour>& prons);
 	private:
 		void ensureDictionaryLoaded();
 	private:
 		GrowOnlyPinArena<wchar_t> stringArena_;
-		std::map<boost::wstring_ref, PhoneticWordNew> phoneticDictKnown_;
-		std::map<boost::wstring_ref, PhoneticWordNew> phoneticDictBroken;
-		std::map<boost::wstring_ref, PhoneticWordNew> phoneticDictShrekky_;
+		std::map<boost::wstring_ref, PhoneticWord> phoneticDictKnown_;
+		std::map<boost::wstring_ref, PhoneticWord> phoneticDictBroken;
+		std::map<boost::wstring_ref, PhoneticWord> phoneticDictShrekky_;
 		std::unique_ptr<PhoneRegistry> phoneReg_;
 		QStringList matchedWords_;
 		QString wordPhoneticTrnascript_;
