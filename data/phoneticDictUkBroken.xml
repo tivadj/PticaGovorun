@@ -16,7 +16,9 @@
       <pron code="значинь" phones="Z N A1 CH Y N1"/>
    </word>
    <word name="комунікаці" phones="K O M U N I K A1 TS I"/>
-   <word name="кількісь" phones="K2 I1 L1 K2 I S1"/>
+   <word name="кількість">
+      <pron code="кількісь" phones="K2 I1 L1 K2 I S1"/>
+   </word>
    <word name="любимий" phones="L1 U B Y1 M Y J"/>
    <word name="мовами">
       <pron code="мом" phones="M O1 M"/>
@@ -26,23 +28,29 @@
       <pron code="пропозиці" phones="P R O P O Z Y1 TS1 I"/>
    </word>
    <word name="пропонова" phones="P R O P O N O1 V A"/>
-   <word name="підтверджені">
-      <pron code="підтведжені" phones="P I D T V E R D ZH E N1 I"/>
+   <word name="підтвердженні">
+      <pron code="підтведжені" phones="P2 I T T V E1 DZH E N1 I"/>
    </word>
    <word name="способу">
       <pron code="спосу" phones="S P O1 S U"/>
    </word>
-   <word name="уважна" phones="U V A ZH N A"/>
+   <word name="текс" phones="T E1 K S"/>
    <word name="українські" phones="U K R A J I1 N1 S1 K2 I"/>
    <word name="цього">
       <pron code="цьо" phones="TS1 O"/>
    </word>
+   <word name="якщо">
+      <pron code="ящо" phones="J A SH CH O1"/>
+   </word>
    <word name="яни" phones="J A1 N Y"/>
    <word name="яскрави" phones="J A S K R A1 V Y"/>
+   <word name="інформації">
+      <pron code="інформаці" phones="I N F O R M A1 TS1 I"/>
+   </word>
    <word name="інших">
       <pron code="инших" phones="Y1 N SH Y KH"/>
    </word>
    <word name="історик">
-      <pron code="історік" phones="I S T O R I K"/>
+      <pron code="історік" phones="I S T O1 R I K"/>
    </word>
 </phoneticDict>

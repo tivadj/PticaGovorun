@@ -17,9 +17,9 @@
    <syncPoint id="10" sampleInd="2902579" levelOfDetail="word" transcripText="етноніміку котра вивчає етнічні назви(1) людей зооніміку яка досліджує клички тварин космоніміку що вивчає назви(1) космічних об'єктів та інші" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="12" sampleInd="3149451" levelOfDetail="word"/>
    <syncPoint id="16" sampleInd="3149897" levelOfDetail="phone" transcripText="click"/>
-   <syncPoint id="22" sampleInd="3153949" levelOfDetail="word" transcripText="кожен із цих напрямів цікавий по своєму" lang="uk" speakerBriefId="verbychso"/>
+   <syncPoint id="22" sampleInd="3153949" levelOfDetail="word" transcripText="кожен іс цих напрямів цікавий по своєму(1)" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="4" sampleInd="3213765" levelOfDetail="word"/>
-   <syncPoint id="17" sampleInd="3217833" levelOfDetail="word" transcripText="особливу увагу с поміж інших класів онімної лексики привертають власні географічні назви(1) чи топоніми" lang="uk" speakerBriefId="verbychso"/>
+   <syncPoint id="17" sampleInd="3217833" levelOfDetail="word" transcripText="особливу увагу с поміж(1) інших класів онімної лексики привертають власні географічні назви(1) чи топоніми" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="19" sampleInd="3366158" levelOfDetail="word"/>
    <syncPoint id="14" sampleInd="3367101" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="31" sampleInd="3368953" levelOfDetail="word" transcripText="як от назви(1) поселень водойм гір морів країв регіонів" lang="uk" speakerBriefId="verbychso"/>
@@ -57,7 +57,7 @@
    <syncPoint id="73" sampleInd="5305775" levelOfDetail="word"/>
    <syncPoint id="90" sampleInd="5310571" levelOfDetail="word" transcripText="скажімо" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="43" sampleInd="5323785" levelOfDetail="word"/>
-   <syncPoint id="25" sampleInd="5331094" levelOfDetail="word" transcripText="назву(1) села(2) загнітків на вінничині один автор тлумачить так" lang="uk" speakerBriefId="verbychso"/>
+   <syncPoint id="25" sampleInd="5331094" levelOfDetail="word" transcripText="назву(1) села(2) загнітків на вінничині один афтор тлумачить так" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="101" sampleInd="5432618" levelOfDetail="word"/>
    <syncPoint id="83" sampleInd="5439167" levelOfDetail="word" transcripText="у цьому(1) селі колись оселився козацький отаман нитка" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="78" sampleInd="5526518" levelOfDetail="word"/>
@@ -123,7 +123,7 @@
    <syncPoint id="212" sampleInd="8594340" levelOfDetail="word"/>
    <syncPoint id="215" sampleInd="8595762" levelOfDetail="phone" transcripText="music"/>
    <syncPoint id="99" sampleInd="8822574" levelOfDetail="phone" transcripText="speaker=Святослав Вербич"/>
-   <syncPoint id="144" sampleInd="9786181" levelOfDetail="word" transcripText="реклама відволікає від цілісного сприйняття фільму водій на мить відволікся за кермом не можна так казати" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="144" sampleInd="9786181" levelOfDetail="word" transcripText="реклама відволікає віт цілісного сприйняття фільму водій на мить відволікся за кермом не можна так казати" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="174" sampleInd="9951440" levelOfDetail="word"/>
    <syncPoint id="1" sampleInd="9960718" levelOfDetail="word" transcripText="за тлумачним словником українська мови" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="211" sampleInd="10008991" levelOfDetail="word"/>
@@ -141,7 +141,7 @@
    <syncPoint id="257" sampleInd="10440372" levelOfDetail="word"/>
    <syncPoint id="45" sampleInd="10450923" levelOfDetail="word" transcripText="зверніть увагу що друге і третє значення переносні(3)" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="178" sampleInd="10523241" levelOfDetail="word"/>
-   <syncPoint id="262" sampleInd="10529641" levelOfDetail="word" transcripText="і виникли набагато пізніше від першого" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="262" sampleInd="10529641" levelOfDetail="word" transcripText="і виникли набагато пізніше віт першого" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="267" sampleInd="10592500" levelOfDetail="word"/>
    <syncPoint id="210" sampleInd="10609997" levelOfDetail="phone" transcripText="two speakers"/>
    <syncPoint id="180" sampleInd="10617091" levelOfDetail="word" transcripText="але калька із російського вислову" lang="uk" speakerBriefId="zakharevycho"/>
@@ -156,7 +156,7 @@
    <syncPoint id="190" sampleInd="10850849" levelOfDetail="word" transcripText="отвлечь ребенка от компьютера" lang="ru" speakerBriefId="zakharevycho"/>
    <syncPoint id="194" sampleInd="10894128" levelOfDetail="word"/>
    <syncPoint id="147" sampleInd="10896311" levelOfDetail="word"/>
-   <syncPoint id="275" sampleInd="10901884" levelOfDetail="word" transcripText="відвабити дитину від комп'ютера" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="275" sampleInd="10901884" levelOfDetail="word" transcripText="відвабити дитину віт комп'ютера" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="289" sampleInd="10955449" levelOfDetail="word"/>
    <syncPoint id="235" sampleInd="10965801" levelOfDetail="word" transcripText="отвлечся мыслями" lang="ru" speakerBriefId="zakharevycho"/>
    <syncPoint id="297" sampleInd="10994477" levelOfDetail="word"/>
@@ -203,7 +203,7 @@
    <syncPoint id="104" sampleInd="12377856" levelOfDetail="word"/>
    <syncPoint id="97" sampleInd="12389333" levelOfDetail="word" transcripText="піца на любий(2) смак одях на любий(2) смак взуття на любий(2) смак тощо" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="373" sampleInd="12519069" levelOfDetail="word"/>
-   <syncPoint id="274" sampleInd="12536186" levelOfDetail="word" transcripText="ця помилка виникла через перенесення в українську мову кальки із російського вислову" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="274" sampleInd="12536186" levelOfDetail="word" transcripText="ця помилка виникла черес перенесення в українську мову кальки із російського вислову" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="647" sampleInd="12648277" levelOfDetail="word"/>
    <syncPoint id="236" sampleInd="12649980" levelOfDetail="word" transcripText="любой" lang="ru" speakerBriefId="zakharevycho"/>
    <syncPoint id="201" sampleInd="12664070" levelOfDetail="word"/>
@@ -218,7 +218,7 @@
    <syncPoint id="385" sampleInd="12819473" levelOfDetail="word"/>
    <syncPoint id="171" sampleInd="12834208" levelOfDetail="word" transcripText="але чи варто їх сліпо копіювати і псувати рідну мову кальками" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="798" sampleInd="12921212" levelOfDetail="word"/>
-   <syncPoint id="48" sampleInd="12926537" levelOfDetail="word" transcripText="українці в таких випадках кажуть на кожен смак у всякому разі форма оплати(2) будь яка перший ліпший будь хто скаже" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="48" sampleInd="12926537" levelOfDetail="word" transcripText="українці в таких випадках кажуть на кожен смак у всякому разі форма оплати(2) будь яка перший ліпший будь-хто скаже" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="246" sampleInd="13113493" levelOfDetail="word"/>
    <syncPoint id="318" sampleInd="13118951" levelOfDetail="word"/>
    <syncPoint id="396" sampleInd="13131899" levelOfDetail="word" transcripText="так само(1) не можна користуватися і прикметником любимий бо такого слова(1) в українській мові немає" lang="uk" speakerBriefId="khorkindm"/>
@@ -243,9 +243,9 @@
    <syncPoint id="268" sampleInd="13906946" levelOfDetail="word"/>
    <syncPoint id="458" sampleInd="13915182" levelOfDetail="word" transcripText="улюблинець долі" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="411" sampleInd="13941691" levelOfDetail="word"/>
-   <syncPoint id="441" sampleInd="14099145" levelOfDetail="word" transcripText="чому майже всі назви(1) кольорів українці пишуть через дефіс" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="441" sampleInd="14099145" levelOfDetail="word" transcripText="чому(2) майже всі назви(1) кольорів українці пишуть через дефіс" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="444" sampleInd="14187571" levelOfDetail="word"/>
-   <syncPoint id="254" sampleInd="14193392" levelOfDetail="word" transcripText="а жовтогарячий і червоногарячий разом(1) і чи можна їх писати через дефіс а якщо ні то чому" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="254" sampleInd="14193392" levelOfDetail="word" transcripText="а жовтогарячий і червоногарячий разом(1) і чи можна їх писати через дефіс а якщо ні то чому(2)" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="461" sampleInd="14357576" levelOfDetail="word"/>
    <syncPoint id="469" sampleInd="14361595" levelOfDetail="word" transcripText="річ у тім" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="136" sampleInd="14376462" levelOfDetail="word"/>
@@ -274,11 +274,11 @@
    <syncPoint id="519" sampleInd="14971250" levelOfDetail="word"/>
    <syncPoint id="499" sampleInd="15368530" levelOfDetail="word" transcripText="за спеціальністю чи зі спеціальності" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="476" sampleInd="15446306" levelOfDetail="word"/>
-   <syncPoint id="514" sampleInd="15455881" levelOfDetail="word" transcripText="і чому все таки завідувач і командувач" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="514" sampleInd="15455881" levelOfDetail="word" transcripText="і чому(2) все таки завідувач і командувач" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="415" sampleInd="15525454" levelOfDetail="word"/>
    <syncPoint id="481" sampleInd="15537643" levelOfDetail="word" transcripText="а допоможе нам" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="555" sampleInd="15555867" levelOfDetail="word"/>
-   <syncPoint id="492" sampleInd="15562697" levelOfDetail="word" transcripText="книжка доктора філологічних наук івана вихованця" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="492" sampleInd="15562697" levelOfDetail="word" transcripText="книшка доктора філологічних наук івана вихованця" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="325" sampleInd="15629558" levelOfDetail="word"/>
    <syncPoint id="64" sampleInd="15634982" levelOfDetail="word" transcripText="розмовляймо" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="471" sampleInd="15656762" levelOfDetail="word"/>
@@ -364,7 +364,7 @@
    <syncPoint id="681" sampleInd="21655756" levelOfDetail="word"/>
    <syncPoint id="569" sampleInd="21664754" levelOfDetail="word" transcripText="а от прості імена стали прізвищами" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="540" sampleInd="21723080" levelOfDetail="word"/>
-   <syncPoint id="556" sampleInd="21736378" levelOfDetail="word" transcripText="ось чому серед українських прізвишч" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="556" sampleInd="21736378" levelOfDetail="word" transcripText="ось чому(2) серед українських прізвишч" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="572" sampleInd="21781772" levelOfDetail="word"/>
    <syncPoint id="470" sampleInd="21787148" levelOfDetail="word" transcripText="можна знайти такі як чорний менший кислий" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="715" sampleInd="21861732" levelOfDetail="word"/>

@@ -4,10 +4,11 @@
       <speaker briefId="zakharevycho" name="Захаревич Олена"/>
       <speaker briefId="bogdanovychov" name="Богданович Олексій Володимирович"/>
       <speaker briefId="romanukjv" name="Романюк Юлія Віталіївна"/>
+      <speaker briefId="unknown" name="unknown"/>
    </header>
-   <syncPoint id="42" sampleInd="7789" levelOfDetail="word" transcripText="вісімнацята година" lang="uk"/>
+   <syncPoint id="42" sampleInd="7789" levelOfDetail="word" transcripText="вісімнацята година" lang="uk" speakerBriefId="unknown"/>
    <syncPoint id="4" sampleInd="36167" levelOfDetail="word"/>
-   <syncPoint id="5" sampleInd="38730" levelOfDetail="word" transcripText="десять хвилин" lang="uk"/>
+   <syncPoint id="5" sampleInd="38730" levelOfDetail="word" transcripText="десять хвилин" lang="uk" speakerBriefId="unknown"/>
    <syncPoint id="2" sampleInd="58708" levelOfDetail="word"/>
    <syncPoint id="7" sampleInd="2368732" levelOfDetail="word" transcripText="inhale" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="1231" sampleInd="2373825" levelOfDetail="word"/>
@@ -109,7 +110,7 @@
    <syncPoint id="157" sampleInd="3964369" levelOfDetail="word"/>
    <syncPoint id="66" sampleInd="3968073" levelOfDetail="word" transcripText="inhale" lang="uk" speakerBriefId="romanukjv"/>
    <syncPoint id="171" sampleInd="3972588" levelOfDetail="word"/>
-   <syncPoint id="200" sampleInd="3975267" levelOfDetail="word" transcripText="який вийшов друком наприкінці дві тисячі(1) одинадцятого року" lang="uk" speakerBriefId="romanukjv"/>
+   <syncPoint id="200" sampleInd="3975267" levelOfDetail="word" transcripText="який вийшов друком наприкінці дві тисячі(1) одинацятого року" lang="uk" speakerBriefId="romanukjv"/>
    <syncPoint id="191" sampleInd="4042112" levelOfDetail="word"/>
    <syncPoint id="17" sampleInd="4048859" levelOfDetail="word" transcripText="словник підготував колектив співробітників" lang="uk" speakerBriefId="romanukjv"/>
    <syncPoint id="204" sampleInd="4097843" levelOfDetail="word"/>
@@ -388,7 +389,7 @@
    <syncPoint id="556" sampleInd="12250715" levelOfDetail="word"/>
    <syncPoint id="223" sampleInd="12255213" levelOfDetail="word" transcripText="не можна" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="304" sampleInd="12267832" levelOfDetail="word"/>
-   <syncPoint id="381" sampleInd="12276580" levelOfDetail="word" transcripText="натомість можна звернутися до когось листовно" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="381" sampleInd="12276580" levelOfDetail="word" transcripText="натомість можна звернутися до когось(1) листовно" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="658" sampleInd="12340597" levelOfDetail="word"/>
    <syncPoint id="696" sampleInd="12349692" levelOfDetail="word" transcripText="тож мало б бути" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="759" sampleInd="12369339" levelOfDetail="word"/>
@@ -435,7 +436,7 @@
    <syncPoint id="581" sampleInd="13986111" levelOfDetail="word"/>
    <syncPoint id="752" sampleInd="13999324" levelOfDetail="word" transcripText="що обрати" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="498" sampleInd="14016226" levelOfDetail="word"/>
-   <syncPoint id="682" sampleInd="14023105" levelOfDetail="word" transcripText="поміж болем і біллю" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="682" sampleInd="14023105" levelOfDetail="word" transcripText="поміж(2) болем і біллю" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="603" sampleInd="14055684" levelOfDetail="word"/>
    <syncPoint id="713" sampleInd="14065094" levelOfDetail="word" transcripText="і як пробитися крізь бренди і тренінги" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="94" sampleInd="14130467" levelOfDetail="word"/>
