@@ -147,8 +147,6 @@ public:
 	void loadAudioMarkupFromXml();
 	void saveAudioMarkupToXml();
 
-	void validateAnnotationStructure();
-
 	void saveCurrentRangeAsWavRequest();
 
 	QString modelShortName() const;

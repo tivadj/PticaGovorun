@@ -4,6 +4,7 @@
 #include <tuple>
 #include <hash_set>
 #include "SpeechProcessing.h"
+#include <boost/utility/string_ref.hpp>
 
 namespace PticaGovorun
 {
@@ -52,7 +53,7 @@ namespace PticaGovorun
 		void insertNewMarkerSafe(int markerInd, const PticaGovorun::TimePointMarker& marker);
 
 		// Validate marker's speech language
-		void validateMarkers(std::stringstream& msgValidate) const;
+		void validateMarkers(QStringList& checkMsgs) const;
 
 		const std::vector<TimePointMarker>& markers() const;
 
@@ -118,4 +119,27 @@ namespace PticaGovorun
 	// dist=number of frames between frameInd and the closest marker.
 	template <typename Markers, typename FrameIndSelector>
 	int getClosestMarkerInd(const Markers& markers, FrameIndSelector markerFrameIndSelector, long frameInd, long* dist);
+
+	PG_EXPORTS void validateSpeechTranscription(boost::wstring_ref speechDataDir);
+
+	struct PG_EXPORTS AnnotSpeechFileNode
+	{
+		QString FileNameNoExt;
+		QString WavFilePath;
+		QString SpeechAnnotationXmlFilePath;
+	};
+
+	struct PG_EXPORTS AnnotSpeechDirNode
+	{
+		QString Name; // name of the directory
+		QString DirFullPath;
+		std::vector<AnnotSpeechDirNode> SubDirs;
+		std::vector<AnnotSpeechFileNode> AnnotFiles;
+	};
+
+	// Loads hierarchical information about speech annotation.
+	PG_EXPORTS void populateAnnotationFileStructure(const QString& annotRootDir, AnnotSpeechDirNode& pseudoRoot);
+
+	// Gets the list of wav files from given hierarchy.
+	PG_EXPORTS void flat(const AnnotSpeechDirNode& node, std::vector<AnnotSpeechFileNode>& result);
 }

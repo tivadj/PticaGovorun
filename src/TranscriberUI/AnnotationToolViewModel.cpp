@@ -1,6 +1,8 @@
 #include "AnnotationToolViewModel.h"
 #include <memory>
 #include <QSettings>
+#include "PresentationHelpers.h"
+#include "SpeechTranscriptionValidation.h"
 
 namespace PticaGovorun
 {
@@ -98,11 +100,35 @@ namespace PticaGovorun
 		return fileWorkspaceViewModel_;
 	}
 
-	void AnnotationToolViewModel::validateAnnotationStructure()
+	void AnnotationToolViewModel::validateAllSpeechAnnotationRequest()
 	{
+		QStringList checkMsgs;
+
+		// in-memory data validation
 		auto m = activeTranscriptionModel();
 		if (m != nullptr)
-			m->validateAnnotationStructure();
+			validateSpeechAnnotation(m->speechAnnotation(), *phoneticDictModel_, checkMsgs);
+
+		// validate on-disk data
+
+		QSettings settings(IniFileName, QSettings::IniFormat); // reads from current directory
+
+		QString audioDataDir = settings.value(SpeechDataRoot, QString("")).toString();
+
+		std::vector<wchar_t> pathBuff;
+		boost::wstring_ref audioDataPath = toWStringRef(audioDataDir, pathBuff);
+
+		validateAllOnDiskSpeechAnnotations(audioDataPath, *phoneticDictModel_, checkMsgs);
+
+		QString msg;
+		if (checkMsgs.isEmpty())
+			msg = "Validation succeeded";
+		else
+		{
+			msg = QString("Validation failed\n");
+			msg.append(checkMsgs.join('\n'));
+		}
+		nextNotification(formatLogLineWithTime(msg));
 	}
 
 	std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> AnnotationToolViewModel::phoneticDictModel()
@@ -132,6 +158,12 @@ namespace PticaGovorun
 
 		activeAudioTranscriptionModelInd_ = (int)audioTranscriptionModels_.size() - 1;
 		emit activeAudioTranscriptionChanged(activeAudioTranscriptionModelInd_);
+	}
+
+	void AnnotationToolViewModel::nextNotification(const QString& message) const
+	{
+		if (notificationService_ != nullptr)
+			notificationService_->nextNotification(message);
 	}
 
 	void AnnotationToolViewModel::closeAudioTranscriptionTab(int tabIndex)

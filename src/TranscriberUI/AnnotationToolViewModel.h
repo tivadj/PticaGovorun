@@ -46,7 +46,7 @@ namespace PticaGovorun
 		std::shared_ptr<SpeechTranscriptionViewModel> audioTranscriptionModelByFilePathAbs(const std::wstring& filePath);
 		std::shared_ptr<FileWorkspaceViewModel> fileWorkspaceModel();
 
-		void validateAnnotationStructure();
+		void validateAllSpeechAnnotationRequest();
 
 		std::shared_ptr<PhoneticDictionaryViewModel> phoneticDictModel();
 
@@ -55,6 +55,9 @@ namespace PticaGovorun
 	private slots:
 		// file workspace
 		void fileWorkspaceViewModel_openAudioFile(const std::wstring& filePath);
+	private:
+		void nextNotification(const QString& message) const;
+
 	private:
 		std::shared_ptr<SharedServiceProvider> serviceProvider_;
 		std::shared_ptr<VisualNotificationService> notificationService_;

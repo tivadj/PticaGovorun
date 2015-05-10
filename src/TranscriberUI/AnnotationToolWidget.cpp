@@ -140,7 +140,7 @@ namespace PticaGovorun
 		}
 		else if (ke->key() == Qt::Key_B && ke->modifiers().testFlag(Qt::ControlModifier))
 		{
-			annotationToolModel_->validateAnnotationStructure();
+			annotationToolModel_->validateAllSpeechAnnotationRequest();
 		}
 		else if (ke->key() == Qt::Key_F11)
 			pushButtonSegmentComposerPlay_Clicked();

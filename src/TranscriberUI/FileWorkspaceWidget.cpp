@@ -31,8 +31,10 @@ namespace PticaGovorun
 
 	void FileWorkspaceWidget::treeWidgetFileItems_itemDoubleClicked(QTreeWidgetItem* item, int column)
 	{
-		QVariant d1 = item->data(0, Qt::UserRole);
-		QString filePath = d1.toString();
-		model_->openAudioFile(filePath.toStdWString());
+		QVariant wavPathVar = item->data(0, Qt::UserRole);
+		if (wavPathVar.isNull())
+			return;
+		QString wavFilePath = wavPathVar.toString();
+		model_->openAudioFile(wavFilePath.toStdWString());
 	}
 }

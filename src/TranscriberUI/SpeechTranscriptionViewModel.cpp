@@ -408,30 +408,11 @@ void SpeechTranscriptionViewModel::soundPlayerPlayCurrentSegment(SegmentStartFra
 	if (curFrameInd < 0)
 		curFrameInd = 0;
 
-
 	// determine the frameInd to which to play audio
 	long curSegBeg;
 	long curSegEnd;
 	int leftMarkerind = -1;
 	std::tie(curSegBeg, curSegEnd) = getSampleRangeToPlay(curFrameInd, startFrameChoice, &leftMarkerind);
-
-	// validate current semgment
-	if (leftMarkerind != -1)
-	{
-		const TimePointMarker& marker = speechAnnot_.marker(leftMarkerind);
-		const auto& text = marker.TranscripText;
-		if (!text.isEmpty() && marker.Language == SpeechLanguage::Ukrainian)
-		{
-			QStringList validResult;
-			phoneticDictViewModel_->validateSegmentTranscription(marker.TranscripText, validResult);
-			if (!validResult.isEmpty())
-			{
-				QString msg = validResult.join('\n');
-				nextNotification(formatLogLineWithTime(msg));
-			}
-		}
-	}
-
 
 	soundPlayerPlay(audioSamples_.data(), curSegBeg, curSegEnd, true);
 }
@@ -548,48 +529,7 @@ void SpeechTranscriptionViewModel::saveAudioMarkupToXml()
 	nextNotification(formatLogLineWithTime("Saved xml markup."));
 }
 
-void SpeechTranscriptionViewModel::validateAnnotationStructure()
-{
-	// validate markers structure
-
-	std::stringstream msgValidate;
-	speechAnnot_.validateMarkers(msgValidate);
-	if (!msgValidate.str().empty())
-		nextNotification(QString::fromStdString(msgValidate.str()));
-
-	// validate that all pronId of entire transcript text are in the phonetic dictionary
-
-	std::vector<std::pair<const PticaGovorun::TimePointMarker*, const PticaGovorun::TimePointMarker*>> segments;
-	collectAnnotatedSegments(speechAnnot_.markers(), segments);
-	QStringList validResult;
-	for (const std::pair<const PticaGovorun::TimePointMarker*, const PticaGovorun::TimePointMarker*>& seg : segments)
-	{
-		if (seg.first->Language == SpeechLanguage::Ukrainian)
-		{
-			int sizeBefore = validResult.size();
-			phoneticDictViewModel_->validateSegmentTranscription(seg.first->TranscripText, validResult);
-			
-			int sizeAfter = validResult.size();
-			int newCount = sizeAfter - sizeBefore;
-
-			// update last few messages with info about marker
-			QString markerInfo = QString(" marker[id=%1]").arg(seg.first->Id);
-			for (int i = 0; i < newCount; ++i)
-				validResult[validResult.size() - 1 - i].append(markerInfo);
-		}
-	}
-	QString msg;
-	if (validResult.isEmpty())
-		msg = "Validation succeeded";
-	else
-	{
-		msg = QString("Validation failed (%1 errors)\n").arg(validResult.size());
-		msg.append(validResult.join('\n'));
-	}
-	nextNotification(formatLogLineWithTime(msg));
-}
-
-	void SpeechTranscriptionViewModel::saveCurrentRangeAsWavRequest()
+void SpeechTranscriptionViewModel::saveCurrentRangeAsWavRequest()
 {
 	long frameLeft;
 	long frameRight;
@@ -1266,7 +1206,7 @@ void SpeechTranscriptionViewModel::setCurrentMarkerTranscriptText(const QString&
 		if (marker.Language == SpeechLanguage::Ukrainian)
 		{
 			QStringList validResult;
-			phoneticDictViewModel_->validateSegmentTranscription(text, validResult);
+			phoneticDictViewModel_->validateWordsHavePhoneticTranscription(text, validResult);
 			if (!validResult.isEmpty())
 			{
 				QString msg = validResult.join('\n');

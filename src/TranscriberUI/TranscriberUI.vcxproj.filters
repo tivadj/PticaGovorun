@@ -149,6 +149,9 @@
     <ClCompile Include="SpeechTranscriptionPaintWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SpeechTranscriptionValidation.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="AudioMarkupNavigatorDialog.ui">
@@ -232,6 +235,9 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_SpeechTranscriptionPaintWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeechTranscriptionValidation.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>

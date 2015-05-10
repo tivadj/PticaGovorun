@@ -1,5 +1,9 @@
 #include "stdafx.h"
+#include <functional>
 #include "SpeechAnnotation.h"
+#include <QDir>
+#include <QDirIterator>
+#include "CoreUtils.h"
 
 namespace PticaGovorun
 {
@@ -93,16 +97,16 @@ namespace PticaGovorun
 		return prevSpeakerBriefId;
 	}
 
-	void SpeechAnnotation::validateMarkers(std::stringstream& msgValidate) const
+	void SpeechAnnotation::validateMarkers(QStringList& checkMsgs) const
 	{
 		for (auto& marker : frameIndMarkers_)
 		{
 			if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Phone)
 			{
 				if (marker.Language != PticaGovorun::SpeechLanguage::NotSet)
-					msgValidate << "Phone marker[id=" << marker.Id << "] has non empty language" << std::endl;
+					checkMsgs.append(QString("Phone marker[id=%1] has non empty language").arg(marker.Id));
 				if (!marker.SpeakerBriefId.empty())
-					msgValidate << "Phone marker[id=" << marker.Id << "] has non empty speakerId" << std::endl;
+					checkMsgs.append(QString("Phone marker[id=%1] has non empty speakerId").arg(marker.Id));
 			}
 
 			else if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Word)
@@ -110,19 +114,19 @@ namespace PticaGovorun
 				if (marker.TranscripText.isEmpty())
 				{
 					if (marker.Language != PticaGovorun::SpeechLanguage::NotSet)
-						msgValidate << "Word marker[id=" << marker.Id << "] without text has non empty language" << std::endl;
+						checkMsgs.append(QString("Word marker[id=%1] without text has non empty language").arg(marker.Id));
 					if (!marker.SpeakerBriefId.empty())
-						msgValidate << "Word marker[id=" << marker.Id << "] without text has non empty speakerBriefId" << std::endl;
+						checkMsgs.append(QString("Word marker[id=%1] without text has non empty speakerBriefId").arg(marker.Id));
 				}
 				else
 				{
 					if (marker.Language == PticaGovorun::SpeechLanguage::NotSet)
-						msgValidate << "Word marker[id=" << marker.Id << "] with text has empty language" << std::endl;
+						checkMsgs.append(QString("Word marker[id=%1] with text has empty language").arg(marker.Id));
 					
 					if (marker.SpeakerBriefId.empty())
-						msgValidate << "Word marker[id=" << marker.Id << "] with text has empty speakerBriefId" << std::endl;
+						checkMsgs.append(QString("Word marker[id=%1] with text has empty speakerBriefId").arg(marker.Id));
 					else if (!findSpeaker(marker.SpeakerBriefId))
-						msgValidate << "Word marker[id=" << marker.Id << "] with text has undefined speakerBriefId" << std::endl;
+						checkMsgs.append(QString("Word marker[id=%1] with text has undefined speakerBriefId").arg(marker.Id));
 				}
 			}
 		}
@@ -282,5 +286,89 @@ namespace PticaGovorun
 		PG_Assert(*distFrames >= 0 && "Error calculating the distance to the closest marker");
 
 		return closestMarkerInd;
+	}
+
+	// Recursively constructs file structure of speech annotation files.
+	struct SpeechAnnotationWorkspaceBuilder
+	{
+		QDir* xmlRootDir;
+		QDir* audioRootDir;
+
+		void populateItemsRec(const QFileInfo& fileInfo, AnnotSpeechDirNode& parent)
+		{
+			QString fileName = fileInfo.fileName();
+			if (fileInfo.isFile() && fileName.endsWith(".wav", Qt::CaseInsensitive))
+			{
+				QString audioFilePath = fileInfo.absoluteFilePath();
+
+				QString audioFileRelPath = audioRootDir->relativeFilePath(audioFilePath);
+
+				int wavInd = audioFileRelPath.lastIndexOf(".wav", -1, Qt::CaseInsensitive);
+				QString xmlAudioFileRelPath = audioFileRelPath.left(wavInd);
+				xmlAudioFileRelPath.append(".xml");
+
+				QString xmlFilePath = xmlRootDir->absoluteFilePath(xmlAudioFileRelPath);
+				
+				QFileInfo xmlFileInfo(xmlFilePath);
+				if (!xmlFileInfo.exists())
+					return;
+
+				AnnotSpeechFileNode fileRecord;
+				fileRecord.FileNameNoExt = xmlFileInfo.completeBaseName();
+				fileRecord.WavFilePath = audioFilePath;
+				fileRecord.SpeechAnnotationXmlFilePath = xmlFilePath;
+				parent.AnnotFiles.push_back(fileRecord);
+			}
+			else if (fileInfo.isDir())
+			{
+				AnnotSpeechDirNode annotDir;
+				annotDir.Name = fileInfo.fileName();
+				annotDir.DirFullPath = fileInfo.absoluteFilePath();
+
+				populateSubItemsWithoutItemItselfRec(fileInfo, annotDir);
+				
+				parent.SubDirs.push_back(annotDir);
+			}
+		}
+
+		void populateSubItemsWithoutItemItselfRec(const QFileInfo& fileInfoExcl, AnnotSpeechDirNode& parent)
+		{
+			QDirIterator it(fileInfoExcl.absoluteFilePath(),
+				QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
+			while (it.hasNext())
+			{
+				it.next();
+				QFileInfo childFileInfo = it.fileInfo();
+				populateItemsRec(childFileInfo, parent);
+			}
+		}
+	};
+
+	void populateAnnotationFileStructure(const QString& annotRootDir, AnnotSpeechDirNode& pseudoRoot)
+	{
+		QDir audioSubDir(annotRootDir);
+		if (!audioSubDir.cd("SpeechAudio"))
+			return;
+		QDir annotSubDir(annotRootDir);
+		if (!annotSubDir.cd("SpeechAnnot"))
+			return;
+
+		SpeechAnnotationWorkspaceBuilder annotStructure;
+		annotStructure.audioRootDir = &audioSubDir;
+		annotStructure.xmlRootDir = &annotSubDir;
+		annotStructure.populateSubItemsWithoutItemItselfRec(audioSubDir.absolutePath(), pseudoRoot);
+	}
+
+	void flat(const AnnotSpeechDirNode& node, std::vector<AnnotSpeechFileNode>& result)
+	{
+		std::function<auto (const AnnotSpeechDirNode&) -> void> flatRec;
+		flatRec = [&result, &flatRec](const AnnotSpeechDirNode& cur) -> void
+		{
+			std::copy(cur.AnnotFiles.begin(), cur.AnnotFiles.end(), std::back_inserter(result));
+
+			for (const AnnotSpeechDirNode& subdir : cur.SubDirs)
+				flatRec(subdir);
+		};
+		flatRec(node);
 	}
 }

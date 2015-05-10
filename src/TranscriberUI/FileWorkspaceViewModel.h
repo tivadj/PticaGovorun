@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QTreeWidget>
 #include <QFileInfo>
+#include "SpeechAnnotation.h"
 
 namespace PticaGovorun
 {
@@ -26,8 +27,7 @@ namespace PticaGovorun
 		void populateItems(QList<QTreeWidgetItem*>& items) const;
 
 	private:
-		void populateItemsRec(const QFileInfo& fileInfo, QTreeWidgetItem* parent) const;
-		void populateSubItemsWithoutItemItselfRec(const QFileInfo& fileInfoExcl, QTreeWidgetItem* parent) const;
+		void populateSubItemsWithoutItemItselfRec(const AnnotSpeechDirNode& annotStructure, QTreeWidgetItem* parent) const;
 	private:
 		std::wstring curDir_;
 	};

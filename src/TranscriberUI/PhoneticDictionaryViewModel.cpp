@@ -5,6 +5,7 @@
 #include "PhoneticDictionaryViewModel.h"
 #include <ClnUtils.h>
 #include "SpeechProcessing.h"
+#include "SpeechAnnotation.h"
 
 namespace PticaGovorun
 {
@@ -270,7 +271,7 @@ namespace PticaGovorun
 		savePhoneticDictionaryXml(words, brokenDictPath, *phoneReg_);
 	}
 
-	void PhoneticDictionaryViewModel::validateSegmentTranscription(const QString& text, QStringList& resultMessages)
+	void PhoneticDictionaryViewModel::validateWordsHavePhoneticTranscription(const QString& text, QStringList& checkMsgs)
 	{
 		ensureDictionaryLoaded();
 
@@ -281,11 +282,10 @@ namespace PticaGovorun
 
 		// check if the word is in the phonetic dictionary
 		// considers similar occurences of phoneAsWord and the word itself
+		// returns true if exact word match was found
 		auto isPronAsWordInDict = [](const std::map<boost::wstring_ref, PhoneticWord>& phoneticDict, boost::wstring_ref pronAsWordPattern,
 			boost::wstring_ref& outExactWord, boost::wstring_ref& outSimilarPronAsWord) -> bool
 		{
-			bool exactPronAsWordExist = false;
-
 			// pattern for similar pronAsWord
 			QString patternWithOpenBracketQ = toQString(pronAsWordPattern);
 			patternWithOpenBracketQ.append('(');
@@ -311,7 +311,7 @@ namespace PticaGovorun
 					}
 				}
 			}
-			return exactPronAsWordExist;
+			return false;
 		};
 
 		// iterate through words
@@ -355,19 +355,43 @@ namespace PticaGovorun
 					if (!outExactWordDictBroken.empty())
 						msgBuf << "word " << outExactWordDictBroken;
 				}
-				resultMessages.append(QString::fromStdWString(msgBuf.str()));
+				checkMsgs.append(QString::fromStdWString(msgBuf.str()));
 			}
 			else if (isKnown && isBroken)
 			{
 				msgBuf.str(L"");
 				msgBuf << L"PronId '" << pronAsWordQuery << L"' has occurence in multiple dictionaries";
-				resultMessages.append(QString::fromStdWString(msgBuf.str()));
+				checkMsgs.append(QString::fromStdWString(msgBuf.str()));
 			}
 			else
 			{
 				// ok, word is exactly in on dictionary of correct or broken words
 			}
 		}
+	}
+
+	void PhoneticDictionaryViewModel::validateSpeechAnnotationsHavePhoneticTranscription(const SpeechAnnotation& speechAnnot, QStringList& checkMsgs)
+	{
+		std::vector<std::pair<const PticaGovorun::TimePointMarker*, const PticaGovorun::TimePointMarker*>> segments;
+		collectAnnotatedSegments(speechAnnot.markers(), segments);
+
+		for (const std::pair<const PticaGovorun::TimePointMarker*, const PticaGovorun::TimePointMarker*>& seg : segments)
+		{
+			if (seg.first->Language == SpeechLanguage::Ukrainian)
+			{
+				int sizeBefore = checkMsgs.size();
+				validateWordsHavePhoneticTranscription(seg.first->TranscripText, checkMsgs);
+
+				int sizeAfter = checkMsgs.size();
+				int newCount = sizeAfter - sizeBefore;
+
+				// update last few messages with info about marker
+				QString markerInfo = QString(" marker[id=%1]").arg(seg.first->Id);
+				for (int i = 0; i < newCount; ++i)
+					checkMsgs[checkMsgs.size() - 1 - i].append(markerInfo);
+			}
+		}
+
 	}
 
 	std::tuple<bool, const char*> PhoneticDictionaryViewModel::convertTextToPhoneListString(boost::wstring_ref text, std::string& speechPhonesString)

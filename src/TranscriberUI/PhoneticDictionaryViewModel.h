@@ -4,6 +4,7 @@
 #include <QStringList>
 #include "PhoneticService.h"
 #include "ComponentsInfrastructure.h"
+#include "SpeechAnnotation.h"
 
 namespace PticaGovorun
 {
@@ -32,7 +33,8 @@ namespace PticaGovorun
 		// Saves all phonetic dictionaries.
 		void saveDict();
 
-		void validateSegmentTranscription(const QString& text, QStringList& resultMessages);
+		void validateWordsHavePhoneticTranscription(const QString& text, QStringList& checkMsgs);
+		void validateSpeechAnnotationsHavePhoneticTranscription(const SpeechAnnotation& speechAnnot, QStringList& checkMsgs);
 
 		std::tuple<bool, const char*> convertTextToPhoneListString(boost::wstring_ref text, std::string& speechPhonesString);
 		bool findPronAsWordPhoneticExpansions(boost::wstring_ref pronAsWord, std::vector<PronunciationFlavour>& prons);
@@ -53,4 +55,5 @@ namespace PticaGovorun
 		QString editedWordSourceDictionary_; // the dictId from where the current word is taken
 	};
 
+	void validate(PhoneticDictionaryViewModel& phoneticDictViewModel, const SpeechAnnotation& speechAnnot, QStringList& validResult);
 }
