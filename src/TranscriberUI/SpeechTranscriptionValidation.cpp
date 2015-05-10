@@ -27,15 +27,13 @@ namespace PticaGovorun
 		std::vector<AnnotSpeechFileNode> annotInfos;
 		flat(annotStructure, annotInfos);
 
-		// do not consider badly marked markup
-		// TODO: fix finance.ua-pynzenykvm markup
-		std::remove_if(annotInfos.begin(), annotInfos.end(), [](AnnotSpeechFileNode& a)
-		{
-			return a.SpeechAnnotationXmlFilePath.contains("finance.ua-pynzenykvm");
-		});
-
+		std::map<boost::wstring_ref, int> pronIdToUsedCount;
 		for (const AnnotSpeechFileNode& fileItem : annotInfos)
 		{
+			// do not consider badly marked markup
+			// TODO: fix finance.ua-pynzenykvm markup
+			bool isBadMarkup = fileItem.SpeechAnnotationXmlFilePath.contains("finance.ua-pynzenykvm");
+
 			SpeechAnnotation annot;
 			bool loadOp;
 			const char* errMsg;
@@ -46,14 +44,27 @@ namespace PticaGovorun
 				continue;
 			}
 
-			QStringList fileItemMsgs;
-			validateSpeechAnnotation(annot, phoneticDictModel, fileItemMsgs);
+			// count usage of pronIds in phonetic dictionary
+			phoneticDictModel.appendPronIdUsage(annot, pronIdToUsedCount);
 
-			if (!fileItemMsgs.empty())
+			if (!isBadMarkup)
 			{
-				checkMsgs << QString::fromStdWString(L"File=") << fileItem.SpeechAnnotationXmlFilePath << "\n";
-				checkMsgs << fileItemMsgs << "\n";
+				QStringList fileItemMsgs;
+				validateSpeechAnnotation(annot, phoneticDictModel, fileItemMsgs);
+
+				if (!fileItemMsgs.empty())
+				{
+					checkMsgs << QString::fromStdWString(L"File=") << fileItem.SpeechAnnotationXmlFilePath << "\n";
+					checkMsgs << fileItemMsgs << "\n";
+				}
 			}
+		}
+
+		//
+		for (const auto& pair : pronIdToUsedCount)
+		{
+			if (pair.second == 0)
+				checkMsgs << QString("PronId=%1 is not used in speech annotation").arg(toQString(pair.first)) << "\n";
 		}
 	}
 

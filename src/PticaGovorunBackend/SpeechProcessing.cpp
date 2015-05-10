@@ -60,6 +60,25 @@ namespace PticaGovorun {
 		}
 	}
 
+	void splitUtteranceIntoWords(boost::wstring_ref text, std::vector<boost::wstring_ref>& wordsAsSlices)
+	{
+		std::wcmatch matchRes;
+		// clothes clothes(1)
+		// apostrophe (eg: п'ять)
+		// dash (eg: to-do)
+		static std::wregex r(LR"regex([\w\(\)'-]+)regex"); // match words
+
+		const wchar_t* wordBeg = std::begin(text);
+		while (std::regex_search(wordBeg, std::cend(text), matchRes, r))
+		{
+			auto& wordSlice = matchRes[0];
+			boost::wstring_ref word = boost::wstring_ref(&*wordSlice.first, wordSlice.second - wordSlice.first);
+			wordsAsSlices.push_back(word);
+
+			wordBeg = wordSlice.second;
+		}
+	}
+
 	// wordToPhoneListFun returns false, if word can't be translated into phone list
 	std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> bool> wordToPhoneListFun, bool insertShortPause, std::vector<std::string>& speechPhones)
 	{

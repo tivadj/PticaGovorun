@@ -35,6 +35,10 @@ namespace PticaGovorun
 
 		void validateWordsHavePhoneticTranscription(const QString& text, QStringList& checkMsgs);
 		void validateSpeechAnnotationsHavePhoneticTranscription(const SpeechAnnotation& speechAnnot, QStringList& checkMsgs);
+		
+		// Add each pronId usage from speech annotation to the dict.
+		// Used to calculate which pronIds in phonetic dict are not used.
+		void countPronIdUsage(const SpeechAnnotation& speechAnnot, std::map<boost::wstring_ref, int>& pronIdToUsedCount);
 
 		std::tuple<bool, const char*> convertTextToPhoneListString(boost::wstring_ref text, std::string& speechPhonesString);
 		bool findPronAsWordPhoneticExpansions(boost::wstring_ref pronAsWord, std::vector<PronunciationFlavour>& prons);
@@ -47,7 +51,7 @@ namespace PticaGovorun
 	private:
 		GrowOnlyPinArena<wchar_t> stringArena_;
 		std::map<boost::wstring_ref, PhoneticWord> phoneticDictKnown_;
-		std::map<boost::wstring_ref, PhoneticWord> phoneticDictBroken;
+		std::map<boost::wstring_ref, PhoneticWord> phoneticDictBroken_;
 		std::map<boost::wstring_ref, PhoneticWord> phoneticDictShrekky_;
 		std::unique_ptr<PhoneRegistry> phoneReg_;
 		QStringList matchedWords_;

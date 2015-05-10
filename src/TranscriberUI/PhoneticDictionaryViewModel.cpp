@@ -33,7 +33,6 @@ namespace PticaGovorun
 		typedef std::chrono::system_clock Clock;
 
 		std::vector<PhoneticWord> phoneticDictWords;
-		phoneticDictWords.reserve(WordsCount);
 		std::vector<std::string> brokenLines;
 		if (phoneticDictShrekky_.empty())
 		{
@@ -43,6 +42,7 @@ namespace PticaGovorun
 
 			std::chrono::time_point<Clock> now1 = Clock::now();
 			
+			phoneticDictWords.reserve(WordsCount);
 			std::tie(loadOp, errMsg) = loadPhoneticDictionaryPronIdPerLine(shrekkyDictPath, *phoneReg_, *pTextCodec, phoneticDictWords, brokenLines, stringArena_);
 			
 			std::chrono::time_point<Clock> now2 = Clock::now();
@@ -62,23 +62,24 @@ namespace PticaGovorun
 			bool loadOp;
 			const char* errMsg;
 			phoneticDictWords.clear();
+			phoneticDictWords.reserve(WordsCount);
 			std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(persianDictPath, *phoneReg_, phoneticDictWords, stringArena_);
 			if (!loadOp)
 				qDebug(errMsg);
 			else
 				reshapeAsDict(phoneticDictWords, phoneticDictKnown_);
 		}
-		if (phoneticDictBroken.empty())
+		if (phoneticDictBroken_.empty())
 		{
 			bool loadOp;
 			const char* errMsg;
 			phoneticDictWords.clear();
-			phoneticDictBroken.clear();
+			phoneticDictWords.reserve(WordsCount);
 			std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(brokenDictPath, *phoneReg_, phoneticDictWords, stringArena_);
 			if (!loadOp)
 				qDebug(errMsg);
 			else
-				reshapeAsDict(phoneticDictWords, phoneticDictBroken);
+				reshapeAsDict(phoneticDictWords, phoneticDictBroken_);
 		}
 		if (!brokenLines.empty())
 		{
@@ -98,7 +99,7 @@ namespace PticaGovorun
 		if (browseDictStr.compare("shrekky", Qt::CaseInsensitive) == 0)
 			dict = &phoneticDictShrekky_;
 		else if (browseDictStr.compare("broken", Qt::CaseInsensitive) == 0)
-			dict = &phoneticDictBroken;
+			dict = &phoneticDictBroken_;
 		else if (browseDictStr.compare("persian", Qt::CaseInsensitive) == 0)
 			dict = &phoneticDictKnown_;
 		if (dict == nullptr)
@@ -151,7 +152,7 @@ namespace PticaGovorun
 		if (browseDictStr.compare("shrekky", Qt::CaseInsensitive) == 0)
 			dict = &phoneticDictShrekky_;
 		else if (browseDictStr.compare("broken", Qt::CaseInsensitive) == 0)
-			dict = &phoneticDictBroken;
+			dict = &phoneticDictBroken_;
 		else if (browseDictStr.compare("persian", Qt::CaseInsensitive) == 0)
 			dict = &phoneticDictKnown_;
 		if (dict == nullptr)
@@ -196,7 +197,7 @@ namespace PticaGovorun
 		if (dictId.compare("persian", Qt::CaseInsensitive) == 0)
 			targetDict = &phoneticDictKnown_;
 		else if (dictId.compare("broken", Qt::CaseInsensitive) == 0)
-			targetDict = &phoneticDictBroken;
+			targetDict = &phoneticDictBroken_;
 		if (targetDict == nullptr)
 			return;
 
@@ -266,8 +267,8 @@ namespace PticaGovorun
 		savePhoneticDictionaryXml(words, persianDictPath, *phoneReg_);
 
 		//
-		words.resize(phoneticDictBroken.size());
-		std::transform(std::begin(phoneticDictBroken), std::end(phoneticDictBroken), std::begin(words), selectSecondFun);
+		words.resize(phoneticDictBroken_.size());
+		std::transform(std::begin(phoneticDictBroken_), std::end(phoneticDictBroken_), std::begin(words), selectSecondFun);
 		savePhoneticDictionaryXml(words, brokenDictPath, *phoneReg_);
 	}
 
@@ -287,8 +288,8 @@ namespace PticaGovorun
 			boost::wstring_ref& outExactWord, boost::wstring_ref& outSimilarPronAsWord) -> bool
 		{
 			// pattern for similar pronAsWord
-			QString patternWithOpenBracketQ = toQString(pronAsWordPattern);
-			patternWithOpenBracketQ.append('(');
+			std::wstring patternWithOpenBracketQ = toStdWString(pronAsWordPattern);
+			patternWithOpenBracketQ.append(L"(");
 
 			for (const auto& pair : phoneticDict)
 			{
@@ -303,8 +304,7 @@ namespace PticaGovorun
 
 					if (outSimilarPronAsWord.empty())
 					{
-						QString curPronAsWordQ = toQString(pron.PronCode);
-						if (curPronAsWordQ.startsWith(patternWithOpenBracketQ))
+						if (pron.PronCode.starts_with(patternWithOpenBracketQ))
 						{
 							outSimilarPronAsWord = pron.PronCode;
 						}
@@ -329,7 +329,7 @@ namespace PticaGovorun
 			outSimilarPronAsWordDictBroken.clear();
 			outExactWordDictBroken.clear();
 			bool isKnown = isPronAsWordInDict(phoneticDictKnown_, pronAsWordQuery, outExactWordDictKnown, outSimilarPronAsWordDictKnown);
-			bool isBroken = isPronAsWordInDict(phoneticDictBroken, pronAsWordQuery, outExactWordDictBroken, outSimilarPronAsWordDictBroken);
+			bool isBroken = isPronAsWordInDict(phoneticDictBroken_, pronAsWordQuery, outExactWordDictBroken, outSimilarPronAsWordDictBroken);
 
 			if (!isKnown && !isBroken)
 			{
@@ -391,7 +391,51 @@ namespace PticaGovorun
 					checkMsgs[checkMsgs.size() - 1 - i].append(markerInfo);
 			}
 		}
+	}
 
+	void PhoneticDictionaryViewModel::appendPronIdUsage(const SpeechAnnotation& speechAnnot, std::map<boost::wstring_ref, int>& pronIdToUsedCount)
+	{
+		ensureDictionaryLoaded();
+
+		// set up all words in phonetic dictionary for counting
+		if (pronIdToUsedCount.empty())
+		{
+			auto pushPronIds = [&pronIdToUsedCount](const decltype(phoneticDictKnown_)& dict) -> void
+			{
+				for (const auto& pair : dict)
+				{
+					for (const auto& pron : pair.second.Pronunciations)
+						pronIdToUsedCount[pron.PronCode] = 0;
+				}
+			};
+			pushPronIds(phoneticDictKnown_);
+			pushPronIds(phoneticDictBroken_);
+		}
+
+		//
+		std::vector<std::pair<const TimePointMarker*, const TimePointMarker*>> segments;
+		collectAnnotatedSegments(speechAnnot.markers(), segments);
+
+		std::vector<wchar_t> textBuff;
+		for (const std::pair<const TimePointMarker*, const TimePointMarker*>& seg : segments)
+		{
+			if (seg.first->Language == SpeechLanguage::Ukrainian)
+			{
+				const QString& text = seg.first->TranscripText;
+				boost::wstring_ref textRef = toWStringRef(text, textBuff);
+
+				std::vector<boost::wstring_ref> wordsAsSlices;
+				splitUtteranceIntoWords(textRef, wordsAsSlices);
+
+				for (boost::wstring_ref pronAsWordRef : wordsAsSlices)
+				{
+					// do not implicitly add the word to counting dict!
+					auto it = pronIdToUsedCount.find(pronAsWordRef);
+					if (it != pronIdToUsedCount.end())
+						pronIdToUsedCount[pronAsWordRef]++;
+				}
+			}
+		}
 	}
 
 	std::tuple<bool, const char*> PhoneticDictionaryViewModel::convertTextToPhoneListString(boost::wstring_ref text, std::string& speechPhonesString)
@@ -442,7 +486,7 @@ namespace PticaGovorun
 	bool PhoneticDictionaryViewModel::findPronAsWordPhoneticExpansions(boost::wstring_ref pronAsWord, std::vector<PronunciationFlavour>& prons)
 	{
 		bool found1 = findPronAsWordPhoneticExpansions(phoneticDictKnown_, pronAsWord, prons);
-		bool found2 = findPronAsWordPhoneticExpansions(phoneticDictBroken, pronAsWord, prons);
+		bool found2 = findPronAsWordPhoneticExpansions(phoneticDictBroken_, pronAsWord, prons);
 		return found1 || found2;
 	}
 

@@ -8,6 +8,8 @@
 
 #include <QObject>
 #include <QFileInfo>
+#include <boost/utility/string_ref.hpp>
+
 #include "PticaGovorunCore.h"
 #include "MLUtils.h"
 #include "ClnUtils.h"
@@ -185,6 +187,7 @@ PG_EXPORTS bool getDefaultMarkerStopsPlayback(MarkerLevelOfDetail levelOfDetail)
 PG_EXPORTS std::string speechLanguageToStr(SpeechLanguage lang);
 
 PG_EXPORTS void splitUtteranceIntoWords(const std::wstring& text, std::vector<wv::slice<const wchar_t>>& wordsAsSlices);
+PG_EXPORTS void splitUtteranceIntoWords(boost::wstring_ref text, std::vector<boost::wstring_ref>& wordsAsSlices);
 
 // insertShortPause=true to insert sp phone between words.
 PG_EXPORTS std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> bool> wordToPhoneListFun, bool insertShortPause, std::vector<std::string>& speechPhones);
