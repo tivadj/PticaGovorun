@@ -5,9 +5,6 @@
       <pron code="блиско" phones="B L Y1 S1 K O"/>
    </word>
    <word name="бюдже" phones="B2 U DZH E"/>
-   <word name="відповідає">
-      <pron code="повідає" phones="P O V I D A1 J E"/>
-   </word>
    <word name="відповідять" phones="V I T P O V I D A1 T1"/>
    <word name="значeння">
       <pron code="значіння" phones="Z N A CH I1 N1 N1 A"/>
@@ -43,7 +40,6 @@
       <pron code="ящо" phones="J A SH CH O1"/>
    </word>
    <word name="яни" phones="J A1 N Y"/>
-   <word name="яскрави" phones="J A S K R A1 V Y"/>
    <word name="інформації">
       <pron code="інформаці" phones="I N F O R M A1 TS1 I"/>
    </word>

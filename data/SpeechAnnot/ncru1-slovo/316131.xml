@@ -61,7 +61,7 @@
    <syncPoint id="400" sampleInd="2382260" levelOfDetail="word"/>
    <syncPoint id="15" sampleInd="2388742" levelOfDetail="word" transcripText="це українська мовна газета розрахована на українських патріотів і можна було передбачити" lang="uk" speakerBriefId="sokolovaso"/>
    <syncPoint id="248" sampleInd="2510723" levelOfDetail="word"/>
-   <syncPoint id="29" sampleInd="2516412" levelOfDetail="word" transcripText="які будуть е відповіді цих людей" lang="uk" speakerBriefId="sokolovaso"/>
+   <syncPoint id="29" sampleInd="2516412" levelOfDetail="word" transcripText="які будуть е вітповіді цих людей" lang="uk" speakerBriefId="sokolovaso"/>
    <syncPoint id="407" sampleInd="2530254" levelOfDetail="phone" transcripText="е"/>
    <syncPoint id="446" sampleInd="2562287" levelOfDetail="word"/>
    <syncPoint id="23" sampleInd="2565727" levelOfDetail="word" transcripText="але наша анкета спровокувала" lang="uk" speakerBriefId="sokolovaso"/>
@@ -93,7 +93,7 @@
    <syncPoint id="70" sampleInd="3032001" levelOfDetail="word"/>
    <syncPoint id="71" sampleInd="3035358" levelOfDetail="word" transcripText="був лист від цілої установи" lang="uk" speakerBriefId="sokolovaso"/>
    <syncPoint id="67" sampleInd="3076388" levelOfDetail="word"/>
-   <syncPoint id="55" sampleInd="3081597" levelOfDetail="word" transcripText="в якій люди розмножили анкету і відповіли" lang="uk" speakerBriefId="sokolovaso"/>
+   <syncPoint id="55" sampleInd="3081597" levelOfDetail="word" transcripText="в якій люди розмножили анкету і вітповіли" lang="uk" speakerBriefId="sokolovaso"/>
    <syncPoint id="918" sampleInd="3125058" levelOfDetail="phone" transcripText="'d' or 't'?"/>
    <syncPoint id="50" sampleInd="3136981" levelOfDetail="word"/>
    <syncPoint id="76" sampleInd="3141761" levelOfDetail="word" transcripText="тобто в одному(2) листі там" lang="uk" speakerBriefId="sokolovaso"/>
@@ -183,7 +183,7 @@
    <syncPoint id="188" sampleInd="4852879" levelOfDetail="word"/>
    <syncPoint id="175" sampleInd="4856121" levelOfDetail="word" transcripText="але" lang="uk" speakerBriefId="sokolovaso"/>
    <syncPoint id="154" sampleInd="4864902" levelOfDetail="word"/>
-   <syncPoint id="179" sampleInd="4870128" levelOfDetail="word" transcripText="аналізуючи їхні відповіді на інші запитання ми зрозуміли шчо" lang="uk" speakerBriefId="sokolovaso"/>
+   <syncPoint id="179" sampleInd="4870128" levelOfDetail="word" transcripText="аналізуючи їхні вітповіді на інші запитання ми зрозуміли шчо" lang="uk" speakerBriefId="sokolovaso"/>
    <syncPoint id="111" sampleInd="4958868" levelOfDetail="word"/>
    <syncPoint id="116" sampleInd="4964954" levelOfDetail="word" transcripText="в різних регіонах по різному але тільки блисько половини вже с ціх людей" lang="uk" speakerBriefId="sokolovaso"/>
    <syncPoint id="112" sampleInd="5055431" levelOfDetail="word"/>

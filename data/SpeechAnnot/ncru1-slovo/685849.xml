@@ -237,7 +237,7 @@
    <syncPoint id="253" sampleInd="10182750" levelOfDetail="word" transcripText="такий пітхіт убеспечить вас від довірливості до брехні" lang="uk" speakerBriefId="klymentovaov"/>
    <syncPoint id="337" sampleInd="10252357" levelOfDetail="phone" transcripText="burr"/>
    <syncPoint id="439" sampleInd="10288243" levelOfDetail="word"/>
-   <syncPoint id="188" sampleInd="10291055" levelOfDetail="word" transcripText="за сугестію більшою мірою відповідає наша права(1) півкуля моску" lang="uk" speakerBriefId="klymentovaov"/>
+   <syncPoint id="188" sampleInd="10291055" levelOfDetail="word" transcripText="за сугестію більшою мірою вітповідає наша права(1) півкуля моску" lang="uk" speakerBriefId="klymentovaov"/>
    <syncPoint id="448" sampleInd="10398118" levelOfDetail="word"/>
    <syncPoint id="296" sampleInd="10400483" levelOfDetail="word" transcripText="а за контроль над ситуацію ліва півкуля" lang="uk" speakerBriefId="klymentovaov"/>
    <syncPoint id="193" sampleInd="10462995" levelOfDetail="word"/>
@@ -464,7 +464,7 @@
    <syncPoint id="346" sampleInd="18228096" levelOfDetail="word"/>
    <syncPoint id="411" sampleInd="18236216" levelOfDetail="word" transcripText="коли двоє чи більше людей натсилають листи одні одним(1)" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="508" sampleInd="18315364" levelOfDetail="word"/>
-   <syncPoint id="864" sampleInd="18321846" levelOfDetail="word" transcripText="і отримують на них відповіді українці листуються" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="864" sampleInd="18321846" levelOfDetail="word" transcripText="і отримують на них вітповіді українці листуються" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="157" sampleInd="18420460" levelOfDetail="word"/>
    <syncPoint id="221" sampleInd="18429688" levelOfDetail="word" transcripText="походить це слово від іменника лист а листом(2)" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="917" sampleInd="18477084" levelOfDetail="phone" transcripText="'t'"/>
@@ -479,7 +479,7 @@
    <syncPoint id="901" sampleInd="18638474" levelOfDetail="word"/>
    <syncPoint id="713" sampleInd="18646858" levelOfDetail="word" transcripText="призначений для повідомлення про щось для спілкування с кимось на вітстані" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="785" sampleInd="18756848" levelOfDetail="word"/>
-   <syncPoint id="636" sampleInd="18764208" levelOfDetail="word" transcripText="а також(2) відповідну поштову кориспонденцію" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="636" sampleInd="18764208" levelOfDetail="word" transcripText="а також(2) вітповідну поштову кориспонденцію" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="704" sampleInd="18828936" levelOfDetail="word"/>
    <syncPoint id="736" sampleInd="18842596" levelOfDetail="word" transcripText="по копійці заробляла" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="716" sampleInd="18880268" levelOfDetail="word"/>
