@@ -105,22 +105,6 @@ namespace PticaGovorun
 		ui->lineEditNewWord->setText(wordQ);
 		
 		QString wordProns = ui->plainTextEditPronunciations->toPlainText();
-
-		QString dictId = currentBrowsedDictId();
-		if (dictId.compare("shrekky", Qt::CaseInsensitive) == 0)
-		{
-			// in each line add pronId as prefix
-			QStringList pronLines = wordProns.split('\n');
-			for (int i = 0; i < pronLines.size(); ++i)
-			{
-				QString& line = pronLines[i];
-				if (line.isEmpty())
-					continue;
-				line.insert(0, '\t');
-				line.insert(0, wordQ);
-			}
-			wordProns = pronLines.join('\n');
-		}
 		ui->plainTextNewWordPronunciations->setPlainText(wordProns);
 	}
 
