@@ -393,7 +393,7 @@ namespace PticaGovorun
 		}
 	}
 
-	void PhoneticDictionaryViewModel::appendPronIdUsage(const SpeechAnnotation& speechAnnot, std::map<boost::wstring_ref, int>& pronIdToUsedCount)
+	void PhoneticDictionaryViewModel::countPronIdUsage(const SpeechAnnotation& speechAnnot, std::map<boost::wstring_ref, int>& pronIdToUsedCount)
 	{
 		ensureDictionaryLoaded();
 

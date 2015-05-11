@@ -45,7 +45,7 @@ namespace PticaGovorun
 			}
 
 			// count usage of pronIds in phonetic dictionary
-			phoneticDictModel.appendPronIdUsage(annot, pronIdToUsedCount);
+			phoneticDictModel.countPronIdUsage(annot, pronIdToUsedCount);
 
 			if (!isBadMarkup)
 			{

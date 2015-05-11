@@ -1292,6 +1292,12 @@ void SpeechTranscriptionViewModel::setCurrentMarkerLang(PticaGovorun::SpeechLang
 		return QString::fromStdString(phoneListString);
 	}
 
+	void SpeechTranscriptionViewModel::onPronIdPhoneticSpecChanged()
+	{
+		// update phonetic expansion of current marker's text
+		emit currentMarkerIndChanged();
+	}
+
 	void SpeechTranscriptionViewModel::ensureRecognizerIsCreated()
 {
 	// initialize the recognizer lazily

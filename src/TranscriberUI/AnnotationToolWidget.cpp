@@ -137,6 +137,9 @@ namespace PticaGovorun
 			PhoneticDictionaryDialog phoneticDictDlg;
 			phoneticDictDlg.setPhoneticViewModel(annotationToolModel_->phoneticDictModel());
 			if (phoneticDictDlg.exec() == QDialog::Accepted) { }
+			
+			// update text line of each transcription view
+			annotationToolModel_->onPronIdPhoneticSpecChanged();
 		}
 		else if (ke->key() == Qt::Key_B && ke->modifiers().testFlag(Qt::ControlModifier))
 		{

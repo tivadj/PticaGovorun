@@ -300,6 +300,7 @@ public:
 	void setCurrentMarkerStopOnPlayback(bool stopsPlayback);
 	void setCurrentMarkerLang(PticaGovorun::SpeechLanguage lang);
 	QString currentMarkerPhoneListString() const;
+	void onPronIdPhoneticSpecChanged();
 
 	void setTemplateMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail);
 	PticaGovorun::MarkerLevelOfDetail templateMarkerLevelOfDetail() const;

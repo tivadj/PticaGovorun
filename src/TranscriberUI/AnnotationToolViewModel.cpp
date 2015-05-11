@@ -166,6 +166,12 @@ namespace PticaGovorun
 			notificationService_->nextNotification(message);
 	}
 
+	void AnnotationToolViewModel::onPronIdPhoneticSpecChanged()
+	{
+		for (auto& m : audioTranscriptionModels_)
+			m->onPronIdPhoneticSpecChanged();
+	}
+
 	void AnnotationToolViewModel::closeAudioTranscriptionTab(int tabIndex)
 	{
 		bool okIndex = tabIndex >= 0 || tabIndex < audioTranscriptionModels_.size();

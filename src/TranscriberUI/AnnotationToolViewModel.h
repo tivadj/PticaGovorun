@@ -52,12 +52,16 @@ namespace PticaGovorun
 
 		// play
 		void playComposingRecipeRequest(QString recipe);
+
+	public:
+		// Occurs when phonetic dialog closes and phonetic expansion of current marker's text must be updated.
+		void onPronIdPhoneticSpecChanged();
+
 	private slots:
 		// file workspace
 		void fileWorkspaceViewModel_openAudioFile(const std::wstring& filePath);
 	private:
 		void nextNotification(const QString& message) const;
-
 	private:
 		std::shared_ptr<SharedServiceProvider> serviceProvider_;
 		std::shared_ptr<VisualNotificationService> notificationService_;
