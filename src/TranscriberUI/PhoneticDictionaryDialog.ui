@@ -227,19 +227,6 @@
     </property>
    </widget>
   </widget>
-  <widget class="QPushButton" name="pushButtonSaveDict">
-   <property name="geometry">
-    <rect>
-     <x>670</x>
-     <y>10</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Save Dict</string>
-   </property>
-  </widget>
   <widget class="QLineEdit" name="lineEditWordTranscriptionAuto">
    <property name="geometry">
     <rect>
@@ -275,7 +262,6 @@
   <tabstop>plainTextNewWordPronunciations</tabstop>
   <tabstop>pushButtonAddNewWord</tabstop>
   <tabstop>radioButtonBrowsePersian</tabstop>
-  <tabstop>pushButtonSaveDict</tabstop>
   <tabstop>radioButtonBrowseBroken</tabstop>
   <tabstop>radioButtonBrowseShrekky</tabstop>
   <tabstop>radioButtonNewWordPersian</tabstop>

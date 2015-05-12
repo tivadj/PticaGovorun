@@ -19,7 +19,6 @@ namespace PticaGovorun
 		QObject::connect(ui->radioButtonBrowseShrekky, SIGNAL(toggled(bool)), this, SLOT(groupBoxBrowseDict_toggled(bool)));
 		QObject::connect(ui->lineEditNewWord, SIGNAL(textChanged(const QString&)), this, SLOT(lineEditNewWord_textChanged(const QString&)));
 		QObject::connect(ui->pushButtonAddNewWord, SIGNAL(clicked()), this, SLOT(pushButtonAddNewWord_clicked()));
-		QObject::connect(ui->pushButtonSaveDict, SIGNAL(clicked()), this, SLOT(pushButtonSaveDict_clicked()));
 	}
 
 	PhoneticDictionaryDialog::~PhoneticDictionaryDialog()
@@ -137,10 +136,5 @@ namespace PticaGovorun
 
 		QString dictId = ui->radioButtonNewWordPersian->isChecked() ? ui->radioButtonNewWordPersian->text() : ui->radioButtonNewWordBroken->text();
 		phoneticDictViewModel_->updateWordPronunciation(dictId, word, pronLinesAsStr);
-	}
-
-	void PhoneticDictionaryDialog::pushButtonSaveDict_clicked()
-	{
-		phoneticDictViewModel_->saveDict();
 	}
 }

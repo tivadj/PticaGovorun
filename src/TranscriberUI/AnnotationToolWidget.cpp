@@ -147,6 +147,9 @@ namespace PticaGovorun
 		}
 		else if (ke->key() == Qt::Key_F11)
 			pushButtonSegmentComposerPlay_Clicked();
+
+		else if (ke->key() == Qt::Key_S && ke->modifiers().testFlag(Qt::ControlModifier))
+			annotationToolModel_->saveRequest();
 		else
 			QWidget::keyPressEvent(ke);
 	}

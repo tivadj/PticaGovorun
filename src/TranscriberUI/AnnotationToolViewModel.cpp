@@ -74,6 +74,8 @@ namespace PticaGovorun
 	{
 		for (auto _ : audioTranscriptionModels_)
 			_->saveAudioMarkupToXml();
+		if (phoneticDictModel_ != nullptr)
+			phoneticDictModel_->saveDict();
 	}
 
 	std::shared_ptr<SpeechTranscriptionViewModel> AnnotationToolViewModel::activeTranscriptionModel()

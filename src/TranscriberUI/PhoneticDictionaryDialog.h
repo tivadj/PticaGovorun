@@ -33,7 +33,6 @@ namespace PticaGovorun
 		void listWidgetWords_itemSelectionChanged();
 		void lineEditNewWord_textChanged(const QString & text);
 		void pushButtonAddNewWord_clicked();
-		void pushButtonSaveDict_clicked();
 
 		void findMatchedWords();
 		QString currentBrowsedDictId();
