@@ -4,9 +4,14 @@
    <word name="близько">
       <pron code="блиско" phones="B L Y1 S1 K O"/>
    </word>
-   <word name="бюдже" phones="B2 U DZH E"/>
+   <word name="бюдже" phones="B2 U DZH E1"/>
    <word name="вау" phones="V A1 U"/>
+   <word name="використати">
+      <pron code="використа" phones="V Y1 K O R Y S T A"/>
+      <pron code="використ" phones="V Y1 K O R Y S T"/>
+   </word>
    <word name="відповідять" phones="V I T P O V I D A1 T1"/>
+   <word name="е" phones="E1"/>
    <word name="значeння">
       <pron code="значіння" phones="Z N A CH I1 N1 N1 A"/>
    </word>
@@ -33,6 +38,7 @@
    <word name="підтвердженні">
       <pron code="підтведжені" phones="P2 I T T V E1 DZH E N1 I"/>
    </word>
+   <word name="розміс" phones="R O Z M2 I1 S"/>
    <word name="способу">
       <pron code="спосу" phones="S P O1 S U"/>
    </word>
@@ -41,15 +47,20 @@
       <pron code="тютюнни" phones="T1 U T1 U1 N N Y"/>
    </word>
    <word name="українські" phones="U K R A J I1 N1 S1 K2 I"/>
+   <word name="учі" phones="U1 CH2 I"/>
    <word name="ха" phones="KH A1"/>
    <word name="цього">
-      <pron code="цьо" phones="TS1 O"/>
+      <pron code="цьо" phones="TS1 O1"/>
    </word>
    <word name="шинець" phones="SH Y N E1 TS1"/>
+   <word name="юей" phones="J U E1 J"/>
    <word name="якщо">
       <pron code="ящо" phones="J A SH CH O1"/>
    </word>
    <word name="яни" phones="J A1 N Y"/>
+   <word name="ів" phones="I1 V"/>
+   <word name="інститу" phones="I N S T Y T U1"/>
+   <word name="інф" phones="I1 N F"/>
    <word name="інформації">
       <pron code="інформаці" phones="I N F O R M A1 TS1 I"/>
    </word>

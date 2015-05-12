@@ -66,6 +66,7 @@ namespace PticaGovorun
 			if (pair.second == 0)
 				checkMsgs << QString("PronId=%1 is not used in speech annotation").arg(toQString(pair.first)) << "\n";
 		}
+		phoneticDictModel.validateAllPronunciationsSpecifyStress(checkMsgs);
 	}
 
 }

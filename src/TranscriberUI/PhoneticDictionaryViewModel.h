@@ -37,6 +37,7 @@ namespace PticaGovorun
 
 		void validateWordsHavePhoneticTranscription(const QString& text, QStringList& checkMsgs);
 		void validateSpeechAnnotationsHavePhoneticTranscription(const SpeechAnnotation& speechAnnot, QStringList& checkMsgs);
+		void validateAllPronunciationsSpecifyStress(QStringList& checkMsgs);
 		
 		// Add each pronId usage from speech annotation to the dict.
 		// Used to calculate which pronIds in phonetic dict are not used.

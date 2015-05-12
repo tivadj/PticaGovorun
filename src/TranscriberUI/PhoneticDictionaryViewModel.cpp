@@ -393,6 +393,26 @@ namespace PticaGovorun
 		}
 	}
 
+	void PhoneticDictionaryViewModel::validateAllPronunciationsSpecifyStress(QStringList& checkMsgs)
+	{
+		ensureDictionaryLoaded();
+
+		auto checkStress = [this,&checkMsgs](const std::map<boost::wstring_ref, PhoneticWord>& phonDict) ->void
+		{
+			for (const auto& pair : phonDict)
+			{
+				for (const PronunciationFlavour& pronId : pair.second.Pronunciations)
+				{
+					if (isWordStressAssigned(*phoneReg_, pronId.Phones))
+						continue;
+					checkMsgs << QString("PronId='%1' does not specify stressed syllable").arg(toQString(pronId.PronCode));
+				}
+			}
+		};
+		checkStress(phoneticDictKnown_);
+		checkStress(phoneticDictBroken_);
+	}
+
 	void PhoneticDictionaryViewModel::countPronIdUsage(const SpeechAnnotation& speechAnnot, std::map<boost::wstring_ref, int>& pronIdToUsedCount)
 	{
 		ensureDictionaryLoaded();
