@@ -19,6 +19,8 @@ namespace PticaGovorun
 	public:
 		PhoneticDictionaryViewModel();
 
+		void ensureDictionaryLoaded();
+
 		void updateSuggesedWordsList(const QString& browseDictStr, const QString& currentWord);
 
 		const QStringList& matchedWords() const;
@@ -46,8 +48,6 @@ namespace PticaGovorun
 		QString getWordAutoTranscription(const QString& word) const;
 	private:
 		bool findPronAsWordPhoneticExpansions(const std::map<boost::wstring_ref, PhoneticWord>& phoneticDict, boost::wstring_ref pronCode, std::vector<PronunciationFlavour>& prons);
-	private:
-		void ensureDictionaryLoaded();
 	private:
 		GrowOnlyPinArena<wchar_t> stringArena_;
 		std::map<boost::wstring_ref, PhoneticWord> phoneticDictKnown_;

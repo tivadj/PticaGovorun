@@ -1037,6 +1037,7 @@ namespace PticaGovorun
 
 	void WordPhoneticTranscriber::transcribe(const PhoneRegistry& phoneReg, const std::wstring& word)
 	{
+		PG_Assert(&phoneReg != nullptr);
 		phoneReg_ = &phoneReg;
 		word_ = &word;
 		errString_.clear();
@@ -1678,7 +1679,7 @@ namespace PticaGovorun
 
 	void WordPhoneticTranscriber::postRulePairOfConsonantsSoftenEachOther()
 	{
-		for (size_t i = billetPhones_.size() - 1; i > 0; --i)
+		for (int i = static_cast<int>(billetPhones_.size()) - 1; i > 0; --i)
 		{
 			const PhoneBillet& right = billetPhones_[i];
 			PhoneBillet& left = billetPhones_[i - 1];
@@ -1696,7 +1697,7 @@ namespace PticaGovorun
 	void WordPhoneticTranscriber::postRuleAmplifyUnvoicedConsonantBeforeVoiced()
 	{
 		// Rule: unvoiced consonant becomes voiced before another voiced consonant
-		for (size_t phInd = billetPhones_.size() - 1; phInd > 0; phInd--)
+		for (int phInd = static_cast<int>(billetPhones_.size()) - 1; phInd > 0; phInd--)
 		{
 			PhoneBillet& prevPh = billetPhones_[phInd - 1];
 			const PhoneBillet& ph = billetPhones_[phInd];

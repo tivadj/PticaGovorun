@@ -29,6 +29,7 @@ namespace PticaGovorun
 	void PhoneticDictionaryDialog::setPhoneticViewModel(std::shared_ptr<PhoneticDictionaryViewModel> phoneticDictViewModel)
 	{
 		phoneticDictViewModel_ = phoneticDictViewModel;
+		phoneticDictViewModel_->ensureDictionaryLoaded();
 		attachDetachPhoneticViewModel(true);
 	}
 
