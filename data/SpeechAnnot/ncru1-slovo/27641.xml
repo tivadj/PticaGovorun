@@ -227,7 +227,7 @@
    <syncPoint id="393" sampleInd="6731490" levelOfDetail="word" transcripText="для дієслів" lang="uk" speakerBriefId="romanukjv"/>
    <syncPoint id="346" sampleInd="6749913" levelOfDetail="phone" transcripText="'v' bounds?"/>
    <syncPoint id="294" sampleInd="6750789" levelOfDetail="word"/>
-   <syncPoint id="269" sampleInd="6756180" levelOfDetail="word" transcripText="тобто не сто сорок тисяч правил для кожного слова(1)" lang="uk" speakerBriefId="romanukjv"/>
+   <syncPoint id="269" sampleInd="6756180" levelOfDetail="word" transcripText="топто не сто сорок тисяч правил для кожного слова(1)" lang="uk" speakerBriefId="romanukjv"/>
    <syncPoint id="354" sampleInd="6830616" levelOfDetail="word"/>
    <syncPoint id="396" sampleInd="6835378" levelOfDetail="word" transcripText="а є слова(2) які відмінюються однаково" lang="uk" speakerBriefId="romanukjv"/>
    <syncPoint id="104" sampleInd="6885801" levelOfDetail="word"/>
@@ -313,7 +313,7 @@
    <syncPoint id="150" sampleInd="9322933" levelOfDetail="word"/>
    <syncPoint id="409" sampleInd="9331334" levelOfDetail="word" transcripText="тільки як родовий множини(3) займенника вони" lang="uk" speakerBriefId="romanukjv"/>
    <syncPoint id="449" sampleInd="9396210" levelOfDetail="word"/>
-   <syncPoint id="426" sampleInd="9411690" levelOfDetail="word" transcripText="тобто їх від вони" lang="uk" speakerBriefId="romanukjv"/>
+   <syncPoint id="426" sampleInd="9411690" levelOfDetail="word" transcripText="топто їх від вони" lang="uk" speakerBriefId="romanukjv"/>
    <syncPoint id="576" sampleInd="9445972" levelOfDetail="word"/>
    <syncPoint id="505" sampleInd="9451561" levelOfDetail="word" transcripText="а займенник їхній відмінюється за правилом прикметників" lang="uk" speakerBriefId="romanukjv"/>
    <syncPoint id="385" sampleInd="9525451" levelOfDetail="word"/>
@@ -664,7 +664,7 @@
    <syncPoint id="963" sampleInd="21832608" levelOfDetail="word"/>
    <syncPoint id="814" sampleInd="21836446" levelOfDetail="word" transcripText="як і їхні вавилонськи попередники" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="210" sampleInd="21884470" levelOfDetail="word"/>
-   <syncPoint id="1234" sampleInd="21890854" levelOfDetail="word" transcripText="тобто сиділи за столами" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="1234" sampleInd="21890854" levelOfDetail="word" transcripText="топто сиділи за столами" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="925" sampleInd="21922754" levelOfDetail="word"/>
    <syncPoint id="1013" sampleInd="21929866" levelOfDetail="word" transcripText="на базарах і міняли грощі" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="777" sampleInd="21962874" levelOfDetail="phone" transcripText="ш OR щ?"/>

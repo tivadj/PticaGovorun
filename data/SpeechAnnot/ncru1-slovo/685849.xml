@@ -13,7 +13,7 @@
    <syncPoint id="8" sampleInd="2554365" levelOfDetail="word"/>
    <syncPoint id="12" sampleInd="2557292" levelOfDetail="word" transcripText="на наші рішення почуття та поведінку" lang="uk" speakerBriefId="klymentovaov"/>
    <syncPoint id="6" sampleInd="2619887" levelOfDetail="word"/>
-   <syncPoint id="3" sampleInd="2629148" levelOfDetail="word" transcripText="тобто до теми мовної сугестії" lang="uk" speakerBriefId="klymentovaov"/>
+   <syncPoint id="3" sampleInd="2629148" levelOfDetail="word" transcripText="топто до теми мовної сугестії" lang="uk" speakerBriefId="klymentovaov"/>
    <syncPoint id="16" sampleInd="2684466" levelOfDetail="word"/>
    <syncPoint id="13" sampleInd="2692073" levelOfDetail="word" transcripText="але сігодні ми будемо говорити про захист від цих прихованих мовних впливів" lang="uk" speakerBriefId="klymentovaov"/>
    <syncPoint id="17" sampleInd="2819246" levelOfDetail="phone" transcripText="'v'"/>
@@ -105,7 +105,7 @@
    <syncPoint id="198" sampleInd="5904962" levelOfDetail="word"/>
    <syncPoint id="162" sampleInd="5907377" levelOfDetail="word" transcripText="і вітповідно така людина" lang="uk" speakerBriefId="klymentovaov"/>
    <syncPoint id="181" sampleInd="5940733" levelOfDetail="word"/>
-   <syncPoint id="173" sampleInd="5942899" levelOfDetail="word" transcripText="уже не сдатна росподілити сили нерідко просто відмовляється жити своїм розумом" lang="uk" speakerBriefId="klymentovaov"/>
+   <syncPoint id="173" sampleInd="5942899" levelOfDetail="word" transcripText="уже не сдатна росподілити сили нерідко просто відмовляєця жити своїм розумом" lang="uk" speakerBriefId="klymentovaov"/>
    <syncPoint id="38" sampleInd="5959850" levelOfDetail="phone" transcripText="has 'n'?"/>
    <syncPoint id="155" sampleInd="6055900" levelOfDetail="word"/>
    <syncPoint id="80" sampleInd="6058099" levelOfDetail="word" transcripText="і як результат звісно страждає" lang="uk" speakerBriefId="klymentovaov"/>
@@ -338,7 +338,7 @@
    <syncPoint id="426" sampleInd="14353475" levelOfDetail="word"/>
    <syncPoint id="506" sampleInd="14362670" levelOfDetail="word" transcripText="правильно кажуть ті" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="167" sampleInd="14384880" levelOfDetail="word"/>
-   <syncPoint id="505" sampleInd="14389709" levelOfDetail="word" transcripText="хто користується висловами навзірець документ" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="505" sampleInd="14389709" levelOfDetail="word" transcripText="хто користуєця висловами навзірець документ" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="571" sampleInd="14458885" levelOfDetail="word"/>
    <syncPoint id="361" sampleInd="14465235" levelOfDetail="word" transcripText="пітписано ручкою" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="464" sampleInd="14488884" levelOfDetail="word"/>

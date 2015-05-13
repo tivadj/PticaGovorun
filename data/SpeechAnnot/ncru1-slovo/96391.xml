@@ -92,7 +92,7 @@
    <syncPoint id="101" sampleInd="7290738" levelOfDetail="word" transcripText="тому(2) шчо наукове аргументоване фактами пояснення таких назв зовсім інше" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="89" sampleInd="7413744" levelOfDetail="word"/>
    <syncPoint id="80" sampleInd="7414257" levelOfDetail="phone" transcripText="click"/>
-   <syncPoint id="119" sampleInd="7418805" levelOfDetail="word" transcripText="шчодо згаданих топонімів прість моргунове моргунівка теребовля то всі вони виникли на місцевому українському тобто слов'янському грунті" lang="uk" speakerBriefId="verbychso"/>
+   <syncPoint id="119" sampleInd="7418805" levelOfDetail="word" transcripText="шчодо згаданих топонімів прість моргунове моргунівка теребовля то всі вони виникли на місцевому українському топто слов'янському грунті" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="130" sampleInd="7661079" levelOfDetail="word"/>
    <syncPoint id="162" sampleInd="7663643" levelOfDetail="word" transcripText="що доводять такі факти" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="143" sampleInd="7700389" levelOfDetail="word"/>
@@ -104,7 +104,7 @@
    <syncPoint id="102" sampleInd="8120127" levelOfDetail="word"/>
    <syncPoint id="124" sampleInd="8122260" levelOfDetail="word" transcripText="в основі назв поселень моргунове моргунівка українське прізвиськове ім'я моргун що нині поширене як прізвище в різних регіонах україни" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="56" sampleInd="8343450" levelOfDetail="word"/>
-   <syncPoint id="91" sampleInd="8348179" levelOfDetail="word" transcripText="в основі назви(1) містечка теребовля географічна лексема теребовля зі значенням витереблене тобто розчищене від лісу заростей місце" lang="uk" speakerBriefId="verbychso"/>
+   <syncPoint id="91" sampleInd="8348179" levelOfDetail="word" transcripText="в основі назви(1) містечка теребовля географічна лексема теребовля зі значенням витереблене топто розчищене від лісу заростей місце" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="192" sampleInd="8581722" levelOfDetail="word"/>
    <syncPoint id="154" sampleInd="8586319" levelOfDetail="word" transcripText="порівняймо українське діалектне теребівля місце очищене від кущів спільнокореневі теребіж із таким самим(1) значенням" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="149" sampleInd="8794279" levelOfDetail="word"/>
@@ -366,7 +366,7 @@
    <syncPoint id="491" sampleInd="22034416" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="223" sampleInd="22038716" levelOfDetail="word" transcripText="а ще воду можна у ступі товкти" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="652" sampleInd="22093206" levelOfDetail="word"/>
-   <syncPoint id="583" sampleInd="22104072" levelOfDetail="word" transcripText="тобто робити щось марно" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="583" sampleInd="22104072" levelOfDetail="word" transcripText="топто робити щось марно" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="445" sampleInd="22143944" levelOfDetail="word"/>
    <syncPoint id="423" sampleInd="22153850" levelOfDetail="word" transcripText="той піп давно воду в ступі товче читаймо у ганни барвінок" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="412" sampleInd="22260582" levelOfDetail="phone" transcripText="'kh'?"/>
@@ -411,7 +411,7 @@
    <syncPoint id="536" sampleInd="23590314" levelOfDetail="word"/>
    <syncPoint id="481" sampleInd="23596548" levelOfDetail="word" transcripText="писав євген кротевич" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="696" sampleInd="23631706" levelOfDetail="word"/>
-   <syncPoint id="686" sampleInd="23639066" levelOfDetail="word" transcripText="я із води(2) йде тобто дуже лехко гарно й швитко" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="686" sampleInd="23639066" levelOfDetail="word" transcripText="я із води(2) йде топто дуже лехко гарно й швитко" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="683" sampleInd="23726830" levelOfDetail="word"/>
    <syncPoint id="359" sampleInd="23734190" levelOfDetail="word" transcripText="торік ми проходили(2) цієї хати(1) не було" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="464" sampleInd="23783306" levelOfDetail="word"/>
