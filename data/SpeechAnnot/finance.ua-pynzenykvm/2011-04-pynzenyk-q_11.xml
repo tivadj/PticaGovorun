@@ -37,7 +37,7 @@
    <syncPoint id="133" sampleInd="203080" levelOfDetail="phone"/>
    <syncPoint id="64" sampleInd="209811" levelOfDetail="word"/>
    <syncPoint id="448" sampleInd="237825" levelOfDetail="phone" transcripText="fill"/>
-   <syncPoint id="105" sampleInd="278888" levelOfDetail="word" transcripText="наступні роки" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="105" sampleInd="278888" levelOfDetail="word" transcripText="наступні роки(2)" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="516" sampleInd="295988" levelOfDetail="phone" transcripText="'y'?"/>
    <syncPoint id="145" sampleInd="296368" levelOfDetail="word"/>
    <syncPoint id="81" sampleInd="317751" levelOfDetail="word" transcripText="дуже просте питання" lang="uk" speakerBriefId="pynzenykvm"/>
