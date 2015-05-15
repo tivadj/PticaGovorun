@@ -57,6 +57,7 @@
       <pron code="тіалектів" phones="T1 I A L E1 K T1 I V"/>
    </word>
    <word name="е" phones="E1"/>
+   <word name="журнала" phones="ZH U R N A1 L A"/>
    <word name="задля">
       <pron code="садля" phones="S A1 D L1 A"/>
    </word>
@@ -125,8 +126,12 @@
    <word name="не">
       <pron code="ни" phones="N Y1"/>
    </word>
+   <word name="небезпечний">
+      <pron code="небеспечни" phones="N E B E S P E1 CH N Y"/>
+   </word>
    <word name="обережні" phones="O B E R E1 ZH N1 I"/>
    <word name="овва" phones="O V V A1"/>
+   <word name="однією" phones="O D N1 I J E1 J U"/>
    <word name="окей" phones="O K E1 J"/>
    <word name="оскіки" phones="O S K I1 K Y"/>
    <word name="осіб">
@@ -151,6 +156,7 @@
    <word name="реалізовувалась">
       <pron code="реалізовулась" phones="R E A L1 I Z O1 V U L A S1"/>
    </word>
+   <word name="революці" phones="R E V O L1 U1 TS1 I"/>
    <word name="розвитку">
       <pron code="росвитку" phones="R O1 S V Y T K U"/>
    </word>
