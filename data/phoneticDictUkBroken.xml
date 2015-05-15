@@ -30,6 +30,9 @@
    <word name="втрачає">
       <pron code="фтрачає" phones="F T R A CH A1 J E"/>
    </word>
+   <word name="втім">
+      <pron code="фтім" phones="F T1 I1 M"/>
+   </word>
    <word name="відбувається">
       <pron code="відбуваіця" phones="V2 I D B U V A1 I TS1 A"/>
    </word>

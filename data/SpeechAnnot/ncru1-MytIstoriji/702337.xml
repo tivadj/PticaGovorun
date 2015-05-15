@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<audioAnnotation>
+   <header>
+      <speaker briefId="shapovalji" name="Шаповал Юрій Іванович"/>
+   </header>
+   <syncPoint id="42" sampleInd="136583" levelOfDetail="word" transcripText="колись чеслав мілош написав що життям лютьських спільнот рухає забуття" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="2" sampleInd="237263" levelOfDetail="word"/>
+   <syncPoint id="3" sampleInd="245284" levelOfDetail="word" transcripText="забуття але не беспам'яцтво" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="5" sampleInd="297013" levelOfDetail="word"/>
+   <syncPoint id="7" sampleInd="304538" levelOfDetail="word" transcripText="про те і забуття і беспам'яцтво можна подолати" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="9" sampleInd="378543" levelOfDetail="word"/>
+   <syncPoint id="11" sampleInd="384364" levelOfDetail="word" transcripText="якщо цього(2) дійсно бажаєш якщо дискутуєш не іс стіною" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="8" sampleInd="481605" levelOfDetail="word"/>
+   <syncPoint id="12" sampleInd="488749" levelOfDetail="word" transcripText="ось чому(2) упродовж наших зустрічей в ефірі" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="6" sampleInd="544712" levelOfDetail="word"/>
+   <syncPoint id="16" sampleInd="550731" levelOfDetail="word" transcripText="для мене(1) була важливою ваша вельми шановні слухачі реакція" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="19" sampleInd="631335" levelOfDetail="word"/>
+   <syncPoint id="4" sampleInd="636412" levelOfDetail="word" transcripText="ваші листи відгуки" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="22" sampleInd="685925" levelOfDetail="word"/>
+   <syncPoint id="17" sampleInd="693037" levelOfDetail="word" transcripText="а їх було доволі багато" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="23" sampleInd="731585" levelOfDetail="word"/>
+   <syncPoint id="31" sampleInd="740731" levelOfDetail="word" transcripText="україна єдина" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="14" sampleInd="769076" levelOfDetail="word"/>
+   <syncPoint id="33" sampleInd="777742" levelOfDetail="word" transcripText="але визнаємо що у різних географічних частин її домінують" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="35" sampleInd="870947" levelOfDetail="word"/>
+   <syncPoint id="30" sampleInd="879993" levelOfDetail="word" transcripText="різні пріоритети" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="26" sampleInd="909397" levelOfDetail="word"/>
+   <syncPoint id="39" sampleInd="919551" levelOfDetail="word" transcripText="тіні різних претків" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="46" sampleInd="957306" levelOfDetail="word"/>
+   <syncPoint id="27" sampleInd="962912" levelOfDetail="word" transcripText="це слід просто враховувати" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="34" sampleInd="996946" levelOfDetail="word"/>
+   <syncPoint id="37" sampleInd="1003875" levelOfDetail="word" transcripText="і боронь боже" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="44" sampleInd="1022662" levelOfDetail="word"/>
+   <syncPoint id="15" sampleInd="1027656" levelOfDetail="word" transcripText="не нав'язувати комусь(2) єдино правильне бачення чи інтерпретацію історії" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="28" sampleInd="1126468" levelOfDetail="word"/>
+   <syncPoint id="20" sampleInd="1134720" levelOfDetail="word" transcripText="колись англійський історик" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="41" sampleInd="1159344" levelOfDetail="word"/>
+   <syncPoint id="47" sampleInd="1164421" levelOfDetail="word" transcripText="норман дейвіс написав" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="61" sampleInd="1198803" levelOfDetail="word"/>
+   <syncPoint id="51" sampleInd="1205302" levelOfDetail="word" transcripText="добрі історики повинні признаватися в своїй обмеженості" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="53" sampleInd="1284054" levelOfDetail="word"/>
+   <syncPoint id="70" sampleInd="1289213" levelOfDetail="word" transcripText="найгіршими істориками є ті що уявляють себе(2)" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="48" sampleInd="1352221" levelOfDetail="word"/>
+   <syncPoint id="69" sampleInd="1358539" levelOfDetail="word" transcripText="вільними від будь яких упереджень" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="65" sampleInd="1412219" levelOfDetail="word"/>
+   <syncPoint id="1" sampleInd="1414998" levelOfDetail="word" transcripText="от і я не удаю що ніби" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="79" sampleInd="1463965" levelOfDetail="word"/>
+   <syncPoint id="72" sampleInd="1466380" levelOfDetail="word" transcripText="для мене(1) все остаточно зрозуміло в українській історії" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="18" sampleInd="1536515" levelOfDetail="word"/>
+   <syncPoint id="75" sampleInd="1540567" levelOfDetail="word" transcripText="програма мить історії ратше була спробою наблизитись до такого розуміння" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="74" sampleInd="1639693" levelOfDetail="word"/>
+   <syncPoint id="59" sampleInd="1646126" levelOfDetail="word" transcripText="програма мить історії не була я не буде засобом" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="88" sampleInd="1700782" levelOfDetail="word"/>
+   <syncPoint id="32" sampleInd="1706736" levelOfDetail="word" transcripText="тиражування не надійних і фальшивих версій" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="63" sampleInd="1773911" levelOfDetail="word"/>
+   <syncPoint id="78" sampleInd="1778624" levelOfDetail="word" transcripText="нашої історичної минувшини" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="54" sampleInd="1816958" levelOfDetail="word"/>
+   <syncPoint id="93" sampleInd="1823375" levelOfDetail="word" transcripText="глупоти і псевдо патріотичноо кокецтва" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="99" sampleInd="1880065" levelOfDetail="word"/>
+   <syncPoint id="106" sampleInd="1885407" levelOfDetail="word" transcripText="і само(1) вихваляння" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="64" sampleInd="1909783" levelOfDetail="word"/>
+   <syncPoint id="58" sampleInd="1916431" levelOfDetail="word" transcripText="я просто" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="97" sampleInd="1928520" levelOfDetail="word"/>
+   <syncPoint id="91" sampleInd="1935367" levelOfDetail="word" transcripText="прагнув переконати що українці" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="76" sampleInd="1980613" levelOfDetail="word"/>
+   <syncPoint id="36" sampleInd="1990188" levelOfDetail="word" transcripText="зі своїм не простим минулим" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="110" sampleInd="2030623" levelOfDetail="word"/>
+   <syncPoint id="25" sampleInd="2037850" levelOfDetail="word" transcripText="не самотні у цьому(1) світі" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="107" sampleInd="2080500" levelOfDetail="word"/>
+   <syncPoint id="103" sampleInd="2090935" levelOfDetail="word" transcripText="тому(2) вчитися варто не лише на власному історичному досвіді" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="38" sampleInd="2167834" levelOfDetail="word"/>
+   <syncPoint id="96" sampleInd="2170761" levelOfDetail="word" transcripText="а і на досвіді інших народів" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="52" sampleInd="2208136" levelOfDetail="word"/>
+   <syncPoint id="50" sampleInd="2214817" levelOfDetail="word" transcripText="як тут не згадати що саме(1)" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="56" sampleInd="2260279" levelOfDetail="word"/>
+   <syncPoint id="109" sampleInd="2269358" levelOfDetail="word" transcripText="трицять першого грудня" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="71" sampleInd="2298613" levelOfDetail="word"/>
+   <syncPoint id="62" sampleInd="2303971" levelOfDetail="word" transcripText="у тисяча дев'яцот дев'яносто дев'ятому році" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="101" sampleInd="2355618" levelOfDetail="word"/>
+   <syncPoint id="13" sampleInd="2364101" levelOfDetail="word" transcripText="президент росії борис єльцин залишив(2) свій пост" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="60" sampleInd="2438801" levelOfDetail="word"/>
+   <syncPoint id="113" sampleInd="2567215" levelOfDetail="word" transcripText="минули роки(2)" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="143" sampleInd="2586068" levelOfDetail="word"/>
+   <syncPoint id="140" sampleInd="2594667" levelOfDetail="word" transcripText="єльцин пішов у най кращий іс світів" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="92" sampleInd="2643287" levelOfDetail="word"/>
+   <syncPoint id="83" sampleInd="2649373" levelOfDetail="word" transcripText="наступник виріс у самостійного і вельми специфічного діяча" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="86" sampleInd="2738626" levelOfDetail="word"/>
+   <syncPoint id="125" sampleInd="2744547" levelOfDetail="word" transcripText="діяча який наважився" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="126" sampleInd="2775389" levelOfDetail="word"/>
+   <syncPoint id="152" sampleInd="2780698" levelOfDetail="word" transcripText="перекроїти кордони сучасної європи" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="49" sampleInd="2830773" levelOfDetail="word"/>
+   <syncPoint id="68" sampleInd="2840133" levelOfDetail="word" transcripText="діяча який злочинно порушив взяті росію обов'яски" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="120" sampleInd="2908499" levelOfDetail="word"/>
+   <syncPoint id="132" sampleInd="2916073" levelOfDetail="word" transcripText="коли україна набувала статусу без ядерної держави" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="108" sampleInd="2983067" levelOfDetail="word"/>
+   <syncPoint id="138" sampleInd="2989169" levelOfDetail="word" transcripText="статусу цього(2) в нас вже" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="114" sampleInd="3022310" levelOfDetail="word"/>
+   <syncPoint id="73" sampleInd="3026858" levelOfDetail="word" transcripText="шчоправда нема" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="150" sampleInd="3046124" levelOfDetail="word"/>
+   <syncPoint id="156" sampleInd="3053136" levelOfDetail="word" transcripText="а путінська росія є" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="81" sampleInd="3094976" levelOfDetail="word"/>
+   <syncPoint id="66" sampleInd="3101938" levelOfDetail="word" transcripText="а значить є джерело небеспеки" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="129" sampleInd="3144241" levelOfDetail="word"/>
+   <syncPoint id="149" sampleInd="3150244" levelOfDetail="word" transcripText="і агресії для україни" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="119" sampleInd="3190067" levelOfDetail="word"/>
+   <syncPoint id="45" sampleInd="3199129" levelOfDetail="word" transcripText="та є інше" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="181" sampleInd="3215237" levelOfDetail="word"/>
+   <syncPoint id="136" sampleInd="3223043" levelOfDetail="word" transcripText="є бажання жити своїм незалежним від росії розумом" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="130" sampleInd="3311022" levelOfDetail="word"/>
+   <syncPoint id="195" sampleInd="3318166" levelOfDetail="word" transcripText="саме(1) це довела революція гідності" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="57" sampleInd="3370458" levelOfDetail="word"/>
+   <syncPoint id="171" sampleInd="3378148" levelOfDetail="word" transcripText="саме(1) за це на київському майдані незалежності" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="116" sampleInd="3437881" levelOfDetail="word"/>
+   <syncPoint id="146" sampleInd="3442859" levelOfDetail="word" transcripText="загинула небесна сотня" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="199" sampleInd="3484715" levelOfDetail="word"/>
+   <syncPoint id="193" sampleInd="3492124" levelOfDetail="word" transcripText="саме(1) за це" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="90" sampleInd="3509555" levelOfDetail="word"/>
+   <syncPoint id="154" sampleInd="3514847" levelOfDetail="word" transcripText="загинули і нажаль гинуть молоді люди" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="204" sampleInd="3567370" levelOfDetail="word"/>
+   <syncPoint id="89" sampleInd="3573009" levelOfDetail="word" transcripText="захисники україни від ворожих бандицьких куль на сході нашої країни" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="67" sampleInd="3657896" levelOfDetail="word"/>
+   <syncPoint id="144" sampleInd="3665851" levelOfDetail="word" transcripText="цього(2) історія ніколи(2) не вибачить і ніколи(2) не забуде ні путіну " lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="166" sampleInd="3750886" levelOfDetail="word"/>
+   <syncPoint id="227" sampleInd="3756675" levelOfDetail="word" transcripText="ні біглому четвертому президенту україни віктору януковичу" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="183" sampleInd="3838998" levelOfDetail="word"/>
+   <syncPoint id="87" sampleInd="3846622" levelOfDetail="word" transcripText="якщо останній як політична маріонетка" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="242" sampleInd="3897789" levelOfDetail="word"/>
+   <syncPoint id="102" sampleInd="3911730" levelOfDetail="word" transcripText="нині мало кого цікавить" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="217" sampleInd="3943366" levelOfDetail="word"/>
+   <syncPoint id="249" sampleInd="3948262" levelOfDetail="word" transcripText="то ляльковот путін залишається і буде предметом інтересу всього світу" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="177" sampleInd="4067001" levelOfDetail="word"/>
+   <syncPoint id="243" sampleInd="4075104" levelOfDetail="word" transcripText="допоки він сам" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="112" sampleInd="4101101" levelOfDetail="word"/>
+   <syncPoint id="230" sampleInd="4107104" levelOfDetail="word" transcripText="його диктатура" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="29" sampleInd="4129810" levelOfDetail="word"/>
+   <syncPoint id="210" sampleInd="4135168" levelOfDetail="word" transcripText="сформований ним державний російський нацизм" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="98" sampleInd="4197779" levelOfDetail="word"/>
+   <syncPoint id="153" sampleInd="4202774" levelOfDetail="word" transcripText="не підуть у належну їм безвість" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="207" sampleInd="4251311" levelOfDetail="word"/>
+   <syncPoint id="100" sampleInd="4257281" levelOfDetail="word" transcripText="фтім" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="172" sampleInd="4267717" levelOfDetail="word"/>
+   <syncPoint id="270" sampleInd="4276250" levelOfDetail="word" transcripText="облишмо політику" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="186" sampleInd="4298195" levelOfDetail="word"/>
+   <syncPoint id="239" sampleInd="4303801" levelOfDetail="word" transcripText="роботу(2) на радіо я сполучаю з діяльністю дослідницькою" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="262" sampleInd="4371539" levelOfDetail="word"/>
+   <syncPoint id="238" sampleInd="4376103" levelOfDetail="word" transcripText="за ці роки(1) я навчився до такого переключення" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="245" sampleInd="4443626" levelOfDetail="word"/>
+   <syncPoint id="261" sampleInd="4449331" levelOfDetail="word" transcripText="моя робота(2) в академічному інституті переважно" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="268" sampleInd="4507146" levelOfDetail="word"/>
+   <syncPoint id="198" sampleInd="4511049" levelOfDetail="word" transcripText="не шкодить" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="257" sampleInd="4526694" levelOfDetail="word"/>
+   <syncPoint id="77" sampleInd="4533970" levelOfDetail="word" transcripText="а допомагає особливо коли йдеця" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="258" sampleInd="4588329" levelOfDetail="word"/>
+   <syncPoint id="196" sampleInd="4594531" levelOfDetail="word" transcripText="про події того(2) періоду яким я займаюсь професійно" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="157" sampleInd="4660350" levelOfDetail="word"/>
+   <syncPoint id="213" sampleInd="4673133" levelOfDetail="word" transcripText="жорсткий ритм підготовки до програм" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="248" sampleInd="4724631" levelOfDetail="word"/>
+   <syncPoint id="135" sampleInd="4731709" levelOfDetail="word" transcripText="змушує мене(2) постійно читати доволі широке коло літератури" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="82" sampleInd="4817770" levelOfDetail="word"/>
+   <syncPoint id="124" sampleInd="4826469" levelOfDetail="word" transcripText="це вашко" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="278" sampleInd="4843800" levelOfDetail="word"/>
+   <syncPoint id="85" sampleInd="4846843" levelOfDetail="word" transcripText="з огляду на перманентний цейтнот" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="310" sampleInd="4888700" levelOfDetail="word"/>
+   <syncPoint id="24" sampleInd="4909008" levelOfDetail="word"/>
+   <syncPoint id="194" sampleInd="4917822" levelOfDetail="word" transcripText="це примушує замислюватись нат тим" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="127" sampleInd="4959794" levelOfDetail="word"/>
+   <syncPoint id="220" sampleInd="4965086" levelOfDetail="word" transcripText="що здавалося відомим чи банальним" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="139" sampleInd="5015542" levelOfDetail="word"/>
+   <syncPoint id="185" sampleInd="5022604" levelOfDetail="word" transcripText="бачити якісь нові грані" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="222" sampleInd="5055828" levelOfDetail="word"/>
+   <syncPoint id="297" sampleInd="5060706" levelOfDetail="word" transcripText="тих або інших подій" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="312" sampleInd="5087877" levelOfDetail="word"/>
+   <syncPoint id="306" sampleInd="5096593" levelOfDetail="word" transcripText="саме(1) тому(2) завершую словами" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="164" sampleInd="5139557" levelOfDetail="word"/>
+   <syncPoint id="237" sampleInd="5149149" levelOfDetail="word" transcripText="француського історика люсьєна февра" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="269" sampleInd="5201010" levelOfDetail="word"/>
+   <syncPoint id="123" sampleInd="5210404" levelOfDetail="word" transcripText="а він писав так" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="295" sampleInd="5231257" levelOfDetail="word"/>
+   <syncPoint id="303" sampleInd="5235756" levelOfDetail="word" transcripText="кожна історія є донькою(2) свого часу(1)" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="134" sampleInd="5302948" levelOfDetail="word"/>
+   <syncPoint id="273" sampleInd="5311117" levelOfDetail="word" transcripText="понат те" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="256" sampleInd="5324595" levelOfDetail="word"/>
+   <syncPoint id="200" sampleInd="5332169" levelOfDetail="word" transcripText="немає історії" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="300" sampleInd="5359324" levelOfDetail="word"/>
+   <syncPoint id="159" sampleInd="5367659" levelOfDetail="word" transcripText="є історики" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="160" sampleInd="5402652" levelOfDetail="word"/>
+   <syncPoint id="240" sampleInd="5409366" levelOfDetail="word" transcripText="вітповідальна місія історика і у програмі" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="311" sampleInd="5466206" levelOfDetail="word"/>
+   <syncPoint id="231" sampleInd="5468868" levelOfDetail="word" transcripText="мить історії" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="330" sampleInd="5490218" levelOfDetail="word"/>
+   <syncPoint id="174" sampleInd="5492781" levelOfDetail="word" transcripText="такош(2) вітповідальна" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="309" sampleInd="5532901" levelOfDetail="word"/>
+   <syncPoint id="182" sampleInd="5538772" levelOfDetail="word" transcripText="з новим" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="375" sampleInd="5552135" levelOfDetail="word"/>
+</audioAnnotation>
