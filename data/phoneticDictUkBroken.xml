@@ -43,8 +43,12 @@
    <word name="візуальна">
       <pron code="візуальна(1)" phones="V2 I1 Z U A L1 N A"/>
    </word>
+   <word name="дво" phones="D V O1"/>
    <word name="дев'яте">
       <pron code="дев'ято" phones="D E V J A1 T O"/>
+   </word>
+   <word name="дрездена">
+      <pron code="дрездона" phones="D R E1 Z D O N A"/>
    </word>
    <word name="діалектів">
       <pron code="тіалектів" phones="T1 I A L E1 K T1 I V"/>
@@ -52,6 +56,12 @@
    <word name="е" phones="E1"/>
    <word name="задля">
       <pron code="садля" phones="S A1 D L1 A"/>
+   </word>
+   <word name="звідси">
+      <pron code="звітти" phones="Z V2 I1 T T Y"/>
+   </word>
+   <word name="здавалось">
+      <pron code="здавало" phones="Z D A V A1 L O"/>
    </word>
    <word name="зи" phones="Z Y1"/>
    <word name="значeння">
@@ -78,6 +88,9 @@
    <word name="кількість">
       <pron code="кількісь" phones="K2 I1 L1 K2 I S1"/>
    </word>
+   <word name="ленінградського">
+      <pron code="ленінграцько" phones="L E N1 I N H R A1 TS1 K O"/>
+   </word>
    <word name="любимий" phones="L1 U B Y1 M Y J"/>
    <word name="людського">
       <pron code="люцького" phones="L1 U TS1 K O1 H O"/>
@@ -97,6 +110,9 @@
    <word name="міфів">
       <pron code="міфіф" phones="M2 I1 F2 I F"/>
    </word>
+   <word name="навчання">
+      <pron code="навчаня" phones="N A V CH A1 N1 A"/>
+   </word>
    <word name="над">
       <pron code="нат" phones="N A1 T"/>
    </word>
@@ -113,6 +129,9 @@
    <word name="осіб">
       <pron code="осіп" phones="O S1 I1 P"/>
    </word>
+   <word name="отже">
+      <pron code="одже(2)" phones="O DZH E1"/>
+   </word>
    <word name="позиціонує">
       <pron code="позицінує" phones="P O Z Y TS1 I N U1 J E"/>
    </word>
@@ -125,6 +144,9 @@
    </word>
    <word name="радше">
       <pron code="рачче" phones="R A1 CH CH E"/>
+   </word>
+   <word name="реалізовувалась">
+      <pron code="реалізовулась" phones="R E A L1 I Z O1 V U L A S1"/>
    </word>
    <word name="розвитку">
       <pron code="росвитку" phones="R O1 S V Y T K U"/>
@@ -151,6 +173,7 @@
    </word>
    <word name="ся" phones="S1 A1"/>
    <word name="текс" phones="T E1 K S"/>
+   <word name="тисячного" phones="T Y1 S1 A CH N O H O"/>
    <word name="тютюнник">
       <pron code="тютюнни" phones="T1 U T1 U1 N N Y"/>
    </word>
@@ -168,6 +191,9 @@
    </word>
    <word name="шинець" phones="SH Y N E1 TS1"/>
    <word name="юей" phones="J U E1 J"/>
+   <word name="юридичного">
+      <pron code="юридично" phones="J U R Y D Y1 CH N O"/>
+   </word>
    <word name="якщо">
       <pron code="ящо" phones="J A SH CH O1"/>
    </word>
@@ -186,6 +212,9 @@
    </word>
    <word name="ідентичність">
       <pron code="ідентичнісь" phones="I D E N T Y1 CH N1 I S1"/>
+   </word>
+   <word name="ілюстрацією">
+      <pron code="ілюстрацію" phones="I L1 U S T R A1 TS1 I J U"/>
    </word>
    <word name="інститу" phones="I N S T Y T U1"/>
    <word name="інф" phones="I1 N F"/>

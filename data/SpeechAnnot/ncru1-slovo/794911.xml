@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<audioAnnotation>
+   <header>
+      <speaker briefId="zakharevycho" name="Захаревич Олена"/>
+      <speaker briefId="khorkindm" name="Хоркін Дмитро Миколайович"/>
+      <speaker briefId="dergachdv" name="Дергач Дмитро Валерійович"/>
+   </header>
+   <syncPoint id="42" sampleInd="1926271" levelOfDetail="word" transcripText="дергач" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="2" sampleInd="1943520" levelOfDetail="word"/>
+   <syncPoint id="3" sampleInd="1949572" levelOfDetail="word" transcripText="об'єктом медіа лінгвістики беззаперечно є мова" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="5" sampleInd="2036956" levelOfDetail="word"/>
+   <syncPoint id="7" sampleInd="2039040" levelOfDetail="word" transcripText="масової інформації а предметність" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="9" sampleInd="2094358" levelOfDetail="word"/>
+   <syncPoint id="8" sampleInd="2100312" levelOfDetail="word" transcripText="виявляється залежно від тих аспектів які дослідник бере до уваги і" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="6" sampleInd="2211047" levelOfDetail="word"/>
+   <syncPoint id="12" sampleInd="2217232" levelOfDetail="word" transcripText="розробляє два роки(1) тому(2)" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="4" sampleInd="2257567" levelOfDetail="word"/>
+   <syncPoint id="17" sampleInd="2260676" levelOfDetail="word" transcripText="фперше в україні була запроваджена спеціалізація" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="19" sampleInd="2336087" levelOfDetail="word"/>
+   <syncPoint id="15" sampleInd="2338419" levelOfDetail="word" transcripText="для студентів" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="24" sampleInd="2364085" levelOfDetail="word"/>
+   <syncPoint id="13" sampleInd="2366516" levelOfDetail="word" transcripText="медіа лінгвістика вітповідно" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="23" sampleInd="2398202" levelOfDetail="word"/>
+   <syncPoint id="14" sampleInd="2433360" levelOfDetail="word" transcripText="тараса шевченка був першим хто запропонував і" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="33" sampleInd="2498154" levelOfDetail="word"/>
+   <syncPoint id="34" sampleInd="2502901" levelOfDetail="word" transcripText="започаткував цю спеціалізацію з медіа лінгвістики" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="1" sampleInd="2570341" levelOfDetail="word"/>
+   <syncPoint id="28" sampleInd="2573284" levelOfDetail="word" transcripText="коли студенти з третього року в межах спеціальності українська мова та література іноземна мова" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="26" sampleInd="2705138" levelOfDetail="word"/>
+   <syncPoint id="39" sampleInd="2715358" levelOfDetail="word" transcripText="мали можливість обрати цю спеціалізацію сформувати проблемну групу" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="46" sampleInd="2820702" levelOfDetail="word"/>
+   <syncPoint id="27" sampleInd="2825680" levelOfDetail="word" transcripText="студентів медіа лінгвістів" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="48" sampleInd="2859681" levelOfDetail="word"/>
+   <syncPoint id="50" sampleInd="2871770" levelOfDetail="word" transcripText="я хочу сказати що інтерес серед студенства до цієї спеціалізації був доволі високий" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="30" sampleInd="3005244" levelOfDetail="word"/>
+   <syncPoint id="54" sampleInd="3006947" levelOfDetail="word" transcripText="оскільки зи потоку" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="38" sampleInd="3054856" levelOfDetail="word"/>
+   <syncPoint id="59" sampleInd="3058726" levelOfDetail="word" transcripText="потік це сімдесят осіб" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="41" sampleInd="3110125" levelOfDetail="word"/>
+   <syncPoint id="47" sampleInd="3114292" levelOfDetail="word" transcripText="на рейтингові  конкурсній основі було сформовано проблемну групу з шістнацяти" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="61" sampleInd="3218627" levelOfDetail="word"/>
+   <syncPoint id="51" sampleInd="3223274" levelOfDetail="word" transcripText="осіп топто були вдібрані" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="53" sampleInd="3259905" levelOfDetail="word"/>
+   <syncPoint id="35" sampleInd="3263609" levelOfDetail="word" transcripText="серед усіх студентів за рейтинговим принципом шіснацять осіб і вже вони закінчують четвертий курс" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="22" sampleInd="3385077" levelOfDetail="word"/>
+   <syncPoint id="74" sampleInd="3385838" levelOfDetail="word" transcripText="вже зарас виходять на захист бакалаврської роботи(2)" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="52" sampleInd="3444397" levelOfDetail="word"/>
+   <syncPoint id="64" sampleInd="3447192" levelOfDetail="word" transcripText="два роки(1) вони активно працюють в цій групі слухаючи" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="29" sampleInd="3526737" levelOfDetail="word"/>
+   <syncPoint id="25" sampleInd="3534857" levelOfDetail="word" transcripText="спецкурси зи проблем медіа лінгвістики досліджуючи мову" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="65" sampleInd="3655482" levelOfDetail="word"/>
+   <syncPoint id="73" sampleInd="3660327" levelOfDetail="word" transcripText="активно спостерігаючи над" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="72" sampleInd="3706103" levelOfDetail="word"/>
+   <syncPoint id="89" sampleInd="3708352" levelOfDetail="word" transcripText="конкретними проблемами поки що локальними але це і добре" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="92" sampleInd="3788278" levelOfDetail="word"/>
+   <syncPoint id="66" sampleInd="3789485" levelOfDetail="word" transcripText="тому(2) що вони можуть на певному більш обмеженому матеріалі" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="77" sampleInd="3863556" levelOfDetail="word"/>
+   <syncPoint id="83" sampleInd="3864995" levelOfDetail="word" transcripText="показати всю глибину тих" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="82" sampleInd="3912028" levelOfDetail="word"/>
+   <syncPoint id="20" sampleInd="3913318" levelOfDetail="word" transcripText="процесі в мові які відбуваються і вони як молоді дослідники" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="85" sampleInd="3995675" levelOfDetail="word"/>
+   <syncPoint id="103" sampleInd="3996964" levelOfDetail="word" transcripText="серед" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="90" sampleInd="4006060" levelOfDetail="word"/>
+   <syncPoint id="43" sampleInd="4009864" levelOfDetail="word" transcripText="найбільш актуальних проблем є мова реклами" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="107" sampleInd="4070176" levelOfDetail="word"/>
+   <syncPoint id="94" sampleInd="4072524" levelOfDetail="word" transcripText="реклама візуальна(1) реклама" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="21" sampleInd="4116994" levelOfDetail="word"/>
+   <syncPoint id="113" sampleInd="4131514" levelOfDetail="word" transcripText="аудіо носіях реклама в інтернеті реклама в телебаченні топто" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="49" sampleInd="4213639" levelOfDetail="word"/>
+   <syncPoint id="118" sampleInd="4219328" levelOfDetail="word" transcripText="різні аспекти креолізації тексту вони досліджують коли можна говорити про" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="76" sampleInd="4332031" levelOfDetail="word"/>
+   <syncPoint id="106" sampleInd="4333354" levelOfDetail="word" transcripText="поєднання в мові зокрема(1) в мові реклами матеріалу різного коду" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="67" sampleInd="4436812" levelOfDetail="word"/>
+   <syncPoint id="91" sampleInd="4439690" levelOfDetail="word" transcripText="як мовного так і візуального чи аудіо" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="112" sampleInd="4519765" levelOfDetail="word"/>
+   <syncPoint id="16" sampleInd="4521881" levelOfDetail="word" transcripText="і в такі спосіб говорити про" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="58" sampleInd="4566483" levelOfDetail="word"/>
+   <syncPoint id="31" sampleInd="4573330" levelOfDetail="word" transcripText="елементи можливого впливу" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="44" sampleInd="4621338" levelOfDetail="word"/>
+   <syncPoint id="125" sampleInd="4624579" levelOfDetail="word" transcripText="і що більше впливає мова чи все ж таки візуальний" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="97" sampleInd="4693441" levelOfDetail="word"/>
+   <syncPoint id="148" sampleInd="4698105" levelOfDetail="word" transcripText="ряд черес колір черес форму черес кількісь черес росташування" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="88" sampleInd="4814975" levelOfDetail="word"/>
+   <syncPoint id="128" sampleInd="4817704" levelOfDetail="word" transcripText="так само(1) досліджуєця соціальна реклама як окремий" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="132" sampleInd="4893247" levelOfDetail="word"/>
+   <syncPoint id="87" sampleInd="4895000" levelOfDetail="word" transcripText="тип рекламного тексту який все ш таки налаштований не на прагматику а на відображення важливих" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="141" sampleInd="5045293" levelOfDetail="word"/>
+   <syncPoint id="147" sampleInd="5047129" levelOfDetail="word" transcripText="проблем які можуть стати" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="81" sampleInd="5091549" levelOfDetail="word"/>
+   <syncPoint id="56" sampleInd="5095038" levelOfDetail="word" transcripText="для суспільства актуальними" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="71" sampleInd="5138284" levelOfDetail="word"/>
+   <syncPoint id="115" sampleInd="5150141" levelOfDetail="word" transcripText="тому(2) саме(2) такі основні віяння в сучасній медіа лінгвістиці" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="126" sampleInd="5269261" levelOfDetail="word"/>
+   <syncPoint id="168" sampleInd="5270220" levelOfDetail="word" transcripText="які характерні для фахово наукового пошуку" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="133" sampleInd="5337527" levelOfDetail="word"/>
+   <syncPoint id="122" sampleInd="5343630" levelOfDetail="word" transcripText="на різних рівнях захищаюця докторські кандидацькі дисертації" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="32" sampleInd="5431064" levelOfDetail="word"/>
+   <syncPoint id="79" sampleInd="5432486" levelOfDetail="word" transcripText="але і студеньські роботи(2) і багато хто" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="143" sampleInd="5507368" levelOfDetail="word"/>
+   <syncPoint id="175" sampleInd="5512246" levelOfDetail="word" transcripText="хоче продовжувати" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="136" sampleInd="5539764" levelOfDetail="word"/>
+   <syncPoint id="117" sampleInd="5545586" levelOfDetail="word" transcripText="досліджувати цю проблематику" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="165" sampleInd="5583638" levelOfDetail="word"/>
+   <syncPoint id="127" sampleInd="5585507" levelOfDetail="word" transcripText="що засвіччує неприхований інтерес серед наукової студеньської громацькості" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="60" sampleInd="5709787" levelOfDetail="word"/>
+   <syncPoint id="155" sampleInd="5715591" levelOfDetail="word" transcripText="щодо медіа лінгвістичної проблематики" lang="uk" speakerBriefId="dergachdv"/>
+   <syncPoint id="169" sampleInd="5760639" levelOfDetail="word"/>
+   <syncPoint id="189" sampleInd="5776218" levelOfDetail="word" transcripText="це була росповідь кандидата філологічних наук дмитра дергача" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="150" sampleInd="5866827" levelOfDetail="word"/>
+   <syncPoint id="57" sampleInd="6058199" levelOfDetail="word" transcripText="ни правильного значення" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="62" sampleInd="6091985" levelOfDetail="word"/>
+   <syncPoint id="105" sampleInd="6096781" levelOfDetail="word" transcripText="наприклат" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="108" sampleInd="6108903" levelOfDetail="word"/>
+   <syncPoint id="130" sampleInd="6119933" levelOfDetail="word" transcripText="звітки взялися такі вислови як" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="99" sampleInd="6170174" levelOfDetail="word"/>
+</audioAnnotation>
