@@ -56,6 +56,7 @@
    <word name="діалектів">
       <pron code="тіалектів" phones="T1 I A L E1 K T1 I V"/>
    </word>
+   <word name="діджеі" phones="D1 I DZH E1 I"/>
    <word name="е" phones="E1"/>
    <word name="журнала" phones="ZH U R N A1 L A"/>
    <word name="задля">
@@ -102,6 +103,7 @@
    <word name="людьми">
       <pron code="людьми(1)" phones="L1 U1 D1 M Y"/>
    </word>
+   <word name="майданівські" phones="M A J D A1 N1 I V S1 K2 I"/>
    <word name="маштаб">
       <pron code="маштап" phones="M A SH T A1 P"/>
    </word>
@@ -120,6 +122,9 @@
    <word name="над">
       <pron code="нат" phones="N A1 T"/>
    </word>
+   <word name="народ">
+      <pron code="нарот" phones="N A R O1 T"/>
+   </word>
    <word name="настільки">
       <pron code="настіки" phones="N A S1 T1 I1 K Y"/>
    </word>
@@ -129,6 +134,7 @@
    <word name="небезпечний">
       <pron code="небеспечни" phones="N E B E S P E1 CH N Y"/>
    </word>
+   <word name="ньом" phones="N1 O1 M"/>
    <word name="обережні" phones="O B E R E1 ZH N1 I"/>
    <word name="овва" phones="O V V A1"/>
    <word name="однією" phones="O D N1 I J E1 J U"/>
@@ -142,6 +148,16 @@
    </word>
    <word name="позиціонує">
       <pron code="позицінує" phones="P O Z Y TS1 I N U1 J E"/>
+   </word>
+   <word name="помаранчевої" phones="P O M A R A1 N CH E V O J I"/>
+   <word name="посвідчення">
+      <pron code="посвіченя" phones="P O S V2 I1 CH E N1 A"/>
+   </word>
+   <word name="посвідчень">
+      <pron code="посвічень" phones="P O S V2 I1 CH E N1"/>
+   </word>
+   <word name="прийшовши">
+      <pron code="пришовши" phones="P R Y SH O1 V SH Y"/>
    </word>
    <word name="пропозиції">
       <pron code="пропозиці" phones="P R O P O Z Y1 TS1 I"/>
