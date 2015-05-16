@@ -58,9 +58,13 @@
    </word>
    <word name="діджеі" phones="D1 I DZH E1 I"/>
    <word name="е" phones="E1"/>
+   <word name="ерпа" phones="E R P A1"/>
    <word name="журнала" phones="ZH U R N A1 L A"/>
    <word name="задля">
       <pron code="садля" phones="S A1 D L1 A"/>
+   </word>
+   <word name="замість">
+      <pron code="замісь" phones="Z A1 M2 I S1"/>
    </word>
    <word name="звідси">
       <pron code="звітти" phones="Z V2 I1 T T Y"/>
@@ -156,6 +160,7 @@
    <word name="посвідчень">
       <pron code="посвічень" phones="P O S V2 I1 CH E N1"/>
    </word>
+   <word name="працюючих" phones="P R A TS1 U1 J U CH Y KH"/>
    <word name="прийшовши">
       <pron code="пришовши" phones="P R Y SH O1 V SH Y"/>
    </word>
@@ -186,6 +191,12 @@
    <word name="скільки">
       <pron code="скіки" phones="S K2 I1 K Y"/>
    </word>
+   <word name="славутича">
+      <pron code="славутича(4)" phones="S L A V U T Y CH A1"/>
+   </word>
+   <word name="слукий" phones="S L U1 K Y J"/>
+   <word name="слути" phones="S L U1 T Y"/>
+   <word name="случ" phones="S L U1 CH"/>
    <word name="способу">
       <pron code="спосу" phones="S P O1 S U"/>
    </word>
@@ -198,9 +209,15 @@
    </word>
    <word name="ся" phones="S1 A1"/>
    <word name="текс" phones="T E1 K S"/>
+   <word name="тепла">
+      <pron code="пепла" phones="P E1 P L A"/>
+   </word>
    <word name="тисячного" phones="T Y1 S1 A CH N O H O"/>
    <word name="тютюнник">
       <pron code="тютюнни" phones="T1 U T1 U1 N N Y"/>
+   </word>
+   <word name="українського">
+      <pron code="українськоо" phones="U K R A J I1 N1 S1 K O O"/>
    </word>
    <word name="українські" phones="U K R A J I1 N1 S1 K2 I"/>
    <word name="утвердження">
@@ -213,6 +230,9 @@
    </word>
    <word name="чимось">
       <pron code="чимусь" phones="CH Y1 M U S1"/>
+   </word>
+   <word name="чисельність">
+      <pron code="чисельнісь" phones="CH Y S E1 L1 N1 I S1"/>
    </word>
    <word name="шинець" phones="SH Y N E1 TS1"/>
    <word name="юей" phones="J U E1 J"/>
