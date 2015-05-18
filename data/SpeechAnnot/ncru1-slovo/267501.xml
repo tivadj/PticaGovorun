@@ -99,7 +99,10 @@
    <syncPoint id="71" sampleInd="5466619" levelOfDetail="word"/>
    <syncPoint id="62" sampleInd="5474259" levelOfDetail="word" transcripText="інших держав" lang="uk" speakerBriefId="grytsenkopj"/>
    <syncPoint id="628" sampleInd="5505284" levelOfDetail="word"/>
-   <syncPoint id="650" sampleInd="5506260" levelOfDetail="word" transcripText="але прихильних до української мови і культури" lang="uk" speakerBriefId="grytsenkopj"/>
+   <syncPoint id="650" sampleInd="5506260" levelOfDetail="word" transcripText="але прихильни" lang="uk" speakerBriefId="grytsenkopj"/>
+   <syncPoint id="252" sampleInd="5534043" levelOfDetail="word"/>
+   <syncPoint id="709" sampleInd="5540079" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="525" sampleInd="5560899" levelOfDetail="word" transcripText="мови і культури" lang="uk" speakerBriefId="grytsenkopj"/>
    <syncPoint id="13" sampleInd="5589559" levelOfDetail="word"/>
    <syncPoint id="60" sampleInd="5596356" levelOfDetail="word" transcripText="яки або(1) беруть беспосередню участь як конкурсанти" lang="uk" speakerBriefId="grytsenkopj"/>
    <syncPoint id="113" sampleInd="5723397" levelOfDetail="word"/>
