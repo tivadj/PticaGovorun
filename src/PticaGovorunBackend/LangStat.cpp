@@ -136,7 +136,7 @@ namespace PticaGovorun
 	//	return wordId;
 	//}
 
-	const WordPart* WordsUsageInfo::wordPartByValue(const std::wstring& partText, WordPartSide partSide)
+	const WordPart* WordsUsageInfo::wordPartByValue(const std::wstring& partText, WordPartSide partSide) const
 	{
 		auto wordPartIt = partTextToWordPart_.find(partText);
 		if (wordPartIt != partTextToWordPart_.end())

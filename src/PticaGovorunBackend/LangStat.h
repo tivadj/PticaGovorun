@@ -89,7 +89,7 @@ namespace PticaGovorun
 		//int pushWordPart(std::unique_ptr<WordPart> wordPart);
 		WordPart* pushWordPart(WordPart&& wordPart);
 		const WordPart* wordPartById(int wordPartId) const;
-		const WordPart* wordPartByValue(const std::wstring& partText, WordPartSide partSide);
+		const WordPart* wordPartByValue(const std::wstring& partText, WordPartSide partSide) const;
 		const WordPart* getOrAddWordPart(const std::wstring& partText, WordPartSide partSide, bool* wasAdded = nullptr);
 
 	public:

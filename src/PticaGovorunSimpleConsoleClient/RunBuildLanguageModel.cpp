@@ -405,7 +405,7 @@ namespace RunBuildLanguageModelNS
 	}
 
 	void writePhoneticDictionary(const wchar_t* filePath, wv::slice<const WordPart*> seedWordParts, const UkrainianPhoneticSplitter& phoneticSplitter, 
-		const PhoneRegistry& phoneReg, WordPhoneticTranscriber& phoneticTranscriber)
+		const PhoneRegistry& phoneReg, std::map<boost::wstring_ref, PronunciationFlavour>& pronCodeToPronObj, WordPhoneticTranscriber& phoneticTranscriber)
 	{
 		QFile lmFile(QString::fromStdWString(filePath));
 		if (!lmFile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -425,13 +425,23 @@ namespace RunBuildLanguageModelNS
 			dumpFileStream << "\t";
 
 			phones.clear();
-			phoneticTranscriber.transcribe(phoneReg, wordPart->partText());
-			if (phoneticTranscriber.hasError())
+
+			auto knownWordIt = pronCodeToPronObj.find(wordPart->partText());
+			if (knownWordIt != pronCodeToPronObj.end())
 			{
-				std::wcerr << L"Can't transcribe word=" << wordPart->partText() << std::endl;
-				return;
+				const PronunciationFlavour& pron = knownWordIt->second;
+				std::copy(pron.Phones.begin(), pron.Phones.end(), std::back_inserter(phones));
 			}
-			phoneticTranscriber.copyOutputPhoneIds(phones);
+			else
+			{
+				phoneticTranscriber.transcribe(phoneReg, wordPart->partText());
+				if (phoneticTranscriber.hasError())
+				{
+					std::wcerr << L"Can't transcribe word=" << wordPart->partText() << std::endl;
+					return;
+				}
+				phoneticTranscriber.copyOutputPhoneIds(phones);
+			}
 
 			std::string phoneListStr;
 			bool pronToStrOp = phoneListToStr(phoneReg, phones, phoneListStr);
@@ -442,7 +452,8 @@ namespace RunBuildLanguageModelNS
 		}
 	}
 
-	void chooseSeedUnigrams(const UkrainianPhoneticSplitter& phoneticSplitter, int minWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, const PhoneRegistry& phoneReg, std::vector<const WordPart*>& result)
+	void chooseSeedUnigrams(const UkrainianPhoneticSplitter& phoneticSplitter, int minWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, const PhoneRegistry& phoneReg, 
+		const std::map<boost::wstring_ref, PronunciationFlavour>& pronCodeToPronObj, std::vector<const WordPart*>& result)
 	{
 		const WordsUsageInfo& wordUsage = phoneticSplitter.wordUsage();
 		
@@ -464,6 +475,19 @@ namespace RunBuildLanguageModelNS
 				continue;
 			}
 
+			// always include pronIds
+			bool includeTrainWordsInLM = true;
+			if (includeTrainWordsInLM)
+			{
+				auto knownWordIt = pronCodeToPronObj.find(wordPart->partText());
+				if (knownWordIt != pronCodeToPronObj.end())
+				{
+					wordPartSureInclude.push_back(wordPart);
+					continue;
+				}
+			}
+
+			// add word as is
 			auto canSpellFun = [&wordUsage, &phoneticSplitter, &phonesTmp, &phoneReg](const WordPart* part)
 			{
 				PG_Assert(part != phoneticSplitter.sentStartWordPart() && part != phoneticSplitter.sentEndWordPart());
@@ -509,16 +533,116 @@ namespace RunBuildLanguageModelNS
 				wordPartCandidates.resize(takeUnigrams);
 		}
 
-		wordPartCandidates.insert(wordPartCandidates.end(), wordPartSureInclude.begin(), wordPartSureInclude.end());
-
-		// sort alphabetically
+		// sort lexicographically
 		std::sort(wordPartCandidates.begin(), wordPartCandidates.end(), [&wordUsage](const WordPart* a, const WordPart* b)
 		{
-			auto opLess = std::less<std::wstring>();
-			return opLess(a->partText(), b->partText());
+			return a->partText() < b->partText();
 		});
 
+		wordPartCandidates.insert(wordPartCandidates.end(), wordPartSureInclude.begin(), wordPartSureInclude.end());
+
 		result.insert(result.end(), std::begin(wordPartCandidates), std::end(wordPartCandidates));
+	}
+
+	void inferPhoneticDictPronIdsUsage(UkrainianPhoneticSplitter& phoneticSplitter, const std::map<boost::wstring_ref, PhoneticWord>& phoneticDict)
+	{
+		WordsUsageInfo& wordUsage = phoneticSplitter.wordUsage();
+
+		// step1: insert pronIds
+		for (const auto& pair : phoneticDict)
+		{
+			const PhoneticWord& word = pair.second;
+			std::wstring wordW = toStdWString(word.Word);
+
+			long wordTimesUsed = -1;
+			const WordPart* wordPart = wordUsage.wordPartByValue(wordW, WordPartSide::WholeWord);
+			if (wordPart != nullptr)
+			{
+				WordSeqKey key = { wordPart->id() };
+				wordTimesUsed = wordUsage.getWordSequenceUsage(key);
+			}
+
+			for (const PronunciationFlavour& pron : word.Pronunciations)
+			{
+				bool wasAdded = false;
+				const WordPart* pronPart = wordUsage.getOrAddWordPart(toStdWString(pron.PronCode), WordPartSide::WholeWord, &wasAdded);
+				if (wasAdded && wordTimesUsed != -1)
+				{
+					// evenly propogate word usage to pronIds
+					WordSeqKey key = { pronPart->id() };
+					WordSeqUsage* u = wordUsage.getOrAddWordSequence(key, &wasAdded);
+					u->UsedCount = wordTimesUsed / word.Pronunciations.size();
+				}
+			}
+		}
+
+		// propogate word usage on pronIds for bigram
+
+		std::vector<const WordSeqUsage*> wordSeqUsages;
+		wordUsage.copyWordSeq(wordSeqUsages);
+		for (const WordSeqUsage* seqUsage : wordSeqUsages)
+		{
+			if (seqUsage->Key.PartCount != 2) // 2=bigram
+				continue;
+
+			int wordPart1Id = seqUsage->Key.PartIds[0];
+			int wordPart2Id = seqUsage->Key.PartIds[1];
+
+			const WordPart* wordPart1 = wordUsage.wordPartById(wordPart1Id);
+			PG_Assert(wordPart1 != nullptr);
+
+			const WordPart* wordPart2 = wordUsage.wordPartById(wordPart2Id);
+			PG_Assert(wordPart2 != nullptr);
+
+			// the wordPart may point to a word which can be expanded to pronId in multiple ways
+			auto wordIt1 = phoneticDict.find(wordPart1->partText());
+			auto wordIt2 = phoneticDict.find(wordPart2->partText());
+			bool noExpansion = wordIt1 == phoneticDict.end() && wordIt2 == phoneticDict.end();
+			if (noExpansion)
+				continue;
+
+			auto collectPronIds = [&phoneticDict, &wordUsage](const PhoneticWord& word, std::vector<const WordPart*>& parts)
+			{
+				for (const PronunciationFlavour& pron : word.Pronunciations)
+				{
+					const WordPart* pronPart = wordUsage.wordPartByValue(toStdWString(pron.PronCode), WordPartSide::WholeWord);
+					PG_Assert(pronPart != nullptr && "PronIds were added in step1");
+					parts.push_back(pronPart);
+				}
+			};
+
+			std::vector<const WordPart*> parts1;
+			if (wordIt1 != phoneticDict.end())
+			{
+				const PhoneticWord& word1 = wordIt1->second;
+				collectPronIds(word1, parts1);
+			}
+			else parts1.push_back(wordPart1);
+
+			std::vector<const WordPart*> parts2;
+			if (wordIt2 != phoneticDict.end())
+			{
+				const PhoneticWord& word2 = wordIt2->second;
+				collectPronIds(word2, parts2);
+			}
+			else parts2.push_back(wordPart2);
+
+			// evenly distribute usage across all pronIds
+			long usagePerPronId = seqUsage->UsedCount / (parts1.size() * parts2.size());
+			if (usagePerPronId == 0) // keep min usage > 0
+				usagePerPronId = 1;
+			for (size_t i1 = 0; i1 < parts1.size(); ++i1)
+				for (size_t i2 = 0; i2 < parts2.size(); ++i2)
+				{
+					const WordPart* p1 = parts1[i1];
+					const WordPart* p2 = parts2[i2];
+
+					WordSeqKey biKey = { p1->id(), p2->id() };
+					bool wasAdded = false;
+					WordSeqUsage* u = wordUsage.getOrAddWordSequence(biKey, &wasAdded);
+					u->UsedCount = usagePerPronId;
+				}
+		}
 	}
 
 	void testLoadDeclinationDict(int argc, wchar_t* argv[])
@@ -620,19 +744,48 @@ namespace RunBuildLanguageModelNS
 
 		phoneticSplitter.printSuffixUsageStatistics();
 
+		//
 		PhoneRegistry phoneReg;
-		bool allowSoftHardConsonant = false;
-		bool allowVowelStress = false;
+		bool allowSoftHardConsonant = true;
+		bool allowVowelStress = true;
 		phoneReg.setPalatalSupport(PalatalSupport::AsHard);
 		initPhoneRegistryUk(phoneReg, allowSoftHardConsonant, allowVowelStress);
 
+		//
+		GrowOnlyPinArena<wchar_t> stringArena(10000);
+		std::vector<PhoneticWord> phoneticDictWords;
+		bool loadPhoneDict;
+		const char* errMsg = nullptr;
+		const wchar_t* persianDictPathK = LR"path(C:\devb\PticaGovorunProj\srcrep\data\phoneticDictUkKnown.xml)path";
+		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryXml(persianDictPathK, phoneReg, phoneticDictWords, stringArena);
+		if (!loadPhoneDict)
+		{
+			std::cerr << "Can't load phonetic dictionary " << errMsg << std::endl;
+			return;
+		}
+
+		std::map<boost::wstring_ref, PhoneticWord> phoneticDict;
+		std::map<boost::wstring_ref, PronunciationFlavour> pronCodeToPronObj;
+		reshapeAsDict(phoneticDictWords, phoneticDict);
+		for (const auto& pair : phoneticDict)
+		{
+			const PhoneticWord& word =  pair.second;
+			for (const PronunciationFlavour& pron : word.Pronunciations)
+			{
+				pronCodeToPronObj[pron.PronCode] = pron;
+			}
+		}
+		
+		// ensure that LM covers all pronunciations in phonetic dictionary
+		inferPhoneticDictPronIdsUsage(phoneticSplitter, phoneticDict);
+
 		// note, the positive threshold may evict the rare words
-		//int maxWordPartUsage = 10;
-		int maxWordPartUsage = -1;
+		int maxWordPartUsage = 10;
+		//int maxWordPartUsage = -1;
 		//int maxUnigramsCount = 10000;
 		int maxUnigramsCount = -1;
 		std::vector<const WordPart*> seedUnigrams;
-		chooseSeedUnigrams(phoneticSplitter, maxWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, phoneReg, seedUnigrams);
+		chooseSeedUnigrams(phoneticSplitter, maxWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, phoneReg, pronCodeToPronObj, seedUnigrams);
 		std::wcout << L"seed unigrams count=" << seedUnigrams.size() << std::endl;
 
 		//
@@ -649,8 +802,6 @@ namespace RunBuildLanguageModelNS
 		//
 		const wchar_t* stressDict = LR"path(C:\devb\PticaGovorunProj\data\stressDictUk.xml)path";
 		std::unordered_map<std::wstring, int> wordToStressedSyllable;
-		bool loadPhoneDict;
-		const char* errMsg;
 		std::tie(loadPhoneDict, errMsg) = loadStressedSyllableDictionaryXml(stressDict, wordToStressedSyllable);
 		if (!loadPhoneDict)
 		{
@@ -674,7 +825,7 @@ namespace RunBuildLanguageModelNS
 		phonDictFileName << "persianDic.";
 		appendTimeStampNow(phonDictFileName);
 		phonDictFileName << ".txt";
-		writePhoneticDictionary(phonDictFileName.str().c_str(), seedUnigrams, phoneticSplitter, phoneReg, phoneticTranscriber);
+		writePhoneticDictionary(phonDictFileName.str().c_str(), seedUnigrams, phoneticSplitter, phoneReg, pronCodeToPronObj, phoneticTranscriber);
 	}
 
 	void tinkerWithPhoneticSplit(int argc, wchar_t* argv[])
