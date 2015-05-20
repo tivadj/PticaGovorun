@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phoneticDict>
+   <word name="inhale" phones="KH"/>
    <word name="або">
       <pron code="або(1)" phones="A1 B O"/>
       <pron code="апо" phones="A P O1"/>
@@ -47,6 +48,7 @@
       <pron code="тіалектів" phones="T1 I A L E1 K T1 I V"/>
    </word>
    <word name="е" phones="E1"/>
+   <word name="еленер" phones="E1 L E N E1 R"/>
    <word name="ерпа" phones="E R P A1"/>
    <word name="задля">
       <pron code="садля" phones="S A1 D L1 A"/>
@@ -125,6 +127,7 @@
    <word name="небезпечний">
       <pron code="небеспечни" phones="N E B E S P E1 CH N Y"/>
    </word>
+   <word name="неті" phones="N E1 T1 I"/>
    <word name="ньом" phones="N1 O1 M"/>
    <word name="обкомам" phones="O1 P K O1 M A M"/>
    <word name="овва" phones="O V V A1"/>
@@ -193,6 +196,7 @@
       <pron code="сумніф" phones="S U1 M N1 I F"/>
    </word>
    <word name="ся" phones="S1 A1"/>
+   <word name="сєпари" phones="S1 E1 P A R Y"/>
    <word name="текс" phones="T E1 K S"/>
    <word name="тепла">
       <pron code="пепла" phones="P E1 P L A"/>
@@ -205,6 +209,9 @@
    </word>
    <word name="тютюнник">
       <pron code="тютюнни" phones="T1 U T1 U1 N N Y"/>
+   </word>
+   <word name="тією">
+      <pron code="тію" phones="T1 I1 J U"/>
    </word>
    <word name="уряд">
       <pron code="урят" phones="U1 R1 A T"/>
@@ -227,6 +234,9 @@
       <pron code="чисельнісь" phones="CH Y S E1 L1 N1 I S1"/>
    </word>
    <word name="шинець" phones="SH Y N E1 TS1"/>
+   <word name="широкого">
+      <pron code="широкоо" phones="SH Y R O1 K O O"/>
+   </word>
    <word name="юей" phones="J U E1 J"/>
    <word name="юридичного">
       <pron code="юридично" phones="J U R Y D Y1 CH N O"/>
@@ -253,6 +263,7 @@
    <word name="ілюстрацією">
       <pron code="ілюстрацію" phones="I L1 U S T R A1 TS1 I J U"/>
    </word>
+   <word name="інеті" phones="I N E1 T1 I"/>
    <word name="інститу" phones="I N S T Y T U1"/>
    <word name="інф" phones="I1 N F"/>
    <word name="інформації">
