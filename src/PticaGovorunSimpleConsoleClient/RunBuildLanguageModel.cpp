@@ -533,13 +533,13 @@ namespace RunBuildLanguageModelNS
 				wordPartCandidates.resize(takeUnigrams);
 		}
 
+		wordPartCandidates.insert(wordPartCandidates.end(), wordPartSureInclude.begin(), wordPartSureInclude.end());
+
 		// sort lexicographically
 		std::sort(wordPartCandidates.begin(), wordPartCandidates.end(), [&wordUsage](const WordPart* a, const WordPart* b)
 		{
 			return a->partText() < b->partText();
 		});
-
-		wordPartCandidates.insert(wordPartCandidates.end(), wordPartSureInclude.begin(), wordPartSureInclude.end());
 
 		result.insert(result.end(), std::begin(wordPartCandidates), std::end(wordPartCandidates));
 	}

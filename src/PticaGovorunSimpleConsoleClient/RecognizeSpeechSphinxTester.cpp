@@ -344,6 +344,16 @@ namespace RecognizeSpeechSphinxTester
 		}
 	};
 
+	std::vector<std::wstring> toStdWStringVec(const std::vector<boost::wstring_ref>& refs)
+	{
+		std::vector<std::wstring> result(refs.size());
+		std::transform(refs.begin(), refs.end(), result.begin(), [](boost::wstring_ref r) -> std::wstring 
+		{
+			return toStdWString(r);
+		});
+		return result;
+	}
+
 	// Result of comparing expected text with decoded speech.
 	struct TwoUtterances
 	{
@@ -353,8 +363,8 @@ namespace RecognizeSpeechSphinxTester
 		std::wstring TextActual;
 		std::vector<boost::wstring_ref> PronIdsExpected; // слова(2)
 		std::vector<boost::wstring_ref> WordsExpected; // слова without any braces
+		std::vector<std::wstring> PronIdsActualRaw;
 		std::vector<std::wstring> WordsActual;
-		std::vector<std::wstring> WordsActualMerged;
 		std::vector<float> WordProbs; // confidence of each recognized word
 		std::vector<float> WordProbsMerged;
 		std::vector<PhoneId> PhonesExpected;
@@ -368,8 +378,8 @@ namespace RecognizeSpeechSphinxTester
 		int& wordErrorTotalCount, int& wordTotalCount,
 		EditDistance<PhoneId, PhoneProximityCosts>& phonesEditDist,
 		const PhoneProximityCosts& editCost,
-		const std::map<boost::wstring_ref, boost::wstring_ref>& pronIdToWordTrain,
-		const std::map<boost::wstring_ref, PronunciationFlavour>& pronIdToPronObjTrain,
+		const std::map<boost::wstring_ref, boost::wstring_ref>& pronIdToWordKnown,
+		const std::map<boost::wstring_ref, PronunciationFlavour>& pronIdToPronObjKnown,
 		const std::map<boost::wstring_ref, boost::wstring_ref>& pronIdToWordTest,
 		const std::map<boost::wstring_ref, PronunciationFlavour>& pronIdToPronObjTest,
 		const PhoneRegistry& phoneReg)
@@ -441,13 +451,13 @@ namespace RecognizeSpeechSphinxTester
 			std::wstring hypWStr = textCodec->toUnicode(hyp).toStdWString();
 
 			// find words and word probabilities
-			std::vector<std::wstring> wordsActual;
+			std::vector<std::wstring> pronIdsActualRaw;
 			std::vector<float> wordsActualProbs;
 			for (ps_seg_t *recogSeg = ps_seg_iter(ps, &score); recogSeg; recogSeg = ps_seg_next(recogSeg))
 			{
 				const char* word = ps_seg_word(recogSeg);
 				std::wstring wordWStr = textCodec->toUnicode(word).toStdWString();
-				wordsActual.push_back(wordWStr);
+				pronIdsActualRaw.push_back(wordWStr);
 
 				int startFrame, endFrame;
 				ps_seg_frames(recogSeg, &startFrame, &endFrame);
@@ -463,15 +473,15 @@ namespace RecognizeSpeechSphinxTester
 
 			std::vector<std::wstring> pronIdsActualMerged;
 			std::vector<float> pronIdsActualProbsMerged;
-			if (!wordsActual.empty())
+			if (!pronIdsActualRaw.empty())
 			{
-				pronIdsActualMerged.push_back(wordsActual.front());
+				pronIdsActualMerged.push_back(pronIdsActualRaw.front());
 				pronIdsActualProbsMerged.push_back(wordsActualProbs.front());
 			}
-			for (size_t wordInd = 1; wordInd < wordsActual.size(); ++wordInd)
+			for (size_t wordInd = 1; wordInd < pronIdsActualRaw.size(); ++wordInd)
 			{
 				const std::wstring& prev = pronIdsActualMerged.back();
-				const std::wstring& cur = wordsActual[wordInd];
+				const std::wstring& cur = pronIdsActualRaw[wordInd];
 				float prevProb = pronIdsActualProbsMerged.back();
 				float curProb = wordsActualProbs[wordInd];
 				if (prev.back() == L'~' && cur.front() == L'~')
@@ -505,10 +515,10 @@ namespace RecognizeSpeechSphinxTester
 
 			// map pronId -> word (eg. слова(2) -> слова)
 			std::vector<boost::wstring_ref> wordsExpected;
-			std::transform(pronIdsExpected.begin(), pronIdsExpected.end(), std::back_inserter(wordsExpected), [&pronIdToWordTrain](boost::wstring_ref pronId)
+			std::transform(pronIdsExpected.begin(), pronIdsExpected.end(), std::back_inserter(wordsExpected), [&pronIdToWordKnown](boost::wstring_ref pronId)
 			{
-				auto wordIt = pronIdToWordTrain.find(pronId);
-				if (wordIt != pronIdToWordTrain.end())
+				auto wordIt = pronIdToWordKnown.find(pronId);
+				if (wordIt != pronIdToWordKnown.end())
 				{
 					boost::wstring_ref word = wordIt->second;
 					return word;
@@ -517,16 +527,17 @@ namespace RecognizeSpeechSphinxTester
 			});
 
 			// skip silences for word-error computation
-			std::vector<boost::wstring_ref> wordsActualNoSil;
-			std::copy_if(std::begin(pronIdsActualMerged), std::end(pronIdsActualMerged), std::back_inserter(wordsActualNoSil), [](std::wstring& word)
+			std::vector<boost::wstring_ref> pronIdsActualNoSil;
+			std::copy_if(std::begin(pronIdsActualMerged), std::end(pronIdsActualMerged), std::back_inserter(pronIdsActualNoSil), [](std::wstring& word)
 			{
 				return word != std::wstring(L"<s>") && word != std::wstring(L"</s>") && word != std::wstring(L"<sil>");
 			});
 			// map pronId -> word (eg. слова(2) -> слова)
-			std::transform(wordsActualNoSil.begin(), wordsActualNoSil.end(), wordsActualNoSil.begin(), [&pronIdToWordTest](boost::wstring_ref pronId)
+			std::vector<boost::wstring_ref> wordsActualNoSil(pronIdsActualNoSil.size());
+			std::transform(pronIdsActualNoSil.begin(), pronIdsActualNoSil.end(), wordsActualNoSil.begin(), [&pronIdToWordKnown](boost::wstring_ref pronId)
 			{
-				auto wordIt = pronIdToWordTest.find(pronId);
-				if (wordIt != pronIdToWordTest.end())
+				auto wordIt = pronIdToWordKnown.find(pronId);
+				if (wordIt != pronIdToWordKnown.end())
 				{
 					boost::wstring_ref word = wordIt->second;
 					return word;
@@ -553,21 +564,27 @@ namespace RecognizeSpeechSphinxTester
 			std::vector<PhoneId> expectedPhones;
 			for (boost::wstring_ref pronId : pronIdsExpected)
 			{
-				auto pronIdIt = pronIdToPronObjTrain.find(pronId);
-				PG_Assert(pronIdIt != pronIdToPronObjTrain.end() && "The pronId used in transcription must exist in manual phonetic dictionary");
+				// the pronId must exist in 'known' phonetic dictionary because 'known' covers all pronIds in transcripted speech
+				//auto pronIdIt = pronIdToPronObjKnown.find(pronId);
+				//PG_Assert(pronIdIt != pronIdToPronObjKnown.end() && "The pronId used in transcription must exist in manual phonetic dictionary");
+				auto pronIdIt = pronIdToPronObjTest.find(pronId);
+				PG_Assert(pronIdIt != pronIdToPronObjTest.end() && "The pronId used in transcription must exist in manual phonetic dictionary");
+
 				const PronunciationFlavour& pronObj = pronIdIt->second;
 				std::copy(pronObj.Phones.begin(), pronObj.Phones.end(), std::back_inserter(expectedPhones));
 			}
 
 			std::vector<PhoneId> actualPhones;
-			for (boost::wstring_ref actualWord : wordsActualNoSil)
+			for (boost::wstring_ref actualWord : pronIdsActualNoSil)
 			{
+				// the pronId is either in 'known' dict or in 'runtime' dict
 				auto pronIdIt = pronIdToPronObjTest.find(actualWord);
-				PG_Assert(pronIdIt != pronIdToPronObjTest.end() && "The word from the output of recognition engine must exist in phonetic dictionary");
+				PG_Assert(pronIdIt != pronIdToPronObjTest.end() && "The pronId used in transcription must exist in manual phonetic dictionary OR in ");
+
 				const PronunciationFlavour& pronObj = pronIdIt->second;
 				std::copy(pronObj.Phones.begin(), pronObj.Phones.end(), std::back_inserter(actualPhones));
-
 			}
+
 			phonesEditDist.estimateAllDistances(expectedPhones, actualPhones, editCost);
 			std::vector<EditStep> phoneEditRecipe;
 			phonesEditDist.minCostRecipe(phoneEditRecipe);
@@ -621,9 +638,9 @@ namespace RecognizeSpeechSphinxTester
 			utter.Segment = seg;
 			utter.TextActual = hypWStr;
 			utter.PronIdsExpected = pronIdsExpected;
+			utter.PronIdsActualRaw = pronIdsActualRaw;
 			utter.WordsExpected = wordsExpected;
-			utter.WordsActual = wordsActual;
-			utter.WordsActualMerged = pronIdsActualMerged;
+			utter.WordsActual = toStdWStringVec(wordsActualNoSil);
 			utter.WordProbs = wordsActualProbs;
 			utter.WordProbsMerged = pronIdsActualProbsMerged;
 			utter.PhonesExpected = expectedPhones;
@@ -734,25 +751,18 @@ namespace RecognizeSpeechSphinxTester
 		readFileId(testFileIdPath, fileIdLines);
 
 		PhoneRegistry phoneReg;
-		bool allowSoftHardConsonant = false;
-		bool allowVowelStress = false;
+		bool allowSoftHardConsonant = true;
+		bool allowVowelStress = true;
 		phoneReg.setPalatalSupport(PalatalSupport::AsHard);
 		initPhoneRegistryUk(phoneReg, allowSoftHardConsonant, allowVowelStress);
 
 		// map pronunciation as word (pronId) to corresponding word
 		GrowOnlyPinArena<wchar_t> stringArena(10000);
-		std::vector<PhoneticWord> phoneticDictTrain;
+		std::vector<PhoneticWord> phoneticDictKnown;
 		bool loadPhoneDict;
 		const char* errMsg = nullptr;
 		const wchar_t* persianDictPathK = LR"path(C:\devb\PticaGovorunProj\srcrep\data\phoneticDictUkKnown.xml)path";
-		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryXml(persianDictPathK, phoneReg, phoneticDictTrain, stringArena);
-		if (!loadPhoneDict)
-		{
-			std::cerr << "Can't load phonetic dictionary " << errMsg << std::endl;
-			return;
-		}
-		const wchar_t* persianDictPathB = LR"path(C:\devb\PticaGovorunProj\srcrep\data\phoneticDictUkBroken.xml)path";
-		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryXml(persianDictPathB, phoneReg, phoneticDictTrain, stringArena);
+		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryXml(persianDictPathK, phoneReg, phoneticDictKnown, stringArena);
 		if (!loadPhoneDict)
 		{
 			std::cerr << "Can't load phonetic dictionary " << errMsg << std::endl;
@@ -783,9 +793,9 @@ namespace RecognizeSpeechSphinxTester
 				}
 			}
 		};
-		std::map<boost::wstring_ref, boost::wstring_ref> pronIdToWordTrain;
-		std::map<boost::wstring_ref, PronunciationFlavour> pronIdToPronObjTrain;
-		populatePhoneDict(phoneticDictTrain, pronIdToWordTrain, pronIdToPronObjTrain);
+		std::map<boost::wstring_ref, boost::wstring_ref> pronIdToWordKnown;
+		std::map<boost::wstring_ref, PronunciationFlavour> pronIdToPronObjKnown;
+		populatePhoneDict(phoneticDictKnown, pronIdToWordKnown, pronIdToPronObjKnown);
 
 		std::map<boost::wstring_ref, boost::wstring_ref> pronIdToWordTest;
 		std::map<boost::wstring_ref, PronunciationFlavour> pronIdToPronObjTest;
@@ -854,7 +864,7 @@ namespace RecognizeSpeechSphinxTester
 		std::vector<TwoUtterances> recogUtterances;
 		decodeSpeechSegments(segments, ps, targetFrameRate, recogUtterances,
 			phoneConfusionMat, phonesCount, wordErrorTotalCount, wordTotalCount, phonesEditDist, phoneCosts, 
-			pronIdToWordTrain, pronIdToPronObjTrain, 
+			pronIdToWordKnown, pronIdToPronObjKnown, 
 			pronIdToWordTest, pronIdToPronObjTest, phoneReg);
 
 		// the call may crash if phonetic dictionary was not correctly initialized (eg .dict file is empty)
@@ -899,13 +909,13 @@ namespace RecognizeSpeechSphinxTester
 			dumpFileStream << "ExpectProns=" << QString::fromStdWString(utter.Segment.TranscriptText) << "\n";
 
 			buff.str(L"");
-			PticaGovorun::join(utter.WordsActual.cbegin(), utter.WordsActual.cend(), separ, buff);
+			PticaGovorun::join(utter.PronIdsActualRaw.cbegin(), utter.PronIdsActualRaw.cend(), separ, buff);
 			dumpFileStream << "ActualRaw=" << QString::fromStdWString(buff.str()) << "\n";
 
 			dumpFileStream << "WordProbs=";
-			for (int wordInd = 0; wordInd < utter.WordsActual.size(); ++wordInd)
+			for (int wordInd = 0; wordInd < utter.PronIdsActualRaw.size(); ++wordInd)
 			{
-				dumpFileStream << QString::fromStdWString(utter.WordsActual[wordInd]) << " ";
+				dumpFileStream << QString::fromStdWString(utter.PronIdsActualRaw[wordInd]) << " ";
 				dumpFileStream << QString("%1").arg(utter.WordProbs[wordInd], 0, 'f', 2) << " ";
 			}
 			dumpFileStream << "\n"; // end after last prob
@@ -916,7 +926,7 @@ namespace RecognizeSpeechSphinxTester
 			//dumpFileStream << "ExpectWords=" << QString::fromStdWString(expectWords) << "\n";
 
 			buff.str(L"");
-			PticaGovorun::join(utter.WordsActualMerged.cbegin(), utter.WordsActualMerged.cend(), separ, buff);
+			PticaGovorun::join(utter.WordsActual.cbegin(), utter.WordsActual.cend(), separ, buff);
 			std::wstring actualWords = buff.str();
 			//dumpFileStream << "ActualWords=" << QString::fromStdWString(actualWords) << "\n";
 
