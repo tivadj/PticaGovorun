@@ -22,6 +22,9 @@
       <pron code="використа" phones="V Y1 K O R Y S T A"/>
       <pron code="використ" phones="V Y1 K O R Y S T"/>
    </word>
+   <word name="включити">
+      <pron code="уключити" phones="V K L1 U CH Y1 T Y"/>
+   </word>
    <word name="вперше">
       <pron code="фперше" phones="F P E1 R SH E"/>
    </word>
@@ -212,6 +215,9 @@
    </word>
    <word name="тією">
       <pron code="тію" phones="T1 I1 J U"/>
+   </word>
+   <word name="тієї">
+      <pron code="тії" phones="T1 I1 J I"/>
    </word>
    <word name="уряд">
       <pron code="урят" phones="U1 R1 A T"/>

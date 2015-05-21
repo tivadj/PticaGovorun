@@ -202,7 +202,7 @@
    <syncPoint id="302" sampleInd="9123110" levelOfDetail="word"/>
    <syncPoint id="299" sampleInd="9127030" levelOfDetail="word" transcripText="треба чітко пам'ятати" lang="uk" speakerBriefId="klymentovaov"/>
    <syncPoint id="344" sampleInd="9162966" levelOfDetail="word"/>
-   <syncPoint id="301" sampleInd="9169531" levelOfDetail="word" transcripText="заради чого ви увійшли в цей інформаційний потік" lang="uk" speakerBriefId="klymentovaov"/>
+   <syncPoint id="301" sampleInd="9169531" levelOfDetail="word" transcripText="заради чого(1) ви увійшли в цей інформаційний потік" lang="uk" speakerBriefId="klymentovaov"/>
    <syncPoint id="252" sampleInd="9252930" levelOfDetail="word"/>
    <syncPoint id="216" sampleInd="9255724" levelOfDetail="word" transcripText="візьміть те по що прийшли і виходьте" lang="uk" speakerBriefId="klymentovaov"/>
    <syncPoint id="159" sampleInd="9315871" levelOfDetail="word"/>
