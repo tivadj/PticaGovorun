@@ -120,6 +120,9 @@
    <word name="навчання">
       <pron code="навчаня" phones="N A V CH A1 N1 A"/>
    </word>
+   <word name="наголошував">
+      <pron code="наголошува" phones="N A H O L O1 SH U V A"/>
+   </word>
    <word name="над">
       <pron code="нат" phones="N A1 T"/>
    </word>
