@@ -84,6 +84,7 @@
    <word name="контрактації">
       <pron code="контрактаці" phones="K O N T R A K T A1 TS1 I"/>
    </word>
+   <word name="коротаєвськ" phones="K O R O T A1 J E V S1 K"/>
    <word name="культура">
       <pron code="культурьа" phones="K U L1 T U1 R1 A"/>
    </word>
@@ -130,6 +131,7 @@
    <word name="небезпечний">
       <pron code="небеспечни" phones="N E B E S P E1 CH N Y"/>
    </word>
+   <word name="непруха" phones="N E P R U1 KH A"/>
    <word name="неті" phones="N E1 T1 I"/>
    <word name="ньом" phones="N1 O1 M"/>
    <word name="обкомам" phones="O1 P K O1 M A M"/>
@@ -181,6 +183,9 @@
       <pron code="розлядають" phones="R O Z L1 A D A1 J U T1"/>
    </word>
    <word name="розміс" phones="R O Z M2 I1 S"/>
+   <word name="розраховували">
+      <pron code="розраховали" phones="R O Z R A KH O1 V A L Y"/>
+   </word>
    <word name="седивую" phones="S E D Y V U1 J U"/>
    <word name="семию" phones="S E M Y1 J U"/>
    <word name="скільки">

@@ -53,6 +53,8 @@
    <word name="але" phones="A L E1"/>
    <word name="алибастрові" phones="A L Y B A1 S T R O V2 I"/>
    <word name="алкоголь" phones="A L K O H O1 L1"/>
+   <word name="альянтів" phones="A L1 J A1 N1 T1 I V"/>
+   <word name="американських" phones="A M E R Y K A1 N1 S1 K Y KH"/>
    <word name="американської" phones="A M E R Y K A1 N1 S1 K O J I"/>
    <word name="америки" phones="A M E1 R Y K Y"/>
    <word name="аморального" phones="A M O R A1 L1 N O H O"/>
@@ -86,6 +88,7 @@
    <word name="аркуші" phones="A1 R K U SH2 I"/>
    <word name="аркушів" phones="A1 R K U SH2 I V"/>
    <word name="армійської" phones="A R M2 I1 J S1 K O J I"/>
+   <word name="арсеній" phones="A R S E1 N1 I J"/>
    <word name="архаїчна" phones="A R KH A J I1 CH N A"/>
    <word name="архівів" phones="A R KH2 I1 V2 I V"/>
    <word name="асиметричного" phones="A S Y M E T R Y1 CH N O H O"/>
@@ -115,7 +118,10 @@
    <word name="багнюки" phones="B A H N1 U1 K Y"/>
    <word name="бажання" phones="B A ZH A1 N1 N1 A"/>
    <word name="бажанням" phones="B A ZH A1 N1 N1 A M"/>
+   <word name="бажаніший" phones="B A1 ZH A N1 I SH Y J"/>
+   <word name="бажаю" phones="B A ZH A1 J U"/>
    <word name="бажаючий" phones="B A ZH A1 J U CH Y J"/>
+   <word name="бажає" phones="B A ZH A1 J E"/>
    <word name="бажаєш" phones="B A ZH A1 J E SH"/>
    <word name="базарах" phones="B A Z A1 R A KH"/>
    <word name="базований" phones="B A Z O1 V A N Y J"/>
@@ -270,6 +276,7 @@
       <pron code="бриткі" phones="B R Y T K2 I1"/>
    </word>
    <word name="бриля" phones="B R Y L1 A1"/>
+   <word name="броне" phones="B R O1 N E"/>
    <word name="брєжнєва" phones="B R1 E1 ZH N1 E V A"/>
    <word name="був" phones="B U1 V"/>
    <word name="бувало" phones="B U V A1 L O"/>
@@ -290,6 +297,7 @@
    <word name="будьте">
       <pron code="бутте" phones="B U1 T T E"/>
    </word>
+   <word name="буксують" phones="B U K S U1 J U T1"/>
    <word name="була" phones="B U L A1"/>
    <word name="були" phones="B U L Y1"/>
    <word name="було" phones="B U L O1"/>
@@ -522,6 +530,9 @@
    <word name="виконано" phones="V Y1 K O N A N O"/>
    <word name="виконувати" phones="V Y K O1 N U V A T Y"/>
    <word name="виконують" phones="V Y K O1 N U J U T1"/>
+   <word name="виконуються">
+      <pron code="виконуюця" phones="V Y K O1 N U J U TS1 A"/>
+   </word>
    <word name="виконуємо" phones="V Y K O1 N U J E M O"/>
    <word name="використання" phones="V Y K O R Y S T A1 N1 N1 A"/>
    <word name="використать" phones="V Y1 K O R Y S T A T1"/>
@@ -721,6 +732,7 @@
    <word name="восьмисот" phones="V O S1 M Y S O1 T"/>
    <word name="восьмого" phones="V O1 S1 M O H O"/>
    <word name="восьмому" phones="V O1 S1 M O M U"/>
+   <word name="воювати" phones="V O J U V A1 T Y"/>
    <word name="воюють" phones="V O J U1 J U T1"/>
    <word name="впасти" phones="V P A1 S T Y"/>
    <word name="вперте" phones="V P E1 R T E"/>
@@ -765,6 +777,7 @@
    <word name="всіляко" phones="V S1 I L1 A1 K O"/>
    <word name="всім" phones="V S1 I1 M"/>
    <word name="всіх" phones="V S1 I1 KH"/>
+   <word name="втому" phones="V T O1 M U"/>
    <word name="втрата" phones="V T R A1 T A"/>
    <word name="втрати" phones="V T R A1 T Y"/>
    <word name="втрату" phones="V T R A1 T U"/>
@@ -792,6 +805,7 @@
    <word name="відбувалися" phones="V2 I D B U V A1 L Y S1 A"/>
    <word name="відбуваються" phones="V2 I D B U V A1 J U TS1 TS1 A"/>
    <word name="відбувається" phones="V2 I D B U V A1 J E TS1 A"/>
+   <word name="відбули" phones="V2 I D B U L Y1"/>
    <word name="відвабити" phones="V2 I D V A1 B Y T Y"/>
    <word name="відвертати" phones="V2 I D V E R T A1 T Y"/>
    <word name="відверто" phones="V2 I D V E1 R T O"/>
@@ -970,6 +984,7 @@
    <word name="військово" phones="V2 I J S1 K O1 V O"/>
    <word name="військову" phones="V2 I J S1 K O V U1"/>
    <word name="військові" phones="V2 I1 J S1 K O V2 I"/>
+   <word name="військовій" phones="V2 I J S1 K O V2 I1 J"/>
    <word name="вікно" phones="V2 I K N O1"/>
    <word name="віктор" phones="V2 I1 K T O R"/>
    <word name="віктора" phones="V2 I1 K T O R A"/>
@@ -1031,7 +1046,9 @@
    <word name="гайовий" phones="H A J O V Y1 J"/>
    <word name="гала" phones="H A1 L A"/>
    <word name="галича" phones="H A1 L Y CH A"/>
+   <word name="галузі" phones="H A1 L U Z1 I"/>
    <word name="галушка" phones="H A L U1 SH K A"/>
+   <word name="гальмують" phones="H A L1 M U1 J U T1"/>
    <word name="гальмується" phones="H A L1 M U1 J E TS1 A"/>
    <word name="галю" phones="H A1 L1 U"/>
    <word name="галя" phones="H A1 L1 A"/>
@@ -1048,6 +1065,7 @@
    <word name="гарно" phones="H A1 R N O"/>
    <word name="гарного" phones="H A1 R N O H O"/>
    <word name="гвардійську" phones="H V A R D1 I1 J S1 K U"/>
+   <word name="гвардійців" phones="H V A R D1 I1 J TS1 I V"/>
    <word name="генерального">
       <pron code="генеральноо" phones="H E N E R A1 L1 N O O"/>
    </word>
@@ -1133,6 +1151,7 @@
    </word>
    <word name="господарському" phones="H O S P O1 D A R S1 K O M U"/>
    <word name="готово" phones="H O T O1 V O"/>
+   <word name="готові" phones="H O T O1 V2 I"/>
    <word name="готські" phones="H O1 TS1 K2 I"/>
    <word name="гоц" phones="H O1 TS"/>
    <word name="грабове" phones="H R A B O1 V E"/>
@@ -1161,6 +1180,9 @@
    </word>
    <word name="громадськості">
       <pron code="громацькості" phones="H R O M A1 TS1 K O S1 T1 I"/>
+   </word>
+   <word name="громадської">
+      <pron code="громацької" phones="H R O M A1 TS1 K O J I"/>
    </word>
    <word name="громадян" phones="H R O M A D1 A1 N"/>
    <word name="громадянський" phones="H R O M A D1 A1 N1 S1 K Y J"/>
@@ -1212,6 +1234,7 @@
    <word name="далекім" phones="D A L E1 K2 I M"/>
    <word name="дало" phones="D A L O1"/>
    <word name="далі" phones="D A1 L1 I"/>
+   <word name="дамо" phones="D A M O1"/>
    <word name="данилович" phones="D A N Y1 L O V Y CH"/>
    <word name="даними" phones="D A1 N Y M Y"/>
    <word name="даних" phones="D A1 N Y KH"/>
@@ -1312,6 +1335,7 @@
    <word name="дещо" phones="D E1 SH CH O"/>
    <word name="деяка" phones="D E1 J A K A"/>
    <word name="деяких" phones="D E1 J A K Y KH"/>
+   <word name="деяку" phones="D E1 J A K U"/>
    <word name="деякі" phones="D E1 J A K2 I"/>
    <word name="джерел" phones="DZH E R E1 L"/>
    <word name="джерела">
@@ -1463,6 +1487,7 @@
    <word name="доповідю" phones="D O1 P O V2 I D1 U"/>
    <word name="допоки" phones="D O P O1 K Y"/>
    <word name="допомагає" phones="D O P O M A H A1 J E"/>
+   <word name="допомоги" phones="D O P O M O1 H Y"/>
    <word name="допомогою" phones="D O P O M O1 H O J U"/>
    <word name="допомогти">
       <pron code="допомохти" phones="D O P O M O KH T Y1"/>
@@ -1559,7 +1584,10 @@
    <word name="думаєм" phones="D U1 M A J E M"/>
    <word name="думи" phones="D U1 M Y"/>
    <word name="думками" phones="D U M K A1 M Y"/>
-   <word name="думки" phones="D U M K Y1"/>
+   <word name="думки">
+      <pron code="думки(1)" phones="D U1 M K Y"/>
+      <pron code="думки(2)" phones="D U M K Y1"/>
+   </word>
    <word name="думку" phones="D U1 M K U"/>
    <word name="думок" phones="D U M O1 K"/>
    <word name="дурниці" phones="D U R N Y1 TS1 I"/>
@@ -1596,6 +1624,7 @@
    <word name="дірявої" phones="D1 I R1 A1 V O J I"/>
    <word name="дітей" phones="D1 I T E1 J"/>
    <word name="діти" phones="D1 I1 T Y"/>
+   <word name="дітищем" phones="D1 I1 T Y SH CH E M"/>
    <word name="дішли" phones="D1 I SH L Y1"/>
    <word name="дію" phones="D1 I1 J U"/>
    <word name="діючий" phones="D1 I1 J U CH Y J"/>
@@ -1623,6 +1652,7 @@
    <word name="еге" phones="E H E1"/>
    <word name="екзаменом" phones="E G Z A1 M E N O M"/>
    <word name="економікою" phones="E K O N O1 M2 I K O J U"/>
+   <word name="економічній" phones="E K O N O M2 I1 CH N1 I J"/>
    <word name="електронні" phones="E L E K T R O1 N1 N1 I"/>
    <word name="елемент" phones="E L E M E1 N T"/>
    <word name="елементи" phones="E L E M E1 N T Y"/>
@@ -1661,6 +1691,9 @@
    <word name="живих" phones="ZH Y V Y1 KH"/>
    <word name="живопису" phones="ZH Y V O1 P Y S U"/>
    <word name="живі" phones="ZH Y V2 I1"/>
+   <word name="жилет" phones="ZH Y L E1 T"/>
+   <word name="жилети" phones="ZH Y L E1 T Y"/>
+   <word name="жилетом" phones="ZH Y L E1 T O M"/>
    <word name="жити" phones="ZH Y1 T Y"/>
    <word name="житла" phones="ZH Y T L A1"/>
    <word name="жито" phones="ZH Y1 T O"/>
@@ -1676,6 +1709,7 @@
    <word name="жодних" phones="ZH O1 D N Y KH"/>
    <word name="жодного" phones="ZH O1 D N O H O"/>
    <word name="жодної" phones="ZH O1 D N O J I"/>
+   <word name="жодні" phones="ZH O1 D N1 I"/>
    <word name="жорсткий" phones="ZH O R S T K Y1 J"/>
    <word name="жорстко" phones="ZH O1 R S T K O"/>
    <word name="жорстку" phones="ZH O R S T K U1"/>
@@ -1843,6 +1877,7 @@
    <word name="залишила" phones="Z A L Y SH Y1 L A"/>
    <word name="залишити">
       <pron code="залишити(2)" phones="Z A L Y1 SH Y T Y"/>
+      <pron code="залишити(3)" phones="Z A L Y SH Y1 T Y"/>
    </word>
    <word name="залишитись" phones="Z A L Y SH Y1 T Y S1"/>
    <word name="залишки" phones="Z A1 L Y SH K Y"/>
@@ -1914,6 +1949,7 @@
    <word name="заради" phones="Z A R A1 D Y"/>
    <word name="зараз">
       <pron code="зарас" phones="Z A1 R A S"/>
+      <pron code="зараз" phones="Z A1 R A Z"/>
    </word>
    <word name="зареєстрована" phones="Z A R E J E S T R O1 V A N A"/>
    <word name="заробляв" phones="Z A R O B L1 A1 V"/>
@@ -1949,6 +1985,7 @@
    <word name="зауважували" phones="Z A U V A1 ZH U V A1 L Y"/>
    <word name="зафіксовано" phones="Z A F2 I K S O1 V A N O"/>
    <word name="зафіксували" phones="Z A F2 I K S U V A1 L Y"/>
+   <word name="зафіксуємось" phones="Z A F2 I K S U1 J E M O S1"/>
    <word name="захисники" phones="Z A KH Y S N Y K Y1"/>
    <word name="захисні" phones="Z A KH Y S1 N1 I1"/>
    <word name="захист" phones="Z A1 KH Y S T"/>
@@ -1970,6 +2007,7 @@
    <word name="західне" phones="Z A1 KH2 I D N E"/>
    <word name="західних" phones="Z A1 KH2 I D N Y KH"/>
    <word name="західного" phones="Z A1 KH2 I D N O H O"/>
+   <word name="зацінить" phones="Z A TS1 I1 N Y T1"/>
    <word name="защімило" phones="Z A SH CH2 I M Y1 L O"/>
    <word name="заявив" phones="Z A J A V Y1 V"/>
    <word name="заявився" phones="Z A J A V Y1 V S1 A"/>
@@ -2216,6 +2254,7 @@
    </word>
    <word name="знов" phones="Z N O1 V"/>
    <word name="знову" phones="Z N O1 V U"/>
+   <word name="знімуть" phones="Z N1 I1 M U T1"/>
    <word name="зобов'язаний" phones="Z O B O V J A1 Z A N Y J"/>
    <word name="зобов'язань" phones="Z O B O V J A1 Z A N1"/>
    <word name="зображення" phones="Z O B R A1 ZH E N1 N1 A"/>
@@ -2341,11 +2380,13 @@
    </word>
    <word name="кельтського" phones="K E1 L1 TS1 K O H O"/>
    <word name="кельтські" phones="K E1 L1 TS1 K2 I"/>
+   <word name="керзона" phones="K E1 R Z O N A"/>
    <word name="кермом" phones="K E R M O1 M"/>
    <word name="керованою" phones="K E R O1 V A N O J U"/>
    <word name="керуючі" phones="K E R U1 J U CH2 I"/>
    <word name="керівник" phones="K E R1 I V N Y1 K"/>
    <word name="керівника" phones="K E R1 I V N Y K A1"/>
+   <word name="керівників" phones="K E R1 I V N Y K2 I1 V"/>
    <word name="кимось" phones="K Y1 M O S1"/>
    <word name="кирило" phones="K Y R Y1 L O"/>
    <word name="кисень" phones="K Y1 S E N1"/>
@@ -2359,6 +2400,7 @@
    <word name="києві" phones="K Y1 J E V2 I"/>
    <word name="київ" phones="K Y1 J I V"/>
    <word name="київському" phones="K Y1 J I V S1 K O M U"/>
+   <word name="класні" phones="K L A1 S N1 I"/>
    <word name="класове" phones="K L A1 S O V E"/>
    <word name="класового" phones="K L A1 S O V O H O"/>
    <word name="класовому" phones="K L A1 S O V O M U"/>
@@ -2679,6 +2721,7 @@
    </word>
    <word name="локальними" phones="L O K A1 L1 N Y M Y"/>
    <word name="лопата" phones="L O P A1 T A"/>
+   <word name="лорда" phones="L O1 R D A"/>
    <word name="луганським">
       <pron code="луганськім" phones="L U H A1 N1 S1 K I M"/>
    </word>
@@ -2699,6 +2742,7 @@
    <word name="львів" phones="L1 V2 I1 V"/>
    <word name="львівського" phones="L1 V2 I1 V S1 K O H O"/>
    <word name="львівської" phones="L1 V2 I1 V S1 K O J I"/>
+   <word name="львівщині" phones="L1 V2 I1 V SH CH Y N1 I"/>
    <word name="люба" phones="L1 U1 B A"/>
    <word name="любе" phones="L1 U1 B E"/>
    <word name="любий">
@@ -2819,6 +2863,7 @@
    <word name="марно" phones="M A1 R N O"/>
    <word name="марусі" phones="M A R U1 S1 I"/>
    <word name="маріонетка" phones="M A R1 I O N E1 T K A"/>
+   <word name="маріуполь" phones="M A R1 I U1 P O L1"/>
    <word name="масенко" phones="M A S E1 N K O"/>
    <word name="масова" phones="M A1 S O V A"/>
    <word name="масовой" phones="M A1 S O V O J"/>
@@ -2973,6 +3018,7 @@
    <word name="молотов" phones="M O1 L O T O V"/>
    <word name="молотовим" phones="M O1 L O T O V Y M"/>
    <word name="момент" phones="M O M E1 N T"/>
+   <word name="моменту" phones="M O M E1 N T U"/>
    <word name="монархічно" phones="M O N A R KH2 I1 CH N O"/>
    <word name="монети" phones="M O N E1 T Y"/>
    <word name="монографіях" phones="M O N O H R A1 F2 I J A KH"/>
@@ -3049,9 +3095,11 @@
    <word name="міністр" phones="M2 I N1 I1 S T R"/>
    <word name="міра" phones="M2 I1 R A"/>
    <word name="міри" phones="M2 I1 R Y"/>
+   <word name="міркуваннями" phones="M2 I R K U V A1 N1 N1 A M Y"/>
    <word name="мірою" phones="M2 I1 R O J U"/>
    <word name="міру" phones="M2 I1 R U"/>
    <word name="мірі" phones="M2 I1 R1 I"/>
+   <word name="місками" phones="M2 I1 S K A M Y"/>
    <word name="міст" phones="M2 I1 S T"/>
    <word name="міста">
       <pron code="міста(1)" phones="M2 I1 S T A"/>
@@ -3134,6 +3182,7 @@
    <word name="навчальної" phones="N A V CH A1 L1 N O J I"/>
    <word name="навчальні" phones="N A V CH A1 L1 N1 I"/>
    <word name="навчатися" phones="N A V CH A1 T Y S1 A"/>
+   <word name="навчають" phones="N A V CH A1 J U T1"/>
    <word name="навчені" phones="N A1 V CH E N1 I"/>
    <word name="навчився" phones="N A V CH Y1 V S1 A"/>
    <word name="навчитися" phones="N A V CH Y1 T Y S1 A"/>
@@ -3217,6 +3266,7 @@
    <word name="найбільш" phones="N A J B2 I1 L1 SH"/>
    <word name="найбільший" phones="N A J B2 I1 L1 SH Y J"/>
    <word name="найвищим" phones="N A J V Y1 SH CH Y M"/>
+   <word name="найвищих" phones="N A J V Y1 SH CH Y KH"/>
    <word name="найвищої" phones="N A J V Y1 SH CH O J I"/>
    <word name="найглибше">
       <pron code="найглипше" phones="N A1 J H L Y P SH E"/>
@@ -3231,6 +3281,7 @@
    <word name="найповніше" phones="N A J P O V N1 I1 SH E"/>
    <word name="найсильніше" phones="N A J S Y L1 N1 I1 SH E"/>
    <word name="найуживанішу" phones="N A J U ZH Y1 V A N1 I SH U"/>
+   <word name="найулюбленішим" phones="N A J U L1 U1 B L E N1 I SH Y M"/>
    <word name="найчастотніших" phones="N A J CH A S T O1 T1 N1 I1 SH Y KH"/>
    <word name="найчастіше" phones="N A J CH A S1 T1 I1 SH E"/>
    <word name="наказ" phones="N A K A1 Z"/>
@@ -3272,6 +3323,7 @@
       <pron code="наприклат" phones="N A P R Y1 K L A T"/>
    </word>
    <word name="наприкінці" phones="N A P R Y K2 I N1 TS1 I1"/>
+   <word name="напружуватись" phones="N A P R U1 ZH U V A T Y S1"/>
    <word name="напрям" phones="N A1 P R1 A M"/>
    <word name="напрямі" phones="N A1 P R1 A M2 I"/>
    <word name="напрямів" phones="N A1 P R1 A M2 I V"/>
@@ -3313,6 +3365,7 @@
    <word name="натуральності" phones="N A T U R A1 L1 N O S1 T1 I"/>
    <word name="натуральні" phones="N A T U R A1 L1 N1 I"/>
    <word name="натяк" phones="N A1 T1 A K"/>
+   <word name="натякнув" phones="N A T1 A K N U1 V"/>
    <word name="наук" phones="N A U1 K"/>
    <word name="наука" phones="N A U1 K A"/>
    <word name="науки" phones="N A U1 K Y"/>
@@ -3363,6 +3416,7 @@
       <pron code="небиспечно" phones="N E B Y S P E1 CH N O"/>
    </word>
    <word name="небесна" phones="N E B E1 S N A"/>
+   <word name="небесних" phones="N E B E1 S N Y KH"/>
    <word name="небеспеки" phones="N E B E S P E1 K Y"/>
    <word name="небо" phones="N E1 B O"/>
    <word name="небудь" phones="N E1 B U D1"/>
@@ -3648,6 +3702,7 @@
    </word>
    <word name="одягу" phones="O1 D1 A H U"/>
    <word name="озброєних" phones="O Z B R O1 J E N Y KH"/>
+   <word name="озброєнь" phones="O Z B R O1 J E N1"/>
    <word name="озера">
       <pron code="озера(1)" phones="O1 Z E R A"/>
    </word>
@@ -3802,6 +3857,7 @@
    <word name="офіційне" phones="O F2 I TS1 I1 J N E"/>
    <word name="офіційних" phones="O F2 I TS1 I1 J N Y KH"/>
    <word name="офіційно" phones="O F2 I TS1 I1 J N O"/>
+   <word name="офіційному" phones="O F2 I TS1 I1 J N O M U"/>
    <word name="офіційні" phones="O F2 I TS1 I1 J N1 I"/>
    <word name="охопила" phones="O KH O P Y1 L A"/>
    <word name="охопити" phones="O KH O P Y1 T Y"/>
@@ -3879,6 +3935,7 @@
    <word name="париж" phones="P A R Y1 ZH"/>
    <word name="парижа" phones="P A R Y1 ZH A"/>
    <word name="парламенті" phones="P A R L A1 M E N1 T1 I"/>
+   <word name="партнер" phones="P A R T N E1 R"/>
    <word name="партії" phones="P A1 R T1 I J I"/>
    <word name="пару" phones="P A1 R U"/>
    <word name="парубок" phones="P A1 R U B O K"/>
@@ -3910,6 +3967,7 @@
    <word name="перебувають" phones="P E R E B U V A1 J U T1"/>
    <word name="перебуваємо" phones="P E R E B U V A1 J E M O"/>
    <word name="перебільшення" phones="P E R E B2 I1 L1 SH E N1 N1 A"/>
+   <word name="перебільшені" phones="P E R E B2 I1 L1 SH E N1 I"/>
    <word name="перевагу" phones="P E R E V A1 H U"/>
    <word name="переважна" phones="P E R E V A1 ZH N A"/>
    <word name="переважно" phones="P E R E V A1 ZH N O"/>
@@ -3929,6 +3987,7 @@
    <word name="переговорів" phones="P E R E H O V O1 R1 I V"/>
    <word name="перед" phones="P E1 R E D"/>
    <word name="передавати" phones="P E R E D A V A1 T Y"/>
+   <word name="передачу" phones="P E R E D A1 CH U"/>
    <word name="передають" phones="P E R E D A J U1 T1"/>
    <word name="передає" phones="P E R E D A J E1"/>
    <word name="передаємо" phones="P E R E D A J E M O1"/>
@@ -3999,6 +4058,7 @@
    <word name="періоду" phones="P E R1 I1 O D U"/>
    <word name="петербурга" phones="P E T E R B U1 R H A"/>
    <word name="петра" phones="P E T R A1"/>
+   <word name="петрович" phones="P E T R O1 V Y CH"/>
    <word name="печеніги" phones="P E CH E N1 I1 H Y"/>
    <word name="пив" phones="P Y1 V"/>
    <word name="пий" phones="P Y1 J"/>
@@ -4048,6 +4108,7 @@
    <word name="пов'язувати" phones="P O V J A1 Z U V A T Y"/>
    <word name="пов'язують" phones="P O V J A1 Z U J U T1"/>
    <word name="пов'язує" phones="P O V J A1 Z U J E"/>
+   <word name="поведінки" phones="P O V E D1 I1 N K Y"/>
    <word name="поведінкою" phones="P O V E D1 I1 N K O J U"/>
    <word name="поведінку" phones="P O V E D1 I1 N K U"/>
    <word name="повернення" phones="P O V E1 R N E N1 N1 A"/>
@@ -4272,7 +4333,9 @@
    <word name="посилання" phones="P O S Y L A1 N1 N1 A"/>
    <word name="посиленню" phones="P O S Y1 L E N1 N1 U"/>
    <word name="посилення" phones="P O S Y1 L E N1 N1 A"/>
+   <word name="посилені" phones="P O S Y1 L E N1 I"/>
    <word name="посилювались" phones="P O S Y1 L1 U V A L Y S1"/>
+   <word name="послаблять" phones="P O S L A1 B L1 A T1"/>
    <word name="послала" phones="P O S L A1 L A"/>
    <word name="послуговуватись" phones="P O S L U H O1 V U V A T Y S1"/>
    <word name="послуговуються" phones="P O S L U H O1 V U J U TS1 A"/>
@@ -4392,6 +4455,7 @@
    <word name="правій" phones="P R A1 V2 I J"/>
    <word name="праги" phones="P R A1 H Y"/>
    <word name="прагматику" phones="P R A H M A1 T Y K U"/>
+   <word name="прагматиці" phones="P R A H M A1 T Y TS1 I"/>
    <word name="прагне" phones="P R A1 H N E"/>
    <word name="прагнув" phones="P R A1 H N U V"/>
    <word name="пражанин" phones="P R A ZH A1 N Y N"/>
@@ -4430,6 +4494,7 @@
    <word name="президенту" phones="P R E Z Y D E1 N T U"/>
    <word name="преподобного" phones="P R E P O D O1 B N O H O"/>
    <word name="преси" phones="P R E1 S Y"/>
+   <word name="пресою" phones="P R E1 S O J U"/>
    <word name="прессі" phones="P R E1 S1 S1 I"/>
    <word name="пресу" phones="P R E1 S U"/>
    <word name="пресі" phones="P R E1 S1 I"/>
@@ -4777,7 +4842,10 @@
    <word name="підтримують">
       <pron code="піттримують" phones="P2 I T T R Y1 M U J U T1"/>
    </word>
-   <word name="підуть" phones="P2 I1 D U T1"/>
+   <word name="підуть">
+      <pron code="підуть(1)" phones="P2 I1 D U T1"/>
+      <pron code="підуть(2)" phones="P2 I D U1 T1"/>
+   </word>
    <word name="підходу">
       <pron code="пітходу" phones="P2 I T KH O1 D U"/>
    </word>
@@ -4894,6 +4962,8 @@
    <word name="республіки" phones="R E S P U1 B L1 I K Y"/>
    <word name="ресторани" phones="R E S T O R A1 N Y"/>
    <word name="ресурси" phones="R E S U1 R S Y"/>
+   <word name="реформ" phones="R E F O1 R M"/>
+   <word name="реформу" phones="R E F O1 R M U"/>
    <word name="рецептах" phones="R E TS E1 P T A KH"/>
    <word name="речей" phones="R E CH E1 J"/>
    <word name="речення" phones="R E1 CH E N1 N1 A"/>
@@ -4923,6 +4993,7 @@
    <word name="риму" phones="R Y1 M U"/>
    <word name="риси" phones="R Y1 S Y"/>
    <word name="ритм" phones="R Y1 T M"/>
+   <word name="риторику" phones="R Y T O1 R Y K U"/>
    <word name="робив" phones="R O B Y1 V"/>
    <word name="робили" phones="R O B Y1 L Y"/>
    <word name="робите" phones="R O1 B Y T E"/>
@@ -5045,6 +5116,9 @@
    <word name="розчарування" phones="R O S CH A R U V A1 N1 N1 A"/>
    <word name="розчищене" phones="R O S CH Y1 SH CH E N E"/>
    <word name="розчищення" phones="R O S CH Y1 SH CH E N1 N1 A"/>
+   <word name="розширюються">
+      <pron code="роширююця" phones="R O SH Y1 R1 U U TS1 A"/>
+   </word>
    <word name="розширюється">
       <pron code="росширюєця" phones="R O SH SH Y1 R1 U J E TS1 A"/>
    </word>
@@ -5189,6 +5263,9 @@
       <pron code="саме(1)" phones="S A1 M E"/>
       <pron code="саме(2)" phones="S A M E1"/>
    </word>
+   <word name="самий">
+      <pron code="самий(1)" phones="S A1 M Y J"/>
+   </word>
    <word name="самим">
       <pron code="самим(1)" phones="S A1 M Y M"/>
    </word>
@@ -5204,6 +5281,8 @@
    <word name="самі" phones="S A M2 I1"/>
    <word name="самійленко" phones="S A M2 I1 J L E N K O"/>
    <word name="санкт" phones="S A1 N K T"/>
+   <word name="санкціями" phones="S A1 N K TS1 I J A M Y"/>
+   <word name="санкції" phones="S A1 N K TS1 I J I"/>
    <word name="сберігали" phones="S B E R1 I H A1 L Y"/>
    <word name="сберігаємо" phones="S B E R1 I H A1 J E M O"/>
    <word name="сварку" phones="S V A1 R K U"/>
@@ -5285,6 +5364,7 @@
    <word name="сепаратисти" phones="S E P A R A T Y1 S T Y"/>
    <word name="сепаратистів" phones="S E P A R A T Y1 S1 T1 I V"/>
    <word name="сервісні" phones="S E1 R V2 I S1 N1 I"/>
+   <word name="сергій" phones="S E R H2 I1 J"/>
    <word name="сергія" phones="S E R H2 I1 J A"/>
    <word name="сергієм" phones="S E R H2 I1 J E M"/>
    <word name="сердито" phones="S E R D Y1 T O"/>
@@ -5344,6 +5424,7 @@
    <word name="скандальні" phones="S K A N D A1 L1 N1 I"/>
    <word name="скарби" phones="S K A R B Y1"/>
    <word name="скаржились" phones="S K A1 R ZH Y L Y S1"/>
+   <word name="скасовані" phones="S K A S O1 V A N1 I"/>
    <word name="скасував" phones="S K A S U V A1 V"/>
    <word name="скасування" phones="S K A S U V A1 N1 N1 A"/>
    <word name="скельце" phones="S K E1 L1 TS E"/>
@@ -5505,6 +5586,7 @@
    <word name="союз">
       <pron code="союс" phones="S O J U1 S"/>
    </word>
+   <word name="союзників" phones="S O J U1 Z N Y K2 I V"/>
    <word name="спала" phones="S P A1 L A"/>
    <word name="спец" phones="S P E1 TS"/>
    <word name="специфічного" phones="S P E TS Y F2 I1 CH N O H O"/>
@@ -5567,6 +5649,7 @@
    <word name="справі" phones="S P R A1 V2 I"/>
    <word name="сприймали" phones="S P R Y J M A1 L Y"/>
    <word name="сприймати" phones="S P R Y J M A1 T Y"/>
+   <word name="сприйняли" phones="S P R Y J N1 A L Y1"/>
    <word name="сприйняття" phones="S P R Y J N1 A T1 T1 A1"/>
    <word name="спричинило" phones="S P R Y CH Y N Y1 L O"/>
    <word name="сприяв" phones="S P R Y J A1 V"/>
@@ -5753,6 +5836,7 @@
    <word name="сучасністю" phones="S U CH A1 S1 N1 I S1 T1 U"/>
    <word name="сфера" phones="S F E1 R A"/>
    <word name="сфери" phones="S F E1 R Y"/>
+   <word name="сфері" phones="S F E1 R1 I"/>
    <word name="сформований" phones="S F O R M O1 V A N Y J"/>
    <word name="сформовано" phones="S F O R M O1 V A N O"/>
    <word name="сформувати" phones="S F O R M U V A1 T Y"/>
@@ -6004,6 +6088,7 @@
    </word>
    <word name="триматись" phones="T R Y M A1 T Y S1"/>
    <word name="трипільців" phones="T R Y P2 I1 L1 TS1 I V"/>
+   <word name="триста" phones="T R Y1 S T A"/>
    <word name="трохи" phones="T R O1 KH Y"/>
    <word name="трублаїні" phones="T R U B L A J I1 N1 I"/>
    <word name="труднощі" phones="T R U1 D N O SH CH2 I"/>
@@ -6479,6 +6564,7 @@
    <word name="чужомовні" phones="CH U ZH O M O1 V N1 I"/>
    <word name="чули" phones="CH U1 L Y"/>
    <word name="чути" phones="CH U1 T Y"/>
+   <word name="чутки" phones="CH U T K Y1"/>
    <word name="чує" phones="CH U1 J E"/>
    <word name="чуємо" phones="CH U1 J E M O"/>
    <word name="чіпка" phones="CH2 I P K A1"/>
@@ -6612,6 +6698,7 @@
    <word name="ядерної" phones="J A1 D E R N O J I"/>
    <word name="як" phones="J A1 K"/>
    <word name="яка" phones="J A K A1"/>
+   <word name="якась" phones="J A K A1 S1"/>
    <word name="якби" phones="J A G B Y1"/>
    <word name="яке" phones="J A K E1"/>
    <word name="якесь" phones="J A K E1 S1"/>
@@ -6676,10 +6763,12 @@
    <word name="європа" phones="J E V R O1 P A"/>
    <word name="європейських" phones="J E V R O P E1 J S1 K Y KH"/>
    <word name="європейські" phones="J E V R O P E1 J S1 K2 I"/>
+   <word name="європейця" phones="J E V R O P E1 J TS1 A"/>
    <word name="європи" phones="J E V R O1 P Y"/>
    <word name="європу" phones="J E V R O1 P U"/>
    <word name="європі" phones="J E V R O1 P2 I"/>
    <word name="єдина" phones="J E D Y1 N A"/>
+   <word name="єдине" phones="J E D Y1 N E"/>
    <word name="єдино" phones="J E D Y1 N O"/>
    <word name="єдиною" phones="J E D Y1 N O J U"/>
    <word name="єкатерина" phones="J E K A T E R Y1 N A"/>
