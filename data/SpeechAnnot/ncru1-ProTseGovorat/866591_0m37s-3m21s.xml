@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<audioAnnotation>
+   <header>
+      <speaker briefId="korotajevskyjsh" name="Коротаєвський Сергій Генадійович"/>
+   </header>
+   <syncPoint id="42" sampleInd="49397" levelOfDetail="word" transcripText="рубрика про це говорять" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="2" sampleInd="74650" levelOfDetail="word"/>
+   <syncPoint id="3" sampleInd="83729" levelOfDetail="word" transcripText="і говорять таке що уже й не скажеш якось інакше як" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="5" sampleInd="148738" levelOfDetail="word"/>
+   <syncPoint id="7" sampleInd="187171" levelOfDetail="word" transcripText="це така універсальна формула з блогосферних мас" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="9" sampleInd="241645" levelOfDetail="word"/>
+   <syncPoint id="11" sampleInd="248112" levelOfDetail="word" transcripText="означає справа начепто була зрозуміла" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="8" sampleInd="294185" levelOfDetail="word"/>
+   <syncPoint id="12" sampleInd="299560" levelOfDetail="word" transcripText="і ясно прозора і" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="6" sampleInd="325474" levelOfDetail="word"/>
+   <syncPoint id="16" sampleInd="334322" levelOfDetail="word" transcripText="тут напустили в чисту воду такого" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="19" sampleInd="377633" levelOfDetail="word"/>
+   <syncPoint id="4" sampleInd="382776" levelOfDetail="word" transcripText="то я про справу російського спецназу на донбасі" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="22" sampleInd="437449" levelOfDetail="word"/>
+   <syncPoint id="17" sampleInd="446479" levelOfDetail="word" transcripText="на жаль великоо розголосу на заході(1)" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="31" sampleInd="486963" levelOfDetail="word"/>
+   <syncPoint id="14" sampleInd="493677" levelOfDetail="word" transcripText="інцидент не дістав" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="23" sampleInd="518731" levelOfDetail="word"/>
+   <syncPoint id="35" sampleInd="526669" levelOfDetail="word" transcripText="хіба що дехто с тамтешніх публіцистів" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="33" sampleInd="570246" levelOfDetail="word"/>
+   <syncPoint id="30" sampleInd="576695" levelOfDetail="word" transcripText="почав дописувати на тему" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="26" sampleInd="604958" levelOfDetail="word"/>
+   <syncPoint id="39" sampleInd="614682" levelOfDetail="word" transcripText="армія путіна в українському полоні" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="46" sampleInd="668065" levelOfDetail="word"/>
+   <syncPoint id="27" sampleInd="679277" levelOfDetail="word" transcripText="ми не будемо перебільшувати" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="34" sampleInd="707341" levelOfDetail="word"/>
+   <syncPoint id="37" sampleInd="717132" levelOfDetail="word" transcripText="ми можемо оцінити маштаби всього" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="44" sampleInd="755813" levelOfDetail="word"/>
+   <syncPoint id="15" sampleInd="762577" levelOfDetail="word" transcripText="одже фіксуємось" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="28" sampleInd="779544" levelOfDetail="word"/>
+   <syncPoint id="20" sampleInd="785002" levelOfDetail="word" transcripText="на прагматиці моменту" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="41" sampleInd="809742" levelOfDetail="word"/>
+   <syncPoint id="47" sampleInd="823170" levelOfDetail="word" transcripText="почнімо не з опставин затримання вони загалом(3) зрозумілі" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="61" sampleInd="881961" levelOfDetail="word"/>
+   <syncPoint id="51" sampleInd="889287" levelOfDetail="word" transcripText="а з доведення фактів" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="53" sampleInd="913415" levelOfDetail="word"/>
+   <syncPoint id="70" sampleInd="920278" levelOfDetail="word" transcripText="те що сержант александров(4)" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="48" sampleInd="958993" levelOfDetail="word"/>
+   <syncPoint id="69" sampleInd="964698" levelOfDetail="word" transcripText="як він сам себе(2) називає" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="65" sampleInd="993589" levelOfDetail="word"/>
+   <syncPoint id="1" sampleInd="998898" levelOfDetail="word" transcripText="і капітан єрофєєв" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="79" sampleInd="1025573" levelOfDetail="word"/>
+   <syncPoint id="72" sampleInd="1031013" levelOfDetail="word" transcripText="є чинними військово службовцями збройних сил російсько федерації" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="18" sampleInd="1099909" levelOfDetail="word"/>
+   <syncPoint id="75" sampleInd="1106821" levelOfDetail="word" transcripText="відомо з їхніх власних слів" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="74" sampleInd="1148000" levelOfDetail="word"/>
+   <syncPoint id="59" sampleInd="1157343" levelOfDetail="word" transcripText="пункт перший" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="88" sampleInd="1172558" levelOfDetail="word"/>
+   <syncPoint id="32" sampleInd="1178329" levelOfDetail="word" transcripText="с погляду кримінальноо закону персональне зізнання" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="63" sampleInd="1236707" levelOfDetail="word"/>
+   <syncPoint id="78" sampleInd="1245323" levelOfDetail="word" transcripText="не є апсолютним доказом" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="54" sampleInd="1284434" levelOfDetail="word"/>
+   <syncPoint id="93" sampleInd="1290338" levelOfDetail="word" transcripText="ми все таки живемо не у час" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="99" sampleInd="1318551" levelOfDetail="word"/>
+   <syncPoint id="106" sampleInd="1324637" levelOfDetail="word" transcripText="ген прокурора вишинського" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="64" sampleInd="1354520" levelOfDetail="word"/>
+   <syncPoint id="58" sampleInd="1360077" levelOfDetail="word" transcripText="коли зізнання вважалось" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="97" sampleInd="1384602" levelOfDetail="word"/>
+   <syncPoint id="91" sampleInd="1390952" levelOfDetail="word" transcripText="царицею доказів" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="76" sampleInd="1414998" levelOfDetail="word"/>
+   <syncPoint id="36" sampleInd="1425234" levelOfDetail="word" transcripText="а видобувались зізнання відомо якими методами" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="110" sampleInd="1498694" levelOfDetail="word"/>
+   <syncPoint id="25" sampleInd="1504647" levelOfDetail="word" transcripText="і тут пункт" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="107" sampleInd="1517828" levelOfDetail="word"/>
+   <syncPoint id="103" sampleInd="1523682" levelOfDetail="word" transcripText="другий" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="38" sampleInd="1532745" levelOfDetail="word"/>
+   <syncPoint id="96" sampleInd="1539294" levelOfDetail="word" transcripText="відверто кажучи особи я" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="52" sampleInd="1572054" levelOfDetail="word"/>
+   <syncPoint id="50" sampleInd="1579099" levelOfDetail="word" transcripText="не маю сумнівів" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="56" sampleInd="1604402" levelOfDetail="word"/>
+   <syncPoint id="109" sampleInd="1609661" levelOfDetail="word" transcripText="у приналежності цього(1) капітана і цього(1) сержанта" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="101" sampleInd="1666682" levelOfDetail="word"/>
+   <syncPoint id="71" sampleInd="1672371" levelOfDetail="word" transcripText="у тому(1) сенсі що вони" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="62" sampleInd="1695159" levelOfDetail="word"/>
+   <syncPoint id="13" sampleInd="1702585" levelOfDetail="word" transcripText="кадрові російські військові" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="60" sampleInd="1746790" levelOfDetail="word"/>
+   <syncPoint id="113" sampleInd="1767279" levelOfDetail="word" transcripText="інша справа що на суді" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="143" sampleInd="1797394" levelOfDetail="word"/>
+   <syncPoint id="140" sampleInd="1803728" levelOfDetail="word" transcripText="це що до суду(1) дійде(2)" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="92" sampleInd="1827906" levelOfDetail="word"/>
+   <syncPoint id="83" sampleInd="1834074" levelOfDetail="word" transcripText="вони можуть у будь який момент" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="125" sampleInd="1864917" levelOfDetail="word"/>
+   <syncPoint id="126" sampleInd="1870192" levelOfDetail="word" transcripText="відмовитись від" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="86" sampleInd="1890649" levelOfDetail="word"/>
+   <syncPoint id="152" sampleInd="1895842" levelOfDetail="word" transcripText="свіччень" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="49" sampleInd="1907054" levelOfDetail="word"/>
+   <syncPoint id="68" sampleInd="1914480" levelOfDetail="word" transcripText="і їм за це" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="120" sampleInd="1930240" levelOfDetail="word"/>
+   <syncPoint id="132" sampleInd="1936425" levelOfDetail="word" transcripText="нічого(2) не буде" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="108" sampleInd="1959230" levelOfDetail="word"/>
+   <syncPoint id="138" sampleInd="1969913" levelOfDetail="word" transcripText="сумно шановні але факт" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="114" sampleInd="2002145" levelOfDetail="word"/>
+   <syncPoint id="73" sampleInd="2014069" levelOfDetail="word" transcripText="пункт третій" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="150" sampleInd="2030805" levelOfDetail="word"/>
+   <syncPoint id="156" sampleInd="2036775" levelOfDetail="word" transcripText="нарешті в росії знайдено родичей обох" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="81" sampleInd="2081277" levelOfDetail="word"/>
+   <syncPoint id="66" sampleInd="2090786" levelOfDetail="word" transcripText="першою дала інтерв'ю дружина сержанта" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="129" sampleInd="2136115" levelOfDetail="word"/>
+   <syncPoint id="149" sampleInd="2141837" levelOfDetail="word" transcripText="олександрова(4)" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="119" sampleInd="2158871" levelOfDetail="word"/>
+   <syncPoint id="45" sampleInd="2165966" levelOfDetail="word" transcripText="вона каже" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="181" sampleInd="2180370" levelOfDetail="word"/>
+   <syncPoint id="136" sampleInd="2191119" levelOfDetail="word" transcripText="що її чоловік" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="130" sampleInd="2207045" levelOfDetail="word"/>
+   <syncPoint id="195" sampleInd="2212353" levelOfDetail="word" transcripText="звільнився з армії ще наприкінці" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="57" sampleInd="2256426" levelOfDetail="word"/>
+   <syncPoint id="171" sampleInd="2262214" levelOfDetail="word" transcripText="минулого року" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="116" sampleInd="2280223" levelOfDetail="word"/>
+   <syncPoint id="146" sampleInd="2290476" levelOfDetail="word" transcripText="можна не вірити" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="199" sampleInd="2308701" levelOfDetail="word"/>
+   <syncPoint id="193" sampleInd="2313844" levelOfDetail="word" transcripText="хоча я певен що в російсько військовому(3) відомстві" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="204" sampleInd="2363738" levelOfDetail="word"/>
+   <syncPoint id="90" sampleInd="2369344" levelOfDetail="word" transcripText="уже давно всі документи заднім як то кажуть" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="154" sampleInd="2423669" levelOfDetail="word"/>
+   <syncPoint id="89" sampleInd="2430582" levelOfDetail="word" transcripText="числом" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="67" sampleInd="2438851" levelOfDetail="word"/>
+   <syncPoint id="144" sampleInd="2450229" levelOfDetail="word" transcripText="переписали" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="166" sampleInd="2463988" levelOfDetail="word"/>
+   <syncPoint id="227" sampleInd="2473762" levelOfDetail="word" transcripText="і тут пункт" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="183" sampleInd="2487951" levelOfDetail="word"/>
+   <syncPoint id="87" sampleInd="2493590" levelOfDetail="word" transcripText="наступний" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="242" sampleInd="2505629" levelOfDetail="word"/>
+   <syncPoint id="102" sampleInd="2511699" levelOfDetail="word" transcripText="за словами маркіана лупківськоо радника голови(3) служби беспеки звинувачене" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="217" sampleInd="2594932" levelOfDetail="word"/>
+   <syncPoint id="177" sampleInd="2600389" levelOfDetail="word" transcripText="уже" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="249" sampleInd="2606078" levelOfDetail="word"/>
+   <syncPoint id="243" sampleInd="2610890" levelOfDetail="word" transcripText="висунуто" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="112" sampleInd="2624087" levelOfDetail="word"/>
+   <syncPoint id="230" sampleInd="2630405" levelOfDetail="word" transcripText="стаття двісті п'ядесят вісім" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="29" sampleInd="2667250" levelOfDetail="word"/>
+   <syncPoint id="210" sampleInd="2674163" levelOfDetail="word" transcripText="тероризм" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="98" sampleInd="2686086" levelOfDetail="word"/>
+   <syncPoint id="153" sampleInd="2691296" levelOfDetail="word" transcripText="пункт третій" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="207" sampleInd="2709537" levelOfDetail="word"/>
+   <syncPoint id="100" sampleInd="2715176" levelOfDetail="word" transcripText="за цією статею" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="172" sampleInd="2737072" levelOfDetail="word"/>
+   <syncPoint id="270" sampleInd="2754138" levelOfDetail="word" transcripText="багато років(1) світить" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="186" sampleInd="2791017" levelOfDetail="word"/>
+   <syncPoint id="239" sampleInd="2799749" levelOfDetail="word" transcripText="однак не кваптися шановні" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="262" sampleInd="2829351" levelOfDetail="word"/>
+   <syncPoint id="238" sampleInd="2833882" levelOfDetail="word" transcripText="справою цію має опікуватись" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="245" sampleInd="2867536" levelOfDetail="word"/>
+   <syncPoint id="261" sampleInd="2874564" levelOfDetail="word" transcripText="генеральна прокуратура" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="268" sampleInd="2904100" levelOfDetail="word"/>
+   <syncPoint id="198" sampleInd="2910798" levelOfDetail="word" transcripText="а есбеу на скільки я знаю" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="257" sampleInd="2945312" levelOfDetail="word"/>
+   <syncPoint id="77" sampleInd="2952224" levelOfDetail="word" transcripText="взагалі зараз збираюця" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="258" sampleInd="2978453" levelOfDetail="word"/>
+   <syncPoint id="196" sampleInd="2984704" levelOfDetail="word" transcripText="позбавити слічих функцій" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="157" sampleInd="3015778" levelOfDetail="word"/>
+   <syncPoint id="213" sampleInd="3028132" levelOfDetail="word" transcripText="тому(2) хто висуватиме" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="248" sampleInd="3058825" levelOfDetail="word"/>
+   <syncPoint id="135" sampleInd="3068152" levelOfDetail="word" transcripText="це ще питання" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="82" sampleInd="3085054" levelOfDetail="word"/>
+   <syncPoint id="124" sampleInd="3091024" levelOfDetail="word" transcripText="а тепер найголовніше" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="24" sampleInd="3114193" levelOfDetail="word"/>
+   <syncPoint id="278" sampleInd="3125157" levelOfDetail="word" transcripText="торх" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="85" sampleInd="3132582" levelOfDetail="word"/>
+   <syncPoint id="310" sampleInd="3140554" levelOfDetail="word" transcripText="точніше пряма торгівля" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="194" sampleInd="3174373" levelOfDetail="word"/>
+   <syncPoint id="127" sampleInd="3182890" levelOfDetail="word" transcripText="капітан і сержант" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="220" sampleInd="3202635" levelOfDetail="word"/>
+   <syncPoint id="139" sampleInd="3208820" levelOfDetail="word" transcripText="якими б вони" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="185" sampleInd="3224547" levelOfDetail="word"/>
+   <syncPoint id="222" sampleInd="3231774" levelOfDetail="word" transcripText="формально статусно не були" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="297" sampleInd="3265395" levelOfDetail="word"/>
+   <syncPoint id="312" sampleInd="3272589" levelOfDetail="word" transcripText="це найбільший трофей на донбасі" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="306" sampleInd="3316529" levelOfDetail="word"/>
+   <syncPoint id="164" sampleInd="3321705" levelOfDetail="word" transcripText="які нашим силам пощастило виловити " lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="237" sampleInd="3367845" levelOfDetail="word"/>
+   <syncPoint id="269" sampleInd="3373335" levelOfDetail="word" transcripText="за всю історію конфлікту" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="123" sampleInd="3398357" levelOfDetail="word"/>
+   <syncPoint id="295" sampleInd="3403202" levelOfDetail="word" transcripText="а це нагадаю понад рік" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="303" sampleInd="3428041" levelOfDetail="word"/>
+   <syncPoint id="134" sampleInd="3435301" levelOfDetail="word" transcripText="і с цієї здобичі треба якось" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="273" sampleInd="3473950" levelOfDetail="word"/>
+   <syncPoint id="256" sampleInd="3479820" levelOfDetail="word" transcripText="скористатися" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="200" sampleInd="3503750" levelOfDetail="word"/>
+   <syncPoint id="300" sampleInd="3515607" levelOfDetail="word" transcripText="схоже зарас у верхаг думають" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="159" sampleInd="3548170" levelOfDetail="word"/>
+   <syncPoint id="160" sampleInd="3557414" levelOfDetail="word" transcripText="а що ж таке з москви скачати" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="240" sampleInd="3609144" levelOfDetail="word"/>
+</audioAnnotation>
