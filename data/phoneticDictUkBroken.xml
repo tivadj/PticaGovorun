@@ -15,6 +15,7 @@
    <word name="бригад">
       <pron code="бригат" phones="B R Y H A1 T"/>
    </word>
+   <word name="бу" phones="B U1"/>
    <word name="бюдже" phones="B2 U DZH E1"/>
    <word name="вау" phones="V A1 U"/>
    <word name="вещас" phones="V E SH CH A1 S"/>
@@ -46,6 +47,9 @@
    </word>
    <word name="дев'яте">
       <pron code="дев'ято" phones="D E V J A1 T O"/>
+   </word>
+   <word name="декларації">
+      <pron code="деклараці" phones="D E K L A R A1 TS1 I"/>
    </word>
    <word name="діалектів">
       <pron code="тіалектів" phones="T1 I A L E1 K T1 I V"/>
