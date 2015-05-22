@@ -154,8 +154,14 @@
    <word name="отже">
       <pron code="одже(2)" phones="O DZH E1"/>
    </word>
+   <word name="офіційний">
+      <pron code="офіційни" phones="O F2 I TS1 I1 J N Y"/>
+   </word>
    <word name="першого">
       <pron code="першоо" phones="P E1 R SH O O"/>
+   </word>
+   <word name="пожежі">
+      <pron code="пожежи" phones="P O ZH E1 ZH2 Y"/>
    </word>
    <word name="позиціонує">
       <pron code="позицінує" phones="P O Z Y TS1 I N U1 J E"/>
