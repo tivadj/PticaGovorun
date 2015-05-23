@@ -460,7 +460,7 @@
    <syncPoint id="660" sampleInd="18091958" levelOfDetail="word"/>
    <syncPoint id="799" sampleInd="18099252" levelOfDetail="word" transcripText="ділове листування офіційне листування" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="873" sampleInd="18160474" levelOfDetail="word"/>
-   <syncPoint id="2" sampleInd="18168130" levelOfDetail="word" transcripText="саме(1) листуванням називається дія" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="2" sampleInd="18168130" levelOfDetail="word" transcripText="саме(1) листуванням називаєця дія" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="346" sampleInd="18228096" levelOfDetail="word"/>
    <syncPoint id="411" sampleInd="18236216" levelOfDetail="word" transcripText="коли двоє чи більше людей натсилають листи одні одним(1)" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="508" sampleInd="18315364" levelOfDetail="word"/>
@@ -532,7 +532,7 @@
    <syncPoint id="269" sampleInd="20442550" levelOfDetail="word"/>
    <syncPoint id="399" sampleInd="20450322" levelOfDetail="word" transcripText="запам'ятайте натсилання листів іншим людям" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="860" sampleInd="20508186" levelOfDetail="word"/>
-   <syncPoint id="370" sampleInd="20512850" levelOfDetail="word" transcripText="називається листуванням" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="370" sampleInd="20512850" levelOfDetail="word" transcripText="називаєця листуванням" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="902" sampleInd="20553268" levelOfDetail="word"/>
    <syncPoint id="634" sampleInd="20559452" levelOfDetail="word" transcripText="а переписка це не наше слово" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="870" sampleInd="20604832" levelOfDetail="word"/>

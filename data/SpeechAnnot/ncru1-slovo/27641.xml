@@ -68,7 +68,7 @@
    <syncPoint id="70" sampleInd="3346892" levelOfDetail="word"/>
    <syncPoint id="89" sampleInd="3348711" levelOfDetail="word" transcripText="inhale" lang="uk" speakerBriefId="romanukjv"/>
    <syncPoint id="39" sampleInd="3352663" levelOfDetail="word"/>
-   <syncPoint id="61" sampleInd="3353441" levelOfDetail="word" transcripText="все це називається словозміною" lang="uk" speakerBriefId="romanukjv"/>
+   <syncPoint id="61" sampleInd="3353441" levelOfDetail="word" transcripText="все це називаєця словозміною" lang="uk" speakerBriefId="romanukjv"/>
    <syncPoint id="91" sampleInd="3389509" levelOfDetail="word"/>
    <syncPoint id="53" sampleInd="3398803" levelOfDetail="word" transcripText="знання правил словозміни" lang="uk" speakerBriefId="romanukjv"/>
    <syncPoint id="49" sampleInd="3432589" levelOfDetail="word"/>
@@ -578,7 +578,7 @@
    <syncPoint id="566" sampleInd="17958584" levelOfDetail="word"/>
    <syncPoint id="526" sampleInd="17966802" levelOfDetail="word" transcripText="а потім і ендосперм" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="793" sampleInd="18005748" levelOfDetail="word"/>
-   <syncPoint id="503" sampleInd="18010892" levelOfDetail="word" transcripText="хвороба називається біллю" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="503" sampleInd="18010892" levelOfDetail="word" transcripText="хвороба називаєця біллю" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="1066" sampleInd="18057858" levelOfDetail="word"/>
    <syncPoint id="1037" sampleInd="18064424" levelOfDetail="word" transcripText="читаймо у журналі" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="1127" sampleInd="18087278" levelOfDetail="word"/>
