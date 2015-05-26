@@ -266,24 +266,28 @@ namespace PticaGovorun
 				if (softHardRequested == SoftHardConsonant::Palatal)
 				{
 					     if (palatalSupport() == PalatalSupport::AsHard)
-						softHardFixed = SoftHardConsonant::Hard;
+						softHardFixed = SoftHardConsonant::Hard; // B2 -> B, L2 -> L
 					else if (palatalSupport() == PalatalSupport::AsSoft)
-						softHardFixed = SoftHardConsonant::Soft;
+						softHardFixed = SoftHardConsonant::Soft; // B2 -> B1, L2 -> L1
 					else if (palatalSupport() == PalatalSupport::AsPalatal)
-						softHardFixed = SoftHardConsonant::Palatal;
+						softHardFixed = SoftHardConsonant::Palatal; // B2 -> B2, L2 -> L2
 				}
 				else if (softHardRequested == SoftHardConsonant::Soft)
 				{
-					     if (palatalSupport() == PalatalSupport::AsHard)
-						softHardFixed = SoftHardConsonant::Hard;
-					else if (palatalSupport() == PalatalSupport::AsSoft)
-						softHardFixed = SoftHardConsonant::Soft;
-					else if (palatalSupport() == PalatalSupport::AsPalatal)
+					if (usuallyHardBasicPhone(*this, basicPhoneStrId))
 					{
-						if (usuallyHardBasicPhone(*this, basicPhoneStrId))
-							softHardFixed = SoftHardConsonant::Palatal; // B1->B2
-						else
-							softHardFixed = SoftHardConsonant::Soft; // L1 -> L1
+						if (palatalSupport() == PalatalSupport::AsHard)
+						{
+							softHardFixed = SoftHardConsonant::Hard; // B1 -> B
+						}
+						else if (palatalSupport() == PalatalSupport::AsSoft)
+						{
+							softHardFixed = SoftHardConsonant::Soft; // B1 -> B1
+						}
+						else if (palatalSupport() == PalatalSupport::AsPalatal)
+						{
+							softHardFixed = SoftHardConsonant::Palatal; // B1 -> B2
+						}
 					}
 				}
 			}
