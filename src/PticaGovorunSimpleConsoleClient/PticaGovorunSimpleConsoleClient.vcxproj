@@ -207,6 +207,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ComputeSpeechMfccTester.cpp" />
+    <ClCompile Include="DslDictionaryConvertRunner.cpp" />
     <ClCompile Include="EditDistanceTests.cpp" />
     <ClCompile Include="MatlabTester.cpp" />
     <ClCompile Include="MigrateXmlSpeechAnnotRunner.cpp" />

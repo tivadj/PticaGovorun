@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <array>
 #include "WavUtils.h"
+#include <samplerate.h>
 
 namespace PticaGovorun {
 
@@ -101,5 +102,40 @@ std::tuple<bool, std::string> writeAllSamplesWavVirtual(short* sampleData, int s
 	//}
 
 	return make_tuple(true, std::string());
+}
+
+std::tuple<bool, const char*> resampleFrames(wv::slice<short> audioSamples, float inputFrameRate, float outFrameRate, std::vector<short>& outFrames)
+{
+	// we can cast float-short or 
+	// use src_short_to_float_array/src_float_to_short_array which convert to float in [-1;1] range; both work
+	std::vector<float> samplesFloat(std::begin(audioSamples), std::end(audioSamples));
+	//src_short_to_float_array(audioSamples.data(), samplesFloat.data(), audioSamples.size());
+
+	std::vector<float> targetSamplesFloat(samplesFloat.size(), 0);
+
+	float srcSampleRate = inputFrameRate;
+	float targetSampleRate = outFrameRate;
+
+	SRC_DATA convertData;
+	convertData.data_in = samplesFloat.data();
+	convertData.input_frames = samplesFloat.size();
+	convertData.data_out = targetSamplesFloat.data();
+	convertData.output_frames = targetSamplesFloat.size();
+	convertData.src_ratio = targetSampleRate / srcSampleRate;
+
+	int converterType = SRC_SINC_BEST_QUALITY;
+	int channels = 1;
+	int error = src_simple(&convertData, converterType, channels);
+	if (error != 0)
+	{
+		const char* msg = src_strerror(error);
+		return std::make_tuple(false, msg);
+	}
+
+	targetSamplesFloat.resize(convertData.output_frames_gen);
+	outFrames.assign(std::begin(targetSamplesFloat), std::end(targetSamplesFloat));
+	//src_float_to_short_array(targetSamplesFloat.data(), targetSamples.data(), targetSamplesFloat.size());
+
+	return std::make_tuple(true, nullptr);
 }
 }

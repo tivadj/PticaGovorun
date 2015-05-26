@@ -19,6 +19,7 @@ namespace RunPrepareTrainModelSphinxNS { void run(); }
 namespace PdfReaderRunnerNS { void run(); }
 namespace RunTextParserNS { void runMain(int argc, wchar_t* argv[]); }
 namespace RunBuildLanguageModelNS { void runMain(int argc, wchar_t* argv[]); }
+namespace DslDictionaryConvertRunnerNS { void run(); }
 
 int _tmain(int argc, TCHAR* argv[])
 {
@@ -37,6 +38,7 @@ int _tmain(int argc, TCHAR* argv[])
 	//RunBuildLanguageModelNS::runMain(argc, argv);
 	RecognizeSpeechSphinxTester::run();
 	//RecognizeSpeechInBatchTester::runMain(argc, argv);
+	//DslDictionaryConvertRunnerNS::run();
 	std::cout << "main exit" << std::endl;
 	return 0;
 }
