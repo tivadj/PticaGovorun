@@ -1244,7 +1244,14 @@ void SpeechTranscriptionViewModel::setCurrentMarkerStopOnPlayback(bool stopsPlay
 	speechAnnot_.marker(currentMarkerInd_).StopsPlayback = stopsPlayback;
 }
 
-void SpeechTranscriptionViewModel::setCurrentMarkerLang(PticaGovorun::SpeechLanguage lang)
+	void SpeechTranscriptionViewModel::setCurrentMarkerExcludePhase(boost::optional<ResourceUsagePhase> excludePhase)
+	{
+		if (currentMarkerInd_ == -1)
+			return;
+		speechAnnot_.marker(currentMarkerInd_).ExcludePhase = excludePhase;
+	}
+
+	void SpeechTranscriptionViewModel::setCurrentMarkerLang(PticaGovorun::SpeechLanguage lang)
 {
 	std::string langStr = speechLanguageToStr(lang);
 	if (currentMarkerInd_ == -1)

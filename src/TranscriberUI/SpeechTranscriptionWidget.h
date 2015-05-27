@@ -38,6 +38,7 @@ namespace PticaGovorun
 		void groupBoxLang_toggled(bool checked);
 		void lineEditMarkerText_editingFinished();
 		void checkBoxCurMarkerStopOnPlayback_toggled(bool checked);
+		void checkBoxCurMarkerUseInTrain_toggled(bool checked);
 	private:
 		void updateSamplesSlider();
 		void UpdateCursorUI();

@@ -13,6 +13,7 @@
 #include "PticaGovorunCore.h"
 #include "MLUtils.h"
 #include "ClnUtils.h"
+#include <boost/optional/optional.hpp>
 
 namespace PticaGovorun {
 
@@ -127,6 +128,15 @@ enum class SpeechLanguage
 	Russian    // 'ru'
 };
 
+enum class ResourceUsagePhase
+{
+	Train,
+	Test,
+};
+
+boost::string_ref toString(ResourceUsagePhase phase);
+boost::optional<ResourceUsagePhase> resourceUsagePhaseFromString(boost::string_ref phase);
+
 struct TimePointMarker
 {
 	// Uniquely identifies the marker. For example, when two markers have the same sample index.
@@ -146,6 +156,10 @@ struct TimePointMarker
 
 	// The speaker id or speaker's name.
 	std::wstring SpeakerBriefId;
+
+	// Value=null means, allow usage without constraints.
+	// Value=Train means, ignore this segment in training.
+	boost::optional<ResourceUsagePhase> ExcludePhase;
 
 	// Determines if this marker stops the audio playback.
 	// by default: true for word-level markers and false for phone-level markers

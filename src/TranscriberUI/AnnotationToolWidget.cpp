@@ -145,6 +145,8 @@ namespace PticaGovorun
 		{
 			annotationToolModel_->validateAllSpeechAnnotationRequest();
 		}
+		else if (ke->key() == Qt::Key_G && ke->modifiers().testFlag(Qt::ControlModifier))
+			annotationToolModel_->navigateToMarkerRequest();
 		else if (ke->key() == Qt::Key_F11)
 			pushButtonSegmentComposerPlay_Clicked();
 

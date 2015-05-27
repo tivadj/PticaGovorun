@@ -13,6 +13,7 @@ namespace PticaGovorun
 		QObject::connect(ui->radioButtonWordLevel, SIGNAL(toggled(bool)), this, SLOT(radioButtonWordLevel_toggled(bool)));
 		QObject::connect(ui->lineEditMarkerText, SIGNAL(editingFinished()), this, SLOT(lineEditMarkerText_editingFinished()));
 		QObject::connect(ui->checkBoxCurMarkerStopOnPlayback, SIGNAL(toggled(bool)), this, SLOT(checkBoxCurMarkerStopOnPlayback_toggled(bool)));
+		QObject::connect(ui->checkBoxCurMarkerUseInTrain, SIGNAL(toggled(bool)), this, SLOT(checkBoxCurMarkerUseInTrain_toggled(bool)));
 		QObject::connect(ui->radioButtonLangNone, SIGNAL(toggled(bool)), this, SLOT(groupBoxLang_toggled(bool)));
 		QObject::connect(ui->radioButtonLangRu, SIGNAL(toggled(bool)), this, SLOT(groupBoxLang_toggled(bool)));
 		QObject::connect(ui->radioButtonLangUk, SIGNAL(toggled(bool)), this, SLOT(groupBoxLang_toggled(bool)));
@@ -219,9 +220,8 @@ namespace PticaGovorun
 
 	void SpeechTranscriptionWidget::transcriberModel_currentMarkerIndChanged()
 	{
-		using namespace PticaGovorun;
-		PticaGovorun::MarkerLevelOfDetail uiMarkerLevel = transcriberModel_->templateMarkerLevelOfDetail();
-		PticaGovorun::SpeechLanguage uiMarkerLang = PticaGovorun::SpeechLanguage::NotSet;
+		MarkerLevelOfDetail uiMarkerLevel = transcriberModel_->templateMarkerLevelOfDetail();
+		SpeechLanguage uiMarkerLang = SpeechLanguage::NotSet;
 		QString uiMarkerIdStr = "###";
 		QString uiMarkerTranscriptStr = "";
 		bool uiMarkerStopsPlayback = false;
@@ -242,11 +242,17 @@ namespace PticaGovorun
 			uiMarkerStopsPlayback = marker.StopsPlayback;
 			uiMarkerStopsPlaybackEnabled = true;
 			uiMarkerSpeakerBriefId = QString::fromStdWString(marker.SpeakerBriefId);
+
+			bool useInTrain = marker.ExcludePhase == nullptr || marker.ExcludePhase == ResourceUsagePhase::Test;
+			ui->checkBoxCurMarkerUseInTrain->setEnabled(true);
+			ui->checkBoxCurMarkerUseInTrain->setChecked(useInTrain);
 		}
 		else
 		{
 			uiMarkerStopsPlaybackEnabled = false;
 			uiMarkerLang = transcriberModel_->templateMarkerSpeechLanguage();
+			ui->checkBoxCurMarkerUseInTrain->setEnabled(false);
+			ui->checkBoxCurMarkerUseInTrain->setChecked(false);
 		}
 
 		// update ui
@@ -273,6 +279,8 @@ namespace PticaGovorun
 
 		int comboSpeakerInd = ui->comboBoxSpeakerId->findData(QVariant::fromValue(uiMarkerSpeakerBriefId));
 		ui->comboBoxSpeakerId->setCurrentIndex(comboSpeakerInd);
+		
+		ui->widgetSamples->setFocus(Qt::OtherFocusReason);
 	}
 
 	void SpeechTranscriptionWidget::transcriberModel_playingSampleIndChanged(long oldPlayingSampleInd)
@@ -349,6 +357,12 @@ namespace PticaGovorun
 		transcriberModel_->setCurrentMarkerStopOnPlayback(checked);
 	}
 
+	void SpeechTranscriptionWidget::checkBoxCurMarkerUseInTrain_toggled(bool checked)
+	{
+		auto excludePhase = boost::make_optional<ResourceUsagePhase>(!checked, ResourceUsagePhase::Train);
+		transcriberModel_->setCurrentMarkerExcludePhase(excludePhase);
+	}
+
 	void SpeechTranscriptionWidget::keyPressEvent(QKeyEvent* ke)
 	{
 		// lanes view
@@ -362,7 +376,7 @@ namespace PticaGovorun
 			transcriberModel_->insertNewMarkerAtCursorRequest();
 		else if (ke->key() == Qt::Key_Delete)
 			transcriberModel_->deleteRequest(ke->modifiers().testFlag(Qt::ControlModifier));
-		else if (ke->key() == Qt::Key_T)
+		else if (ke->key() == Qt::Key_T && ke->modifiers().testFlag(Qt::ControlModifier))
 			transcriberModel_->selectMarkerClosestToCurrentCursorRequest();
 
 		// navigation
@@ -374,24 +388,40 @@ namespace PticaGovorun
 			transcriberModel_->selectMarkerForward();
 		else if (ke->key() == Qt::Key_Left && ke->modifiers().testFlag(Qt::ControlModifier))
 			transcriberModel_->selectMarkerBackward();
-		else if (ke->key() == Qt::Key_G && ke->modifiers().testFlag(Qt::ControlModifier))
-			transcriberModel_->navigateToMarkerRequest();
 		else if (ke->key() == Qt::Key_PageUp)
 			transcriberModel_->scrollPageBackwardRequest(); // PageUp is near Home => it scrolls backward
 		else if (ke->key() == Qt::Key_PageDown)
 			transcriberModel_->scrollPageForwardRequest();
 
 		// play
-		if (ke->key() == Qt::Key_Space || ke->key() == Qt::Key_C)
-			transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::CurrentCursor);
-		// F9 is used to start playing when typing transcript text in
-		else if (ke->key() == Qt::Key_X || ke->key() == Qt::Key_F9)
-			transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::SegmentBegin);
-		else if (ke->key() == Qt::Key_Backslash)
+		//if (ke->key() == Qt::Key_Space || ke->key() == Qt::Key_C)
+		//	transcriberModel_->soundPlayerTogglePlayPause();
+		//// F9 is used to start playing when typing transcript text in
+		//else if (ke->key() == Qt::Key_X || ke->key() == Qt::Key_F9)
+		//	transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::SegmentBegin);
+		//else if (ke->key() == Qt::Key_Backslash)
+		//	transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::CurrentCursor);
+
+		if (ke->key() == Qt::Key_Space)
 			transcriberModel_->soundPlayerTogglePlayPause();
+		// F9 is used to start playing when typing transcript text in
+		else if (ke->key() == Qt::Key_F9)
+		{
+			if (ke->modifiers().testFlag(Qt::ControlModifier))
+				transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::CurrentCursor);
+			else
+				transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::SegmentBegin);
+		}
+		else if (ke->key() == Qt::Key_Backslash)
+		{
+			if (ke->modifiers().testFlag(Qt::ControlModifier))
+				transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::CurrentCursor);
+			else
+				transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::SegmentBegin);
+		}
 
 		// analyze
-		else if (ke->key() == Qt::Key_R)
+		else if (ke->key() == Qt::Key_R && ke->modifiers().testFlag(Qt::ControlModifier))
 			transcriberModel_->recognizeCurrentSegmentJuliusRequest();
 		else if (ke->key() == Qt::Key_F1)
 			transcriberModel_->recognizeCurrentSegmentSphinxRequest();
@@ -408,8 +438,6 @@ namespace PticaGovorun
 			transcriberModel_->saveCurrentRangeAsWavRequest();
 
 		// persistence
-		else if (ke->key() == Qt::Key_S && ke->modifiers().testFlag(Qt::ControlModifier))
-			transcriberModel_->saveAudioMarkupToXml();
 		else if (ke->key() == Qt::Key_F5)
 			transcriberModel_->refreshRequest();
 

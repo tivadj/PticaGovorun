@@ -53,6 +53,9 @@ namespace PticaGovorun
 		// play
 		void playComposingRecipeRequest(QString recipe);
 
+		// navigate
+		void navigateToMarkerRequest();
+
 	public:
 		// Occurs when phonetic dialog closes and phonetic expansion of current marker's text must be updated.
 		void onPronIdPhoneticSpecChanged();

@@ -17,8 +17,8 @@
 #include "InteropPython.h"
 #include "PticaGovorunCore.h"
 
-namespace PticaGovorun {
-
+namespace PticaGovorun 
+{
 	bool getDefaultMarkerStopsPlayback(MarkerLevelOfDetail levelOfDetail)
 	{
 		if (levelOfDetail == MarkerLevelOfDetail::Word)
@@ -39,6 +39,28 @@ namespace PticaGovorun {
 		default:
 			return "";
 		}
+	}
+
+	boost::string_ref toString(ResourceUsagePhase phase)
+	{
+		switch (phase)
+		{
+		case ResourceUsagePhase::Train:
+			return "train";
+		case ResourceUsagePhase::Test:
+			return "test";
+		default:
+			return nullptr;
+		}
+	}
+
+	boost::optional<ResourceUsagePhase> resourceUsagePhaseFromString(boost::string_ref phase)
+	{
+		if (phase.compare("train") == 0)
+			return ResourceUsagePhase::Train;
+		if (phase.compare("test") == 0)
+			return ResourceUsagePhase::Test;
+		return nullptr;
 	}
 
 	void splitUtteranceIntoWords(const std::wstring& text, std::vector<wv::slice<const wchar_t>>& wordsAsSlices)

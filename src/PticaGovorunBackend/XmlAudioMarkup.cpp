@@ -29,6 +29,7 @@ namespace {
 	static const char* MarkerSampleIndName = "sampleInd";
 	static const char* MarkerTranscripTextName = "transcripText";
 	static const char* MarkerLanguageName = "lang";
+	static const char* MarkerExcludePhaseName = "exclude";
 	static const char* MarkerLangUkrainian = "uk";
 	static const char* MarkerLangRussian = "ru";
 	static const char* MarkerLevelOfDetailName = "levelOfDetail";
@@ -110,6 +111,9 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMa
 
 			QString speakerBriefIdStr = e.attribute(MarkerSpeakerBriefIdName, "");
 
+			QString excludeStr = e.attribute(MarkerExcludePhaseName, "");
+			boost::optional<ResourceUsagePhase> excludePhase = resourceUsagePhaseFromString(excludeStr.toStdString());
+
 			//
 			PG_Assert(markerId != -1);
 
@@ -120,6 +124,7 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMa
 			syncPoint.LevelOfDetail = levelOfDetail;
 			syncPoint.Language = lang;
 			syncPoint.SpeakerBriefId = speakerBriefIdStr.toStdWString();
+			syncPoint.ExcludePhase = excludePhase;
 
 			// UI specific
 			syncPoint.IsManual = true;
@@ -185,6 +190,13 @@ PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const SpeechAnnota
 		{
 			QString spkStr = QString::fromStdWString(marker.SpeakerBriefId);
 			xmlWriter.writeAttribute(MarkerSpeakerBriefIdName, spkStr);
+		}
+
+		if (marker.ExcludePhase != nullptr)
+		{
+			boost::string_ref excludeRef = toString(marker.ExcludePhase.get());
+			QString excludeStrQ = QString::fromLatin1(excludeRef.data(), excludeRef.size());
+			xmlWriter.writeAttribute(MarkerExcludePhaseName, excludeStrQ);
 		}
 
 		xmlWriter.writeEndElement(); // MarkerName

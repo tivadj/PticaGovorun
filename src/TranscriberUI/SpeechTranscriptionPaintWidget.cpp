@@ -253,17 +253,22 @@ void SpeechTranscriptionPaintWidget::drawMarkers(QPainter& painter, const QRect&
 		auto x = markerDocX - docLeft;
 
 		int markerHalfHeight = markerHalfHeightMax;
+		QPen markerPen;
 		if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Word)
 		{
-			painter.setPen(wordMarkerColor);
+			markerPen.setColor(wordMarkerColor);
 			markerHalfHeight = markerHalfHeightMax;
 		}
 		else if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Phone)
 		{
-			painter.setPen(phoneMarkerColor);
+			markerPen.setColor(phoneMarkerColor);
 			markerHalfHeight = markerHalfHeightMax * 0.6;
 		}
 
+		if (marker.ExcludePhase != nullptr)
+			markerPen.setStyle(Qt::DashLine);
+
+		painter.setPen(markerPen);
 		painter.drawLine(x, viewportRect.top(), x, viewportRect.bottom());
 
 		// draw cross above the marker to indicate that it stops audio player

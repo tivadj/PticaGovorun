@@ -145,6 +145,13 @@ namespace PticaGovorun
 			m->playComposingRecipeRequest(recipe);
 	}
 
+	void AnnotationToolViewModel::navigateToMarkerRequest()
+	{
+		auto m = activeTranscriptionModel();
+		if (m != nullptr)
+			m->navigateToMarkerRequest();
+	}
+
 	void AnnotationToolViewModel::fileWorkspaceViewModel_openAudioFile(const std::wstring& filePath)
 	{
 		QString filePathQ = QString::fromStdWString(filePath);

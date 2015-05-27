@@ -156,7 +156,7 @@
      <widget class="QCheckBox" name="checkBoxCurMarkerStopOnPlayback">
       <property name="geometry">
        <rect>
-        <x>200</x>
+        <x>250</x>
         <y>20</y>
         <width>91</width>
         <height>17</height>
@@ -324,6 +324,19 @@
         <width>131</width>
         <height>16</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBoxCurMarkerUseInTrain">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>20</y>
+        <width>41</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Train</string>
       </property>
      </widget>
     </widget>

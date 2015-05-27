@@ -298,6 +298,7 @@ public:
 	void setCurrentMarkerTranscriptText(const QString& text);
 	void setCurrentMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail);
 	void setCurrentMarkerStopOnPlayback(bool stopsPlayback);
+	void setCurrentMarkerExcludePhase(boost::optional<ResourceUsagePhase> excludePhase);
 	void setCurrentMarkerLang(PticaGovorun::SpeechLanguage lang);
 	QString currentMarkerPhoneListString() const;
 	void onPronIdPhoneticSpecChanged();
