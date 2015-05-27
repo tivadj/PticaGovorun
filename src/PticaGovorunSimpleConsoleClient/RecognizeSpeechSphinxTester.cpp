@@ -163,6 +163,10 @@ namespace RecognizeSpeechSphinxTester
 		int EndMarkerId;
 	};
 
+	// persian_test/ncru1-ProTseGovorat/849331_0m45s-2m46s_00056-00193
+	// OriginalFileNamePart = 849331
+	// StartMarkerId = 56
+	// EndMarkerId = 193
 	bool readFileId(const wchar_t* fileIdPath, std::vector<SphinxFileIdLine>& fileIdLines)
 	{
 		QFile file(QString::fromWCharArray(fileIdPath));
@@ -176,7 +180,8 @@ namespace RecognizeSpeechSphinxTester
 			int slashInd = line.lastIndexOf(QChar('/'));
 			PG_Assert(slashInd != -1);
 
-			int underscoreInd = line.indexOf(QChar('_'), slashInd);
+			// move to the *last* group separated by underscore
+			int underscoreInd = line.lastIndexOf(QChar('_'));
 			PG_Assert(underscoreInd != -1);
 			int dashInd = line.indexOf(QChar('-'), underscoreInd);
 			PG_Assert(dashInd != -1);

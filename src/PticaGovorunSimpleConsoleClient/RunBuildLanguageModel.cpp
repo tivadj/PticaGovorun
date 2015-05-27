@@ -645,6 +645,35 @@ namespace RunBuildLanguageModelNS
 		}
 	}
 
+	void mergePhoneticDictOnlyNew(std::map<boost::wstring_ref, PhoneticWord>& basePhoneticDict, const std::vector<PhoneticWord>& extraPhoneticDict)
+	{
+		for (const PhoneticWord& extraWord : extraPhoneticDict)
+		{
+			boost::wstring_ref wordRef = extraWord.Word;
+			auto wordIt = basePhoneticDict.find(wordRef);
+			if (wordIt == basePhoneticDict.end())
+			{
+				// new word; add the whole word with all prons
+				basePhoneticDict.insert({ wordRef, extraWord });
+				continue;
+			}
+
+			// existing word; try to integrate new prons into it
+			PhoneticWord& baseWord = wordIt->second;
+			for (const PronunciationFlavour& extraPron : extraWord.Pronunciations)
+			{
+				auto matchedPronIt = std::find_if(baseWord.Pronunciations.begin(), baseWord.Pronunciations.end(), [&extraPron](PronunciationFlavour& p)
+				{
+					return p.PronCode == extraPron.PronCode;
+				});
+				bool duplicatePron = matchedPronIt != baseWord.Pronunciations.end();
+				if (duplicatePron)
+					continue; // pron with the same code already exist
+				baseWord.Pronunciations.push_back(extraPron);
+			}
+		}
+	}
+
 	void testLoadDeclinationDict(int argc, wchar_t* argv[])
 	{
 		std::wstring targetWord;
@@ -763,10 +792,20 @@ namespace RunBuildLanguageModelNS
 			std::cerr << "Can't load phonetic dictionary " << errMsg << std::endl;
 			return;
 		}
+		const wchar_t* brownBearDictPath = LR"path(C:\devb\PticaGovorunProj\srcrep\data\phoneticBrownBear.xml)path";
+		std::vector<PhoneticWord> brownBearPhoneticDictWords;
+		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryXml(brownBearDictPath, phoneReg, brownBearPhoneticDictWords, stringArena);
+		if (!loadPhoneDict)
+		{
+			std::cerr << "Can't load phonetic dictionary " << errMsg << std::endl;
+			return;
+		}
 
 		std::map<boost::wstring_ref, PhoneticWord> phoneticDict;
 		std::map<boost::wstring_ref, PronunciationFlavour> pronCodeToPronObj;
 		reshapeAsDict(phoneticDictWords, phoneticDict);
+		mergePhoneticDictOnlyNew(phoneticDict, brownBearPhoneticDictWords);
+
 		for (const auto& pair : phoneticDict)
 		{
 			const PhoneticWord& word =  pair.second;

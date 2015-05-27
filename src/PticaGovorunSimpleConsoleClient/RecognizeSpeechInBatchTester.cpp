@@ -98,8 +98,8 @@ namespace RecognizeSpeechInBatchTester
 
 		//
 		const char* hmmPath       = R"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\model_parameters\persian.cd_cont_200\)path";
-		const char* langModelPath = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persian.lm.DMP)path";
-		const char* dictPath =      R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persianDic.txt)path";
+		const char* langModelPath = R"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian.arpa)path";
+		const char* dictPath =      R"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian.dic)path";
 		
 		AudioSpeechDecoder decoder;
 		decoder.init(hmmPath, langModelPath, dictPath);
