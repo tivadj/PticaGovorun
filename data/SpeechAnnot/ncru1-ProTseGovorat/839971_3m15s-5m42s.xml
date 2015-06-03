@@ -51,7 +51,7 @@
    <syncPoint id="72" sampleInd="920212" levelOfDetail="word"/>
    <syncPoint id="20" sampleInd="925719" levelOfDetail="word" transcripText="весь цей масив росташований за два десятки кілометрів" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="90" sampleInd="982740" levelOfDetail="word"/>
-   <syncPoint id="30" sampleInd="989885" levelOfDetail="word" transcripText="від самої станції" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="30" sampleInd="989885" levelOfDetail="word" transcripText="від самої станції" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="32" sampleInd="1009184" levelOfDetail="word"/>
    <syncPoint id="73" sampleInd="1014840" levelOfDetail="word" transcripText="однак вогонь швитко почав просуватись" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="54" sampleInd="1056316" levelOfDetail="word"/>
@@ -61,7 +61,7 @@
    <syncPoint id="18" sampleInd="1130850" levelOfDetail="word"/>
    <syncPoint id="112" sampleInd="1137846" levelOfDetail="word" transcripText="не завдала" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="105" sampleInd="1152366" levelOfDetail="word"/>
-   <syncPoint id="107" sampleInd="1158385" levelOfDetail="word" transcripText="проте довелось евакуювати так званих" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="107" sampleInd="1158385" levelOfDetail="word" transcripText="проте довелось евакуювати так званих" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="9" sampleInd="1197662" levelOfDetail="word"/>
    <syncPoint id="58" sampleInd="1204591" levelOfDetail="word" transcripText="самоселів" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="86" sampleInd="1218449" levelOfDetail="word"/>
@@ -73,13 +73,15 @@
    <syncPoint id="97" sampleInd="1351593" levelOfDetail="word"/>
    <syncPoint id="31" sampleInd="1357513" levelOfDetail="word" transcripText="с причинами" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="130" sampleInd="1371736" levelOfDetail="word"/>
-   <syncPoint id="116" sampleInd="1376928" levelOfDetail="word" transcripText="тим більше що спеціалісти екстреники" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="116" sampleInd="1376928" levelOfDetail="word" transcripText="тим біше що" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="168" sampleInd="1388951" levelOfDetail="word"/>
+   <syncPoint id="295" sampleInd="1389546" levelOfDetail="word" transcripText="спеціалісти екстреники" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="87" sampleInd="1421877" levelOfDetail="word"/>
    <syncPoint id="121" sampleInd="1427980" levelOfDetail="word" transcripText="уже оприлюднили попередні версії" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="60" sampleInd="1468811" levelOfDetail="word"/>
    <syncPoint id="79" sampleInd="1475178" levelOfDetail="word" transcripText="пітпал" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="92" sampleInd="1484257" levelOfDetail="word"/>
-   <syncPoint id="133" sampleInd="1489615" levelOfDetail="word" transcripText="чи необережне поводження з вогнем" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="133" sampleInd="1489615" levelOfDetail="word" transcripText="чи необережне поводження" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="135" sampleInd="1531769" levelOfDetail="word"/>
    <syncPoint id="101" sampleInd="1536333" levelOfDetail="word" transcripText="з вогнем" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="132" sampleInd="1547314" levelOfDetail="word"/>
@@ -145,7 +147,7 @@
    <syncPoint id="159" sampleInd="3022840" levelOfDetail="word"/>
    <syncPoint id="255" sampleInd="3029554" levelOfDetail="word" transcripText="брюсель поки виділяє половину" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="67" sampleInd="3068830" levelOfDetail="word"/>
-   <syncPoint id="224" sampleInd="3076024" levelOfDetail="word" transcripText="а загальна вартість усіх робіт" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="224" sampleInd="3076024" levelOfDetail="word" transcripText="а загальна вартісь усіх робіт" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="252" sampleInd="3110902" levelOfDetail="word"/>
    <syncPoint id="282" sampleInd="3117368" levelOfDetail="word" transcripText="оцінюєця у два мільярди" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="286" sampleInd="3153072" levelOfDetail="word"/>

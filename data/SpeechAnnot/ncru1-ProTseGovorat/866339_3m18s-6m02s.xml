@@ -23,7 +23,9 @@
    <syncPoint id="14" sampleInd="516598" levelOfDetail="word"/>
    <syncPoint id="33" sampleInd="526686" levelOfDetail="word" transcripText="а вони знову віддаляюця" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="35" sampleInd="553923" levelOfDetail="word"/>
-   <syncPoint id="30" sampleInd="559215" levelOfDetail="word" transcripText="так що про деякі райдужні очікування" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="30" sampleInd="559165" levelOfDetail="word" transcripText="так що" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="189" sampleInd="568162" levelOfDetail="word"/>
+   <syncPoint id="273" sampleInd="569088" levelOfDetail="word" transcripText="про деякі райдужні очікуваня" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="26" sampleInd="603850" levelOfDetail="word"/>
    <syncPoint id="39" sampleInd="609109" levelOfDetail="word" transcripText="на тлі похмурих реалій" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="46" sampleInd="635436" levelOfDetail="word"/>
@@ -51,7 +53,7 @@
    <syncPoint id="74" sampleInd="1146528" levelOfDetail="word"/>
    <syncPoint id="59" sampleInd="1158848" levelOfDetail="word" transcripText="збільшення рівня беспеки" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="88" sampleInd="1202425" levelOfDetail="word"/>
-   <syncPoint id="32" sampleInd="1215919" levelOfDetail="word" transcripText="досягнення візової лібералізації а також(1)" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="32" sampleInd="1215919" levelOfDetail="word" transcripText="досягненя візової лібералізації а також(1)" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="63" sampleInd="1261761" levelOfDetail="word"/>
    <syncPoint id="78" sampleInd="1279638" levelOfDetail="word" transcripText="дотримання принципу" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="54" sampleInd="1309323" levelOfDetail="word"/>
@@ -73,7 +75,7 @@
    <syncPoint id="52" sampleInd="1717254" levelOfDetail="word"/>
    <syncPoint id="50" sampleInd="1722744" levelOfDetail="word" transcripText="а дбілісі наростив свій експорт до об'єднаної європи" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="56" sampleInd="1776921" levelOfDetail="word"/>
-   <syncPoint id="109" sampleInd="1782825" levelOfDetail="word" transcripText="на п'ядесят вітсотків" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="109" sampleInd="1782825" levelOfDetail="word" transcripText="на п'ядесят вітсотків" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="101" sampleInd="1805332" levelOfDetail="word"/>
    <syncPoint id="71" sampleInd="1812956" levelOfDetail="word" transcripText="азербайджан бажає" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="13" sampleInd="1839085" levelOfDetail="word"/>
@@ -125,9 +127,11 @@
    <syncPoint id="183" sampleInd="2797103" levelOfDetail="word"/>
    <syncPoint id="87" sampleInd="2806050" levelOfDetail="word" transcripText="кожної країни" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="242" sampleInd="2826060" levelOfDetail="word"/>
-   <syncPoint id="102" sampleInd="2841159" levelOfDetail="word" transcripText="вільно обирати рівень відносин з європейським союзом" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="102" sampleInd="2841159" levelOfDetail="word" transcripText="вільно обирати рівень" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="173" sampleInd="2869785" levelOfDetail="word"/>
+   <syncPoint id="231" sampleInd="2871439" levelOfDetail="word" transcripText="відносин з європейським союзом" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="217" sampleInd="2904646" levelOfDetail="word"/>
-   <syncPoint id="177" sampleInd="2910666" levelOfDetail="word" transcripText="при цьому(1)" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="177" sampleInd="2910666" levelOfDetail="word" transcripText="при цьому(1)" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="249" sampleInd="2918868" levelOfDetail="word"/>
    <syncPoint id="243" sampleInd="2924408" levelOfDetail="word" transcripText="зачищені усі згатки і про євро перспективи" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="112" sampleInd="2986639" levelOfDetail="word"/>
@@ -141,7 +145,7 @@
    <syncPoint id="172" sampleInd="3146490" levelOfDetail="word"/>
    <syncPoint id="270" sampleInd="3154478" levelOfDetail="word" transcripText="в тому(1) числі і для росії приблизно так" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="186" sampleInd="3199162" levelOfDetail="word"/>
-   <syncPoint id="239" sampleInd="3206009" levelOfDetail="word" transcripText="як висловилась" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="239" sampleInd="3206009" levelOfDetail="word" transcripText="як висловилась" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="262" sampleInd="3220793" levelOfDetail="word"/>
    <syncPoint id="238" sampleInd="3226482" levelOfDetail="word" transcripText="федеріка могеріні" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="245" sampleInd="3246294" levelOfDetail="word"/>
@@ -155,7 +159,7 @@
    <syncPoint id="157" sampleInd="3382431" levelOfDetail="word"/>
    <syncPoint id="213" sampleInd="3390104" levelOfDetail="word" transcripText="зрозуміло ми не можемо розраховувати як написав" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="248" sampleInd="3446745" levelOfDetail="word"/>
-   <syncPoint id="135" sampleInd="3452170" levelOfDetail="word" transcripText="один з європейських коментаторів" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="135" sampleInd="3452170" levelOfDetail="word" transcripText="один з європейських коментаторів" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="82" sampleInd="3482086" levelOfDetail="word"/>
    <syncPoint id="124" sampleInd="3492538" levelOfDetail="word" transcripText="не марно сподіватись" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="24" sampleInd="3517278" levelOfDetail="word"/>

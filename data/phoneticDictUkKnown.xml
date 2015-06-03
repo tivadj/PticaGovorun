@@ -422,7 +422,6 @@
    <word name="вареник" phones="V A R E1 N Y K"/>
    <word name="вартий" phones="V A1 R T Y J"/>
    <word name="варто" phones="V A1 R T O"/>
-   <word name="вартість" phones="V A1 R T1 I S1 T1"/>
    <word name="варшавську" phones="V A R SH A1 V S1 K U"/>
    <word name="варіант" phones="V A R1 I A1 N T"/>
    <word name="варіанти" phones="V A R1 I A1 N T Y"/>
@@ -1188,7 +1187,7 @@
    <word name="ганни" phones="H A1 N N Y"/>
    <word name="ганчіркою" phones="H A N CH2 I1 R K O J U"/>
    <word name="гаразди" phones="H A R A1 S D Y"/>
-   <word name="гарантована" phones="H A R A N T O1 V A N A"/>
+   <word name="гарантовано" phones="H A R A N T O1 V A N O"/>
    <word name="гармонійне" phones="H A R M O N1 I1 J N E"/>
    <word name="гармонійними" phones="H A R M O N1 I1 J N Y M Y"/>
    <word name="гарний" phones="H A1 R N Y J"/>
@@ -1699,7 +1698,9 @@
    <word name="доступнішими" phones="D O S T U1 P N1 I SH Y M Y"/>
    <word name="доступу" phones="D O1 S T U P U"/>
    <word name="досяг" phones="D O S1 A1 H"/>
-   <word name="досягнення" phones="D O S1 A1 H N E N1 N1 A"/>
+   <word name="досягнення">
+      <pron code="досягненя" phones="D O S1 A1 H N E N1 A"/>
+   </word>
    <word name="досягнутого" phones="D O S1 A1 H N U T O H O"/>
    <word name="досі" phones="D O1 S1 I"/>
    <word name="дотримання" phones="D O T R Y1 M A N1 N1 A"/>
@@ -3594,9 +3595,6 @@
    </word>
    <word name="най" phones="N A1 J"/>
    <word name="найавторитетніші" phones="N A J A V T O R Y T E1 T1 N1 I1 SH2 I"/>
-   <word name="найближчим">
-      <pron code="найблишчим" phones="N A J B L Y1 SH CH Y M"/>
-   </word>
    <word name="найбільш" phones="N A J B2 I1 L1 SH"/>
    <word name="найбільше" phones="N A J B2 I1 L1 SH E"/>
    <word name="найбільший" phones="N A J B2 I1 L1 SH Y J"/>
@@ -4276,7 +4274,9 @@
    <word name="очолює" phones="O CH O1 L1 U J E"/>
    <word name="очі" phones="O1 CH2 I"/>
    <word name="очікували" phones="O CH2 I1 K U V A L Y"/>
-   <word name="очікування" phones="O CH2 I1 K U V A N1 N1 A"/>
+   <word name="очікування">
+      <pron code="очікуваня" phones="O CH2 I1 K U V A N1 A"/>
+   </word>
    <word name="очікувати" phones="O CH2 I1 K U V A T Y"/>
    <word name="очіпок" phones="O CH2 I1 P O K"/>
    <word name="ошукати" phones="O SH U K A1 T Y"/>
@@ -5157,7 +5157,6 @@
    <word name="просити" phones="P R O S Y1 T Y"/>
    <word name="прослов'янського" phones="P R O S L O V J A1 N1 S1 K O H O"/>
    <word name="просте" phones="P R O S T E1"/>
-   <word name="простежувались" phones="P R O S T E1 ZH U V A L Y S1"/>
    <word name="простий" phones="P R O S T Y1 J"/>
    <word name="простим" phones="P R O S T Y1 M"/>
    <word name="просто" phones="P R O1 S T O"/>
@@ -5281,7 +5280,9 @@
       <pron code="пітклав" phones="P2 I T K L A1 V"/>
    </word>
    <word name="підкорити" phones="P2 I T K O R Y1 T Y"/>
-   <word name="підкреслення" phones="P2 I T K R E1 S L E N1 N1 A"/>
+   <word name="підкреслення">
+      <pron code="піткреслення" phones="P2 I T K R E1 S L E N1 N1 A"/>
+   </word>
    <word name="підкреслив">
       <pron code="піткреслив" phones="P2 I T K R E1 S L Y V"/>
    </word>
@@ -5667,7 +5668,6 @@
    <word name="розумом" phones="R O1 Z U M O M"/>
    <word name="розуміння" phones="R O Z U M2 I1 N1 N1 A"/>
    <word name="розуміти" phones="R O Z U M2 I1 T Y"/>
-   <word name="розумієте" phones="R O Z U M2 I1 J E T E"/>
    <word name="розхитують" phones="R O S KH Y1 T U J U T1"/>
    <word name="розцяцькованого" phones="R O S1 TS1 A TS1 K O1 V A N O H O"/>
    <word name="розчарування" phones="R O S CH A R U V A1 N1 N1 A"/>
@@ -6194,10 +6194,8 @@
    <word name="спецназівців" phones="S P E TS N A1 Z1 I V TS1 I V"/>
    <word name="спеціальний" phones="S P E TS1 I A1 L1 N Y J"/>
    <word name="спеціальних" phones="S P E TS1 I A1 L1 N Y KH"/>
-   <word name="спеціального">
-      <pron code="спеціального" phones="S P E TS1 I A1 L1 N O H O"/>
-      <pron code="спеціальноо" phones="S P E TS1 I A1 L1 N O O"/>
-   </word>
+   <word name="спеціально" phones="S P E TS1 I A1 L1 N O"/>
+   <word name="спеціального" phones="S P E TS1 I A1 L1 N O H O"/>
    <word name="спеціальностей" phones="S P E TS1 I A1 L1 N O S T E J"/>
    <word name="спеціальності" phones="S P E TS1 I A1 L1 N O S1 T1 I"/>
    <word name="спеціальної" phones="S P E TS1 I A1 L1 N O J I"/>

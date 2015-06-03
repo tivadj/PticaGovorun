@@ -170,8 +170,15 @@
    <syncPoint id="308" sampleInd="13348408" levelOfDetail="word"/>
    <syncPoint id="322" sampleInd="13356925" levelOfDetail="word" transcripText="слово жоден" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="219" sampleInd="13381963" levelOfDetail="word"/>
-   <syncPoint id="274" sampleInd="13387966" levelOfDetail="word" transcripText="уживаємо в заперечних реченнях для підкреслення повного категоричного заперечення наприклад" lang="uk" speakerBriefId="khorkindm"/>
-   <syncPoint id="279" sampleInd="13524682" levelOfDetail="word"/>
+   <syncPoint id="274" sampleInd="13387966" levelOfDetail="word" transcripText="уживаємо в заперечних реченнях для піткреслення" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="828" sampleInd="13456977" levelOfDetail="word"/>
+   <syncPoint id="646" sampleInd="13459970" levelOfDetail="word" transcripText="повного" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="602" sampleInd="13473415" levelOfDetail="word"/>
+   <syncPoint id="497" sampleInd="13476491" levelOfDetail="word" transcripText="категоричного заперечення" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="675" sampleInd="13511617" levelOfDetail="word"/>
+   <syncPoint id="665" sampleInd="13515222" levelOfDetail="word" transcripText="наприклад" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="279" sampleInd="13526567" levelOfDetail="word"/>
+   <syncPoint id="640" sampleInd="13528055" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="193" sampleInd="13535481" levelOfDetail="word" transcripText="жодного шелесту свисту чи шарудіння" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="129" sampleInd="13605451" levelOfDetail="word"/>
    <syncPoint id="267" sampleInd="13613918" levelOfDetail="word" transcripText="важкий ліс цей був мертвий бездушний" lang="uk" speakerBriefId="khorkindm"/>

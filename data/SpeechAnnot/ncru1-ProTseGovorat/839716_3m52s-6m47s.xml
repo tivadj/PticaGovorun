@@ -39,8 +39,8 @@
    <syncPoint id="61" sampleInd="812206" levelOfDetail="word"/>
    <syncPoint id="51" sampleInd="822939" levelOfDetail="word" transcripText="але на пряме зверненя" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="53" sampleInd="849713" levelOfDetail="word"/>
-   <syncPoint id="70" sampleInd="855170" levelOfDetail="word"/>
-   <syncPoint id="48" sampleInd="869492" levelOfDetail="word" transcripText="європо" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="70" sampleInd="855170" levelOfDetail="word" transcripText="європо" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
+   <syncPoint id="48" sampleInd="869492" levelOfDetail="word"/>
    <syncPoint id="69" sampleInd="877413" levelOfDetail="word" transcripText="прийми на в овійми" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="65" sampleInd="902947" levelOfDetail="word"/>
    <syncPoint id="1" sampleInd="912803" levelOfDetail="word" transcripText="ми дістали шо" lang="uk" speakerBriefId="korotajevskyjsh"/>
@@ -59,7 +59,7 @@
    <syncPoint id="99" sampleInd="1211570" levelOfDetail="word"/>
    <syncPoint id="106" sampleInd="1218317" levelOfDetail="word" transcripText="горить" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="64" sampleInd="1227413" levelOfDetail="word"/>
-   <syncPoint id="58" sampleInd="1234871" levelOfDetail="word" transcripText="віттак с перспективками" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="58" sampleInd="1234871" levelOfDetail="word" transcripText="вітак с перспективками" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="97" sampleInd="1261364" levelOfDetail="word"/>
    <syncPoint id="91" sampleInd="1265862" levelOfDetail="word" transcripText="все зрозуміло" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="76" sampleInd="1284384" levelOfDetail="word"/>
@@ -67,7 +67,7 @@
    <syncPoint id="110" sampleInd="1318816" levelOfDetail="word"/>
    <syncPoint id="25" sampleInd="1323678" levelOfDetail="word" transcripText="черес п'ять років(1) він планує подавати заявку" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="107" sampleInd="1374927" levelOfDetail="word"/>
-   <syncPoint id="103" sampleInd="1380319" levelOfDetail="word" transcripText="на вступ" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="103" sampleInd="1380319" levelOfDetail="word" transcripText="на вступ" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="38" sampleInd="1388438" levelOfDetail="word"/>
    <syncPoint id="96" sampleInd="1397336" levelOfDetail="word" transcripText="до євро союзу" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="52" sampleInd="1423366" levelOfDetail="word"/>
@@ -105,7 +105,7 @@
    <syncPoint id="119" sampleInd="2014945" levelOfDetail="word"/>
    <syncPoint id="45" sampleInd="2022966" levelOfDetail="word" transcripText="оскільки як я зрозумів" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="181" sampleInd="2051923" levelOfDetail="word"/>
-   <syncPoint id="136" sampleInd="2058588" levelOfDetail="word" transcripText="щойно україні дадуть без віз" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="136" sampleInd="2058588" levelOfDetail="word" transcripText="щойно україні дадуть" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="130" sampleInd="2083791" levelOfDetail="word"/>
    <syncPoint id="195" sampleInd="2089777" levelOfDetail="word" transcripText="без віз" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="57" sampleInd="2106001" levelOfDetail="word"/>
@@ -179,7 +179,7 @@
    <syncPoint id="303" sampleInd="3349290" levelOfDetail="word"/>
    <syncPoint id="134" sampleInd="3355508" levelOfDetail="word" transcripText="євро" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="273" sampleInd="3363744" levelOfDetail="word"/>
-   <syncPoint id="256" sampleInd="3372624" levelOfDetail="word" transcripText="перспектив" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="256" sampleInd="3372624" levelOfDetail="word" transcripText="перспектив" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="200" sampleInd="3383440" levelOfDetail="word"/>
    <syncPoint id="300" sampleInd="3388252" levelOfDetail="word" transcripText="а також(2) більшість того(2) на що ми" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="159" sampleInd="3420103" levelOfDetail="word"/>

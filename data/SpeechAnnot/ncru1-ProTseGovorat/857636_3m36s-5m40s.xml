@@ -13,7 +13,7 @@
    <syncPoint id="8" sampleInd="200004" levelOfDetail="word"/>
    <syncPoint id="12" sampleInd="206057" levelOfDetail="word" transcripText="які ми класні" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="6" sampleInd="232070" levelOfDetail="word"/>
-   <syncPoint id="16" sampleInd="240289" levelOfDetail="word" transcripText="більше того(1)" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="16" sampleInd="240289" levelOfDetail="word" transcripText="більше того(1)" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="4" sampleInd="252014" levelOfDetail="word"/>
    <syncPoint id="19" sampleInd="252941" levelOfDetail="word"/>
    <syncPoint id="22" sampleInd="261838" levelOfDetail="word" transcripText="ми не просто класні" lang="uk" speakerBriefId="korotajevskyjsh"/>
@@ -38,13 +38,13 @@
    <syncPoint id="47" sampleInd="698742" levelOfDetail="word"/>
    <syncPoint id="61" sampleInd="705026" levelOfDetail="word" transcripText="кожен з вас бажає за європу воювати" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="51" sampleInd="756094" levelOfDetail="word"/>
-   <syncPoint id="53" sampleInd="760080" levelOfDetail="word" transcripText="тим більше що європа" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="53" sampleInd="760080" levelOfDetail="word" transcripText="тим більше що європа" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="70" sampleInd="779428" levelOfDetail="word"/>
    <syncPoint id="48" sampleInd="785316" levelOfDetail="word" transcripText="все одно" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="69" sampleInd="796264" levelOfDetail="word"/>
    <syncPoint id="65" sampleInd="803424" levelOfDetail="word" transcripText="не зацінить" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="1" sampleInd="817961" levelOfDetail="word"/>
-   <syncPoint id="79" sampleInd="827751" levelOfDetail="word" transcripText="судячи с поведінки союзників" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="79" sampleInd="827751" levelOfDetail="word" transcripText="судячи с поведінки союзників" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="72" sampleInd="861091" levelOfDetail="word"/>
    <syncPoint id="18" sampleInd="866531" levelOfDetail="word" transcripText="європа не те що за нас воювати вона не бажає" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="75" sampleInd="916342" levelOfDetail="word"/>
@@ -89,7 +89,7 @@
    <syncPoint id="126" sampleInd="1702287" levelOfDetail="word"/>
    <syncPoint id="152" sampleInd="1710721" levelOfDetail="word" transcripText="теж якась непруха" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="49" sampleInd="1738372" levelOfDetail="word"/>
-   <syncPoint id="68" sampleInd="1746393" levelOfDetail="word" transcripText="нам кажуть" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="68" sampleInd="1746393" levelOfDetail="word" transcripText="нам кажуть" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="120" sampleInd="1755571" levelOfDetail="word"/>
    <syncPoint id="132" sampleInd="1760201" levelOfDetail="word" transcripText="вже готові начепто посилені санкції але тільки якщо сепаратисти" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="108" sampleInd="1829990" levelOfDetail="word"/>

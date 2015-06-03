@@ -3,7 +3,7 @@
    <header>
       <speaker briefId="korotajevskyjsh" name="Коротаєвський Сергій Генадійович"/>
    </header>
-   <syncPoint id="42" sampleInd="44254" levelOfDetail="word" transcripText="про це говорять" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="42" sampleInd="44254" levelOfDetail="word" transcripText="про це говорять" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="2" sampleInd="58608" levelOfDetail="word"/>
    <syncPoint id="3" sampleInd="69308" levelOfDetail="word" transcripText="його убили за слова(2)" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="5" sampleInd="111528" levelOfDetail="word"/>
@@ -25,7 +25,9 @@
    <syncPoint id="27" sampleInd="445387" levelOfDetail="word"/>
    <syncPoint id="21" sampleInd="453607" levelOfDetail="word" transcripText="війна путін" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="18" sampleInd="480645" levelOfDetail="word"/>
-   <syncPoint id="39" sampleInd="487244" levelOfDetail="word" transcripText="як ви розумієте це про участь росії у війні на донбасі" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="39" sampleInd="487244" levelOfDetail="word" transcripText="як ви розуміте" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="324" sampleInd="501648" levelOfDetail="word"/>
+   <syncPoint id="251" sampleInd="501896" levelOfDetail="word" transcripText="це про участь росії у війні на донбасі" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="40" sampleInd="553708" levelOfDetail="word"/>
    <syncPoint id="28" sampleInd="561431" levelOfDetail="word" transcripText="у нас з вами проблем не має" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="46" sampleInd="593481" levelOfDetail="word"/>

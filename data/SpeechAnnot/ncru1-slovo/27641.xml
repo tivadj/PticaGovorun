@@ -118,7 +118,7 @@
    <syncPoint id="212" sampleInd="4150747" levelOfDetail="word"/>
    <syncPoint id="153" sampleInd="4152748" levelOfDetail="word" transcripText="inhale" lang="uk" speakerBriefId="romanukjv"/>
    <syncPoint id="172" sampleInd="4158304" levelOfDetail="word"/>
-   <syncPoint id="128" sampleInd="4160752" levelOfDetail="word" transcripText="інституту української мови національної академії наук україни" lang="uk" speakerBriefId="romanukjv"/>
+   <syncPoint id="128" sampleInd="4160752" levelOfDetail="word" transcripText="інституту української мови національної академії наук україни" lang="uk" speakerBriefId="romanukjv" exclude="train"/>
    <syncPoint id="201" sampleInd="4237023" levelOfDetail="word"/>
    <syncPoint id="160" sampleInd="4239619" levelOfDetail="word" transcripText="inhale" lang="uk" speakerBriefId="romanukjv"/>
    <syncPoint id="203" sampleInd="4243440" levelOfDetail="word"/>

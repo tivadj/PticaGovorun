@@ -286,7 +286,9 @@
    <syncPoint id="513" sampleInd="10604159" levelOfDetail="word"/>
    <syncPoint id="335" sampleInd="10610278" levelOfDetail="word" transcripText="як писав нестор літописець" lang="uk" speakerBriefId="grytsenkopj"/>
    <syncPoint id="486" sampleInd="10678197" levelOfDetail="word"/>
-   <syncPoint id="175" sampleInd="10683754" levelOfDetail="word" transcripText="звіци пішла і єсть земля руська" lang="uk" speakerBriefId="grytsenkopj"/>
+   <syncPoint id="175" sampleInd="10683754" levelOfDetail="word" transcripText="звіци пішла і єсть" lang="uk" speakerBriefId="grytsenkopj"/>
+   <syncPoint id="651" sampleInd="10733598" levelOfDetail="word"/>
+   <syncPoint id="636" sampleInd="10735566" levelOfDetail="word" transcripText="земля руська" lang="uk" speakerBriefId="grytsenkopj"/>
    <syncPoint id="499" sampleInd="10767500" levelOfDetail="word"/>
    <syncPoint id="302" sampleInd="10775537" levelOfDetail="word" transcripText="так от снову ж таки" lang="uk" speakerBriefId="grytsenkopj"/>
    <syncPoint id="294" sampleInd="10811870" levelOfDetail="word"/>

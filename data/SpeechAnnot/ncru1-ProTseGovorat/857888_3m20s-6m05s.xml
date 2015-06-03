@@ -39,7 +39,7 @@
    <syncPoint id="65" sampleInd="823319" levelOfDetail="word"/>
    <syncPoint id="43" sampleInd="831356" levelOfDetail="word" transcripText="але не кваптесь" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="1" sampleInd="846455" levelOfDetail="word"/>
-   <syncPoint id="34" sampleInd="853516" levelOfDetail="word" transcripText="так ось" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="34" sampleInd="853516" levelOfDetail="word" transcripText="так ось" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="25" sampleInd="859784" levelOfDetail="word"/>
    <syncPoint id="75" sampleInd="865820" levelOfDetail="word" transcripText="вимоги сепаратистів" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="58" sampleInd="890164" levelOfDetail="word"/>
@@ -59,7 +59,7 @@
    <syncPoint id="85" sampleInd="1360622" levelOfDetail="word"/>
    <syncPoint id="103" sampleInd="1368560" levelOfDetail="word" transcripText="то він трохи довше" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="107" sampleInd="1388819" levelOfDetail="word"/>
-   <syncPoint id="90" sampleInd="1396161" levelOfDetail="word" transcripText="особливий статус у складі україни російська мова гарантована" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="90" sampleInd="1396161" levelOfDetail="word" transcripText="особливий статус у складі україни російська мова гарантовано" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="102" sampleInd="1463023" levelOfDetail="word"/>
    <syncPoint id="110" sampleInd="1469290" levelOfDetail="word" transcripText="на рівні" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="111" sampleInd="1478799" levelOfDetail="word"/>
@@ -118,9 +118,9 @@
    <syncPoint id="123" sampleInd="2589375" levelOfDetail="word"/>
    <syncPoint id="135" sampleInd="2616298" levelOfDetail="word" transcripText="це щоп показати заходу що ми виконуємо протоколи як відомо" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="191" sampleInd="2695232" levelOfDetail="word"/>
-   <syncPoint id="139" sampleInd="2701020" levelOfDetail="word" transcripText="закон не передбачає жодних" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="139" sampleInd="2701020" levelOfDetail="word" transcripText="закон не передбачає жодних" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="229" sampleInd="2728852" levelOfDetail="word"/>
-   <syncPoint id="173" sampleInd="2735881" levelOfDetail="word" transcripText="автономіських планів" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="173" sampleInd="2735881" levelOfDetail="word" transcripText="автономіських планів" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="158" sampleInd="2758703" levelOfDetail="word"/>
    <syncPoint id="41" sampleInd="2763962" levelOfDetail="word" transcripText="у часі він обмежений у просторі(1) теж" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="197" sampleInd="2809390" levelOfDetail="word"/>

@@ -3,8 +3,6 @@
    <header>
       <speaker briefId="korotajevskyjsh" name="Коротаєвський Сергій Генадійович"/>
    </header>
-   <syncPoint id="42" sampleInd="39127" levelOfDetail="word" transcripText="з вами сергій" lang="uk" speakerBriefId="korotajevskyjsh"/>
-   <syncPoint id="2" sampleInd="53383" levelOfDetail="word"/>
    <syncPoint id="3" sampleInd="97223" levelOfDetail="word" transcripText="можливо це прорив" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="6" sampleInd="119136" levelOfDetail="word"/>
    <syncPoint id="7" sampleInd="125073" levelOfDetail="word" transcripText="можливо просто всі стомилися від війни" lang="uk" speakerBriefId="korotajevskyjsh"/>
@@ -23,7 +21,7 @@
    <syncPoint id="33" sampleInd="499564" levelOfDetail="word"/>
    <syncPoint id="34" sampleInd="507552" levelOfDetail="word" transcripText="структур" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="1" sampleInd="520517" levelOfDetail="word"/>
-   <syncPoint id="28" sampleInd="534822" levelOfDetail="word" transcripText="перші ознаки проривності простежувались" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="28" sampleInd="534822" levelOfDetail="word" transcripText="перші ознаки проривності простежулись" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="26" sampleInd="582401" levelOfDetail="word"/>
    <syncPoint id="39" sampleInd="588172" levelOfDetail="word" transcripText="ще тоді коли президент" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="46" sampleInd="614516" levelOfDetail="word"/>
@@ -80,7 +78,7 @@
    <syncPoint id="148" sampleInd="1696466" levelOfDetail="word"/>
    <syncPoint id="88" sampleInd="1703329" levelOfDetail="word" transcripText="гуманітарно політичні складовій підгрупа с політичних питань уже" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="128" sampleInd="1785801" levelOfDetail="word"/>
-   <syncPoint id="66" sampleInd="1791590" levelOfDetail="word" transcripText="найблишчим часом почне розглядати організацію" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="66" sampleInd="1791590" levelOfDetail="word" transcripText="найбличим часом почне розглядати організацію" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="126" sampleInd="1841831" levelOfDetail="word"/>
    <syncPoint id="62" sampleInd="1846577" levelOfDetail="word" transcripText="і проведення виборів" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="159" sampleInd="1873004" levelOfDetail="word"/>

@@ -17,6 +17,12 @@
    </word>
    <word name="бу" phones="B U1"/>
    <word name="бюдже" phones="B2 U DZH E1"/>
+   <word name="більше">
+      <pron code="біше" phones="B2 I1 SH E"/>
+   </word>
+   <word name="вартість">
+      <pron code="вартісь" phones="V A1 R T1 I S1"/>
+   </word>
    <word name="вау" phones="V A1 U"/>
    <word name="вещас" phones="V E SH CH A1 S"/>
    <word name="використати">
@@ -39,11 +45,17 @@
       <pron code="відбуваіця" phones="V2 I D B U V A1 I TS1 A"/>
    </word>
    <word name="відповідять" phones="V I T P O V I D A1 T1"/>
+   <word name="відтак">
+      <pron code="вітак" phones="V2 I T A1 K"/>
+   </word>
    <word name="відчуватися">
       <pron code="віччуватися" phones="V2 I CH CH U V A1 T Y S1 A"/>
    </word>
    <word name="відібрані">
       <pron code="вдібрані" phones="V2 D1 I1 B R A N1 I"/>
+   </word>
+   <word name="військових">
+      <pron code="віськових" phones="V2 I S1 K O1 V Y KH"/>
    </word>
    <word name="дев'яте">
       <pron code="дев'ято" phones="D E V J A1 T O"/>
@@ -126,6 +138,9 @@
    <word name="над">
       <pron code="нат" phones="N A1 T"/>
    </word>
+   <word name="найближчим">
+      <pron code="найбличим" phones="N A J B L Y1 CH Y M"/>
+   </word>
    <word name="народ">
       <pron code="нарот" phones="N A R O1 T"/>
    </word>
@@ -183,6 +198,9 @@
       <pron code="пропозиці" phones="P R O P O Z Y1 TS1 I"/>
    </word>
    <word name="пропонова" phones="P R O P O N O1 V A"/>
+   <word name="простежувались">
+      <pron code="простежулись" phones="P R O S T E1 ZH U L Y S1"/>
+   </word>
    <word name="підбрюшшя" phones="P2 I D B R1 U1 SH2 SH2 A"/>
    <word name="підтвердженні">
       <pron code="підтведжені" phones="P2 I T T V E1 DZH E N1 I"/>
@@ -206,6 +224,9 @@
    </word>
    <word name="розраховувати">
       <pron code="розраховати" phones="R O Z R A KH O1 V A T Y"/>
+   </word>
+   <word name="розумієте">
+      <pron code="розуміте" phones="R O Z U M2 I1 T E"/>
    </word>
    <word name="седивую" phones="S E D Y V U1 J U"/>
    <word name="семию" phones="S E M Y1 J U"/>

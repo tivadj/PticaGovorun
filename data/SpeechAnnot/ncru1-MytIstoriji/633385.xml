@@ -182,8 +182,8 @@
    <syncPoint id="191" sampleInd="5269029" levelOfDetail="word"/>
    <syncPoint id="337" sampleInd="5271146" levelOfDetail="word" transcripText="у повідомленні до посольства італії в москві" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="165" sampleInd="5326745" levelOfDetail="word"/>
-   <syncPoint id="328" sampleInd="5329242" levelOfDetail="word"/>
-   <syncPoint id="316" sampleInd="5369048" levelOfDetail="word" transcripText="оцінюючи наслітки голодомору" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="328" sampleInd="5329242" levelOfDetail="word" transcripText="оцінюючи наслітки голодомору" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="316" sampleInd="5369048" levelOfDetail="word"/>
    <syncPoint id="258" sampleInd="5369924" levelOfDetail="word"/>
    <syncPoint id="85" sampleInd="5375266" levelOfDetail="word" transcripText="напише" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="175" sampleInd="5387057" levelOfDetail="word"/>
