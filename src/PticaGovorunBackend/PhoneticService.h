@@ -199,16 +199,6 @@ namespace PticaGovorun
 		void calcLangStatistics(const std::vector<const WordPart*>& wordParts);
 	};
 
-	template <typename StreatT>
-	void printWordPart(const WordPart* wordPart, StreatT& stream)
-	{
-		if (wordPart->partSide() == WordPartSide::RightPart || wordPart->partSide() == WordPartSide::MiddlePart)
-			stream << "~";
-		stream << QString::fromStdWString(wordPart->partText());
-		if (wordPart->partSide() == WordPartSide::LeftPart || wordPart->partSide() == WordPartSide::MiddlePart)
-			stream << "~";
-	}
-
 	// equality by value
 	PG_EXPORTS bool operator == (const Pronunc& a, const Pronunc& b);
 	PG_EXPORTS bool operator < (const Pronunc& a, const Pronunc& b);
@@ -347,6 +337,9 @@ namespace PticaGovorun
 			phoneticDict[w] = item;
 		}
 	}
+
+	// Integrate new pronunciations from extra dictionary into base dictionary. Pronunciations with existent code are ignored.
+	PG_EXPORTS void mergePhoneticDictOnlyNew(std::map<boost::wstring_ref, PhoneticWord>& basePhoneticDict, const std::vector<PhoneticWord>& extraPhoneticDict);
 
 	//
 	PG_EXPORTS int phoneticSplitOfWord(wv::slice<wchar_t> word, boost::optional<WordClass> wordClass, int* pMatchedSuffixInd = nullptr);

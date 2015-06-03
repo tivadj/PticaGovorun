@@ -192,6 +192,9 @@ struct AnnotatedSpeechSegment
 	
 	int StartMarkerId = -1;
 	int EndMarkerId = -1;
+	
+	TimePointMarker StartMarker;
+	TimePointMarker EndMarker;
 };
 
 // Determines if a marker with given level of detail will stop the audio playback.

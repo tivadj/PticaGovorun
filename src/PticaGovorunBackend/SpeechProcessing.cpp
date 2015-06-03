@@ -359,6 +359,8 @@ namespace PticaGovorun
 				seg.SegmentId = marker.Id;
 				seg.StartMarkerId = marker.Id;
 				seg.EndMarkerId = markersOfInterest[i+1].Id;
+				seg.StartMarker = marker;
+				seg.EndMarker = markersOfInterest[i+1];
 				seg.FilePath = wavFilePath.toStdWString();
 				seg.TranscriptText = marker.TranscripText.toStdWString();
 				seg.Language = marker.Language;

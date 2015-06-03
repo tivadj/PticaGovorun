@@ -68,6 +68,18 @@ namespace PticaGovorun
 		return false;
 	}
 
+	void toStringWithTilde(const WordPart& a, std::wstring& result)
+	{
+		const WordPart* wordPart = &a;
+		
+		result.clear();
+		if (wordPart->partSide() == WordPartSide::RightPart || wordPart->partSide() == WordPartSide::MiddlePart)
+			result += L"~";
+		result += wordPart->partText();
+		if (wordPart->partSide() == WordPartSide::LeftPart || wordPart->partSide() == WordPartSide::MiddlePart)
+			result += L"~";
+	}
+
 	//
 
 	WordSeqKey::WordSeqKey(std::initializer_list<int> wordIds)

@@ -38,6 +38,18 @@ namespace PticaGovorun
 	};
 
 	bool operator==(const WordPart& a, const WordPart& b);
+	PG_EXPORTS void toStringWithTilde(const WordPart& a, std::wstring& result);
+
+	// TODO: obsolete, use toString()
+	template <typename StreatT>
+	void printWordPart(const WordPart* wordPart, StreatT& stream)
+	{
+		if (wordPart->partSide() == WordPartSide::RightPart || wordPart->partSide() == WordPartSide::MiddlePart)
+			stream << "~";
+		stream << QString::fromStdWString(wordPart->partText());
+		if (wordPart->partSide() == WordPartSide::LeftPart || wordPart->partSide() == WordPartSide::MiddlePart)
+			stream << "~";
+	}
 
 	struct PG_EXPORTS WordSeqKey
 	{

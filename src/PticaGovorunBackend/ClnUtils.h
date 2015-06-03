@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <functional>
 #include "PticaGovorunCore.h"
 
 // temporary implementation of a slice
@@ -257,6 +258,42 @@ auto binarySearch(const RandIt& begin, const RandIt& end, long frameIndValue, It
 		{
 			result << separator << *begin;
 		}
+	}
+
+	//template <
+	//	class C,
+	//	class X1 = typename std::enable_if<
+	//		std::is_void<
+	//			decltype(C().push_back(C::value_type()))
+	//		>::value
+	//	>::type
+	//>
+	//auto put(C& cont) -> std::function < auto (typename C::value_type) -> void >
+	//{
+	//	return[&cont](typename C::value_type item) -> void
+	//	{
+	//		cont.push_back(item);
+	//	};
+	//}
+
+	// Adaptor from container with push_back method (such as std::vector) into output range function.
+	template <typename C>
+	auto putBack(C& cont) -> std::function < auto (typename C::value_type) -> void >
+	{
+		return[&cont](typename C::value_type item) -> void
+		{
+			cont.push_back(item);
+		};
+	}
+
+	// Adaptor from container with insert method (such as std::set) into output range function.
+	template <class C>
+	auto putInsert(C& setCont) -> std::function < auto (typename C::value_type) -> void >
+	{
+		return[&setCont](typename C::value_type item) -> void
+		{
+			setCont.insert(item);
+		};
 	}
 }
       

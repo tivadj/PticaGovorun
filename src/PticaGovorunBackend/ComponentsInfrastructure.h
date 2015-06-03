@@ -13,6 +13,10 @@ namespace PticaGovorun
 	template <typename IdT, typename CharT, size_t BuffSize>
 	struct IdWithDebugStr
 	{
+		typedef IdT id_type;
+		typedef CharT char_type;
+		static const size_t buff_size = BuffSize;
+
 		IdT Id;
 #if PG_DEBUG
 		std::array<CharT, BuffSize> Str; // debug only
@@ -36,6 +40,21 @@ namespace PticaGovorun
 	{
 		return x.Id < y.Id;
 	}
+
+	template <typename IdT, typename CharT, size_t BuffSize>
+	struct IdWithDebugStrHasher
+	{
+		size_t operator()(const IdWithDebugStr<IdT, CharT, BuffSize> idEx)
+		{
+			return std::hash_value(idEx.Id);
+		}
+	};
+
+	template <typename IdWithDebugStrType>
+	struct IdWithDebugStrTraits
+	{
+		typedef IdWithDebugStrHasher<typename IdWithDebugStrType::id_type, typename IdWithDebugStrType::char_type, IdWithDebugStrType::buff_size> hasher;
+	};
 
 	template <typename T>
 	struct NoDeleteFunctor

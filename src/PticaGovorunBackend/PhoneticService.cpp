@@ -8,6 +8,7 @@
 #include <QXmlStreamReader>
 #include <QString>
 #include "CoreUtils.h"
+#include <utility>
 
 namespace PticaGovorun
 {
@@ -367,6 +368,9 @@ namespace PticaGovorun
 			allowPalatalizedConsonant = true;
 			palatalProxy = SoftHardConsonant::Soft;
 		}
+
+		// TODO: silence is not a vowel
+		phoneReg.newVowelPhone("SIL", false); // SIL
 
 		phoneReg.newVowelPhone("A", false); // A
 		if (allowVowelStress)
@@ -2865,6 +2869,35 @@ namespace PticaGovorun
 			return false;
 
 		return true;
+	}
+
+	void mergePhoneticDictOnlyNew(std::map<boost::wstring_ref, PhoneticWord>& basePhoneticDict, const std::vector<PhoneticWord>& extraPhoneticDict)
+	{
+		for (const PhoneticWord& extraWord : extraPhoneticDict)
+		{
+			boost::wstring_ref wordRef = extraWord.Word;
+			auto wordIt = basePhoneticDict.find(wordRef);
+			if (wordIt == basePhoneticDict.end())
+			{
+				// new word; add the whole word with all prons
+				basePhoneticDict.insert({ wordRef, extraWord });
+				continue;
+			}
+
+			// existing word; try to integrate new prons into it
+			PhoneticWord& baseWord = wordIt->second;
+			for (const PronunciationFlavour& extraPron : extraWord.Pronunciations)
+			{
+				auto matchedPronIt = std::find_if(baseWord.Pronunciations.begin(), baseWord.Pronunciations.end(), [&extraPron](PronunciationFlavour& p)
+				{
+					return p.PronCode == extraPron.PronCode;
+				});
+				bool duplicatePron = matchedPronIt != baseWord.Pronunciations.end();
+				if (duplicatePron)
+					continue; // pron with the same code already exist
+				baseWord.Pronunciations.push_back(extraPron);
+			}
+		}
 	}
 
 	// Tries to split the word into two parts, so that the phonetic transcription is not corrupted.

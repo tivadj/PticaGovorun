@@ -213,6 +213,7 @@
     <ClCompile Include="MigrateXmlSpeechAnnotRunner.cpp" />
     <ClCompile Include="RecognizeSpeechInBatchTester.cpp" />
     <ClCompile Include="RunBuildLanguageModel.cpp" />
+    <ClCompile Include="PrepareSphinxTrainData.cpp" />
     <ClCompile Include="RunTextParser.cpp" />
     <ClCompile Include="PdfReaderRunner.cpp" />
     <ClCompile Include="PhoneticSpellerTests.cpp" />

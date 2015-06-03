@@ -78,6 +78,9 @@
     <ClInclude Include="ComponentsInfrastructure.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SphinxModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -144,6 +147,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PhoneticSerializationXml.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SphinxModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

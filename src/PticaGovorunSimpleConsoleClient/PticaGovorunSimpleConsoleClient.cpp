@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include <iostream>
+#include <chrono> // std::chrono::system_clock
 
 namespace MatlabTesterNS { void run(); }
 namespace SliceTesterNS { void run(); }
@@ -19,9 +20,10 @@ namespace RunPrepareTrainModelSphinxNS { void run(); }
 namespace PdfReaderRunnerNS { void run(); }
 namespace RunTextParserNS { void runMain(int argc, wchar_t* argv[]); }
 namespace RunBuildLanguageModelNS { void runMain(int argc, wchar_t* argv[]); }
+namespace PrepareSphinxTrainDataNS { void run(); }
 namespace DslDictionaryConvertRunnerNS { void run(); }
 
-int _tmain(int argc, TCHAR* argv[])
+int mainCore(int argc, TCHAR* argv[])
 {
 	//SliceTesterNS::run();
 	//MatlabTesterNS::run();
@@ -36,10 +38,23 @@ int _tmain(int argc, TCHAR* argv[])
 	//PdfReaderRunnerNS::run();
 	//RunTextParserNS::runMain(argc, argv);
 	//RunBuildLanguageModelNS::runMain(argc, argv);
-	RecognizeSpeechSphinxTester::run();
+	PrepareSphinxTrainDataNS::run();
+	//RecognizeSpeechSphinxTester::run();
 	//RecognizeSpeechInBatchTester::runMain(argc, argv);
 	//DslDictionaryConvertRunnerNS::run();
-	std::cout << "main exit" << std::endl;
 	return 0;
 }
 
+int _tmain(int argc, TCHAR* argv[])
+{
+	typedef std::chrono::system_clock Clock;
+	std::chrono::time_point<Clock> now1 = Clock::now();
+
+	int result = mainCore(argc, argv);
+
+	std::chrono::time_point<Clock> now2 = Clock::now();
+	auto elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
+	std::cout << "main exit, elapsed=" << elapsedSec << "s" << std::endl;
+
+	return result;
+}
