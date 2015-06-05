@@ -11,21 +11,19 @@
    <syncPoint id="6" sampleInd="410096" levelOfDetail="word"/>
    <syncPoint id="14" sampleInd="413569" levelOfDetail="word" transcripText="в україні" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="9" sampleInd="428271" levelOfDetail="word"/>
-   <syncPoint id="12" sampleInd="434506" levelOfDetail="word" transcripText="одже" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="8" sampleInd="445735" levelOfDetail="word"/>
-   <syncPoint id="16" sampleInd="452978" levelOfDetail="word" transcripText="у нас сьогодні" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="12" sampleInd="434506" levelOfDetail="word" transcripText="одже &lt;sil&gt; у нас сьогодні" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="19" sampleInd="483093" levelOfDetail="word"/>
-   <syncPoint id="4" sampleInd="490254" levelOfDetail="word" transcripText="нагода згадати" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="4" sampleInd="490254" levelOfDetail="word" transcripText="нагода &lt;sil&gt; згадати" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="22" sampleInd="527331" levelOfDetail="word"/>
    <syncPoint id="17" sampleInd="534144" levelOfDetail="word" transcripText="третього президента україни" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="23" sampleInd="575157" levelOfDetail="word"/>
-   <syncPoint id="31" sampleInd="586155" levelOfDetail="word" transcripText="віктора ющенка" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="31" sampleInd="586155" levelOfDetail="word" transcripText="віктора &lt;sil&gt; ющенка" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="33" sampleInd="614632" levelOfDetail="word"/>
    <syncPoint id="24" sampleInd="627796" levelOfDetail="word" transcripText="пам'ятаю як п'ятнацятого листопада" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="29" sampleInd="667933" levelOfDetail="word"/>
    <syncPoint id="30" sampleInd="670314" levelOfDetail="word" transcripText="дві тисячі(1) четвертого року" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="26" sampleInd="704199" levelOfDetail="word"/>
-   <syncPoint id="39" sampleInd="713460" levelOfDetail="word" transcripText="ющенко брав участь у теледебатах з віктором януковичем" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="39" sampleInd="713460" levelOfDetail="word" transcripText="ющенко брав участь у теледебатах &lt;sil&gt; з віктором януковичем" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="46" sampleInd="793601" levelOfDetail="word"/>
    <syncPoint id="27" sampleInd="801456" levelOfDetail="word" transcripText="останній сказав що влада в україні вже змінилася" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="34" sampleInd="865655" levelOfDetail="word"/>
@@ -33,32 +31,29 @@
    <syncPoint id="44" sampleInd="929523" levelOfDetail="word"/>
    <syncPoint id="15" sampleInd="938321" levelOfDetail="word" transcripText="думаю що тепер вже лише сліпий не помічає" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="28" sampleInd="1006042" levelOfDetail="word"/>
-   <syncPoint id="20" sampleInd="1012789" levelOfDetail="word" transcripText="що влада таки" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="35" sampleInd="1036140" levelOfDetail="word"/>
-   <syncPoint id="47" sampleInd="1041002" levelOfDetail="word" transcripText="змінилася" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="20" sampleInd="1012789" levelOfDetail="word" transcripText="що влада таки &lt;sil&gt; змінилася" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="61" sampleInd="1058499" levelOfDetail="word"/>
-   <syncPoint id="51" sampleInd="1068289" levelOfDetail="word" transcripText="вірю що усвідомлює це і віктор андрійович" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="53" sampleInd="1146478" levelOfDetail="word"/>
+   <syncPoint id="51" sampleInd="1067247" levelOfDetail="word" transcripText="вірю що &lt;sil&gt; усвідомлює &lt;sil&gt; це і віктор андрійович &lt;/s&gt;" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="53" sampleInd="1148975" levelOfDetail="word"/>
    <syncPoint id="41" sampleInd="1158336" levelOfDetail="word" transcripText="щодо нього" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="67" sampleInd="1175750" levelOfDetail="word"/>
-   <syncPoint id="18" sampleInd="1188252" levelOfDetail="word" transcripText="точніше щодо його президентства існує безліч трактовок" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="57" sampleInd="1256998" levelOfDetail="word"/>
-   <syncPoint id="10" sampleInd="1266805" levelOfDetail="word" transcripText="однією з най модніших є така мовляв ну який з ющенка був президент" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="1" sampleInd="1368362" levelOfDetail="word"/>
-   <syncPoint id="21" sampleInd="1380120" levelOfDetail="word" transcripText="не було у нього якостей для цього(1)" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="18" sampleInd="1188252" levelOfDetail="word" transcripText="точніше щодо його президентства існує безліч трактовок &lt;/s&gt;" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="57" sampleInd="1258999" levelOfDetail="word"/>
+   <syncPoint id="10" sampleInd="1264754" levelOfDetail="word" transcripText="&lt;s&gt; однією з най модніших є така мовляв ну який з ющенка був президент &lt;/s&gt;" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="1" sampleInd="1371190" levelOfDetail="word"/>
+   <syncPoint id="21" sampleInd="1378929" levelOfDetail="word" transcripText="не було у нього &lt;sil&gt; якостей для цього(1)" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="68" sampleInd="1430576" levelOfDetail="word"/>
-   <syncPoint id="13" sampleInd="1437588" levelOfDetail="word" transcripText="та й сам він нібито особливо на цю роль не претендував" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="87" sampleInd="1520821" levelOfDetail="word"/>
-   <syncPoint id="40" sampleInd="1526378" levelOfDetail="word" transcripText="політики політичні лідери це символи при чому(1) символи живі" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="83" sampleInd="1610653" levelOfDetail="word"/>
-   <syncPoint id="49" sampleInd="1620691" levelOfDetail="word" transcripText="ось чому(2) вони усвідомлюють що роблять кому(2) підіграють" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="54" sampleInd="1703908" levelOfDetail="word"/>
-   <syncPoint id="38" sampleInd="1713020" levelOfDetail="word" transcripText="на чому(1) грають і за що вітповідають" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="43" sampleInd="1779368" levelOfDetail="word"/>
-   <syncPoint id="50" sampleInd="1787058" levelOfDetail="word" transcripText="таким символом поза сумнівом" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="64" sampleInd="1828650" levelOfDetail="word"/>
-   <syncPoint id="104" sampleInd="1833826" levelOfDetail="word" transcripText="був віктор ющенко" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="69" sampleInd="1865678" levelOfDetail="word"/>
+   <syncPoint id="13" sampleInd="1435554" levelOfDetail="word" transcripText="&lt;s&gt; та й сам він &lt;sp&gt; нібито особливо на цю роль &lt;sil&gt; не претендував &lt;/s&gt;" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="87" sampleInd="1521334" levelOfDetail="word"/>
+   <syncPoint id="40" sampleInd="1525435" levelOfDetail="word" transcripText="&lt;s&gt; політики політичні лідери це символи &lt;sp&gt; при чому(1) символи живі &lt;/s&gt;" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="83" sampleInd="1613315" levelOfDetail="word"/>
+   <syncPoint id="351" sampleInd="1619021" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="49" sampleInd="1619434" levelOfDetail="word" transcripText="&lt;s&gt; ось чому(2) вони усвідомлюють &lt;sil&gt; що роблять &lt;sp&gt; кому(2) підіграють &lt;/s&gt;" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="54" sampleInd="1705429" levelOfDetail="word"/>
+   <syncPoint id="38" sampleInd="1711928" levelOfDetail="word" transcripText="&lt;s&gt; на чому(1) &lt;sil&gt; грають &lt;sil&gt; і за що вітповідають &lt;/s&gt;" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="43" sampleInd="1782262" levelOfDetail="word"/>
+   <syncPoint id="50" sampleInd="1785239" levelOfDetail="word" transcripText="&lt;s&gt; таким символом поза сумнівом &lt;sil&gt; був віктор ющенко &lt;/s&gt;" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="69" sampleInd="1868969" levelOfDetail="word"/>
    <syncPoint id="81" sampleInd="1875087" levelOfDetail="word" transcripText="він знав на що йшов" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="70" sampleInd="1902755" levelOfDetail="word"/>
    <syncPoint id="103" sampleInd="1909767" levelOfDetail="word" transcripText="якщо пережив колізію отруєння і запеклої бородьби з віктором януковичем у дві тисячі(1) четвертому" lang="uk" speakerBriefId="shapovalji"/>
@@ -67,19 +62,21 @@
    <syncPoint id="76" sampleInd="2139869" levelOfDetail="word"/>
    <syncPoint id="101" sampleInd="2151363" levelOfDetail="word" transcripText="це пізніше майже всі повторювали що на помаранчевому київському майдані" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="97" sampleInd="2253052" levelOfDetail="word"/>
-   <syncPoint id="86" sampleInd="2259799" levelOfDetail="word" transcripText="у дві тисячі(1) четвертому році вони стояли мовляв не за ющенка а за себе(1)" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="86" sampleInd="2259799" levelOfDetail="word" transcripText="у дві тисячі(1) четвертому році" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="271" sampleInd="2300002" levelOfDetail="word"/>
+   <syncPoint id="344" sampleInd="2305509" levelOfDetail="word" transcripText="вони стояли мовляв не за ющенка а за себе(1)" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="62" sampleInd="2365127" levelOfDetail="word"/>
    <syncPoint id="25" sampleInd="2375347" levelOfDetail="word" transcripText="значною мірою це так" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="112" sampleInd="2410985" levelOfDetail="word"/>
-   <syncPoint id="128" sampleInd="2419684" levelOfDetail="word" transcripText="але правда все таки в тому(1)" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="128" sampleInd="2419684" levelOfDetail="word" transcripText="але &lt;sp&gt; правда все таки в тому(1)" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="119" sampleInd="2454479" levelOfDetail="word"/>
-   <syncPoint id="107" sampleInd="2459424" levelOfDetail="word" transcripText="що стояли і за себе(1) і за віктора ющенка" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="107" sampleInd="2459424" levelOfDetail="word" transcripText="що стояли &lt;sil&gt; і за себе(1) &lt;/s&gt;" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="181" sampleInd="2498750" levelOfDetail="word"/>
+   <syncPoint id="350" sampleInd="2502768" levelOfDetail="word" transcripText="&lt;s&gt; і за віктора ющенка" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="88" sampleInd="2534653" levelOfDetail="word"/>
-   <syncPoint id="106" sampleInd="2539647" levelOfDetail="word" transcripText="символа опозиції який уособлював зміни" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="106" sampleInd="2539647" levelOfDetail="word" transcripText="символа опозиції &lt;sil&gt; який уособлював зміни" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="90" sampleInd="2615422" levelOfDetail="word"/>
-   <syncPoint id="139" sampleInd="2622831" levelOfDetail="word" transcripText="і протистояння" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="72" sampleInd="2645073" levelOfDetail="word"/>
-   <syncPoint id="45" sampleInd="2650564" levelOfDetail="word" transcripText="беззаконню" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="139" sampleInd="2622831" levelOfDetail="word" transcripText="і протистояння &lt;sil&gt; беззаконню" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="109" sampleInd="2667581" levelOfDetail="word"/>
    <syncPoint id="143" sampleInd="2678380" levelOfDetail="word" transcripText="пришовши до влади віктор андрійович" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="75" sampleInd="2720385" levelOfDetail="word"/>
@@ -93,13 +90,13 @@
    <syncPoint id="165" sampleInd="2954589" levelOfDetail="word"/>
    <syncPoint id="84" sampleInd="2961750" levelOfDetail="word" transcripText="і власні бриткі почуття" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="147" sampleInd="2997504" levelOfDetail="word"/>
-   <syncPoint id="82" sampleInd="3002879" levelOfDetail="word" transcripText="які вона в мені викликала(1)" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="82" sampleInd="3002879" levelOfDetail="word" transcripText="які вона &lt;sil&gt; в мені &lt;sil&gt; викликала(1)" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="92" sampleInd="3055782" levelOfDetail="word"/>
-   <syncPoint id="135" sampleInd="3067408" levelOfDetail="word" transcripText="я тоді запитав які посвічченя вам ще потрібні" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="135" sampleInd="3067408" levelOfDetail="word" transcripText="я тоді &lt;sil&gt; запитав які посвічченя вам ще потрібні" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="140" sampleInd="3148492" levelOfDetail="word"/>
-   <syncPoint id="99" sampleInd="3158546" levelOfDetail="word" transcripText="як ви мали мандат народної довіри" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="99" sampleInd="3158546" levelOfDetail="word" transcripText="як ви мали мандат &lt;sp&gt; народної довіри" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="179" sampleInd="3211334" levelOfDetail="word"/>
-   <syncPoint id="80" sampleInd="3217618" levelOfDetail="word" transcripText="при чому(1) не фальшивий мандат а такий що його історія дає один рас" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="80" sampleInd="3217618" levelOfDetail="word" transcripText="при чому(1) не фальшивий мандат &lt;sp&gt; а такий що його історія дає &lt;sp&gt; один рас" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="150" sampleInd="3311766" levelOfDetail="word"/>
    <syncPoint id="149" sampleInd="3325129" levelOfDetail="word" transcripText="нагадаю те що попри революційний пафос і романтизм" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="110" sampleInd="3392469" levelOfDetail="word"/>
@@ -109,9 +106,9 @@
    <syncPoint id="96" sampleInd="3458983" levelOfDetail="word"/>
    <syncPoint id="129" sampleInd="3465284" levelOfDetail="word" transcripText="я щасливий що належу до них" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="36" sampleInd="3503519" levelOfDetail="word"/>
-   <syncPoint id="196" sampleInd="3513590" levelOfDetail="word" transcripText="так влада президента леоніда кучми(1)" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="196" sampleInd="3513590" levelOfDetail="word" transcripText="так влада президента леоніда &lt;sp&gt; кучми(1)" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="115" sampleInd="3565402" levelOfDetail="word"/>
-   <syncPoint id="177" sampleInd="3569669" levelOfDetail="word" transcripText="закінчилась(2)" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="177" sampleInd="3569669" levelOfDetail="word" transcripText="закінчювалась" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="166" sampleInd="3589993" levelOfDetail="word"/>
    <syncPoint id="116" sampleInd="3598097" levelOfDetail="word" transcripText="то було розуміння і того(2) що" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="208" sampleInd="3633206" levelOfDetail="word"/>
@@ -123,7 +120,7 @@
    <syncPoint id="121" sampleInd="3789022" levelOfDetail="word"/>
    <syncPoint id="209" sampleInd="3798944" levelOfDetail="word" transcripText="та боже мій" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="74" sampleInd="3818426" levelOfDetail="word"/>
-   <syncPoint id="159" sampleInd="3826744" levelOfDetail="word" transcripText="як же помаранчева влада себе(2) полюбила" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="159" sampleInd="3826744" levelOfDetail="word" transcripText="як же помаранчева влада себе(2) &lt;sp&gt; полюбила" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="180" sampleInd="3887139" levelOfDetail="word"/>
    <syncPoint id="221" sampleInd="3895920" levelOfDetail="word" transcripText="полюбила" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="239" sampleInd="3910275" levelOfDetail="word"/>
@@ -137,9 +134,7 @@
    <syncPoint id="231" sampleInd="4052762" levelOfDetail="word"/>
    <syncPoint id="234" sampleInd="4062784" levelOfDetail="word" transcripText="це повна втрата" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="79" sampleInd="4086383" levelOfDetail="word"/>
-   <syncPoint id="160" sampleInd="4088417" levelOfDetail="word" transcripText="орієнтирів" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="32" sampleInd="4104607" levelOfDetail="word"/>
-   <syncPoint id="260" sampleInd="4109767" levelOfDetail="word" transcripText="а за повну втрату логічна росплата" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="160" sampleInd="4088417" levelOfDetail="word" transcripText="орієнтирів &lt;sil&gt; а за повну втрату &lt;sil&gt; логічна росплата" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="270" sampleInd="4172775" levelOfDetail="word"/>
    <syncPoint id="108" sampleInd="4193347" levelOfDetail="word" transcripText="згадую як віктор ющенко називав леоніда кучму батьком" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="182" sampleInd="4257596" levelOfDetail="word"/>
@@ -171,13 +166,11 @@
    <syncPoint id="278" sampleInd="5005322" levelOfDetail="word"/>
    <syncPoint id="279" sampleInd="5013988" levelOfDetail="word" transcripText="перетворився на символ втраченого часу(1)" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="258" sampleInd="5080469" levelOfDetail="word"/>
-   <syncPoint id="274" sampleInd="5092243" levelOfDetail="word" transcripText="не так ті воріженьки" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="137" sampleInd="5127055" levelOfDetail="word"/>
-   <syncPoint id="126" sampleInd="5132198" levelOfDetail="word" transcripText="як добрі люди" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="274" sampleInd="5092243" levelOfDetail="word" transcripText="не так ті воріженьки &lt;sil&gt; як добрі люди" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="207" sampleInd="5156194" levelOfDetail="word"/>
    <syncPoint id="227" sampleInd="5165107" levelOfDetail="word" transcripText="добра(1) людина" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="284" sampleInd="5187334" levelOfDetail="word"/>
-   <syncPoint id="345" sampleInd="5194081" levelOfDetail="word" transcripText="залишила нам україну яка і не снилася нам у дві тисячі(1) четвертому році" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="345" sampleInd="5194081" levelOfDetail="word" transcripText="залишила нам україну яка і не снилася нам &lt;sp&gt; у дві &lt;sp&gt; тисячі(1) &lt;sil&gt; четвертому році" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="187" sampleInd="5304237" levelOfDetail="word"/>
    <syncPoint id="296" sampleInd="5311365" levelOfDetail="word" transcripText="і ця україна знов змушена була" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="205" sampleInd="5358596" levelOfDetail="word"/>
@@ -189,10 +182,6 @@
    <syncPoint id="332" sampleInd="5452513" levelOfDetail="word"/>
    <syncPoint id="211" sampleInd="5459773" levelOfDetail="word" transcripText="цього(1) разу" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="200" sampleInd="5476856" levelOfDetail="word"/>
-   <syncPoint id="253" sampleInd="5493129" levelOfDetail="word" transcripText="аргументів" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="203" sampleInd="5510444" levelOfDetail="word"/>
-   <syncPoint id="183" sampleInd="5516678" levelOfDetail="word" transcripText="вже" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="238" sampleInd="5524930" levelOfDetail="word"/>
-   <syncPoint id="292" sampleInd="5534373" levelOfDetail="word" transcripText="кривавих" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="253" sampleInd="5493129" levelOfDetail="word" transcripText="аргументів &lt;sil&gt; вже &lt;sil&gt; кривавих" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="267" sampleInd="5547702" levelOfDetail="word"/>
 </audioAnnotation>

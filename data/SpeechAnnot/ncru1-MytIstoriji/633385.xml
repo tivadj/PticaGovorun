@@ -11,7 +11,7 @@
    <syncPoint id="9" sampleInd="437019" levelOfDetail="word"/>
    <syncPoint id="11" sampleInd="466192" levelOfDetail="word" transcripText="про роботу(2) в україні надзвичайної комісіі" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="8" sampleInd="531035" levelOfDetail="word"/>
-   <syncPoint id="12" sampleInd="536658" levelOfDetail="word" transcripText="на чолі з в'ячеславом молотовим" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="12" sampleInd="536658" levelOfDetail="word" transcripText="на чолі &lt;sil&gt; з в'ячеславом &lt;sil&gt; молотовим" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="6" sampleInd="597946" levelOfDetail="word"/>
    <syncPoint id="16" sampleInd="603089" levelOfDetail="word" transcripText="комісія та її голова" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="19" sampleInd="634907" levelOfDetail="word"/>
@@ -29,13 +29,11 @@
    <syncPoint id="27" sampleInd="905758" levelOfDetail="word" transcripText="і особливо" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="26" sampleInd="921882" levelOfDetail="word"/>
    <syncPoint id="34" sampleInd="948772" levelOfDetail="phone" transcripText="click"/>
-   <syncPoint id="37" sampleInd="949384" levelOfDetail="word" transcripText="за демобілізованість у заготівлях" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="37" sampleInd="949384" levelOfDetail="word" transcripText="за демобілізованість &lt;sil&gt; у заготівлях" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="44" sampleInd="1005050" levelOfDetail="word"/>
-   <syncPoint id="15" sampleInd="1008754" levelOfDetail="word" transcripText="надзвичайна комісіа" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="15" sampleInd="1008754" levelOfDetail="word" transcripText="надзвичайна &lt;sp&gt; комісіа" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="28" sampleInd="1043168" levelOfDetail="word"/>
-   <syncPoint id="20" sampleInd="1047071" levelOfDetail="word" transcripText="почала вичавлювати с селян" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="41" sampleInd="1090367" levelOfDetail="word"/>
-   <syncPoint id="47" sampleInd="1095692" levelOfDetail="word" transcripText="зерно" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="20" sampleInd="1047071" levelOfDetail="word" transcripText="почала вичавлювати с селян &lt;sil&gt; зерно" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="61" sampleInd="1109054" levelOfDetail="word"/>
    <syncPoint id="51" sampleInd="1115603" levelOfDetail="word" transcripText="дев'яносто" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="53" sampleInd="1135762" levelOfDetail="word"/>
@@ -43,15 +41,15 @@
    <syncPoint id="48" sampleInd="1164008" levelOfDetail="word"/>
    <syncPoint id="69" sampleInd="1170375" levelOfDetail="word" transcripText="це все шо ї вдалося зробити " lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="65" sampleInd="1210214" levelOfDetail="word"/>
-   <syncPoint id="1" sampleInd="1218648" levelOfDetail="word" transcripText="до січня тисяча дев'яцот трицять третьо року" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="1" sampleInd="1218648" levelOfDetail="word" transcripText="до січня тисяча дев'яцот &lt;sil&gt; трицять третьо року" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="79" sampleInd="1278927" levelOfDetail="word"/>
    <syncPoint id="68" sampleInd="1281325" levelOfDetail="word" transcripText="значною мірою за рахунок" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="54" sampleInd="1311837" levelOfDetail="word"/>
    <syncPoint id="86" sampleInd="1312680" levelOfDetail="word" transcripText="того(2) що в українських селах" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="40" sampleInd="1344465" levelOfDetail="word"/>
-   <syncPoint id="49" sampleInd="1345276" levelOfDetail="word" transcripText="у складі спеціальних бригат по видобуттю зерна(2)" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="49" sampleInd="1345276" levelOfDetail="word" transcripText="у складі спеціальних бригат &lt;sp&gt; по видобуттю зерна(2)" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="64" sampleInd="1411541" levelOfDetail="word"/>
-   <syncPoint id="58" sampleInd="1414485" levelOfDetail="word" transcripText="діяло сто дванацять тисяч активістів" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="58" sampleInd="1414485" levelOfDetail="word" transcripText="діяло сто дванацять тисяч &lt;sil&gt; активістів" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="24" sampleInd="1478684" levelOfDetail="word"/>
    <syncPoint id="25" sampleInd="1484191" levelOfDetail="word" transcripText="які одержували певний вітсоток від награбованоо зерна(2) і харчів" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="101" sampleInd="1570847" levelOfDetail="word"/>
@@ -79,23 +77,17 @@
    <syncPoint id="60" sampleInd="2378257" levelOfDetail="word"/>
    <syncPoint id="13" sampleInd="2380358" levelOfDetail="word" transcripText="і зокрема щодо одноосібників які" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="115" sampleInd="2431541" levelOfDetail="word"/>
-   <syncPoint id="113" sampleInd="2436122" levelOfDetail="word" transcripText="не виконують план хлібо здавання" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="113" sampleInd="2436122" levelOfDetail="word" transcripText="не виконують &lt;sil&gt; план &lt;sil&gt; хлібо здавання" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="56" sampleInd="2489555" levelOfDetail="word"/>
-   <syncPoint id="21" sampleInd="2493573" levelOfDetail="word" transcripText="тоді дозволялось застосовувати натуральні штрафи" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="21" sampleInd="2493573" levelOfDetail="word" transcripText="тоді &lt;sil&gt; дозволялось застосовувати натуральні штрафи" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="104" sampleInd="2563874" levelOfDetail="word"/>
    <syncPoint id="117" sampleInd="2572672" levelOfDetail="word" transcripText="по м'ясо заготівлям у розмірі" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="152" sampleInd="2609799" levelOfDetail="word"/>
-   <syncPoint id="108" sampleInd="2611684" levelOfDetail="word" transcripText="п'ятнацяти місячної норми і річної норми" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="141" sampleInd="2667135" levelOfDetail="word"/>
-   <syncPoint id="78" sampleInd="2670376" levelOfDetail="word" transcripText="картоплі" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="108" sampleInd="2611684" levelOfDetail="word" transcripText="п'ятнацяти місячної норми і річної норми &lt;sil&gt; картоплі" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="125" sampleInd="2683490" levelOfDetail="word"/>
-   <syncPoint id="124" sampleInd="2685326" levelOfDetail="word" transcripText="і при всьому(1) тому(1) треба було ще й здавати" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="38" sampleInd="2740181" levelOfDetail="word"/>
-   <syncPoint id="32" sampleInd="2743902" levelOfDetail="word" transcripText="хліп" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="124" sampleInd="2685326" levelOfDetail="word" transcripText="і при всьому(1) тому(1) треба було ще й здавати &lt;sil&gt; хліп" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="71" sampleInd="2754469" levelOfDetail="word"/>
-   <syncPoint id="138" sampleInd="2757793" levelOfDetail="word" transcripText="двацятоо листопада" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="114" sampleInd="2785741" levelOfDetail="word"/>
-   <syncPoint id="73" sampleInd="2790653" levelOfDetail="word" transcripText="тодішній урят" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="138" sampleInd="2757793" levelOfDetail="word" transcripText="двацятоо листопада &lt;sil&gt; тодішній урят" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="150" sampleInd="2813409" levelOfDetail="word"/>
    <syncPoint id="156" sampleInd="2814798" levelOfDetail="word" transcripText="україни ухвалює рішення про запровадження натуральних штрафів щодо колгоспів що зривають" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="81" sampleInd="2931784" levelOfDetail="word"/>
@@ -107,10 +99,14 @@
    <syncPoint id="174" sampleInd="3094331" levelOfDetail="word"/>
    <syncPoint id="120" sampleInd="3114160" levelOfDetail="word" transcripText="в якому піткреслювало що репресія є одним(2) с потужних" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="187" sampleInd="3194118" levelOfDetail="word"/>
-   <syncPoint id="207" sampleInd="3197624" levelOfDetail="word" transcripText="засобів подолання класового спротиву хлібо заготівлі" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="207" sampleInd="3197624" levelOfDetail="word" transcripText="засобів &lt;sp&gt; подолання" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="329" sampleInd="3234371" levelOfDetail="word"/>
+   <syncPoint id="343" sampleInd="3237364" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="210" sampleInd="3252562" levelOfDetail="word" transcripText="спротиву хлібо заготівлі" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="80" sampleInd="3288829" levelOfDetail="word"/>
    <syncPoint id="121" sampleInd="3294567" levelOfDetail="word" transcripText="цей же час" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="135" sampleInd="3315322" levelOfDetail="word"/>
+   <syncPoint id="148" sampleInd="3316942" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="197" sampleInd="3318067" levelOfDetail="word" transcripText="тривала" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="153" sampleInd="3334671" levelOfDetail="word"/>
    <syncPoint id="200" sampleInd="3340525" levelOfDetail="word" transcripText="операціа" lang="uk" speakerBriefId="shapovalji"/>
@@ -119,17 +115,13 @@
    <syncPoint id="154" sampleInd="3425081" levelOfDetail="word"/>
    <syncPoint id="89" sampleInd="3427909" levelOfDetail="word" transcripText="масова операціа" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="105" sampleInd="3458834" levelOfDetail="word"/>
-   <syncPoint id="147" sampleInd="3465168" levelOfDetail="word" transcripText="по нанесенню" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="211" sampleInd="3486220" levelOfDetail="word"/>
-   <syncPoint id="170" sampleInd="3488866" levelOfDetail="word" transcripText="оперативного удару по класовому ворогу" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="147" sampleInd="3486551" levelOfDetail="word" transcripText="&lt;s&gt; оперативного удару по класовому ворогу" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="107" sampleInd="3558655" levelOfDetail="word"/>
    <syncPoint id="172" sampleInd="3560623" levelOfDetail="word" transcripText="вона мала(1) на меті виявленя" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="100" sampleInd="3593168" levelOfDetail="word"/>
    <syncPoint id="36" sampleInd="3594987" levelOfDetail="word" transcripText="контреволюційних центрів що організують саботаж і зрив хлібо заготівель" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="173" sampleInd="3687349" levelOfDetail="word"/>
-   <syncPoint id="116" sampleInd="3689301" levelOfDetail="word" transcripText="інших господарсько(2)" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="213" sampleInd="3711643" levelOfDetail="word"/>
-   <syncPoint id="243" sampleInd="3714769" levelOfDetail="word" transcripText="політичних заходів" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="116" sampleInd="3689301" levelOfDetail="word" transcripText="інших господарсько(2) &lt;sil&gt; політичних заходів" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="176" sampleInd="3739575" levelOfDetail="word"/>
    <syncPoint id="246" sampleInd="3744338" levelOfDetail="word" transcripText="і охопила " lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="241" sampleInd="3762248" levelOfDetail="word"/>
@@ -149,7 +141,7 @@
    <syncPoint id="232" sampleInd="4182201" levelOfDetail="word"/>
    <syncPoint id="158" sampleInd="4188171" levelOfDetail="word" transcripText="ухвалено постанову" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="190" sampleInd="4214085" levelOfDetail="word"/>
-   <syncPoint id="194" sampleInd="4251923" levelOfDetail="word" transcripText="про занесеня на чорну дошку сіл які злісно саботують хлібо заготівлі" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="194" sampleInd="4251923" levelOfDetail="word" transcripText="про занесеня на чорну дошку сіл &lt;sil&gt; які злісно саботують хлібо заготівлі" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="264" sampleInd="4376566" levelOfDetail="word"/>
    <syncPoint id="289" sampleInd="4379642" levelOfDetail="word" transcripText="оце рішення" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="275" sampleInd="4399124" levelOfDetail="word"/>
@@ -159,11 +151,14 @@
    <syncPoint id="74" sampleInd="4478024" levelOfDetail="word"/>
    <syncPoint id="252" sampleInd="4482175" levelOfDetail="word" transcripText="п'ятнацятоо  грудня" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="284" sampleInd="4507758" levelOfDetail="word"/>
-   <syncPoint id="298" sampleInd="4586692" levelOfDetail="word" transcripText="куди припинялися поставки промислових товарів черес те що ці райони не виконали план хлібо сдачі" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="298" sampleInd="4586692" levelOfDetail="word" transcripText="куди припинялися поставки промислових товарів &lt;sil&gt; черес те що ці райони &lt;sil&gt; не виконали &lt;sil&gt; план хлібо сдачі" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="272" sampleInd="4729361" levelOfDetail="word"/>
    <syncPoint id="281" sampleInd="4733776" levelOfDetail="word" transcripText="дев'ятнацятоо грудня" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="315" sampleInd="4767033" levelOfDetail="word"/>
-   <syncPoint id="233" sampleInd="4837003" levelOfDetail="word" transcripText="розлядають питання про хлібо заготівлі в україні" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="233" sampleInd="4837003" levelOfDetail="word" transcripText="розлядають &lt;sil&gt;" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="43" sampleInd="4853342" levelOfDetail="word"/>
+   <syncPoint id="136" sampleInd="4859412" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="293" sampleInd="4868160" levelOfDetail="word" transcripText="про хлібо заготівлі в україні" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="128" sampleInd="4906659" levelOfDetail="word" transcripText="відзначають ситуацію" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="217" sampleInd="4942513" levelOfDetail="word"/>
    <syncPoint id="286" sampleInd="4949045" levelOfDetail="word" transcripText="як незадовільну і доручають виправити її" lang="uk" speakerBriefId="shapovalji"/>
@@ -172,9 +167,9 @@
    <syncPoint id="224" sampleInd="5053612" levelOfDetail="word"/>
    <syncPoint id="319" sampleInd="5058474" levelOfDetail="word" transcripText="та павлу(2) посташеву" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="283" sampleInd="5084950" levelOfDetail="word"/>
-   <syncPoint id="202" sampleInd="5086670" levelOfDetail="word" transcripText="як окремо" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="202" sampleInd="5086670" levelOfDetail="word" transcripText="як &lt;sil&gt; окремо" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="129" sampleInd="5108450" levelOfDetail="word"/>
-   <syncPoint id="339" sampleInd="5135224" levelOfDetail="word" transcripText="у травні тисяча дев'яцот трицять третьоо року " lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="339" sampleInd="5135224" levelOfDetail="word" transcripText="у травні тисяча дев'яцот трицять &lt;sp&gt; третьоо року " lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="212" sampleInd="5198083" levelOfDetail="word"/>
    <syncPoint id="218" sampleInd="5203656" levelOfDetail="word" transcripText="італійський консул у харкові" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="146" sampleInd="5241742" levelOfDetail="word"/>
@@ -182,25 +177,18 @@
    <syncPoint id="191" sampleInd="5269029" levelOfDetail="word"/>
    <syncPoint id="337" sampleInd="5271146" levelOfDetail="word" transcripText="у повідомленні до посольства італії в москві" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="165" sampleInd="5326745" levelOfDetail="word"/>
-   <syncPoint id="328" sampleInd="5329242" levelOfDetail="word" transcripText="оцінюючи наслітки голодомору" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="316" sampleInd="5369048" levelOfDetail="word"/>
-   <syncPoint id="258" sampleInd="5369924" levelOfDetail="word"/>
-   <syncPoint id="85" sampleInd="5375266" levelOfDetail="word" transcripText="напише" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="328" sampleInd="5329242" levelOfDetail="word" transcripText="оцінюючи наслітки голодомору &lt;sil&gt; напише" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="175" sampleInd="5387057" levelOfDetail="word"/>
    <syncPoint id="268" sampleInd="5390282" levelOfDetail="word" transcripText="можливо в дуже блиському майбутньому" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="363" sampleInd="5440556" levelOfDetail="word"/>
-   <syncPoint id="236" sampleInd="5443748" levelOfDetail="word" transcripText="не доведеця більше говорити ні про україну ні про український нарот а одже" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="236" sampleInd="5443748" levelOfDetail="word" transcripText="не доведеця більше говорити &lt;sil&gt; ні про україну &lt;sil&gt; ні про український нарот &lt;sp&gt; а одже" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="346" sampleInd="5557129" levelOfDetail="word"/>
    <syncPoint id="270" sampleInd="5563264" levelOfDetail="word" transcripText="не буде й української проблеми" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="306" sampleInd="5620021" levelOfDetail="word"/>
    <syncPoint id="345" sampleInd="5622998" levelOfDetail="word" transcripText="оскільки україна" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="378" sampleInd="5650433" levelOfDetail="word"/>
-   <syncPoint id="221" sampleInd="5656850" levelOfDetail="word" transcripText="фактично стане" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="274" sampleInd="5681342" levelOfDetail="word"/>
-   <syncPoint id="323" sampleInd="5687130" levelOfDetail="word" transcripText="частиною росії" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="221" sampleInd="5656850" levelOfDetail="word" transcripText="фактично стане &lt;sil&gt; частиною &lt;sp&gt; росії" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="231" sampleInd="5718618" levelOfDetail="word"/>
-   <syncPoint id="163" sampleInd="5721346" levelOfDetail="word" transcripText="але слава богу" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="102" sampleInd="5744912" levelOfDetail="word"/>
-   <syncPoint id="308" sampleInd="5748451" levelOfDetail="word" transcripText="цього(2) не сталося" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="163" sampleInd="5721346" levelOfDetail="word" transcripText="але слава богу &lt;sil&gt; цього(2) не &lt;sil&gt; сталося" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="290" sampleInd="5780435" levelOfDetail="word"/>
 </audioAnnotation>

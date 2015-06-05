@@ -203,8 +203,7 @@ PG_EXPORTS bool getDefaultMarkerStopsPlayback(MarkerLevelOfDetail levelOfDetail)
 // Converts language to string.
 PG_EXPORTS std::string speechLanguageToStr(SpeechLanguage lang);
 
-PG_EXPORTS void splitUtteranceIntoWords(const std::wstring& text, std::vector<wv::slice<const wchar_t>>& wordsAsSlices);
-PG_EXPORTS void splitUtteranceIntoWords(boost::wstring_ref text, std::vector<boost::wstring_ref>& wordsAsSlices);
+PG_EXPORTS void splitUtteranceIntoWords(boost::wstring_ref text, std::vector<boost::wstring_ref>& words);
 
 // insertShortPause=true to insert sp phone between words.
 PG_EXPORTS std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> bool> wordToPhoneListFun, bool insertShortPause, std::vector<std::string>& speechPhones);
@@ -212,6 +211,9 @@ PG_EXPORTS std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstr
 // Appends silience frames before and after the given audio.
 // Result (padded audio) has a size=initial audio size + 2*silenceFramesCount.
 PG_EXPORTS void padSilence(const short* audioFrames, int audioFramesCount, int silenceFramesCount, std::vector<short>& paddedAudio);
+
+// Returns whether audio segment is padded with silence form start/end.
+PG_EXPORTS boost::optional<std::tuple<bool, bool>> isSilenceFlankedSegment(const TimePointMarker& marker);
 
 // Merges a sequence of phone-states (such as j2,j3,j4,o2,o3...) into monophone sequence (such as j,o...)
 PG_EXPORTS void mergeSamePhoneStates(const std::vector<AlignedPhoneme>& phoneStates, std::vector<AlignedPhoneme>& monoPhones);

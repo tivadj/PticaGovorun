@@ -63,39 +63,21 @@ namespace PticaGovorun
 		return nullptr;
 	}
 
-	void splitUtteranceIntoWords(const std::wstring& text, std::vector<wv::slice<const wchar_t>>& wordsAsSlices)
-	{
-		std::wsmatch matchRes;
-		// clothes clothes(1)
-		// apostrophe (eg: п'ять)
-		// dash (eg: to-do)
-		static std::wregex r(LR"regex([\w\(\)'-]+)regex"); // match words
-
-		auto wordBeg = std::cbegin(text);
-		while (std::regex_search(wordBeg, std::cend(text), matchRes, r))
-		{
-			auto& wordSlice = matchRes[0];
-			wv::slice<const wchar_t> word = wv::make_view(&*wordSlice.first, wordSlice.second - wordSlice.first);
-			wordsAsSlices.push_back(word);
-
-			wordBeg = wordSlice.second;
-		}
-	}
-
-	void splitUtteranceIntoWords(boost::wstring_ref text, std::vector<boost::wstring_ref>& wordsAsSlices)
+	void splitUtteranceIntoWords(boost::wstring_ref text, std::vector<boost::wstring_ref>& words)
 	{
 		std::wcmatch matchRes;
 		// clothes clothes(1)
 		// apostrophe (eg: п'ять)
 		// dash (eg: to-do)
-		static std::wregex r(LR"regex([\w\(\)'-]+)regex"); // match words
+		// angle bracket, slash <s> <sil> </sil>
+		static std::wregex r(LR"regex([\w\(\)'-<>/]+)regex"); // match words
 
 		const wchar_t* wordBeg = std::begin(text);
 		while (std::regex_search(wordBeg, std::cend(text), matchRes, r))
 		{
 			auto& wordSlice = matchRes[0];
 			boost::wstring_ref word = boost::wstring_ref(&*wordSlice.first, wordSlice.second - wordSlice.first);
-			wordsAsSlices.push_back(word);
+			words.push_back(word);
 
 			wordBeg = wordSlice.second;
 		}
@@ -113,13 +95,13 @@ namespace PticaGovorun
 		// insert the starting silence phone
 		speechPhones.push_back(PGPhoneSilence);
 
-		std::vector<wv::slice<const wchar_t>> wordsAsSlices;
-		splitUtteranceIntoWords(text, wordsAsSlices);
+		std::vector<boost::wstring_ref> words;
+		splitUtteranceIntoWords(text, words);
 
 		// iterate through words
-		for (wv::slice<const wchar_t>& wordSlice : wordsAsSlices)
+		for (boost::wstring_ref wordRef : words)
 		{
-			word.assign(wordSlice.begin(), wordSlice.end());
+			toStdWString(wordRef, word);
 
 			// convert word to phones
 			wordPhones.clear();
@@ -168,6 +150,27 @@ namespace PticaGovorun
 
 		// silence after the audio
 		std::memset(paddedAudio.data() + silenceFramesCount + audioFramesCount, 0, silenceFramesCount * FrameSize);
+	}
+
+	boost::optional<std::tuple<bool, bool>> isSilenceFlankedSegment(const TimePointMarker& marker)
+	{
+		std::vector<boost::wstring_ref> pronCodes;
+		std::vector<wchar_t> pronCodeBuff;
+		splitUtteranceIntoWords(toWStringRef(marker.TranscripText, pronCodeBuff), pronCodes);
+
+		if (pronCodes.empty())
+			return nullptr;
+		
+		bool startsSil = false;
+		bool endsSil = false;
+
+		boost::wstring_ref firstPronCode = pronCodes.front();
+		if (firstPronCode.compare(L"<s>") == 0)
+			startsSil = true;
+		boost::wstring_ref lastPronCode = pronCodes.back();
+		if (lastPronCode.compare(L"</s>") == 0)
+			endsSil = true;
+		return std::make_tuple(startsSil, endsSil);
 	}
 
 	void mergeSamePhoneStates(const std::vector<AlignedPhoneme>& phoneStates, std::vector<AlignedPhoneme>& monoPhones)

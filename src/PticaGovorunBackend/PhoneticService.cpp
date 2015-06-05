@@ -2871,6 +2871,22 @@ namespace PticaGovorun
 		return true;
 	}
 
+	void populatePronCodes(const std::vector<PhoneticWord>& phoneticDict, std::map<boost::wstring_ref, PronunciationFlavour>& pronCodeToObj, std::vector<boost::wstring_ref>& duplicatePronCodes)
+	{
+		for (const PhoneticWord& word : phoneticDict)
+		{
+			for (const PronunciationFlavour& pron : word.Pronunciations)
+			{
+				const auto& code = pron.PronCode;
+				auto it = pronCodeToObj.find(code);
+				if (it != pronCodeToObj.end())
+					duplicatePronCodes.push_back(code);
+				else
+					pronCodeToObj.insert({ code, pron });
+			}
+		}
+	}
+
 	void mergePhoneticDictOnlyNew(std::map<boost::wstring_ref, PhoneticWord>& basePhoneticDict, const std::vector<PhoneticWord>& extraPhoneticDict)
 	{
 		for (const PhoneticWord& extraWord : extraPhoneticDict)

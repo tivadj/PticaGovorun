@@ -39,7 +39,6 @@ namespace PticaGovorun
 		bool hasPhoneticExpansion(boost::wstring_ref word, bool useBroken) const;
 		bool isBrokenUtterance(boost::wstring_ref text) const;
 		const PronunciationFlavour* expandWellKnownPronCode(boost::wstring_ref pronCode, bool useBrokenDict) const;
-		void populatePronCodes(const std::vector<PhoneticWord>& phoneticDict, std::map<boost::wstring_ref, PronunciationFlavour>& pronCodeToObj, std::vector<boost::wstring_ref>& duplicatePronCodes);
 
 		std::tuple<bool, const char*> buildPhaseSpecificParts(ResourceUsagePhase phase, int maxWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, const std::set<PhoneId>& trainPhoneIds);
 

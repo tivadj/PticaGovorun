@@ -567,6 +567,10 @@ namespace PticaGovorun
 				return true;
 		}
 
+		it = pronCodeToObjFiller_.find(word);
+		if (it != pronCodeToObjFiller_.end())
+			return true;
+
 		return false;
 	}
 
@@ -601,22 +605,6 @@ namespace PticaGovorun
 			return &it->second;
 
 		return nullptr;
-	}
-
-	void SphinxTrainDataBuilder::populatePronCodes(const std::vector<PhoneticWord>& phoneticDict, std::map<boost::wstring_ref, PronunciationFlavour>& pronCodeToObj, std::vector<boost::wstring_ref>& duplicatePronCodes)
-	{
-		for (const PhoneticWord& word : phoneticDict)
-		{
-			for (const PronunciationFlavour& pron : word.Pronunciations)
-			{
-				const auto& code = pron.PronCode;
-				auto it = pronCodeToObj.find(code);
-				if (it != pronCodeToObj.end())
-					duplicatePronCodes.push_back(code);
-				else
-					pronCodeToObj.insert({ code, pron });
-			}
-		}
 	}
 
 	bool SphinxTrainDataBuilder::writePhoneList(const std::vector<std::string>& phoneList, const QString& phoneListFile) const
@@ -1065,11 +1053,18 @@ namespace PticaGovorun
 			// fileIds
 			txtFileIds << segRef.OutAudioSegPathParts.WavOutRelFilePathNoExt << "\n";
 
+			// determine if segment requires padding with silence
+			bool startsSil = false;
+			bool endsSil = false;
+			boost::optional<std::tuple<bool, bool>> isPadded = isSilenceFlankedSegment(segRef.Seg->StartMarker);
+			if (isPadded != nullptr)
+				std::tie(startsSil, endsSil) = isPadded.get();
+
 			// transcription
-			if (targetPhase == ResourceUsagePhase::Train)
+			if (targetPhase == ResourceUsagePhase::Train && !startsSil)
 				txtTranscription << "<s> ";
 			txtTranscription << QString::fromStdWString(segRef.Seg->TranscriptText) <<" ";
-			if (targetPhase == ResourceUsagePhase::Train)
+			if (targetPhase == ResourceUsagePhase::Train && !endsSil)
 				txtTranscription << "</s> ";
 			txtTranscription << "(" << segRef.OutAudioSegPathParts.SegFileNameNoExt << ")" << "\n";
 		}
@@ -1134,6 +1129,9 @@ namespace PticaGovorun
 				return;
 			}
 
+			std::vector<boost::wstring_ref> segPronCodes;
+			std::vector<wchar_t> pronCodeBuff;
+
 			// generate each audio segments
 			for (const details::AssignedPhaseAudioSegment* segRef : segs)
 			{
@@ -1163,15 +1161,25 @@ namespace PticaGovorun
 					segFrames = segFramesResamp;
 				}
 
+				// determine whether to pad the utterance with silence
+				bool startsSil = false;
+				bool endsSil = false;
+				if (padSilence)
+				{
+					boost::optional<std::tuple<bool, bool>> isPadded = isSilenceFlankedSegment(seg.StartMarker);
+					if (isPadded != nullptr)
+						std::tie(startsSil, endsSil) = isPadded.get();
+				}
+
 				// pad frames with silence
 				paddedSegFramesOut.clear();
 
-				if (padSilence)
+				if (!startsSil)
 					std::copy(silenceFrames.begin(), silenceFrames.end(), std::back_inserter(paddedSegFramesOut));
 
 				std::copy(segFrames.begin(), segFrames.end(), std::back_inserter(paddedSegFramesOut));
 
-				if (padSilence)
+				if (!endsSil)
 					std::copy(silenceFrames.begin(), silenceFrames.end(), std::back_inserter(paddedSegFramesOut));
 
 				// write output wav segment

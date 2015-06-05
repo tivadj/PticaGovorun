@@ -338,6 +338,8 @@ namespace PticaGovorun
 		}
 	}
 
+	PG_EXPORTS void populatePronCodes(const std::vector<PhoneticWord>& phoneticDict, std::map<boost::wstring_ref, PronunciationFlavour>& pronCodeToObj, std::vector<boost::wstring_ref>& duplicatePronCodes);
+
 	// Integrate new pronunciations from extra dictionary into base dictionary. Pronunciations with existent code are ignored.
 	PG_EXPORTS void mergePhoneticDictOnlyNew(std::map<boost::wstring_ref, PhoneticWord>& basePhoneticDict, const std::vector<PhoneticWord>& extraPhoneticDict);
 

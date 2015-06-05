@@ -51,20 +51,18 @@ namespace PronunciationChecksRunnerNS
 
 		//
 
-		std::vector<wv::slice<const wchar_t>> wordsAsSlices;
+		std::vector<boost::wstring_ref> words;
 		std::wstring word;
 		word.reserve(32);
 		for (const AnnotatedSpeechSegment& seg : segments)
 		{
-
-			wordsAsSlices.clear();
-			splitUtteranceIntoWords(seg.TranscriptText, wordsAsSlices);
+			words.clear();
+			splitUtteranceIntoWords(seg.TranscriptText, words);
 
 			// iterate through words
-			for (wv::slice<const wchar_t>& wordSlice : wordsAsSlices)
+			for (boost::wstring_ref wordRef : words)
 			{
-				word.clear();
-				word.assign(wordSlice.begin(), wordSlice.end());
+				toStdWString(wordRef, word);
 
 				auto it = wordToPhoneListDict.find(word);
 				if (it != std::end(wordToPhoneListDict))

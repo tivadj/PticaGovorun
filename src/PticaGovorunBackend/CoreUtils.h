@@ -36,4 +36,5 @@ namespace PticaGovorun
 
 	PG_EXPORTS QString toQString(boost::wstring_ref text);
 	PG_EXPORTS std::wstring toStdWString(boost::wstring_ref text);
+	PG_EXPORTS void toStdWString(boost::wstring_ref text, std::wstring& result);
 }

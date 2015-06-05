@@ -1067,7 +1067,6 @@
    <word name="відчинені">
       <pron code="віччинені" phones="V2 I CH CH Y1 N E N1 I"/>
    </word>
-   <word name="відчуваєм" phones="V2 I D CH U V A1 J E M"/>
    <word name="відчуваємо">
       <pron code="вічуваємо" phones="V2 I CH U V A1 J E M O"/>
    </word>
@@ -2073,14 +2072,12 @@
    <word name="закінчення" phones="Z A K2 I1 N CH E N1 N1 A"/>
    <word name="закінчень" phones="Z A K2 I1 N CH E N1"/>
    <word name="закінчив" phones="Z A K2 I N CH Y1 V"/>
-   <word name="закінчилась">
-      <pron code="закінчилась(2)" phones="Z A K2 I1 N CH Y L A S1"/>
-   </word>
    <word name="закінчились" phones="Z A K2 I N CH Y1 L Y S1"/>
    <word name="закінчилося" phones="Z A K2 I N CH Y1 L O S1 A"/>
    <word name="закінчують" phones="Z A K2 I1 N CH U J U T1"/>
    <word name="закінчуючи" phones="Z A K2 I1 N CH U J U CH Y"/>
    <word name="закінчується" phones="Z A K2 I1 N CH U J E TS1 A"/>
+   <word name="закінчювалась" phones="Z A K2 I1 N CH2 U V A L A S1"/>
    <word name="залежить" phones="Z A L E1 ZH Y T1"/>
    <word name="залежно" phones="Z A L E1 ZH N O"/>
    <word name="залишалася" phones="Z A L Y SH A1 L A S1 A"/>
@@ -2669,7 +2666,6 @@
    <word name="київському" phones="K Y1 J I V S1 K O M U"/>
    <word name="класні" phones="K L A1 S N1 I"/>
    <word name="класове" phones="K L A1 S O V E"/>
-   <word name="класового" phones="K L A1 S O V O H O"/>
    <word name="класовому" phones="K L A1 S O V O M U"/>
    <word name="класів" phones="K L A1 S1 I V"/>
    <word name="клеврет" phones="K L E V R E1 T"/>
@@ -3648,7 +3644,6 @@
    <word name="нами" phones="N A1 M Y"/>
    <word name="наміри" phones="N A1 M2 I R Y"/>
    <word name="намітка" phones="N A M2 I1 T K A"/>
-   <word name="нанесенню" phones="N A N E1 S E N1 N1 U"/>
    <word name="нанесено" phones="N A N E1 S E N O"/>
    <word name="напевно" phones="N A P E1 V N O"/>
    <word name="напис" phones="N A1 P Y S"/>
@@ -4326,7 +4321,7 @@
    <word name="панич" phones="P A N Y1 CH"/>
    <word name="пантелеймон" phones="P A N T E L E J M O1 N"/>
    <word name="панувала" phones="P A N U V A1 L A"/>
-   <word name="панування" phones="P A N U V A1 N1 N1 A"/>
+   <word name="пануванню" phones="P A N U V A1 N1 N1 U"/>
    <word name="панірувальні" phones="P A N1 I R U V A1 L1 N1 I"/>
    <word name="паперу" phones="P A P E1 R U"/>
    <word name="париж" phones="P A R Y1 ZH"/>
@@ -7372,7 +7367,6 @@
    <word name="юрій" phones="J U1 R1 I J"/>
    <word name="юрія" phones="J U1 R1 I J A"/>
    <word name="юстиції" phones="J U S T Y1 TS1 I J I"/>
-   <word name="ютубі" phones="J U1 T U1 B2 I"/>
    <word name="ющенка" phones="J U1 SH CH E N K A"/>
    <word name="ющенко" phones="J U1 SH CH E N K O"/>
    <word name="ющенком" phones="J U1 SH CH E N K O M"/>

@@ -52,4 +52,8 @@ std::wstring toStdWString(boost::wstring_ref text)
 	return std::wstring(text.data(), text.size());
 }
 
+void toStdWString(boost::wstring_ref text, std::wstring& result)
+{
+	result.assign(text.data(), text.size());
+}
 }

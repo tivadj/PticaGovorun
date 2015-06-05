@@ -51,8 +51,9 @@ namespace PticaGovorun
 		bool findPronAsWordPhoneticExpansions(const std::map<boost::wstring_ref, PhoneticWord>& phoneticDict, boost::wstring_ref pronCode, std::vector<PronunciationFlavour>& prons);
 	private:
 		GrowOnlyPinArena<wchar_t> stringArena_;
-		std::map<boost::wstring_ref, PhoneticWord> phoneticDictKnown_;
+		std::map<boost::wstring_ref, PhoneticWord> phoneticDictWellFormed_;
 		std::map<boost::wstring_ref, PhoneticWord> phoneticDictBroken_;
+		std::map<boost::wstring_ref, PhoneticWord> phoneticDictFiller_;
 		std::map<boost::wstring_ref, PhoneticWord> phoneticDictShrekky_;
 		std::unique_ptr<PhoneRegistry> phoneReg_;
 		QStringList matchedWords_;
