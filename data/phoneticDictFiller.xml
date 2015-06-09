@@ -3,4 +3,5 @@
    <word name="&lt;s>" phones="SIL"/>
    <word name="&lt;/s>" phones="SIL"/>
    <word name="&lt;sil>" phones="SIL"/>
+   <word name="[sp]" phones="SIL"/>
 </phoneticDict>

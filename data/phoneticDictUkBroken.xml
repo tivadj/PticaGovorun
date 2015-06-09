@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phoneticDict>
-   <word name="inhale" phones="KH"/>
    <word name="або">
       <pron code="або(1)" phones="A1 B O"/>
       <pron code="апо" phones="A P O1"/>
@@ -32,6 +31,7 @@
    <word name="включити">
       <pron code="уключити" phones="V K L1 U CH Y1 T Y"/>
    </word>
+   <word name="владіміра" phones="V L A D1 I1 M2 I R A"/>
    <word name="вперше">
       <pron code="фперше" phones="F P E1 R SH E"/>
    </word>
@@ -57,12 +57,14 @@
    <word name="військових">
       <pron code="віськових" phones="V2 I S1 K O1 V Y KH"/>
    </word>
+   <word name="гепеу" phones="H E P E U1"/>
    <word name="дев'яте">
       <pron code="дев'ято" phones="D E V J A1 T O"/>
    </word>
    <word name="декларації">
       <pron code="деклараці" phones="D E K L A R A1 TS1 I"/>
    </word>
+   <word name="дождь" phones="D O1 ZH D1"/>
    <word name="діалектів">
       <pron code="тіалектів" phones="T1 I A L E1 K T1 I V"/>
    </word>
@@ -90,7 +92,8 @@
    </word>
    <word name="и" phones="Y1"/>
    <word name="ишин" phones="Y1 SH Y N"/>
-   <word name="комунікаці" phones="K O M U N I K A1 TS I"/>
+   <word name="кагебізаці" phones="K A H E B2 I Z A1 TS1 I"/>
+   <word name="кадебешніків" phones="K A D E B E1 SH N1 I K2 I V"/>
    <word name="комісія">
       <pron code="комісіа" phones="K O M2 I1 S1 I A"/>
    </word>
@@ -155,8 +158,10 @@
    </word>
    <word name="непруха" phones="N E P R U1 KH A"/>
    <word name="неті" phones="N E1 T1 I"/>
-   <word name="ньом" phones="N1 O1 M"/>
    <word name="обкомам" phones="O1 P K O1 M A M"/>
+   <word name="обсервер">
+      <pron code="опсервер" phones="O P S E1 R V E R"/>
+   </word>
    <word name="обійми">
       <pron code="овійми" phones="O V2 I1 J M Y1"/>
    </word>
@@ -202,8 +207,11 @@
       <pron code="простежулись" phones="P R O S T E1 ZH U L Y S1"/>
    </word>
    <word name="підбрюшшя" phones="P2 I D B R1 U1 SH2 SH2 A"/>
+   <word name="підтвердження">
+      <pron code="піттведженя" phones="P2 I T T V E1 DZH E N1 A"/>
+   </word>
    <word name="підтвердженні">
-      <pron code="підтведжені" phones="P2 I T T V E1 DZH E N1 I"/>
+      <pron code="піттведжені" phones="P2 I T T V E1 DZH E N1 I"/>
    </word>
    <word name="радше">
       <pron code="рачче" phones="R A1 CH CH E"/>
@@ -266,6 +274,7 @@
    <word name="тієї">
       <pron code="тії" phones="T1 I1 J I"/>
    </word>
+   <word name="уересер" phones="U1 E R E S E R"/>
    <word name="уряд">
       <pron code="урят" phones="U1 R1 A T"/>
    </word>
@@ -277,6 +286,9 @@
    </word>
    <word name="учі" phones="U1 CH2 I"/>
    <word name="ха" phones="KH A1"/>
+   <word name="цекавекапебе" phones="TS E1 K A1 V E1 K A1 P E1 B E1"/>
+   <word name="цекакабеу" phones="TS E K A K A B E U1"/>
+   <word name="цекакапебеу" phones="TS E K A K A P E B E U1"/>
    <word name="цього">
       <pron code="цьо" phones="TS1 O1"/>
    </word>

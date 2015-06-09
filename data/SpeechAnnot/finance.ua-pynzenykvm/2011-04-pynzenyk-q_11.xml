@@ -18,7 +18,7 @@
    <syncPoint id="268" sampleInd="33058" levelOfDetail="word"/>
    <syncPoint id="67" sampleInd="34662" levelOfDetail="phone" transcripText="е на а"/>
    <syncPoint id="71" sampleInd="47231" levelOfDetail="phone"/>
-   <syncPoint id="228" sampleInd="48421" levelOfDetail="word" transcripText="inhale" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="228" sampleInd="48421" levelOfDetail="word" transcripText="[inh]" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="473" sampleInd="65554" levelOfDetail="phone" transcripText="е"/>
    <syncPoint id="5" sampleInd="70912" levelOfDetail="phone"/>
    <syncPoint id="334" sampleInd="74071" levelOfDetail="word" transcripText="ті питання які ми піднімались" lang="uk" speakerBriefId="pynzenykvm"/>
@@ -118,7 +118,7 @@
    <syncPoint id="6" sampleInd="1440151" levelOfDetail="word"/>
    <syncPoint id="478" sampleInd="1440350" levelOfDetail="phone" transcripText="&lt;click&gt;"/>
    <syncPoint id="206" sampleInd="1446485" levelOfDetail="word" transcripText="е обмінний курс" lang="uk" speakerBriefId="pynzenykvm"/>
-   <syncPoint id="301" sampleInd="1467405" levelOfDetail="word" transcripText="inhale" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="301" sampleInd="1467405" levelOfDetail="word" transcripText="[inh]" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="393" sampleInd="1483677" levelOfDetail="word" transcripText="залежить від того скільки доларів поставляється" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="348" sampleInd="1499288" levelOfDetail="phone" transcripText="скільки доларів"/>
    <syncPoint id="29" sampleInd="1515362" levelOfDetail="phone" transcripText="поставляється"/>
@@ -136,7 +136,7 @@
    <syncPoint id="226" sampleInd="1763822" levelOfDetail="phone"/>
    <syncPoint id="123" sampleInd="1764747" levelOfDetail="phone" transcripText="але я не хочу ускладнювати"/>
    <syncPoint id="337" sampleInd="1797294" levelOfDetail="phone" transcripText="деяких деталей"/>
-   <syncPoint id="82" sampleInd="1819819" levelOfDetail="word" transcripText="inhale" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="82" sampleInd="1819819" levelOfDetail="word" transcripText="[inh]" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="129" sampleInd="1859923" levelOfDetail="word" transcripText="з другого боку ми маєм сто сімнадцять мільярдів доларів боргу зовнішнього" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="33" sampleInd="1870787" levelOfDetail="phone" transcripText="ми маєм сто сімнадцять"/>
    <syncPoint id="315" sampleInd="1895394" levelOfDetail="phone" transcripText="мільярдів доларів боргу"/>
@@ -190,7 +190,7 @@
    <syncPoint id="396" sampleInd="2873969" levelOfDetail="word"/>
    <syncPoint id="83" sampleInd="2883329" levelOfDetail="word" transcripText="це не наші" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="395" sampleInd="2896510" levelOfDetail="word" transcripText="вони підуть(1)" lang="uk" speakerBriefId="pynzenykvm"/>
-   <syncPoint id="2" sampleInd="2912385" levelOfDetail="word" transcripText="inhale" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="2" sampleInd="2912385" levelOfDetail="word" transcripText="[inh]" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="291" sampleInd="2926773" levelOfDetail="word" transcripText="топто є проблема" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="428" sampleInd="2952721" levelOfDetail="word"/>
    <syncPoint id="36" sampleInd="2957963" levelOfDetail="word"/>
@@ -212,7 +212,7 @@
    <syncPoint id="140" sampleInd="3276856" levelOfDetail="phone"/>
    <syncPoint id="8" sampleInd="3279717" levelOfDetail="phone" transcripText="які з одного боку"/>
    <syncPoint id="408" sampleInd="3300124" levelOfDetail="word"/>
-   <syncPoint id="207" sampleInd="3300421" levelOfDetail="phone" transcripText="inhale е е"/>
+   <syncPoint id="207" sampleInd="3300421" levelOfDetail="phone" transcripText="[inh] е е"/>
    <syncPoint id="4" sampleInd="3317207" levelOfDetail="phone"/>
    <syncPoint id="310" sampleInd="3339450" levelOfDetail="word" transcripText="зменшують маштаби залежності самої країни від кредитів з другого боку відкривають умови для інвестицій" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="217" sampleInd="3373203" levelOfDetail="phone" transcripText="самої країни від кредитів"/>
