@@ -345,4 +345,25 @@ namespace PticaGovorun
 
 	//
 	PG_EXPORTS int phoneticSplitOfWord(wv::slice<wchar_t> word, boost::optional<WordClass> wordClass, int* pMatchedSuffixInd = nullptr);
+
+	// <sil> pseudo word.
+	PG_EXPORTS boost::wstring_ref fillerSilence();
+
+	// <s> pseudo word.
+	PG_EXPORTS boost::wstring_ref fillerStartSilence();
+
+	// </s> pseudo word.
+	PG_EXPORTS boost::wstring_ref fillerEndSilence();
+
+	// [sp] pseudo word.
+	PG_EXPORTS boost::wstring_ref fillerShortPause();
+
+	// [inh] pseudo word.
+	PG_EXPORTS boost::wstring_ref fillerInhale();
+
+	// [eee] (latin 'e') pseudo word.
+	PG_EXPORTS boost::wstring_ref fillerEee();
+
+	// [yyy] (latin 'y') pseudo word.
+	PG_EXPORTS boost::wstring_ref fillerYyy();
 }

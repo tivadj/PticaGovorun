@@ -415,6 +415,12 @@ namespace PticaGovorun
 			{
 				for (const PronunciationFlavour& pronId : pair.second.Pronunciations)
 				{
+					if (pronId.PronCode == fillerInhale()) // inhale has no stress
+						continue;
+					if (pronId.PronCode == fillerEee()) // 'eee' has no stress
+						continue;
+					if (pronId.PronCode == fillerYyy()) // 'yyy' has no stress
+						continue;
 					if (isWordStressAssigned(*phoneReg_, pronId.Phones))
 						continue;
 					checkMsgs << QString("PronId='%1' does not specify stressed syllable").arg(toQString(pronId.PronCode));

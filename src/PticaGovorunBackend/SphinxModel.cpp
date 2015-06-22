@@ -150,6 +150,13 @@ namespace PticaGovorun
 		}
 	}
 
+	void addFillerWords(WordsUsageInfo& wordUsage)
+	{
+		bool isAdded = false;
+		wordUsage.getOrAddWordPart(toStdWString(fillerInhale()), WordPartSide::WholeWord, &isAdded);
+		PG_Assert(isAdded);
+	}
+
 	void chooseSeedUnigrams(const UkrainianPhoneticSplitter& phoneticSplitter, int minWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, const PhoneRegistry& phoneReg,
 		std::function<auto (boost::wstring_ref pronCode) -> const PronunciationFlavour*> expandWellKnownPronCode,
 		const std::set<PhoneId>& trainPhoneIds,
@@ -169,7 +176,9 @@ namespace PticaGovorun
 			// include <s>, </s> and ~Right parts
 			if (wordPart == phoneticSplitter.sentStartWordPart() ||
 				wordPart == phoneticSplitter.sentEndWordPart() ||
-				(allowPhoneticWordSplit && wordPart->partSide() == WordPartSide::RightPart))
+				(allowPhoneticWordSplit && wordPart->partSide() == WordPartSide::RightPart) ||
+				wordPart->partText().compare(fillerInhale().data()) == 0
+				)
 			{
 				wordPartSureInclude.push_back(wordPart);
 				continue;
@@ -276,7 +285,7 @@ namespace PticaGovorun
 		}
 
 		bool includeBrownBear = false;
-		bool outputWav = false;
+		bool outputWav = true;
 		bool outputPhoneticDictAndLangModel = true;
 		bool padSilence = true; // pad the audio segment with the silence segment
 		bool allowSoftHardConsonant = true;
@@ -284,6 +293,7 @@ namespace PticaGovorun
 		PalatalSupport palatalSupport = PalatalSupport::AsHard;
 		bool useBrokenPronsInTrainOnly = true;
 		const double trainCasesRatio = 0.7;
+		bool swapTrainTestData = false; // swaps train/test portions of data, so that opposite data can be tested when random generator's seed is fixed
 		const float outFrameRate = 16000; // Sphinx requires 16k
 		// note, the positive threshold may evict the rare words
 		int maxWordPartUsage = 10;
@@ -321,7 +331,7 @@ namespace PticaGovorun
 		std::vector<details::AssignedPhaseAudioSegment> phaseAssignedSegs;
 		std::set<PhoneId> trainPhoneIds;
 		const char* errMsg;
-		std::tie(op, errMsg) = partitionTrainTestData(segments_, trainCasesRatio, useBrokenPronsInTrainOnly, phaseAssignedSegs, trainPhoneIds);
+		std::tie(op, errMsg) = partitionTrainTestData(segments_, trainCasesRatio, swapTrainTestData, useBrokenPronsInTrainOnly, phaseAssignedSegs, trainPhoneIds);
 		if (!op)
 		{
 			errMsg_ = "Can't fix train/test partitioning";
@@ -339,22 +349,23 @@ namespace PticaGovorun
 			loadPhoneticSplitter(declinedWordDict, phoneticSplitter_);
 
 			// ensure that LM covers all pronunciations in phonetic dictionary
+			addFillerWords(phoneticSplitter_.wordUsage());
 			inferPhoneticDictPronIdsUsage(phoneticSplitter_, phoneticDictWellFormed_);
 			inferPhoneticDictPronIdsUsage(phoneticSplitter_, phoneticDictBroken_);
-
+			
 			// .dic and .arpa files are different
 			// broken words goes in dict and lang model in train phase only
 			// alternatively we can always ignore broken words, but it is a pity to not use the markup
 			std::tie(op, errMsg) = buildPhaseSpecificParts(ResourceUsagePhase::Train, maxWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, trainPhoneIds);
 			if (!op)
 			{
-				errMsg_ = QString("Can't write phonetic dictionary file. %1").arg(errMsg);
+				errMsg_ = QString("Can't build phase specific parts. %1").arg(errMsg);
 				return;
 			}
 			std::tie(op, errMsg) = buildPhaseSpecificParts(ResourceUsagePhase::Test, maxWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, trainPhoneIds);
 			if (!op)
 			{
-				errMsg_ = QString("Can't write phonetic dictionary file. %1").arg(errMsg);
+				errMsg_ = QString("Can't build phase specific parts. %1").arg(errMsg);
 				return;
 			}
 
@@ -819,14 +830,30 @@ namespace PticaGovorun
 		{
 			if (seg.TranscriptText.find(L"<unk>") != std::wstring::npos ||
 				seg.TranscriptText.find(L"<air>") != std::wstring::npos ||
-				seg.TranscriptText.find(L"inhale") != std::wstring::npos)
+				seg.TranscriptText.find(L"[clk]") != std::wstring::npos)
 				return false;
-			if (seg.FilePath.find(L"pynzenykvm") != std::wstring::npos)
+			
+			// noisy speech
+			if (seg.ContentMarker.SpeakerBriefId == L"pynzenykvm" ||
+				seg.ContentMarker.SpeakerBriefId == L"grytsenkopj" ||
+				seg.ContentMarker.SpeakerBriefId == L"chemerkinsh" ||
+				seg.ContentMarker.SpeakerBriefId == L"sokolovaso" ||
+				seg.ContentMarker.SpeakerBriefId == L"romanukjv" ||
+				seg.ContentMarker.SpeakerBriefId == L"shapovalji" ||
+				seg.ContentMarker.SpeakerBriefId == L"dergachdv")
+				return false;
+			if (!includeBrownBear && seg.ContentMarker.SpeakerBriefId == L"BrownBear1")
+				return false;
+
+			if (seg.TranscriptText.find(L"#") != std::wstring::npos) // segments to ignore
 				return false;
 			if (seg.Language != SpeechLanguage::Ukrainian)
+			{
+				if (seg.TranscriptText.compare(fillerInhale().data()) == 0) // lang(inhale)=null, but we allow it
+					return true;
+
 				return false;
-			if (!includeBrownBear && seg.StartMarker.SpeakerBriefId == L"BrownBear1")
-				return false;
+			}
 			return true;
 		};
 
@@ -840,7 +867,7 @@ namespace PticaGovorun
 		}
 	}
 
-	std::tuple<bool, const char*> SphinxTrainDataBuilder::partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool useBrokenPronsInTrainOnly, std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds) const
+	std::tuple<bool, const char*> SphinxTrainDataBuilder::partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly, std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds) const
 	{
 		// partition train-test data
 		std::vector<std::reference_wrapper<const AnnotatedSpeechSegment>> rejectedSegments;
@@ -848,15 +875,15 @@ namespace PticaGovorun
 		std::uniform_real_distribution<float> rnd(0, 1);
 		for (const AnnotatedSpeechSegment& seg : segments)
 		{
-			bool isAlwaysTest = seg.StartMarker.ExcludePhase == ResourceUsagePhase::Train;
-			bool isAlwaysTrain = seg.StartMarker.ExcludePhase == ResourceUsagePhase::Test;
+			bool isAlwaysTest = seg.ContentMarker.ExcludePhase == ResourceUsagePhase::Train;
+			bool isAlwaysTrain = seg.ContentMarker.ExcludePhase == ResourceUsagePhase::Test;
 
 			bool broken = isBrokenUtterance(seg.TranscriptText);
 			if (useBrokenPronsInTrainOnly)
 			{
 				isAlwaysTrain |= broken;
 			}
-			isAlwaysTrain |= seg.StartMarker.SpeakerBriefId == L"BrownBear1";
+			isAlwaysTrain |= seg.ContentMarker.SpeakerBriefId == L"BrownBear1";
 
 			if (isAlwaysTrain && isAlwaysTest)
 			{
@@ -878,6 +905,15 @@ namespace PticaGovorun
 
 				float val = rnd(g);
 				ResourceUsagePhase phase = val < trainCasesRatio ? ResourceUsagePhase::Train : ResourceUsagePhase::Test;
+
+				if (swapTrainTestData)
+				{
+					if (phase == ResourceUsagePhase::Train)
+						phase = ResourceUsagePhase::Test;
+					else if (phase == ResourceUsagePhase::Test)
+						phase = ResourceUsagePhase::Train;
+				}
+
 				segRef.Phase = phase;
 			}
 			outSegRefs.push_back(segRef);
@@ -967,11 +1003,11 @@ namespace PticaGovorun
 	}
 
 
-	QString generateSegmentFileNameNoExt(const QString& baseFileName, const TimePointMarker& start, const TimePointMarker& end)
+	QString generateSegmentFileNameNoExt(const QString& baseFileName, const AnnotatedSpeechSegment& seg)
 	{
 		QLatin1Char filler('0');
 		int width = 5;
-		return QString("%1_%2-%3").arg(baseFileName).arg(start.Id, width, 10, filler).arg(end.Id, width, 10, filler);
+		return QString("%1_%2-%3").arg(baseFileName).arg(seg.StartMarker.Id, width, 10, filler).arg(seg.EndMarker.Id, width, 10, filler);
 	}
 
 	// audioSrcRootDir   =C:\PG\data\SpeechAudio\
@@ -984,7 +1020,7 @@ namespace PticaGovorun
 	// WavOutFilePathNExt=C:\PG\SphinxTrain\out123\wav\persian_train\ncru1-slovo\22229_00273-00032
 	details::AudioFileRelativePathComponents audioFilePathComponents(
 		const QString& audioSrcRootDirPath,
-		const QString& wavSrcFilePathAbs, const TimePointMarker& start, const TimePointMarker& end,
+		const QString& wavSrcFilePathAbs, const AnnotatedSpeechSegment& seg,
 		const QString& wavBaseOutDirPath,
 		const QString& wavDirPathForRelPathes)
 	{
@@ -998,7 +1034,7 @@ namespace PticaGovorun
 		QString wavOutRelFilePath = wavBaseOutDir.relativeFilePath(wavOutAbsFilePath);
 
 		// Sphinx FileId file name must have no extension, forward slashes
-		QString segFileNameNoExt = generateSegmentFileNameNoExt(QFileInfo(wavOutRelFilePath).completeBaseName(), start, end);
+		QString segFileNameNoExt = generateSegmentFileNameNoExt(QFileInfo(wavOutRelFilePath).completeBaseName(), seg);
 		QString wavOutRelFilePathNoExt = QFileInfo(wavOutRelFilePath).dir().filePath(segFileNameNoExt);
 		QString wavOutFilePath = wavBaseOutDir.filePath(wavOutRelFilePathNoExt);
 
@@ -1022,7 +1058,7 @@ namespace PticaGovorun
 			if (segRef.Phase != targetPhase)
 				continue;
 			QString wavFilePath = QString::fromStdWString(seg.FilePath);
-			segRef.OutAudioSegPathParts = audioFilePathComponents(audioSrcRootDirPath, wavFilePath, seg.StartMarker, seg.EndMarker, wavBaseOutDirPath, wavDirPathForRelPathes);
+			segRef.OutAudioSegPathParts = audioFilePathComponents(audioSrcRootDirPath, wavFilePath, seg, wavBaseOutDirPath, wavDirPathForRelPathes);
 		}
 	}
 	
@@ -1045,6 +1081,9 @@ namespace PticaGovorun
 		txtTranscription.setCodec("UTF-8");
 		txtTranscription.setGenerateByteOrderMark(false);
 
+		QString startSilQ = toQString(fillerStartSilence());
+		QString endSilQ = toQString(fillerEndSilence());
+
 		for (const details::AssignedPhaseAudioSegment& segRef : segsRefs)
 		{
 			if (segRef.Phase != targetPhase)
@@ -1054,18 +1093,15 @@ namespace PticaGovorun
 			txtFileIds << segRef.OutAudioSegPathParts.WavOutRelFilePathNoExt << "\n";
 
 			// determine if segment requires padding with silence
-			bool startsSil = false;
-			bool endsSil = false;
-			boost::optional<std::tuple<bool, bool>> isPadded = isSilenceFlankedSegment(segRef.Seg->StartMarker);
-			if (isPadded != nullptr)
-				std::tie(startsSil, endsSil) = isPadded.get();
+			bool startsSil = segRef.Seg->TranscriptionStartsWithSilence;
+			bool endsSil = segRef.Seg->TranscriptionEndsWithSilence;
 
 			// transcription
 			if (targetPhase == ResourceUsagePhase::Train && !startsSil)
-				txtTranscription << "<s> ";
+				txtTranscription << startSilQ << " ";
 			txtTranscription << QString::fromStdWString(segRef.Seg->TranscriptText) <<" ";
 			if (targetPhase == ResourceUsagePhase::Train && !endsSil)
-				txtTranscription << "</s> ";
+				txtTranscription << endSilQ << " ";
 			txtTranscription << "(" << segRef.OutAudioSegPathParts.SegFileNameNoExt << ")" << "\n";
 		}
 		return true;
@@ -1162,24 +1198,18 @@ namespace PticaGovorun
 				}
 
 				// determine whether to pad the utterance with silence
-				bool startsSil = false;
-				bool endsSil = false;
-				if (padSilence)
-				{
-					boost::optional<std::tuple<bool, bool>> isPadded = isSilenceFlankedSegment(seg.StartMarker);
-					if (isPadded != nullptr)
-						std::tie(startsSil, endsSil) = isPadded.get();
-				}
+				bool startsSil = seg.AudioStartsWithSilence;
+				bool endsSil = seg.AudioEndsWithSilence;
 
 				// pad frames with silence
 				paddedSegFramesOut.clear();
 
-				if (!startsSil)
+				if (padSilence && !startsSil)
 					std::copy(silenceFrames.begin(), silenceFrames.end(), std::back_inserter(paddedSegFramesOut));
 
 				std::copy(segFrames.begin(), segFrames.end(), std::back_inserter(paddedSegFramesOut));
 
-				if (!endsSil)
+				if (padSilence && !endsSil)
 					std::copy(silenceFrames.begin(), silenceFrames.end(), std::back_inserter(paddedSegFramesOut));
 
 				// write output wav segment
@@ -1194,6 +1224,27 @@ namespace PticaGovorun
 				}
 			}
 		}
+	}
+
+	bool loadSphinxAudio(boost::wstring_ref audioDir, const std::vector<std::wstring>& audioRelPathesNoExt, boost::wstring_ref audioFileSuffix, std::vector<AudioData>& audioDataList)
+	{
+		QString ext = toQString(audioFileSuffix);
+		auto audioDirQ = QDir(toQString(audioDir));
+
+		bool readOp;
+		std::string errMsg;
+		for (const std::wstring& audioPathNoExt : audioRelPathesNoExt)
+		{
+			QString absPath = audioDirQ.filePath(QString("%1.%2").arg(toQString(audioPathNoExt)).arg(ext));
+
+			AudioData audioData;
+
+			std::tie(readOp, errMsg) = readAllSamples(absPath.toStdString(), audioData.Frames, &audioData.FrameRate);
+			if (!readOp)
+				return false;
+			audioDataList.push_back(std::move(audioData));
+		}
+		return true;
 	}
 
 	std::tuple<bool, const char*> writePhoneticDictSphinx(const std::vector<PhoneticWord>& phoneticDictWords, const PhoneRegistry& phoneReg, const QString& filePath)
@@ -1220,4 +1271,70 @@ namespace PticaGovorun
 		}
 		return std::make_tuple(true, nullptr);
 	}
+
+	bool readSphinxFileFileId(boost::wstring_ref fileIdPath, std::vector<std::wstring>& fileIds)
+	{
+		QFile file(toQString(fileIdPath));
+		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+			return false;
+
+		QTextStream stream(&file);
+		while (!stream.atEnd())
+		{
+			QString fileId = stream.readLine();
+			fileIds.push_back(fileId.toStdWString());
+		}
+		return true;
+	}
+
+	bool readSphinxFileTranscription(boost::wstring_ref transcriptionFilePath, std::vector<SphinxTranscriptionLine>& transcriptions)
+	{
+		QFile file(toQString(transcriptionFilePath));
+		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+			return false;
+
+		QTextStream stream(&file);
+		stream.setCodec("UTF-8");
+		while (!stream.atEnd())
+		{
+			QString line = stream.readLine();
+			int openBracketInd = line.lastIndexOf(QChar('('));
+			if (openBracketInd == -1)
+				return false;
+
+			// move to the *last* group separated by underscore
+			int closeBracketInd = line.indexOf(QChar(')'), openBracketInd);
+			if (closeBracketInd == -1)
+				return false;
+
+			// -1 to account for space after transcription and before the open bracket
+			QString transcr = line.left(openBracketInd - 1);
+
+			QString fileId = line.mid(openBracketInd + 1, closeBracketInd - openBracketInd - 1);
+
+			SphinxTranscriptionLine part;
+			part.Transcription = transcr.toStdWString();
+			part.FileNameWithoutExtension = fileId.toStdWString();
+			transcriptions.push_back(part);
+		}
+		return true;
+	}
+
+	bool checkFileIdTranscrConsistency(const std::vector<std::wstring>& dataFilePathNoExt, const std::vector<SphinxTranscriptionLine>& dataTranscr)
+	{
+		if (dataFilePathNoExt.size() != dataTranscr.size())
+			return false;
+
+		for (size_t i = 0; i < dataFilePathNoExt.size(); ++i)
+		{
+			const std::wstring& filePathNoExt = dataFilePathNoExt[i];
+			const SphinxTranscriptionLine& transcrInfo = dataTranscr[i];
+
+			// TODO: substring is not enough
+			// here we actually need to extract exact file name without ext from filePath and compare with fileId from transcription
+			if (filePathNoExt.find(transcrInfo.FileNameWithoutExtension) == std::wstring::npos)
+				return false;
+		}
+		return true;
+	};
 }

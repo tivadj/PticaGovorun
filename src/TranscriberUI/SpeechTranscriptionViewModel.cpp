@@ -1194,13 +1194,21 @@ void SpeechTranscriptionViewModel::setCurrentMarkerTranscriptText(const QString&
 		//	marker.Language = PticaGovorun::SpeechLanguage::NotSet;
 		if (marker.LevelOfDetail == PticaGovorun::MarkerLevelOfDetail::Word)
 		{
-			// first time initialization?
-			if (marker.Language == PticaGovorun::SpeechLanguage::NotSet)
-				marker.Language = templateMarkerSpeechLanguage_;
+			// silence has no language, has no speaker
+			if (marker.TranscripText != toQString(fillerSilence()))
+			{
+				// inhale has speaker but has no language
+				if (marker.TranscripText != toQString(fillerInhale()))
+				{
+					// first time initialization?
+					if (marker.Language == PticaGovorun::SpeechLanguage::NotSet)
+						marker.Language = templateMarkerSpeechLanguage_;
+				}
 
-			// first time initialization?
-			if (marker.SpeakerBriefId.empty())
-				marker.SpeakerBriefId = speechAnnot_.inferRecentSpeaker(currentMarkerInd_);
+				// first time initialization?
+				if (marker.SpeakerBriefId.empty())
+					marker.SpeakerBriefId = speechAnnot_.inferRecentSpeaker(currentMarkerInd_);
+			}
 		}
 
 		if (marker.Language == SpeechLanguage::Ukrainian)

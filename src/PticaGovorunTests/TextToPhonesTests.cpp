@@ -17,6 +17,27 @@ namespace PticaGovorun
 			REQUIRE(pronCodes[1].compare(L"із-за") == 0);
 		}
 		SECTION("filler words") {
+			pronCodes.clear();
+			splitUtteranceIntoWords(L"<s>", pronCodes);
+			REQUIRE(pronCodes.size() == 1);
+			REQUIRE(pronCodes[0].compare(L"<s>") == 0);
+
+			pronCodes.clear();
+			splitUtteranceIntoWords(L"</s>", pronCodes);
+			REQUIRE(pronCodes.size() == 1);
+			REQUIRE(pronCodes[0].compare(L"</s>") == 0);
+
+			pronCodes.clear();
+			splitUtteranceIntoWords(L"<sil>", pronCodes);
+			REQUIRE(pronCodes.size() == 1);
+			REQUIRE(pronCodes[0].compare(L"<sil>") == 0);
+
+			pronCodes.clear();
+			splitUtteranceIntoWords(L"[sp]", pronCodes);
+			REQUIRE(pronCodes.size() == 1);
+			REQUIRE(pronCodes[0].compare(L"[sp]") == 0);
+
+			pronCodes.clear();
 			splitUtteranceIntoWords(L"<s> happy <sil> sheep </s>", pronCodes);
 			REQUIRE(pronCodes.size() == 5);
 			REQUIRE(pronCodes[0].compare(L"<s>") == 0);

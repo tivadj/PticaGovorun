@@ -8,6 +8,7 @@
 #include <windows.h>
 
 #include <pocketsphinx.h>
+#include <QDir>
 #include <QTextCodec>
 #include <QDebug>
 
@@ -22,6 +23,7 @@
 #include "CoreUtils.h" // timeStamp
 #include "ClnUtils.h"
 #include "PhoneticService.h"
+#include "SphinxModel.h"
 
 namespace RecognizeSpeechSphinxTester
 {
@@ -155,51 +157,6 @@ namespace RecognizeSpeechSphinxTester
 		}
 	};
 	
-	struct SphinxFileIdLine
-	{
-		std::wstring Line;
-		std::wstring OriginalFileNamePart;
-		int StartMarkerId;
-		int EndMarkerId;
-	};
-
-	// persian_test/ncru1-ProTseGovorat/849331_0m45s-2m46s_00056-00193
-	// OriginalFileNamePart = 849331
-	// StartMarkerId = 56
-	// EndMarkerId = 193
-	bool readFileId(const wchar_t* fileIdPath, std::vector<SphinxFileIdLine>& fileIdLines)
-	{
-		QFile file(QString::fromWCharArray(fileIdPath));
-		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-			return false;
-		
-		QTextStream stream(&file);
-		while (!stream.atEnd())
-		{
-			QString line = stream.readLine();
-			int slashInd = line.lastIndexOf(QChar('/'));
-			PG_Assert(slashInd != -1);
-
-			// move to the *last* group separated by underscore
-			int underscoreInd = line.lastIndexOf(QChar('_'));
-			PG_Assert(underscoreInd != -1);
-			int dashInd = line.indexOf(QChar('-'), underscoreInd);
-			PG_Assert(dashInd != -1);
-
-			QString origSpeechFileNamePart = line.mid(slashInd + 1, underscoreInd - slashInd - 1);
-			QString startMarkerIdStr = line.mid(underscoreInd + 1, dashInd - underscoreInd - 1);
-			QString endMarkerIdStr = line.mid(dashInd + 1);
-
-			SphinxFileIdLine part;
-			part.Line = line.toStdWString();
-			part.OriginalFileNamePart = origSpeechFileNamePart.toStdWString();
-			part.StartMarkerId = startMarkerIdStr.toInt();
-			part.EndMarkerId = endMarkerIdStr.toInt();
-			fileIdLines.push_back(part);
-		}
-		return true;
-	}
-
 	template <typename T>
 	bool startsWith(wv::slice<T> items, wv::slice<T> prefix)
 	{
@@ -359,12 +316,20 @@ namespace RecognizeSpeechSphinxTester
 		return result;
 	}
 
+	struct TranscribedAudioSegment
+	{
+		std::wstring RelFilePathNoExt; // relative path to speech file
+		std::wstring Transcription;
+		std::vector<short> Frames;
+		float FrameRate;
+	};
+
 	// Result of comparing expected text with decoded speech.
 	struct TwoUtterances
 	{
 		float ErrorWord; // edit distance between utterances as a sequence of words
 		float ErrorChars; // edit distance between utterances as a sequence of chars
-		AnnotatedSpeechSegment Segment;
+		TranscribedAudioSegment Segment;
 		std::wstring TextActual;
 		std::vector<boost::wstring_ref> PronIdsExpected; // слова(2)
 		std::vector<boost::wstring_ref> WordsExpected; // слова without any braces
@@ -378,7 +343,9 @@ namespace RecognizeSpeechSphinxTester
 		std::string PhonesActualAlignedStr;
 	};
 
-	void decodeSpeechSegments(const std::vector<AnnotatedSpeechSegment>& segments, ps_decoder_t *ps, float targetFrameRate, std::vector<TwoUtterances>& recogUtterances,
+	void decodeSpeechSegments(const std::vector<TranscribedAudioSegment>& segs,
+		
+		ps_decoder_t *ps, float targetFrameRate, std::vector<TwoUtterances>& recogUtterances,
 		std::vector<int>& phoneConfusionMat, int phonesCount,
 		int& wordErrorTotalCount, int& wordTotalCount,
 		EditDistance<PhoneId, PhoneProximityCosts>& phonesEditDist,
@@ -390,12 +357,13 @@ namespace RecognizeSpeechSphinxTester
 	{
 		QTextCodec* textCodec = QTextCodec::codecForName("utf8");
 
-		for (int i = 0; i < segments.size(); ++i)
+		for (int i = 0; i < segs.size(); ++i)
 		{
-			const AnnotatedSpeechSegment& seg = segments[i];
+			const TranscribedAudioSegment& seg = segs[i];
 
 			// decode
 
+			const std::vector<short>* speechFramesActual = &seg.Frames;
 			std::vector<short> speechFramesResamp;
 			bool requireResampling = seg.FrameRate != targetFrameRate;
 			if (requireResampling)
@@ -422,6 +390,7 @@ namespace RecognizeSpeechSphinxTester
 
 				outFramesFloat.resize(convertData.output_frames_gen);
 				speechFramesResamp.assign(std::begin(outFramesFloat), std::end(outFramesFloat));
+				speechFramesActual = &speechFramesResamp;
 			}
 
 			int rv = ps_start_utt(ps, "goforward");
@@ -432,7 +401,7 @@ namespace RecognizeSpeechSphinxTester
 			}
 
 			bool fullUtterance = true;
-			rv = ps_process_raw(ps, speechFramesResamp.data(), speechFramesResamp.size(), false, fullUtterance);
+			rv = ps_process_raw(ps, speechFramesActual->data(), speechFramesActual->size(), false, fullUtterance);
 			if (rv < 0)
 			{
 				std::cerr << "Error: Can't process utterance";
@@ -479,7 +448,7 @@ namespace RecognizeSpeechSphinxTester
 			// split expected text into words
 
 			std::vector<boost::wstring_ref> pronCodesExpected;
-			splitUtteranceIntoWords(seg.TranscriptText, pronCodesExpected);
+			splitUtteranceIntoWords(seg.Transcription, pronCodesExpected);
 
 			// merge actual pronCodes (word parts)
 
@@ -768,6 +737,61 @@ namespace RecognizeSpeechSphinxTester
 		}
 	}
 
+	// Loads transcription and audio data in Sphinx format.
+	bool loadSpeechSegmentsToDecode(int trunc, boost::wstring_ref fileIdPath, boost::wstring_ref transcrPath, boost::wstring_ref audioDir,
+		std::vector<TranscribedAudioSegment>& segments)
+	{
+		std::vector<std::wstring> audioRelFilePathesNoExt;
+		bool op = readSphinxFileFileId(fileIdPath, audioRelFilePathesNoExt);
+		if (!op)
+		{
+			std::wcerr << "can't read Sphinx fileId file" << fileIdPath << std::endl;
+			return false;
+		}
+
+		std::vector<SphinxTranscriptionLine> speechTranscr;
+		op = readSphinxFileTranscription(transcrPath, speechTranscr);
+		if (!op)
+		{
+			std::wcerr << "can't read Sphinx transcr file" << transcrPath << std::endl;
+			return false;
+		}
+
+		op = checkFileIdTranscrConsistency(audioRelFilePathesNoExt, speechTranscr);
+		if (!op)
+		{
+			std::wcerr << "fileId and transcr files do not match. fileId=" << fileIdPath << " transcr=" << transcrPath << std::endl;
+			return false;
+		}
+
+		std::vector<AudioData> audioDataList;
+		op = loadSphinxAudio(audioDir, audioRelFilePathesNoExt, L"wav", audioDataList);
+		if (!op)
+		{
+			std::wcerr << "can't read audio data. audioDir=" << audioDir << std::endl;
+			return false;
+		}
+		PG_DbgAssert(audioDataList.size() == speechTranscr.size());
+
+		//
+		if (trunc != -1 && audioDataList.size() > trunc)
+		{
+			audioDataList.resize(trunc);
+			speechTranscr.resize(trunc);
+		}
+
+		segments.resize(speechTranscr.size());
+		for (size_t i = 0; i<segments.size(); ++i)
+		{
+			TranscribedAudioSegment& seg = segments[i];
+			seg.RelFilePathNoExt = audioRelFilePathesNoExt[i];
+			seg.Transcription = speechTranscr[i].Transcription;
+			seg.Frames = std::move(audioDataList[i].Frames);
+			seg.FrameRate = audioDataList[i].FrameRate;
+		}
+		return true;
+	}
+
 	void testSphincDecoder()
 	{
 		const char* hmmPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";
@@ -779,10 +803,21 @@ namespace RecognizeSpeechSphinxTester
 		const wchar_t* dictPathW      = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian.dic)path";
 		const wchar_t* dictPathFiller = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian.filler)path";
 
+		const wchar_t* fileIdPath =  LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian_test.fileids)path";
+		const wchar_t* transcrPath = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian_test.transcription)path";
+		const wchar_t* audioDir =    LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\wav\)path";
+
 		//
-		const wchar_t* testFileIdPath = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian_test.fileids)path";
-		std::vector<SphinxFileIdLine> fileIdLines;
-		readFileId(testFileIdPath, fileIdLines);
+		int segsMax = -1;
+		std::vector<TranscribedAudioSegment> segments;
+		bool op = loadSpeechSegmentsToDecode(segsMax, fileIdPath, transcrPath, audioDir, segments);
+		if (!op)
+		{
+			std::cerr << "can't read Sphinx fileId file" << fileIdPath << std::endl;
+			return;
+		}
+
+		//
 
 		bool excludeSilFromDecOutput = true; // true to match Sphinx behaviour of excluding silence from decoder's output
 		PhoneRegistry phoneReg;
@@ -850,42 +885,6 @@ namespace RecognizeSpeechSphinxTester
 		populatePronCodes(phoneticDictFiller, pronCodeToPronObjFiller, duplicatePronCodes);
 
 		//
-		const wchar_t* wavRootDir       = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAudio\)path";
-		const wchar_t* annotRootDir     = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAnnot\)path";
-		const wchar_t* wavDirToAnalyze  = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAudio\)path";
-
-		std::vector<AnnotatedSpeechSegment> segments;
-		auto segPredBeforeFun = [](const AnnotatedSpeechSegment& seg) -> bool
-		{
-			if (seg.FilePath.find(L"pynzenykvm") != std::wstring::npos)
-				return false;
-			if (seg.Language != SpeechLanguage::Ukrainian)
-				return false;
-			return true;
-		};
-		bool loadOp;
-		std::tie(loadOp, errMsg) = loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, true, segPredBeforeFun, segments);
-
-		// process only test speech segments
-
-		auto remIt = std::remove_if(segments.begin(), segments.end(), [&fileIdLines](const AnnotatedSpeechSegment& seg)
-		{
-			auto fileIdIt = std::find_if(fileIdLines.begin(), fileIdLines.end(), [&seg](const SphinxFileIdLine& fileIdLine)
-			{
-				return seg.FilePath.find(fileIdLine.OriginalFileNamePart) != std::wstring::npos &&
-					seg.StartMarkerId == fileIdLine.StartMarkerId &&
-					seg.EndMarkerId == fileIdLine.EndMarkerId;
-			});
-			bool isTestSeg = fileIdIt != fileIdLines.end();
-			return !isTestSeg;
-		});
-		segments.erase(remIt, segments.end());
-		
-		int trunc = -1;
-		if (trunc != -1 && segments.size() > trunc)
-			segments.resize(trunc);
-
-		//
 		cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
 			"-hmm", hmmPath,
 			"-lm", langModelPath, // accepts both TXT and DMP formats
@@ -913,7 +912,7 @@ namespace RecognizeSpeechSphinxTester
 		decodeSpeechSegments(segments, ps, targetFrameRate, recogUtterances,
 			phoneConfusionMat, phonesCount, wordErrorTotalCount, wordTotalCount, phonesEditDist, phoneCosts, 
 			pronCodeToWordWellFormed,
-			pronCodeToObjWellFormed, pronCodeToPronObjFiller,
+			pronCodeToObjTest, pronCodeToPronObjFiller,
 			phoneReg, excludeSilFromDecOutput);
 
 		// the call may crash if phonetic dictionary was not correctly initialized (eg .dict file is empty)
@@ -953,9 +952,9 @@ namespace RecognizeSpeechSphinxTester
 			const TwoUtterances& utter = recogUtterances[i];
 			if (utter.ErrorWord == 0) // skip correct utterances
 				break;
-			dumpFileStream << "WordError=" << utter.ErrorWord << "/" <<utter.WordsExpected.size() << " " << "CharError=" << utter.ErrorChars << " SegId=" << utter.Segment.SegmentId << " " << QString::fromStdWString(utter.Segment.FilePath) <<"\n";
+			dumpFileStream << "WordError=" << utter.ErrorWord << "/" <<utter.WordsExpected.size() << " " << "CharError=" << utter.ErrorChars << " RelWavPath=" << QString::fromStdWString(utter.Segment.RelFilePathNoExt) <<"\n";
 
-			dumpFileStream << "ExpectProns=" << QString::fromStdWString(utter.Segment.TranscriptText) << "\n";
+			dumpFileStream << "ExpectProns=" << QString::fromStdWString(utter.Segment.Transcription) << "\n";
 
 			buff.str(L"");
 			PticaGovorun::join(utter.PronIdsActualRaw.cbegin(), utter.PronIdsActualRaw.cend(), separ, buff);

@@ -4,6 +4,7 @@
 #include <QDir>
 #include <QDirIterator>
 #include "CoreUtils.h"
+#include "PhoneticService.h"
 
 namespace PticaGovorun
 {
@@ -117,6 +118,22 @@ namespace PticaGovorun
 						checkMsgs.append(QString("Word marker[id=%1] without text has non empty language").arg(marker.Id));
 					if (!marker.SpeakerBriefId.empty())
 						checkMsgs.append(QString("Word marker[id=%1] without text has non empty speakerBriefId").arg(marker.Id));
+				}
+				else if (marker.TranscripText == toQString(fillerSilence()))
+				{
+					// silence has no language, has no speaker
+					if (marker.Language != PticaGovorun::SpeechLanguage::NotSet)
+						checkMsgs.append(QString("Silence marker[id=%1] can't define a language").arg(marker.Id));
+					if (!marker.SpeakerBriefId.empty())
+						checkMsgs.append(QString("Silence marker[id=%1] can't define speakerBriefId").arg(marker.Id));
+				}
+				else if (marker.TranscripText == toQString(fillerInhale()))
+				{
+					// inhale has no language but has a speaker
+					if (marker.Language != PticaGovorun::SpeechLanguage::NotSet)
+						checkMsgs.append(QString("Inhale marker[id=%1] can't define a language").arg(marker.Id));
+					if (marker.SpeakerBriefId.empty())
+						checkMsgs.append(QString("Inhale marker[id=%1] must define speakerBriefId").arg(marker.Id));
 				}
 				else
 				{

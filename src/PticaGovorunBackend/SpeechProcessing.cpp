@@ -16,6 +16,7 @@
 #include "JuliusToolNativeWrapper.h"
 #include "InteropPython.h"
 #include "PticaGovorunCore.h"
+#include "PhoneticService.h"
 
 namespace PticaGovorun 
 {
@@ -70,7 +71,8 @@ namespace PticaGovorun
 		// apostrophe (eg: п'ять)
 		// dash (eg: to-do)
 		// angle bracket, slash <s> <sil> </sil>
-		static std::wregex r(LR"regex([\w\(\)'-<>/]+)regex"); // match words
+		// square bracket [sp] [inh]
+		static std::wregex r(LR"regex([\w\(\)\[\]'-<>/]+)regex"); // match words
 
 		const wchar_t* wordBeg = std::begin(text);
 		while (std::regex_search(wordBeg, std::cend(text), matchRes, r))
@@ -150,27 +152,6 @@ namespace PticaGovorun
 
 		// silence after the audio
 		std::memset(paddedAudio.data() + silenceFramesCount + audioFramesCount, 0, silenceFramesCount * FrameSize);
-	}
-
-	boost::optional<std::tuple<bool, bool>> isSilenceFlankedSegment(const TimePointMarker& marker)
-	{
-		std::vector<boost::wstring_ref> pronCodes;
-		std::vector<wchar_t> pronCodeBuff;
-		splitUtteranceIntoWords(toWStringRef(marker.TranscripText, pronCodeBuff), pronCodes);
-
-		if (pronCodes.empty())
-			return nullptr;
-		
-		bool startsSil = false;
-		bool endsSil = false;
-
-		boost::wstring_ref firstPronCode = pronCodes.front();
-		if (firstPronCode.compare(L"<s>") == 0)
-			startsSil = true;
-		boost::wstring_ref lastPronCode = pronCodes.back();
-		if (lastPronCode.compare(L"</s>") == 0)
-			endsSil = true;
-		return std::make_tuple(startsSil, endsSil);
 	}
 
 	void mergeSamePhoneStates(const std::vector<AlignedPhoneme>& phoneStates, std::vector<AlignedPhoneme>& monoPhones)
@@ -299,6 +280,12 @@ namespace PticaGovorun
 		return annotPathAbs.toStdWString();
 	}
 
+	enum class ShortPauseUsage
+	{
+		Ignore,
+		UseAsSilence
+	};
+
 	std::tuple<bool, const char*> loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir, 
 		MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments)
 	{
@@ -347,51 +334,138 @@ namespace PticaGovorun
 			return m.LevelOfDetail == targetLevelOfDetail;
 		});
 
+		// determine the segment's bounds
+		// if a text segment is flanked with the silence segment then the text segment is aumented with silence
+		struct SegmentBlank
+		{
+			const TimePointMarker* ContentMarker = nullptr; // the marker with text
+
+			// start/end markers may be different from content marker, if text segment is flanked with silence to the start/end
+			const TimePointMarker* StartMarker = nullptr;
+			const TimePointMarker* EndMarker = nullptr;
+			bool HasStartSilence = false;
+			bool HasEndSilence = false;
+		};
+		ShortPauseUsage shortPauseUsage = ShortPauseUsage::UseAsSilence;
+		QString fillerSilQ = toQString(fillerSilence());
+		QString fillerSpQ = toQString(fillerShortPause());
+		std::vector<SegmentBlank> blankSegs;
+		for (int i = 0; i < (int)markersOfInterest.size() - 1; ++i)
+		{
+			const auto& marker = markersOfInterest[i];
+
+			if (marker.TranscripText.isEmpty()) // ignore empty segments
+				continue;
+			if (marker.TranscripText.contains(QChar('#'))) // ignore markers with pound #
+				continue;
+			if (marker.TranscripText == fillerSilQ) // skip silence segments, attach it to neighbour text segments
+				continue;
+			if (marker.TranscripText == fillerSpQ) // later [sp] is ignored or used as silence
+				continue;
+
+			SegmentBlank blankSeg;
+			blankSeg.ContentMarker = &marker;
+			blankSeg.StartMarker = &marker;
+			blankSeg.EndMarker = &markersOfInterest[i + 1];
+			
+			if (i > 0 && (
+				markersOfInterest[i - 1].TranscripText == fillerSilQ ||
+				markersOfInterest[i - 1].TranscripText == fillerSpQ && shortPauseUsage == ShortPauseUsage::UseAsSilence
+				))
+			{
+				blankSeg.StartMarker = &markersOfInterest[i - 1];
+				blankSeg.HasStartSilence = true;
+			}
+			if (i + 2 < markersOfInterest.size() && (
+				markersOfInterest[i + 1].TranscripText == fillerSilQ ||
+				markersOfInterest[i + 1].TranscripText == fillerSpQ && shortPauseUsage == ShortPauseUsage::UseAsSilence
+				))
+			{
+				blankSeg.EndMarker = &markersOfInterest[i + 2]; // the end of next silence segment
+				blankSeg.HasEndSilence = true;
+			}
+			blankSegs.push_back(blankSeg);
+		}
+
 		// audio frames are lazy loaded
 		float frameRate = -1;
 		std::vector<short> speechFrames;
 
+		// remove [sp]
+		std::vector<boost::wstring_ref> words;
+		std::vector<boost::wstring_ref> wordsNoSp;
+
 		// collect annotated frames
 		// two consequent markers form a segment of intereset
-		for (int i = 0; i < (int)markersOfInterest.size()-1; ++i)
+		for (const SegmentBlank& blankSeg : blankSegs)
 		{
-			const auto& marker = markersOfInterest[i];
-			if (!marker.TranscripText.isEmpty())
+			AnnotatedSpeechSegment seg;
+			seg.SegmentId = blankSeg.ContentMarker->Id;
+			seg.StartMarkerId = blankSeg.StartMarker->Id;
+			seg.EndMarkerId = blankSeg.EndMarker->Id;
+			seg.StartMarker = *blankSeg.StartMarker;
+			seg.EndMarker = *blankSeg.EndMarker;
+			seg.ContentMarker = *blankSeg.ContentMarker;
+			seg.FilePath = wavFilePath.toStdWString();
+			seg.AudioStartsWithSilence = blankSeg.HasStartSilence;
+			seg.AudioEndsWithSilence = blankSeg.HasEndSilence;
+			QString txt = blankSeg.ContentMarker->TranscripText;
+
+			bool skipShortPause = true;
+			if (skipShortPause)
 			{
-				AnnotatedSpeechSegment seg;
-				seg.SegmentId = marker.Id;
-				seg.StartMarkerId = marker.Id;
-				seg.EndMarkerId = markersOfInterest[i+1].Id;
-				seg.StartMarker = marker;
-				seg.EndMarker = markersOfInterest[i+1];
-				seg.FilePath = wavFilePath.toStdWString();
-				seg.TranscriptText = marker.TranscripText.toStdWString();
-				seg.Language = marker.Language;
+				std::wstring txtW = txt.toStdWString();
+				words.clear();
+				wordsNoSp.clear();
+				splitUtteranceIntoWords(txtW, words);
 
-				// filter out unwanted segments
-				if (!segPredBefore(seg))
-					continue;
+				seg.TranscriptionStartsWithSilence = words.front() == fillerStartSilence();
+				seg.TranscriptionEndsWithSilence = words.front() == fillerEndSilence();
 
-				if (loadAudio)
+				for (size_t i = 0; i < words.size(); ++i)
 				{
-					// lazy load audio samples
-					if (speechFrames.empty())
+					auto word = words[i];
+					if (word == fillerShortPause())
 					{
-						// load wav file
-						auto readOp = readAllSamples(wavFilePath.toStdString(), speechFrames, &frameRate);
-						if (!std::get<0>(readOp))
-							return std::make_pair(false, "Can't read wav file");
+						wordsNoSp.push_back(fillerSilence()); // [sp] -> <sil>
+						continue;
 					}
-
-					seg.FrameRate = frameRate;
-
-					long frameStart = marker.SampleInd;
-					long frameEnd = markersOfInterest[i + 1].SampleInd;
-
-					seg.Frames = std::vector<short>(&speechFrames[frameStart], &speechFrames[frameEnd]);
+					//if (word == fillerShortPause() || word == fillerSilence()) // [sp] -> [], <sil> -> []
+					//	continue;
+					wordsNoSp.push_back(word);
 				}
-				segments.push_back(seg);
+
+				std::wstringstream buf;
+				join(wordsNoSp.begin(), wordsNoSp.end(), std::wstring(L" "), buf);
+
+				txt = QString::fromStdWString(buf.str());
 			}
+			seg.TranscriptText = txt.toStdWString();
+			seg.Language = blankSeg.ContentMarker->Language;
+
+			// filter out unwanted segments
+			if (!segPredBefore(seg))
+				continue;
+
+			if (loadAudio)
+			{
+				// lazy load audio samples
+				if (speechFrames.empty())
+				{
+					// load wav file
+					auto readOp = readAllSamples(wavFilePath.toStdString(), speechFrames, &frameRate);
+					if (!std::get<0>(readOp))
+						return std::make_pair(false, "Can't read wav file");
+				}
+
+				seg.FrameRate = frameRate;
+
+				long frameStart = blankSeg.StartMarker->SampleInd;
+				long frameEnd = blankSeg.EndMarker->SampleInd;
+
+				seg.Frames = std::vector<short>(&speechFrames[frameStart], &speechFrames[frameEnd]);
+			}
+			segments.push_back(seg);
 		}
 
 		return std::make_pair(true, "");

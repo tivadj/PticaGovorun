@@ -61,7 +61,7 @@ namespace PticaGovorun
 
 		//
 		void loadAudioAnnotation(const wchar_t* wavRootDir, const wchar_t* annotRootDir, const wchar_t* wavDirToAnalyze, bool includeBrownBear);
-		std::tuple<bool, const char*> partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool useBrokenPronsInTrainOnly, 
+		std::tuple<bool, const char*> partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly, 
 			std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds) const;
 
 		// Ensures that the test phoneset is a subset of train phoneset.
@@ -107,4 +107,25 @@ namespace PticaGovorun
 	// Writes phonetic dictionary to file.
 	// Each line has one pronunciation.
 	std::tuple<bool,const char*> writePhoneticDictSphinx(const std::vector<PhoneticWord>& phoneticDictWords, const PhoneRegistry& phoneReg, const QString& filePath);
+
+	PG_EXPORTS bool readSphinxFileFileId(boost::wstring_ref fileIdPath, std::vector<std::wstring>& fileIds);
+
+	// The line in Sphinx *.transcriptino file.
+	struct SphinxTranscriptionLine
+	{
+		std::wstring Transcription;
+		std::wstring FileNameWithoutExtension; // fileId
+	};
+
+	PG_EXPORTS bool readSphinxFileTranscription(boost::wstring_ref transcriptionFilePath, std::vector<SphinxTranscriptionLine>& transcriptions);
+	PG_EXPORTS bool checkFileIdTranscrConsistency(const std::vector<std::wstring>& dataFilePathNoExt, const std::vector<SphinxTranscriptionLine>& dataTranscr);
+
+	// move to Sphinx
+	PG_EXPORTS struct AudioData
+	{
+		std::vector<short> Frames;
+		float FrameRate;
+	};
+
+	PG_EXPORTS bool loadSphinxAudio(boost::wstring_ref audioDir, const std::vector<std::wstring>& audioRelPathesNoExt, boost::wstring_ref audioFileSuffix, std::vector<AudioData>& audioDataList);
 }

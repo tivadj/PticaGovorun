@@ -226,8 +226,10 @@ namespace PticaGovorun
 		}
 
 		// assume that processed text covers P portion of the whole language (0..1)
-		const float TextStatisticCover = 0.9;
-		//const float TextStatisticCover = 1;
+		static const float TextStatisticCover = 0.8;
+		//static const float TextStatisticCover = 1;
+		static const float NewWordProb = 0.1;
+		static const float FillerInhaleProb = 0.1;
 
 		// create unigrams
 
@@ -235,16 +237,24 @@ namespace PticaGovorun
 		int unigramOrder = 0;
 		for (const WordPart* wordPart : seedUnigrams)
 		{
-			WordSeqKey seqKey({ wordPart->id() });
-			long seqUsage = wordUsage.getWordSequenceUsage(seqKey);
-			if (seqUsage == 0)
+			auto wordPartProbFun = [&wordUsage, unigramTotalUsageCounter](const WordPart* wordPart) -> float
 			{
-				// assign it some minimal usage
-				seqUsage = 1;
-			}
-			PG_Assert(seqUsage > 0);
+				if (wordPart->partText().compare(fillerInhale().data()) == 0)
+					return FillerInhaleProb;
 
-			double prob = seqUsage / (double)unigramTotalUsageCounter;
+				WordSeqKey seqKey({ wordPart->id() });
+				long seqUsage = wordUsage.getWordSequenceUsage(seqKey);
+				if (seqUsage == 0)
+				{
+					// assign it some minimal usage
+					seqUsage = 1;
+				}
+				PG_Assert(seqUsage > 0);
+
+				double prob = seqUsage / (double)unigramTotalUsageCounter;
+				return prob;
+			};
+			double prob = wordPartProbFun(wordPart);
 			PG_Assert(prob > 0 && prob <= 1);
 			double logProb = std::log10(prob);
 

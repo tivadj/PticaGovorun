@@ -371,6 +371,11 @@ namespace PticaGovorun
 
 		// TODO: silence is not a vowel
 		phoneReg.newVowelPhone("SIL", false); // SIL
+		//phoneReg.newVowelPhone("SWL", false); // silence with noise
+		phoneReg.newVowelPhone("INH", false); // inhale
+		//phoneReg.newConsonantPhone("CLK", SoftHardConsonant::Hard); // click sound (such as pressed key)
+		phoneReg.newVowelPhone("EEE", false); // filler; gives a speaker the time to think about her answer
+		phoneReg.newVowelPhone("YYY", false); // filler; gives a speaker the time to think about her answer
 
 		phoneReg.newVowelPhone("A", false); // A
 		if (allowVowelStress)
@@ -2992,6 +2997,41 @@ namespace PticaGovorun
 		}
 
 		return -1;
+	}
+
+	boost::wstring_ref fillerSilence()
+	{
+		return L"<sil>";
+	}
+
+	boost::wstring_ref fillerStartSilence()
+	{
+		return L"<s>";
+	}
+
+	boost::wstring_ref fillerEndSilence()
+	{
+		return L"</s>";
+	}
+
+	boost::wstring_ref fillerShortPause()
+	{
+		return L"[sp]";
+	}
+
+	boost::wstring_ref fillerInhale()
+	{
+		return L"[inh]";
+	}
+
+	boost::wstring_ref fillerEee()
+	{
+		return L"[eee]";
+	}
+
+	boost::wstring_ref fillerYyy()
+	{
+		return L"[yyy]";
 	}
 
 	// Returns number of made transformations or zero if the map was not changed.

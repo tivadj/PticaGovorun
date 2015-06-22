@@ -195,6 +195,12 @@ struct AnnotatedSpeechSegment
 	
 	TimePointMarker StartMarker;
 	TimePointMarker EndMarker;
+	TimePointMarker ContentMarker;
+
+	bool AudioStartsWithSilence = false; // true if there are silence samples in the start of audio
+	bool AudioEndsWithSilence = false;
+	bool TranscriptionStartsWithSilence = false; // true if transcription starts with <s>
+	bool TranscriptionEndsWithSilence = false;
 };
 
 // Determines if a marker with given level of detail will stop the audio playback.
@@ -211,9 +217,6 @@ PG_EXPORTS std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstr
 // Appends silience frames before and after the given audio.
 // Result (padded audio) has a size=initial audio size + 2*silenceFramesCount.
 PG_EXPORTS void padSilence(const short* audioFrames, int audioFramesCount, int silenceFramesCount, std::vector<short>& paddedAudio);
-
-// Returns whether audio segment is padded with silence form start/end.
-PG_EXPORTS boost::optional<std::tuple<bool, bool>> isSilenceFlankedSegment(const TimePointMarker& marker);
 
 // Merges a sequence of phone-states (such as j2,j3,j4,o2,o3...) into monophone sequence (such as j,o...)
 PG_EXPORTS void mergeSamePhoneStates(const std::vector<AlignedPhoneme>& phoneStates, std::vector<AlignedPhoneme>& monoPhones);
