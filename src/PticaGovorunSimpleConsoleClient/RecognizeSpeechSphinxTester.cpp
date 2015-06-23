@@ -327,6 +327,7 @@ namespace RecognizeSpeechSphinxTester
 	// Result of comparing expected text with decoded speech.
 	struct TwoUtterances
 	{
+		std::wstring RelFilePathNoExt; // relative path to speech file
 		float ErrorWord; // edit distance between utterances as a sequence of words
 		float ErrorChars; // edit distance between utterances as a sequence of chars
 		TranscribedAudioSegment Segment;
@@ -635,6 +636,7 @@ namespace RecognizeSpeechSphinxTester
 
 			//
 			TwoUtterances utter;
+			utter.RelFilePathNoExt = seg.RelFilePathNoExt;
 			utter.ErrorWord = distWord;
 			utter.ErrorChars = distChar;
 			utter.Segment = seg;
@@ -656,7 +658,7 @@ namespace RecognizeSpeechSphinxTester
 		}
 	}
 
-	void dumpConfusionMatrix(const std::vector<int>& phoneConfusionMat, int phonesCount, const std::string& outFilePath, const PhoneRegistry& phoneReg)
+	void dumpConfusionMatrix(const std::vector<int>& phoneConfusionMat, int phonesCount, boost::wstring_ref outFilePath, const PhoneRegistry& phoneReg)
 	{
 		// find pivotal phone of high confusion
 		std::vector<int> confData;
@@ -672,7 +674,7 @@ namespace RecognizeSpeechSphinxTester
 		int highConfusionThresh = confData[kHighest];
 		
 
-		QFile dumpFile(outFilePath.c_str());
+		QFile dumpFile(toQString(outFilePath));
 		if (!dumpFile.open(QIODevice::WriteOnly | QIODevice::Text))
 		{
 			std::cerr << "Can't open ouput file" << std::endl;
@@ -790,6 +792,70 @@ namespace RecognizeSpeechSphinxTester
 			seg.FrameRate = audioDataList[i].FrameRate;
 		}
 		return true;
+	}
+
+	std::tuple<bool, const char*> dumpDecoderExpectActualResults(boost::wstring_ref filePath, const std::vector<TwoUtterances>& recogUtterances)
+	{
+		QFile dumpFile(toQString(filePath));
+		if (!dumpFile.open(QIODevice::WriteOnly | QIODevice::Text))
+			return std::make_tuple(false, "Can't open ouput file");
+
+		QTextStream dumpFileStream(&dumpFile);
+		dumpFileStream.setCodec("UTF-8");
+
+		const std::wstring separ(L" ");
+		std::wstringstream buff;
+		CharPhonationGroupCosts c;
+		EditDistance<wchar_t, CharPhonationGroupCosts> editDist;
+		for (int i = 0; i < recogUtterances.size(); ++i)
+		{
+			const TwoUtterances& utter = recogUtterances[i];
+			if (utter.ErrorWord == 0) // skip correct utterances
+				continue;
+			dumpFileStream << "WordError=" << utter.ErrorWord << "/" << utter.WordsExpected.size() << " " << "CharError=" << utter.ErrorChars << " RelWavPath=" << QString::fromStdWString(utter.Segment.RelFilePathNoExt) << "\n";
+
+			dumpFileStream << "ExpectProns=" << QString::fromStdWString(utter.Segment.Transcription) << "\n";
+
+			buff.str(L"");
+			PticaGovorun::join(utter.PronIdsActualRaw.cbegin(), utter.PronIdsActualRaw.cend(), separ, buff);
+			dumpFileStream << "ActualRaw=" << QString::fromStdWString(buff.str()) << "\n";
+
+			dumpFileStream << "WordProbs=";
+			for (int wordInd = 0; wordInd < utter.PronIdsActualRaw.size(); ++wordInd)
+			{
+				dumpFileStream << QString::fromStdWString(utter.PronIdsActualRaw[wordInd]) << " ";
+				dumpFileStream << QString("%1").arg(utter.WordProbs[wordInd], 0, 'f', 2) << " ";
+			}
+			dumpFileStream << "\n"; // end after last prob
+
+			buff.str(L"");
+			PticaGovorun::join(utter.WordsExpected.cbegin(), utter.WordsExpected.cend(), separ, buff);
+			std::wstring expectWords = buff.str();
+			//dumpFileStream << "ExpectWords=" << QString::fromStdWString(expectWords) << "\n";
+
+			buff.str(L"");
+			PticaGovorun::join(utter.WordsActual.cbegin(), utter.WordsActual.cend(), separ, buff);
+			std::wstring actualWords = buff.str();
+			//dumpFileStream << "ActualWords=" << QString::fromStdWString(actualWords) << "\n";
+
+			//
+			editDist.estimateAllDistances(expectWords, actualWords, c);
+			std::vector<EditStep> editRecipe;
+			editDist.minCostRecipe(editRecipe);
+			std::vector<wchar_t> alignWord1;
+			std::vector<wchar_t> alignWord2;
+			alignWords(wv::make_view(expectWords), wv::make_view(actualWords), editRecipe, L'_', alignWord1, alignWord2);
+			dumpFileStream << "ExpectWords=" << QString::fromStdWString(std::wstring(alignWord1.begin(), alignWord1.end())) << "\n";
+			dumpFileStream << "ActualWords=" << QString::fromStdWString(std::wstring(alignWord2.begin(), alignWord2.end())) << "\n";
+
+
+			// expected-actual phones
+			dumpFileStream << "ExpectPhones=" << QString::fromStdString(utter.PhonesExpectedAlignedStr) << "\n";
+			dumpFileStream << "ActualPhones=" << QString::fromStdString(utter.PhonesActualAlignedStr) << "\n";
+
+			dumpFileStream << "\n"; // line between utterances
+		}
+		return std::make_tuple(true, nullptr);
 	}
 
 	void testSphincDecoder()
@@ -918,89 +984,67 @@ namespace RecognizeSpeechSphinxTester
 		// the call may crash if phonetic dictionary was not correctly initialized (eg .dict file is empty)
 		ps_free(ps);
 
-		// order error, large to small
+		//
+		std::wstring timeStampStr;
+		appendTimeStampNow(timeStampStr);
+
+		std::wstringstream dumpFileName;
+
+		// brief info
+
+		{
+			dumpFileName << L"wordErrorDump." << timeStampStr << L"_brief.txt";
+
+			QFile dumpFile(toQString(dumpFileName.str()));
+			if (!dumpFile.open(QIODevice::WriteOnly | QIODevice::Text))
+			{
+				std::cerr << "Can't open ouput file" << std::endl;
+				return;
+			}
+
+			QTextStream dumpFileStream(&dumpFile);
+			dumpFileStream.setCodec("UTF-8");
+
+			double wordErrorAvg = wordErrorTotalCount / (double)wordTotalCount;
+			dumpFileStream << "WordErrorAvg=" << wordErrorAvg << " UtterCount=" << segments.size() << "\n";
+		}
+
+		// order by word error large to small
+		
 		std::sort(std::begin(recogUtterances), std::end(recogUtterances), [](TwoUtterances& a, TwoUtterances& b)
 		{
 			return a.ErrorWord > b.ErrorWord;
 		});
 
-		std::string timeStampStr;
-		appendTimeStampNow(timeStampStr);
-
-		std::stringstream dumpFileName;
-		dumpFileName << "wordErrorDump." << timeStampStr << ".txt";
-
-		QFile dumpFile(dumpFileName.str().c_str());
-		if (!dumpFile.open(QIODevice::WriteOnly | QIODevice::Text))
+		dumpFileName.str(L"");
+		dumpFileName << L"wordErrorDump." << timeStampStr << L"_byWordErr.txt";
+		std::tie(op,errMsg) = dumpDecoderExpectActualResults(dumpFileName.str(), recogUtterances);
+		if (!op)
 		{
-			std::cerr << "Can't open ouput file" <<std::endl;
+			std::cerr << errMsg << std::endl;
 			return;
 		}
 
-		QTextStream dumpFileStream(&dumpFile);
-		dumpFileStream.setCodec("UTF-8");
+		// order by file path
 		
-		double wordErrorAvg = wordErrorTotalCount / (double)wordTotalCount;
-		dumpFileStream << "WordErrorAvg=" << wordErrorAvg << " UtterCount=" << segments.size() <<"\n";
-
-		const std::wstring separ(L" ");
-		std::wstringstream buff;
-		CharPhonationGroupCosts c;
-		EditDistance<wchar_t, CharPhonationGroupCosts> editDist;
-		for (int i = 0; i < recogUtterances.size(); ++i)
+		std::sort(std::begin(recogUtterances), std::end(recogUtterances), [](TwoUtterances& a, TwoUtterances& b)
 		{
-			const TwoUtterances& utter = recogUtterances[i];
-			if (utter.ErrorWord == 0) // skip correct utterances
-				break;
-			dumpFileStream << "WordError=" << utter.ErrorWord << "/" <<utter.WordsExpected.size() << " " << "CharError=" << utter.ErrorChars << " RelWavPath=" << QString::fromStdWString(utter.Segment.RelFilePathNoExt) <<"\n";
+			return a.RelFilePathNoExt < b.RelFilePathNoExt;
+		});
 
-			dumpFileStream << "ExpectProns=" << QString::fromStdWString(utter.Segment.Transcription) << "\n";
-
-			buff.str(L"");
-			PticaGovorun::join(utter.PronIdsActualRaw.cbegin(), utter.PronIdsActualRaw.cend(), separ, buff);
-			dumpFileStream << "ActualRaw=" << QString::fromStdWString(buff.str()) << "\n";
-
-			dumpFileStream << "WordProbs=";
-			for (int wordInd = 0; wordInd < utter.PronIdsActualRaw.size(); ++wordInd)
-			{
-				dumpFileStream << QString::fromStdWString(utter.PronIdsActualRaw[wordInd]) << " ";
-				dumpFileStream << QString("%1").arg(utter.WordProbs[wordInd], 0, 'f', 2) << " ";
-			}
-			dumpFileStream << "\n"; // end after last prob
-
-			buff.str(L"");
-			PticaGovorun::join(utter.WordsExpected.cbegin(), utter.WordsExpected.cend(), separ, buff);
-			std::wstring expectWords = buff.str();
-			//dumpFileStream << "ExpectWords=" << QString::fromStdWString(expectWords) << "\n";
-
-			buff.str(L"");
-			PticaGovorun::join(utter.WordsActual.cbegin(), utter.WordsActual.cend(), separ, buff);
-			std::wstring actualWords = buff.str();
-			//dumpFileStream << "ActualWords=" << QString::fromStdWString(actualWords) << "\n";
-
-			//
-			editDist.estimateAllDistances(expectWords, actualWords, c);
-			std::vector<EditStep> editRecipe;
-			editDist.minCostRecipe(editRecipe);
-			std::vector<wchar_t> alignWord1;
-			std::vector<wchar_t> alignWord2;
-			alignWords(wv::make_view(expectWords), wv::make_view(actualWords), editRecipe, L'_', alignWord1, alignWord2);
-			dumpFileStream << "ExpectWords=" << QString::fromStdWString(std::wstring(alignWord1.begin(), alignWord1.end())) << "\n";
-			dumpFileStream << "ActualWords=" << QString::fromStdWString(std::wstring(alignWord2.begin(), alignWord2.end())) << "\n";
-
-
-			// expected-actual phones
-			dumpFileStream << "ExpectPhones=" << QString::fromStdString(utter.PhonesExpectedAlignedStr) << "\n";
-			dumpFileStream << "ActualPhones=" << QString::fromStdString(utter.PhonesActualAlignedStr) << "\n";
-
-			dumpFileStream << "\n"; // line between utterances
+		dumpFileName.str(L"");
+		dumpFileName << L"wordErrorDump." << timeStampStr << L"_byFile.txt";
+		std::tie(op,errMsg) = dumpDecoderExpectActualResults(dumpFileName.str(), recogUtterances);
+		if (!op)
+		{
+			std::cerr << errMsg << std::endl;
+			return;
 		}
 
-		dumpFileName.str("");
-		dumpFileName << "wordErrorDump." << timeStampStr << ".ConfusionMat.htm";
-
+		// print confusion matrix
+		dumpFileName.str(L"");
+		dumpFileName << L"wordErrorDump." << timeStampStr << "_confusionMat.htm";
 		dumpConfusionMatrix(phoneConfusionMat, phonesCount, dumpFileName.str(), phoneReg);
-		dumpFileStream << "\n"; // line after confusion matrix		
 	}
 
 	void run()
