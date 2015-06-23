@@ -106,7 +106,7 @@ namespace RecognizeSpeechInBatchTester
 
 		int framesProcessed = -1;
 		std::vector<std::wstring> words;
-		const float utterenceSec = 5;
+		const float utterenceSec = 10;
 		std::vector<short> utterFrames;
 		for (int decodeFrameInd = 0; decodeFrameInd < audioFramesSphinx.size();)
 		{
@@ -124,8 +124,11 @@ namespace RecognizeSpeechInBatchTester
 			//
 			for (const std::wstring& word : words)
 			{
-				if (word == L"<s>" || word == L"</s>")
+				if (word.compare(fillerStartSilence().data()) ==  0 ||
+					word.compare(fillerEndSilence().data()) == 0)
 					continue;
+				if (word.compare(fillerInhale().data()) == 0)
+					dumpFileStream <<"\n";
 				dumpFileStream << QString::fromStdWString(word) << " ";
 			}
 			dumpFileStream.flush();

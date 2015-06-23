@@ -4,6 +4,7 @@
 #include "ClnUtils.h"
 #include "fe_internal.h" // fe_t(front end)
 #include "SpeechProcessing.h"
+#include "PhoneticService.h"
 
 namespace PticaGovorun
 {
@@ -11,13 +12,6 @@ namespace PticaGovorun
 
 	namespace
 	{
-		struct ParsedSpeechSegment
-		{
-			std::wstring Word;
-			int StartFrame;
-			int EndFrame;
-		};
-
 		// Mergeds word parts, when one the previous part ends and next part starts in '~'.
 		void mergeWordParts(wv::slice<ParsedSpeechSegment> parts, std::vector<ParsedSpeechSegment>& mergedParts)
 		{
@@ -147,36 +141,7 @@ namespace PticaGovorun
 		std::vector<ParsedSpeechSegment> wordsMerged;
 		mergeWordParts(wordsActual, wordsMerged);
 
-		// some recognition error is accumulated in the end of the utterance
-		// hence the words after chosen one are not included into result
-		// (w1,w2,w3) shuld be truncated into (w1,w2)
-		// (w1,w2,<sil>) -> (w1,w2)
-		// (w1,w2,</s>) -> (w1)
-		size_t excludeWordInd = 0;
-		if (wordsActual.empty())
-		{
-			excludeWordInd = 0;
-		}
-		else if (wordsActual.size() == 1)
-		{
-			excludeWordInd = 1;
-		}
-		else
-		{
-			// skip couple of words at right end (except <s> and </s>)
-			int wordsSkipped = 0;
-			for (excludeWordInd = wordsMerged.size() - 1; excludeWordInd >= 0; --excludeWordInd)
-			{
-				if (wordsMerged[excludeWordInd].Word == L"<s>" || wordsMerged[excludeWordInd].Word == L"</s>")
-					continue;
-				
-				// do not count <s> and </s>
-				wordsSkipped++;
-				const int skipWordsCount = 1;
-				if (wordsSkipped >= skipWordsCount)
-					break;
-			}
-		}
+		size_t excludeWordInd = determineWordIndToExclude(wordsMerged);
 		for (size_t i = 0; i < excludeWordInd; ++i)
 		{
 			words.push_back(wordsMerged[i].Word);
@@ -186,6 +151,48 @@ namespace PticaGovorun
 		framesProcessed = frames.size();
 		if (excludeWordInd > 0)
 			framesProcessed = wordsMerged[excludeWordInd - 1].EndFrame;
+	}
+
+	int AudioSpeechDecoder::determineWordIndToExclude(const std::vector<ParsedSpeechSegment>& wordsMerged) const
+	{
+		// some recognition error is accumulated in the end of the utterance
+		// hence the words after chosen one are not included into result
+		// (w1,w2,w3) shuld be truncated into (w1,w2)
+		// (w1,w2,<sil>) -> (w1,w2)
+		// (w1,w2,</s>) -> (w1)
+		if (wordsMerged.empty())
+			return 0;
+		
+		if (wordsMerged.size() == 1)
+			return 1;
+
+		// if there is an inhale, then cut after it
+		auto inhIt = std::find_if(wordsMerged.crbegin(), wordsMerged.crend(), [](const ParsedSpeechSegment& seg) {
+			return seg.Word.compare(fillerInhale().data()) == 0;
+		});
+		if (inhIt != wordsMerged.crend())
+		{
+			auto it = inhIt.base();
+			size_t exclInd = std::distance(wordsMerged.cbegin(), it); // next after inhale
+			return exclInd;
+		}
+
+		// skip couple of words at right end (except <s> and </s>)
+		int wordsSkipped = 0;
+		size_t excludeWordInd = 0;
+		for (excludeWordInd = wordsMerged.size() - 1; excludeWordInd >= 0; --excludeWordInd)
+		{
+			if (wordsMerged[excludeWordInd].Word.compare(fillerStartSilence().data()) == 0  ||
+				wordsMerged[excludeWordInd].Word.compare(fillerEndSilence().data()) == 0)
+				continue;
+
+			// do not count <s> and </s>
+			wordsSkipped++;
+			const int skipWordsCount = 1;
+			if (wordsSkipped >= skipWordsCount)
+				break;
+		}
+		return excludeWordInd;
 	}
 
 	bool AudioSpeechDecoder::hasError() const
