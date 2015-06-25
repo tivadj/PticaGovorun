@@ -46,6 +46,7 @@
    <syncPoint id="729" sampleInd="3185916" levelOfDetail="word" transcripText="#цікавий по своєму(1)" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="56" sampleInd="3213335" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="17" sampleInd="3214906" levelOfDetail="word" transcripText="[inh] особливу увагу с" lang="uk" speakerBriefId="verbychso"/>
+   <syncPoint id="1152" sampleInd="3242011" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="1382" sampleInd="3243218" levelOfDetail="word" transcripText="#поміж(1) інших класів онімної лексики" lang="uk" speakerBriefId="verbychso"/>
    <syncPoint id="1169" sampleInd="3261542" levelOfDetail="phone" transcripText="noise"/>
    <syncPoint id="1301" sampleInd="3274954" levelOfDetail="phone" transcripText="noise"/>
@@ -293,7 +294,7 @@
    <syncPoint id="112" sampleInd="10347464" levelOfDetail="phone" transcripText="[inh]"/>
    <syncPoint id="525" sampleInd="10351168" levelOfDetail="phone" transcripText="&lt;sil&gt;"/>
    <syncPoint id="168" sampleInd="10352607" levelOfDetail="phone" transcripText="і третє"/>
-   <syncPoint id="227" sampleInd="10370898" levelOfDetail="word" transcripText="відтягати виконання чого(2) небудь [sp] на пізніший час " lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="227" sampleInd="10370898" levelOfDetail="word" transcripText="відтягати виконання чого(2) небудь [sp] на пізніши час " lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="257" sampleInd="10440802" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="219" sampleInd="10444456" levelOfDetail="word"/>
    <syncPoint id="292" sampleInd="10448971" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="khorkindm"/>
@@ -338,8 +339,8 @@
    <syncPoint id="1373" sampleInd="11260003" levelOfDetail="word"/>
    <syncPoint id="838" sampleInd="11260665" levelOfDetail="phone" transcripText="waves?"/>
    <syncPoint id="207" sampleInd="11265510" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
-   <syncPoint id="327" sampleInd="11269694" levelOfDetail="word" transcripText="не забиру у вас [sp] багато час" lang="uk" speakerBriefId="zakharevycho"/>
-   <syncPoint id="291" sampleInd="11315768" levelOfDetail="word"/>
+   <syncPoint id="327" sampleInd="11269694" levelOfDetail="word" transcripText="не забиру у вас [sp] багато часу(1)" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="291" sampleInd="11316743" levelOfDetail="word"/>
    <syncPoint id="846" sampleInd="11481440" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="145" sampleInd="11484632" levelOfDetail="word" transcripText="виділити кошти" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="1068" sampleInd="11511820" levelOfDetail="word"/>
@@ -446,7 +447,7 @@
    <syncPoint id="372" sampleInd="13680117" levelOfDetail="word" transcripText="а російське" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="714" sampleInd="13698408" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="329" sampleInd="13701285" levelOfDetail="word" transcripText="любимиц баловень" lang="ru" speakerBriefId="zakharevycho"/>
-   <syncPoint id="271" sampleInd="13733848" levelOfDetail="word" transcripText="[inh] [sp] ми передаємо як &lt;sil&gt; улюбленик або ж улюблинець [sp] [inh]" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="271" sampleInd="13733848" levelOfDetail="word" transcripText="[inh] [sp] ми передаємо як &lt;sil&gt; улюбленик або ш улюблинець [sp] [inh]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="775" sampleInd="13814981" levelOfDetail="word"/>
    <syncPoint id="856" sampleInd="13816304" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="429" sampleInd="13817213" levelOfDetail="word" transcripText="любимец богов" lang="ru" speakerBriefId="zakharevycho"/>
@@ -491,7 +492,7 @@
    <syncPoint id="1093" sampleInd="14569422" levelOfDetail="word"/>
    <syncPoint id="1019" sampleInd="14570579" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="1465" sampleInd="14571638" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="578" sampleInd="14573192" levelOfDetail="word" transcripText="синьо фіолетовий [inh]" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="578" sampleInd="14573192" levelOfDetail="word" transcripText="сині фіолетовий [inh]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="322" sampleInd="14602910" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="482" sampleInd="14605672" levelOfDetail="word" transcripText="топто [sp] колір [inh] нібито змішується [inh] і складаєця з двох інших кольорів [sp] [inh]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="394" sampleInd="14624276" levelOfDetail="phone"/>
@@ -532,7 +533,11 @@
    <syncPoint id="471" sampleInd="15657920" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="1048" sampleInd="15660053" levelOfDetail="word"/>
    <syncPoint id="446" sampleInd="15675681" levelOfDetail="phone" transcripText="music"/>
-   <syncPoint id="244" sampleInd="16223238" levelOfDetail="word" transcripText="юрист зобов'язаний скласти вступний іспит [sp] до колегії адвокатів" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="244" sampleInd="16223238" levelOfDetail="word" transcripText="юрист зобов'язаний скласти вступний іспит" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="1421" sampleInd="16282012" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="1469" sampleInd="16283219" levelOfDetail="word"/>
+   <syncPoint id="529" sampleInd="16283351" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="1056" sampleInd="16283500" levelOfDetail="word" transcripText="до колегії адвокатів" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="125" sampleInd="16313102" levelOfDetail="word"/>
    <syncPoint id="432" sampleInd="16314078" levelOfDetail="phone" transcripText="noise"/>
    <syncPoint id="902" sampleInd="16315567" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
@@ -565,20 +570,20 @@
    <syncPoint id="439" sampleInd="16811560" levelOfDetail="word"/>
    <syncPoint id="445" sampleInd="16929124" levelOfDetail="word" transcripText="з українською мовою  [inh]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="1248" sampleInd="16964052" levelOfDetail="word"/>
-   <syncPoint id="622" sampleInd="16964912" levelOfDetail="phone" transcripText="noise"/>
-   <syncPoint id="304" sampleInd="16965424" levelOfDetail="word" transcripText="в російській [sp] частіше трапляється перехід дієприкметників і прикметників [sp] в іменник [inh]" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="622" sampleInd="16964912" levelOfDetail="phone" transcripText="todo: noise OR v?"/>
+   <syncPoint id="304" sampleInd="16965176" levelOfDetail="word" transcripText="в російські [sp] частіше трапляється перехід дієприкметників і прикметників [sp] в іменник [inh]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="1345" sampleInd="16983616" levelOfDetail="phone" transcripText="todo:part of ch?"/>
    <syncPoint id="295" sampleInd="17088298" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="310" sampleInd="17090200" levelOfDetail="word" transcripText="порівняймо &lt;sil&gt; [inh] &lt;sil&gt; українське" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="1059" sampleInd="17132254" levelOfDetail="word" transcripText="#завідувач" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="589" sampleInd="17141250" levelOfDetail="phone" transcripText="click"/>
-   <syncPoint id="1209" sampleInd="17153306" levelOfDetail="word" transcripText="[inh] [sp] російське" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="1209" sampleInd="17153306" levelOfDetail="word" transcripText="[inh] [sp] росіське" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="285" sampleInd="17177220" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="592" sampleInd="17181006" levelOfDetail="word" transcripText="заведующий" lang="ru" speakerBriefId="zakharevycho"/>
    <syncPoint id="352" sampleInd="17209072" levelOfDetail="word"/>
    <syncPoint id="346" sampleInd="17212064" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="1046" sampleInd="17212428" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="454" sampleInd="17213668" levelOfDetail="word" transcripText="українське [sp] командувач [sp] російське" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="454" sampleInd="17213668" levelOfDetail="word" transcripText="українське [sp] командувач [sp] росіське" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="511" sampleInd="17283408" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="241" sampleInd="17291726" levelOfDetail="word" transcripText="коммандующий" lang="ru" speakerBriefId="zakharevycho"/>
    <syncPoint id="563" sampleInd="17315688" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
@@ -586,6 +591,7 @@
    <syncPoint id="651" sampleInd="17321940" levelOfDetail="phone" transcripText="noise"/>
    <syncPoint id="571" sampleInd="17325992" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="546" sampleInd="17328604" levelOfDetail="word" transcripText="пожежник" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="732" sampleInd="17346746" levelOfDetail="phone" transcripText="exhale"/>
    <syncPoint id="129" sampleInd="17348564" levelOfDetail="word"/>
    <syncPoint id="1269" sampleInd="17353246" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="625" sampleInd="17354618" levelOfDetail="word" transcripText="пожарный" lang="ru" speakerBriefId="zakharevycho"/>
@@ -646,7 +652,13 @@
    <syncPoint id="303" sampleInd="20795112" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="1097" sampleInd="20797560" levelOfDetail="word"/>
    <syncPoint id="634" sampleInd="20797658" levelOfDetail="phone" transcripText="noise"/>
-   <syncPoint id="951" sampleInd="20798948" levelOfDetail="word" transcripText="дуб [sp] бик [sp] залізо [inh] і [sp] їстівні" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="951" sampleInd="20798948" levelOfDetail="word" transcripText="дуб" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="452" sampleInd="20809714" levelOfDetail="word"/>
+   <syncPoint id="606" sampleInd="20809864" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="1236" sampleInd="20810096" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="403" sampleInd="20812294" levelOfDetail="word"/>
+   <syncPoint id="1227" sampleInd="20812608" levelOfDetail="phone" transcripText="noise"/>
+   <syncPoint id="1052" sampleInd="20813138" levelOfDetail="word" transcripText="бик [sp] залізо [inh] і [sp] їстівні" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="496" sampleInd="20842210" levelOfDetail="phone"/>
    <syncPoint id="670" sampleInd="20851042" levelOfDetail="phone" transcripText="і &lt;sil&gt; їстівні"/>
    <syncPoint id="918" sampleInd="20881918" levelOfDetail="word"/>

@@ -563,7 +563,7 @@
    <syncPoint id="477" sampleInd="11332801" levelOfDetail="phone"/>
    <syncPoint id="627" sampleInd="11336390" levelOfDetail="phone" transcripText="рим &lt;sil&gt; рима"/>
    <syncPoint id="215" sampleInd="11372690" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="439" sampleInd="11373831" levelOfDetail="word" transcripText="так само(1) як чоловік чоловіка [inh] &lt;sil&gt; краб [sp] краба [sp] стіл стола" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="439" sampleInd="11373831" levelOfDetail="word" transcripText="так само(1) як чоловік чоловіка [inh] &lt;sil&gt; крап [sp] краба [sp] стіл стола" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="312" sampleInd="11411222" levelOfDetail="phone"/>
    <syncPoint id="635" sampleInd="11416646" levelOfDetail="phone" transcripText="краб &lt;sil&gt; краба"/>
    <syncPoint id="461" sampleInd="11437500" levelOfDetail="phone"/>
@@ -685,10 +685,8 @@
    <syncPoint id="349" sampleInd="13457622" levelOfDetail="word"/>
    <syncPoint id="1433" sampleInd="13457969" levelOfDetail="phone" transcripText="noise"/>
    <syncPoint id="703" sampleInd="13458465" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
-   <syncPoint id="708" sampleInd="13459838" levelOfDetail="word" transcripText="виконувати шчо небудь одночасно зь чимось [sp] іншим" lang="uk" speakerBriefId="zakharevycho"/>
-   <syncPoint id="504" sampleInd="13522680" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
-   <syncPoint id="1495" sampleInd="13523772" levelOfDetail="word" transcripText="[inh]" speakerBriefId="zakharevycho"/>
-   <syncPoint id="1285" sampleInd="13526286" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="708" sampleInd="13459838" levelOfDetail="word" transcripText="виконувати шчо небудь одночасно зь чимось [sp] іншим [inh]" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="1285" sampleInd="13526286" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="493" sampleInd="13527195" levelOfDetail="word" transcripText="містити в собі [sp] водночас(2) [sp] певні риси якості властивості &lt;sil&gt; наприклад" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="214" sampleInd="13549256" levelOfDetail="phone"/>
    <syncPoint id="614" sampleInd="13550761" levelOfDetail="phone" transcripText="водночас(2) певні риси якості властивості &lt;sil&gt; наприклад"/>
@@ -716,7 +714,7 @@
    <syncPoint id="847" sampleInd="13944833" levelOfDetail="phone" transcripText="читаймо у володимира сосюри"/>
    <syncPoint id="604" sampleInd="13984937" levelOfDetail="word"/>
    <syncPoint id="1184" sampleInd="14577360" levelOfDetail="phone" transcripText="music"/>
-   <syncPoint id="575" sampleInd="14578666" levelOfDetail="word" transcripText="речення с цими слово сполуками [inh] є і в різноманітних &lt;sil&gt; текстах які відбивають [sp] усне мовлення &lt;sil&gt; наприклад" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="575" sampleInd="14578666" levelOfDetail="word" transcripText="реченя с цими слово сполуками [inh] є і в різноманітних &lt;sil&gt; текстах які відбивають [sp] усне мовлення &lt;sil&gt; наприклад" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="527" sampleInd="14618554" levelOfDetail="phone" transcripText="[inh]"/>
    <syncPoint id="854" sampleInd="14621564" levelOfDetail="phone"/>
    <syncPoint id="846" sampleInd="14622308" levelOfDetail="phone" transcripText="є і в різноманітних &lt;sil&gt; текстах які відбивають"/>
@@ -786,7 +784,7 @@
    <syncPoint id="723" sampleInd="15789757" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="766" sampleInd="15791096" levelOfDetail="word" transcripText="треба замінити на словоформи [sp] сьогодні [sp] і &lt;sil&gt; на сьогодні [inh]" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="666" sampleInd="15881424" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="khorkindm"/>
-   <syncPoint id="985" sampleInd="15882400" levelOfDetail="word" transcripText="ящо йдеця про" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="985" sampleInd="15882400" levelOfDetail="word" transcripText="яшчо йдеця про" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="297" sampleInd="15902327" levelOfDetail="word"/>
    <syncPoint id="930" sampleInd="15906048" levelOfDetail="word" transcripText="день між учора й завтра [sp] [inh] [sp] або на слова(2) тепер зарас сьогодення сучаснісь" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="756" sampleInd="15948384" levelOfDetail="phone" transcripText="або на слова(2) тепер зарас сьогодення сучасність"/>

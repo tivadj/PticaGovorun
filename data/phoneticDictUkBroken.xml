@@ -45,9 +45,6 @@
       <pron code="відбуваіця" phones="V2 I D B U V A1 I TS1 A"/>
    </word>
    <word name="відповідять" phones="V I T P O V I D A1 T1"/>
-   <word name="відтак">
-      <pron code="вітак" phones="V2 I T A1 K"/>
-   </word>
    <word name="відчуватися">
       <pron code="віччуватися" phones="V2 I CH CH U V A1 T Y S1 A"/>
    </word>
@@ -306,9 +303,6 @@
    <word name="юридичного">
       <pron code="юридично" phones="J U R Y D Y1 CH N O"/>
    </word>
-   <word name="якщо">
-      <pron code="ящо" phones="J A SH CH O1"/>
-   </word>
    <word name="які">
       <pron code="яки" phones="J A K2 Y1"/>
    </word>
@@ -341,5 +335,4 @@
       <pron code="історік" phones="I S T O1 R I K"/>
    </word>
    <word name="іч" phones="I1 CH"/>
-   <word name="ї" phones="J I1"/>
 </phoneticDict>

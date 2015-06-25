@@ -5,9 +5,11 @@
    </header>
    <syncPoint id="42" sampleInd="12204" levelOfDetail="word" transcripText="[inh] &lt;sil&gt; з вами сергій коротаєвськ рубрика про це говорять [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="2" sampleInd="72434" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="3" sampleInd="73492" levelOfDetail="word" transcripText="в один і той самий(1) день двоє найвищих керівників нашої держави [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="3" sampleInd="73492" levelOfDetail="word" transcripText="в один і той самий(1) день двоє найвищи керівників нашоі держави [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="5" sampleInd="87764" levelOfDetail="phone" transcripText="elongated"/>
    <syncPoint id="7" sampleInd="91501" levelOfDetail="phone" transcripText="самий(1) день двоє найвищих керівників нашої держави"/>
+   <syncPoint id="95" sampleInd="123121" levelOfDetail="phone" transcripText="Y or I, no KH"/>
+   <syncPoint id="146" sampleInd="139808" levelOfDetail="phone" transcripText="нашо OR нашої"/>
    <syncPoint id="9" sampleInd="152343" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="11" sampleInd="153864" levelOfDetail="word" transcripText="відбули до європи де росповідають про те [inh] [sp] які ми &lt;sil&gt; класні [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="12" sampleInd="206057" levelOfDetail="phone" transcripText="які ми &lt;sil&gt; класні"/>
@@ -100,7 +102,7 @@
    <syncPoint id="117" sampleInd="1572319" levelOfDetail="phone" transcripText="не читати &lt;sil&gt; що вони пишуть"/>
    <syncPoint id="154" sampleInd="1589071" levelOfDetail="phone" transcripText="sil"/>
    <syncPoint id="141" sampleInd="1617714" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="125" sampleInd="1618789" levelOfDetail="word" transcripText="навіть &lt;sil&gt; з найулюбленішим дітищем західних альянтів [sp] іс санкціями [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="125" sampleInd="1618789" levelOfDetail="word" transcripText="навіть &lt;sil&gt; з найулюбленішим дітищем західних альянтів [sp] іс санціами [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="259" sampleInd="1706488" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="171" sampleInd="1708340" levelOfDetail="word"/>
    <syncPoint id="273" sampleInd="1709316" levelOfDetail="phone" transcripText="glottal"/>
@@ -109,7 +111,7 @@
    <syncPoint id="49" sampleInd="1745235" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="68" sampleInd="1746393" levelOfDetail="word" transcripText="нам кажуть [inh]" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="120" sampleInd="1758862" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="132" sampleInd="1760201" levelOfDetail="word" transcripText="вже готові начепто посилені санкції але тільки якщо сепаратисти [inh] підуть(2) на маріуполь [inh] &lt;sil&gt; а якщо не підуть(2)" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="132" sampleInd="1760201" levelOfDetail="word" transcripText="вже готові начепто посилені санці але тільки яшчо сепаратисти [inh] підуть(2) на маріуполь [inh] &lt;sil&gt; а яшчо не підуть(2)" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="108" sampleInd="1829990" levelOfDetail="phone"/>
    <syncPoint id="138" sampleInd="1837895" levelOfDetail="phone" transcripText="підуть(2) на маріуполь"/>
    <syncPoint id="114" sampleInd="1868919" levelOfDetail="phone" transcripText="&lt;sil&gt;"/>
@@ -159,7 +161,7 @@
    <syncPoint id="172" sampleInd="2576608" levelOfDetail="phone"/>
    <syncPoint id="270" sampleInd="2583356" levelOfDetail="phone" transcripText="ми такі"/>
    <syncPoint id="186" sampleInd="2597297" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="98" sampleInd="2602010" levelOfDetail="word" transcripText="най бажаніший партнер [inh] по цей бік [inh] лінії імені &lt;sil&gt; лорда [inh] [sp] керзона [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="98" sampleInd="2602010" levelOfDetail="word" transcripText="най бажаніши партнер [inh] по цей бік [inh] лінії імені &lt;sil&gt; лорда [inh] [sp] керзона [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="130" sampleInd="2631546" levelOfDetail="phone" transcripText="[inh]"/>
    <syncPoint id="200" sampleInd="2648993" levelOfDetail="phone" transcripText="[inh]"/>
    <syncPoint id="185" sampleInd="2686814" levelOfDetail="phone" transcripText="[inh]"/>

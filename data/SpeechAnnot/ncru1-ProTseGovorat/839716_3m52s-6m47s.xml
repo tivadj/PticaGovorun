@@ -14,12 +14,12 @@
    <syncPoint id="99" sampleInd="269776" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="12" sampleInd="270619" levelOfDetail="word" transcripText="те що зафіксувались на прагматиці моменту [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="6" sampleInd="326218" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="16" sampleInd="327095" levelOfDetail="word" transcripText="за два дні які мали б для україни мати значення [inh] пробачте за &lt;sil&gt; неоковирність формулювань [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="16" sampleInd="327095" levelOfDetail="word" transcripText="за два дні які мали б для україни мати значення [inh] пробачте за &lt;sil&gt; неоковирнісь формулювань [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="4" sampleInd="398123" levelOfDetail="phone" transcripText="пробачте за &lt;sil&gt; неоковирність формулювань"/>
    <syncPoint id="22" sampleInd="447984" levelOfDetail="word"/>
    <syncPoint id="170" sampleInd="449919" levelOfDetail="phone" transcripText="noise"/>
    <syncPoint id="395" sampleInd="453011" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="17" sampleInd="454963" levelOfDetail="word" transcripText="як європейськи прорив [inh] ми дізнались що ми [inh] [sp] європейська держава" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="17" sampleInd="454963" levelOfDetail="word" transcripText="як європейські прорив [inh] ми дізнались що ми [inh] [sp] європейська держава" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="31" sampleInd="491626" levelOfDetail="phone" transcripText="ми дізнались що ми"/>
    <syncPoint id="33" sampleInd="515887" levelOfDetail="phone" transcripText="європейська держава"/>
    <syncPoint id="35" sampleInd="543389" levelOfDetail="word"/>
@@ -132,7 +132,7 @@
    <syncPoint id="184" sampleInd="2571432" levelOfDetail="phone" transcripText="ym"/>
    <syncPoint id="270" sampleInd="2613222" levelOfDetail="phone" transcripText="оскільки вчорашня так звана донорська конференція по суті"/>
    <syncPoint id="345" sampleInd="2681324" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="239" sampleInd="2683457" levelOfDetail="word" transcripText="не була донорською [inh] з огляду на вітсутність [inh] &lt;sil&gt; донорів" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="239" sampleInd="2683457" levelOfDetail="word" transcripText="не була донорскою [inh] з огляду на вітсутність [inh] &lt;sil&gt; донорів" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="238" sampleInd="2713919" levelOfDetail="phone" transcripText="з огляду на вітсутність"/>
    <syncPoint id="261" sampleInd="2751873" levelOfDetail="phone" transcripText="донорів"/>
    <syncPoint id="296" sampleInd="2765119" levelOfDetail="word"/>

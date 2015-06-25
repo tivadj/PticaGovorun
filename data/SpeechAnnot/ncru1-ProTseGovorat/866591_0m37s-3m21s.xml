@@ -25,7 +25,8 @@
    <syncPoint id="33" sampleInd="570246" levelOfDetail="word" transcripText="[clk]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="94" sampleInd="570576" levelOfDetail="word"/>
    <syncPoint id="298" sampleInd="573057" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="30" sampleInd="576695" levelOfDetail="word" transcripText="почав дописувати на тему [inh] &lt;sil&gt; армія путіна в українському полоні [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="30" sampleInd="576695" levelOfDetail="word" transcripText="почав дописути на тему [inh] &lt;sil&gt; армія путіна в українському полоні [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="329" sampleInd="594208" levelOfDetail="phone" transcripText="has ва?"/>
    <syncPoint id="39" sampleInd="614682" levelOfDetail="phone" transcripText="армія путіна в українському полоні"/>
    <syncPoint id="46" sampleInd="673737" levelOfDetail="word"/>
    <syncPoint id="287" sampleInd="674415" levelOfDetail="phone" transcripText="click"/>
@@ -68,7 +69,7 @@
    <syncPoint id="107" sampleInd="1517828" levelOfDetail="phone"/>
    <syncPoint id="103" sampleInd="1523682" levelOfDetail="phone" transcripText="другий"/>
    <syncPoint id="38" sampleInd="1532745" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="96" sampleInd="1534613" levelOfDetail="word" transcripText="[inh] відверто кажучи особи я [inh] [sp] не маю сумнівів [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="96" sampleInd="1534613" levelOfDetail="word" transcripText="[inh] відверто кажучи особисто я [inh] [sp] не маю сумнівів [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="52" sampleInd="1572054" levelOfDetail="phone"/>
    <syncPoint id="50" sampleInd="1579099" levelOfDetail="phone" transcripText="не маю сумнівів"/>
    <syncPoint id="56" sampleInd="1608586" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
@@ -93,8 +94,9 @@
    <syncPoint id="108" sampleInd="1959230" levelOfDetail="phone" transcripText="&lt;sil&gt;"/>
    <syncPoint id="138" sampleInd="1965151" levelOfDetail="phone" transcripText="[inh] сумно шановні але факт"/>
    <syncPoint id="114" sampleInd="2002145" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="73" sampleInd="2014069" levelOfDetail="word" transcripText="пункт &lt;sil&gt; третій [inh] нарешті в росії знайдено [sp] родичей обох [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="73" sampleInd="2014069" levelOfDetail="word" transcripText="пунт &lt;sil&gt; третій [inh] нарешті в росіі знайдено [sp] родичев обох [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="156" sampleInd="2036775" levelOfDetail="phone" transcripText="нарешті в росії знайдено &lt;sil&gt; родичей обох"/>
+   <syncPoint id="354" sampleInd="2077655" levelOfDetail="phone" transcripText="родичев OR родиче"/>
    <syncPoint id="81" sampleInd="2087148" levelOfDetail="word"/>
    <syncPoint id="281" sampleInd="2087925" levelOfDetail="phone" transcripText="noise"/>
    <syncPoint id="173" sampleInd="2088570" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
@@ -158,8 +160,9 @@
    <syncPoint id="255" sampleInd="2946469" levelOfDetail="word"/>
    <syncPoint id="307" sampleInd="2946651" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="326" sampleInd="2950736" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="77" sampleInd="2952224" levelOfDetail="word" transcripText="взагалі зараз збираюця [inh] позбавити слічих функцій [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="77" sampleInd="2952224" levelOfDetail="word" transcripText="взагалі зара збираюця [inh] позбавити слічих функцій [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="196" sampleInd="2984704" levelOfDetail="phone" transcripText="позбавити слічих функцій"/>
+   <syncPoint id="232" sampleInd="3007344" levelOfDetail="phone" transcripText="has KH?"/>
    <syncPoint id="157" sampleInd="3021484" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="309" sampleInd="3024361" levelOfDetail="word" transcripText="[yyy]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="174" sampleInd="3025533" levelOfDetail="phone" transcripText="ym"/>

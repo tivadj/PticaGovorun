@@ -54,8 +54,8 @@
    <syncPoint id="68" sampleInd="838517" levelOfDetail="phone" transcripText="віт самого(2) початку не була натто великою"/>
    <syncPoint id="50" sampleInd="890990" levelOfDetail="phone" transcripText="чотириста гектарів лісу"/>
    <syncPoint id="72" sampleInd="925107" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="20" sampleInd="925785" levelOfDetail="word" transcripText="весь цей масив росташований за два десятки кілометрів [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
-   <syncPoint id="48" sampleInd="984510" levelOfDetail="word"/>
+   <syncPoint id="20" sampleInd="925785" levelOfDetail="word" transcripText="увесь цей масив росташований за два десятки кілометрів" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="48" sampleInd="982823" levelOfDetail="word"/>
    <syncPoint id="74" sampleInd="984609" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="288" sampleInd="989041" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="30" sampleInd="989885" levelOfDetail="word" transcripText="від самої станції [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
@@ -88,7 +88,7 @@
    <syncPoint id="132" sampleInd="1547314" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="106" sampleInd="1550506" levelOfDetail="word" transcripText="[clk]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="289" sampleInd="1551085" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="149" sampleInd="1551796" levelOfDetail="word" transcripText="радіаційний фон у нормі запевняють у службах [inh] але в соціальних мережах &lt;sil&gt; переполох [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="149" sampleInd="1552027" levelOfDetail="word" transcripText="радіаційний фон у нормі запевняють у службах [inh] але в соціальних мережах &lt;sil&gt; переполох [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="88" sampleInd="1610504" levelOfDetail="phone" transcripText="але в соціальних мережах &lt;sil&gt; переполох"/>
    <syncPoint id="136" sampleInd="1651418" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="33" sampleInd="1652178" levelOfDetail="word" transcripText="з'явились заклики перейти до життя [sp] у закритому режимі [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
@@ -104,7 +104,7 @@
    <syncPoint id="177" sampleInd="1839863" levelOfDetail="word" transcripText="офіційни прогноз як висловився [inh] арсен аваков [sp] у [sp] плюс [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="161" sampleInd="1880016" levelOfDetail="phone" transcripText="арсен аваков &lt;sil&gt; у &lt;sil&gt; плюс"/>
    <syncPoint id="249" sampleInd="1911983" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="65" sampleInd="1912942" levelOfDetail="word" transcripText="топто пожежа буде ліквідована без наслітків у вигляді [inh] радіоактивноо спалаху [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="65" sampleInd="1912942" levelOfDetail="word" transcripText="топто пожежа буде ліквідована без наслітків у вигляді [inh] радіоктивноо спалаху [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="154" sampleInd="1982118" levelOfDetail="phone" transcripText="радіоактивноо спалаху"/>
    <syncPoint id="198" sampleInd="2014383" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="181" sampleInd="2015408" levelOfDetail="word" transcripText="вітер зарас так само(1) як і двацять дев'ять років(1) тому(2) [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
@@ -116,7 +116,7 @@
    <syncPoint id="103" sampleInd="2203440" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="95" sampleInd="2204498" levelOfDetail="word" transcripText="може йтися про так зване вторинне забруднення оскільки всі рослини [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="212" sampleInd="2281579" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="183" sampleInd="2282753" levelOfDetail="word" transcripText="у сталкерскій зоні [inh] [sp] несуть у собі [inh] підвищений вміст [inh] активної речовини(4) [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="183" sampleInd="2282753" levelOfDetail="word" transcripText="у сталкерскі зоні [inh] [sp] несуть у собі [inh] підвищений вміст [inh] активної речовини(4) [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="143" sampleInd="2311578" levelOfDetail="phone" transcripText="несуть у собі"/>
    <syncPoint id="193" sampleInd="2326429" levelOfDetail="phone"/>
    <syncPoint id="120" sampleInd="2332614" levelOfDetail="phone" transcripText="підвищений вміст"/>
@@ -139,7 +139,7 @@
    <syncPoint id="236" sampleInd="2768658" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="153" sampleInd="2770130" levelOfDetail="word" transcripText="до збирання коштів на спорудження нового саркофагу [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="235" sampleInd="2837421" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="korotajevskyjsh"/>
-   <syncPoint id="176" sampleInd="2840084" levelOfDetail="word" transcripText="асамблея складаєця с представників [inh] двацяти трьох країн та євро комісії [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="176" sampleInd="2840084" levelOfDetail="word" transcripText="асамблея складаєця с преставників [inh] двацяти трьох країн та євро комісії [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="194" sampleInd="2882039" levelOfDetail="phone" transcripText="двацяти трьох країн та євро комісії"/>
    <syncPoint id="246" sampleInd="2931420" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="271" sampleInd="2935869" levelOfDetail="word" transcripText="на першочергові потреби неопхідно приблизно [inh] [sp] сімсот мільйонів євро [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
