@@ -284,6 +284,8 @@ namespace PticaGovorun
 			return;
 		}
 
+		int randSeed = 1932;
+		bool swapTrainTestData = true; // swaps train/test portions of data, so that opposite data can be tested when random generator's seed is fixed
 		bool includeBrownBear = false;
 		bool outputWav = true;
 		bool outputPhoneticDictAndLangModel = true;
@@ -293,7 +295,6 @@ namespace PticaGovorun
 		PalatalSupport palatalSupport = PalatalSupport::AsHard;
 		bool useBrokenPronsInTrainOnly = true;
 		const double trainCasesRatio = 0.7;
-		bool swapTrainTestData = false; // swaps train/test portions of data, so that opposite data can be tested when random generator's seed is fixed
 		const float outFrameRate = 16000; // Sphinx requires 16k
 		// note, the positive threshold may evict the rare words
 		int maxWordPartUsage = 10;
@@ -331,7 +332,7 @@ namespace PticaGovorun
 		std::vector<details::AssignedPhaseAudioSegment> phaseAssignedSegs;
 		std::set<PhoneId> trainPhoneIds;
 		const char* errMsg;
-		std::tie(op, errMsg) = partitionTrainTestData(segments_, trainCasesRatio, swapTrainTestData, useBrokenPronsInTrainOnly, phaseAssignedSegs, trainPhoneIds);
+		std::tie(op, errMsg) = partitionTrainTestData(segments_, trainCasesRatio, swapTrainTestData, useBrokenPronsInTrainOnly, randSeed, phaseAssignedSegs, trainPhoneIds);
 		if (!op)
 		{
 			errMsg_ = "Can't fix train/test partitioning";
@@ -867,11 +868,11 @@ namespace PticaGovorun
 		}
 	}
 
-	std::tuple<bool, const char*> SphinxTrainDataBuilder::partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly, std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds) const
+	std::tuple<bool, const char*> SphinxTrainDataBuilder::partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly, int randSeed, std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds) const
 	{
 		// partition train-test data
 		std::vector<std::reference_wrapper<const AnnotatedSpeechSegment>> rejectedSegments;
-		std::mt19937 g(1933);
+		std::mt19937 g(randSeed);
 		std::uniform_real_distribution<float> rnd(0, 1);
 		for (const AnnotatedSpeechSegment& seg : segments)
 		{
@@ -1204,12 +1205,17 @@ namespace PticaGovorun
 				// pad frames with silence
 				paddedSegFramesOut.clear();
 
+				const float minSilLenMs = 100;
+				long minSilLenFrames = static_cast<long>(minSilLenMs / 1000 * srcAudioFrameRate);
+				
 				if (padSilence && !startsSil)
+				//if (padSilence && seg.StartSilenceFramesCount < minSilLenFrames)
 					std::copy(silenceFrames.begin(), silenceFrames.end(), std::back_inserter(paddedSegFramesOut));
 
 				std::copy(segFrames.begin(), segFrames.end(), std::back_inserter(paddedSegFramesOut));
 
 				if (padSilence && !endsSil)
+				//if (padSilence && seg.EndSilenceFramesCount < minSilLenFrames)
 					std::copy(silenceFrames.begin(), silenceFrames.end(), std::back_inserter(paddedSegFramesOut));
 
 				// write output wav segment

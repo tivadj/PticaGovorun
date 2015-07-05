@@ -199,6 +199,8 @@ struct AnnotatedSpeechSegment
 
 	bool AudioStartsWithSilence = false; // true if there are silence samples in the start of audio
 	bool AudioEndsWithSilence = false;
+	long StartSilenceFramesCount = 0;
+	long EndSilenceFramesCount = 0;
 	bool TranscriptionStartsWithSilence = false; // true if transcription starts with <s>
 	bool TranscriptionEndsWithSilence = false;
 };

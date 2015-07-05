@@ -345,6 +345,8 @@ namespace PticaGovorun
 			const TimePointMarker* EndMarker = nullptr;
 			bool HasStartSilence = false;
 			bool HasEndSilence = false;
+			long StartSilenceFramesCount = 0;
+			long EndSilenceFramesCount = 0;
 		};
 		ShortPauseUsage shortPauseUsage = ShortPauseUsage::UseAsSilence;
 		QString fillerSilQ = toQString(fillerSilence());
@@ -368,21 +370,26 @@ namespace PticaGovorun
 			blankSeg.StartMarker = &marker;
 			blankSeg.EndMarker = &markersOfInterest[i + 1];
 			
-			if (i > 0 && (
-				markersOfInterest[i - 1].TranscripText == fillerSilQ ||
-				markersOfInterest[i - 1].TranscripText == fillerSpQ && shortPauseUsage == ShortPauseUsage::UseAsSilence
-				))
+			if (i > 0)
 			{
-				blankSeg.StartMarker = &markersOfInterest[i - 1];
-				blankSeg.HasStartSilence = true;
+				const auto& prevMarker = markersOfInterest[i - 1];
+				if (prevMarker.TranscripText == fillerSilQ ||
+					prevMarker.TranscripText == fillerSpQ && shortPauseUsage == ShortPauseUsage::UseAsSilence)
+				{
+					blankSeg.StartMarker = &prevMarker;
+					blankSeg.HasStartSilence = true;
+					blankSeg.StartSilenceFramesCount = marker.SampleInd - prevMarker.SampleInd;
+				}
 			}
 			if (i + 2 < markersOfInterest.size() && (
 				markersOfInterest[i + 1].TranscripText == fillerSilQ ||
 				markersOfInterest[i + 1].TranscripText == fillerSpQ && shortPauseUsage == ShortPauseUsage::UseAsSilence
 				))
 			{
-				blankSeg.EndMarker = &markersOfInterest[i + 2]; // the end of next silence segment
+				const auto& nextNextMarker = markersOfInterest[i + 2]; // the end of next silence segment
+				blankSeg.EndMarker = &nextNextMarker;
 				blankSeg.HasEndSilence = true;
+				blankSeg.EndSilenceFramesCount = nextNextMarker.SampleInd - markersOfInterest[i+1].SampleInd;
 			}
 			blankSegs.push_back(blankSeg);
 		}
@@ -409,6 +416,8 @@ namespace PticaGovorun
 			seg.FilePath = wavFilePath.toStdWString();
 			seg.AudioStartsWithSilence = blankSeg.HasStartSilence;
 			seg.AudioEndsWithSilence = blankSeg.HasEndSilence;
+			seg.StartSilenceFramesCount = blankSeg.StartSilenceFramesCount;
+			seg.EndSilenceFramesCount = blankSeg.EndSilenceFramesCount;
 			QString txt = blankSeg.ContentMarker->TranscripText;
 
 			bool skipShortPause = true;
