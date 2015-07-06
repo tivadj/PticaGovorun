@@ -12,7 +12,11 @@
    <syncPoint id="43" sampleInd="187584" levelOfDetail="phone" transcripText="[inh]"/>
    <syncPoint id="11" sampleInd="207363" levelOfDetail="word" transcripText="звісно не бракуватиме так званих [sp] добрих слів [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="8" sampleInd="267328" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="12" sampleInd="268238" levelOfDetail="word" transcripText="але обіцянки як це робилось уже неодноразово [inh] виглядатимуть [inh] &lt;sil&gt; не чіткими [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="12" sampleInd="268238" levelOfDetail="word" transcripText="але обіцянки як" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="178" sampleInd="280227" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="95" sampleInd="289555" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="287" sampleInd="289885" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="175" sampleInd="290580" levelOfDetail="word" transcripText="це робилось уже неодноразово [inh] виглядатимуть [inh] &lt;sil&gt; не чіткими [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="16" sampleInd="331626" levelOfDetail="phone" transcripText="виглядатимуть &lt;sil&gt; не чіткими"/>
    <syncPoint id="162" sampleInd="346642" levelOfDetail="phone" transcripText="inh"/>
    <syncPoint id="259" sampleInd="374954" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
@@ -27,11 +31,10 @@
    <syncPoint id="27" sampleInd="638033" levelOfDetail="word" transcripText="[inh] що спільного між &lt;sil&gt; галушками і [inh] [sp] шашликом" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="37" sampleInd="696542" levelOfDetail="phone" transcripText="шашликом"/>
    <syncPoint id="44" sampleInd="710120" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="15" sampleInd="716239" levelOfDetail="word" transcripText="що краще [inh] білоруські болота чи вірменськи севан [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="15" sampleInd="716239" levelOfDetail="word" transcripText="що краще [inh] білоруські болота чи вірменські севан [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="20" sampleInd="735124" levelOfDetail="phone" transcripText="білоруські болота чи вірменськи севан"/>
    <syncPoint id="41" sampleInd="789930" levelOfDetail="word"/>
-   <syncPoint id="141" sampleInd="799803" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="47" sampleInd="801026" levelOfDetail="word" transcripText="хто більше європеєць [inh] житель баку(2) чи кишинева" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="47" sampleInd="798298" levelOfDetail="word" transcripText="хто більше європеєць [inh] житель баку(2) чи кишинева" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="51" sampleInd="828561" levelOfDetail="phone" transcripText="житель баку(2) чи кишинева"/>
    <syncPoint id="53" sampleInd="863489" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="306" sampleInd="873725" levelOfDetail="word"/>
@@ -41,12 +44,12 @@
    <syncPoint id="65" sampleInd="964367" levelOfDetail="word" transcripText="посиленя різниці між асоційованими [inh] [sp] і не асоціованими членами [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="1" sampleInd="1014244" levelOfDetail="phone" transcripText="і не асоційованими членами"/>
    <syncPoint id="79" sampleInd="1058151" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="korotajevskyjsh"/>
-   <syncPoint id="72" sampleInd="1059226" levelOfDetail="word" transcripText="закріплення перспективи членства [inh] &lt;sil&gt; в євро союзі як [sp] прис переможцю [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="72" sampleInd="1059226" levelOfDetail="word" transcripText="закріпленя перспективи членства [inh] &lt;sil&gt; в євро союзі як [sp] прис переможцю [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="75" sampleInd="1104523" levelOfDetail="phone" transcripText="в євро союзі як прис переможцю"/>
    <syncPoint id="74" sampleInd="1153639" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="59" sampleInd="1155045" levelOfDetail="word" transcripText="[eee] збільшення [sp] рівня беспеки [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="88" sampleInd="1205864" levelOfDetail="word"/>
-   <syncPoint id="39" sampleInd="1210511" levelOfDetail="word" transcripText="[yyy] досягненя візової лібералізації а також(1) [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="39" sampleInd="1210511" levelOfDetail="word" transcripText="[yyy] досягненя візовоі лібералізаці а також(1) [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="159" sampleInd="1211702" levelOfDetail="phone" transcripText="ym"/>
    <syncPoint id="281" sampleInd="1268938" levelOfDetail="phone" transcripText="tail of inhale"/>
    <syncPoint id="63" sampleInd="1270493" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
@@ -54,11 +57,12 @@
    <syncPoint id="99" sampleInd="1313672" levelOfDetail="phone" transcripText="більше за &lt;sil&gt; більше"/>
    <syncPoint id="208" sampleInd="1330789" levelOfDetail="phone" transcripText="[inh]"/>
    <syncPoint id="93" sampleInd="1354834" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="106" sampleInd="1358439" levelOfDetail="word" transcripText="ви продовжуєте реформи і ми продовжимо піттримку ось так сформулював [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="106" sampleInd="1358439" levelOfDetail="word" transcripText="ви продовжуете реформи і ми продовжимо піттримку ось так сформулював [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="64" sampleInd="1435620" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="58" sampleInd="1437720" levelOfDetail="word" transcripText="[eee] цей чи не най головніши пункт [inh] [sp] жан клод [sp] юнкер" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="58" sampleInd="1437720" levelOfDetail="word" transcripText="[eee] цей чи не най головніши пункт [inh] [sp] жан клод [inh] [sp] юнкер" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="97" sampleInd="1476881" levelOfDetail="phone"/>
    <syncPoint id="91" sampleInd="1483628" levelOfDetail="phone" transcripText="жан клод &lt;sil&gt; юнкер"/>
+   <syncPoint id="251" sampleInd="1495965" levelOfDetail="phone" transcripText="quick inh"/>
    <syncPoint id="76" sampleInd="1505822" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="133" sampleInd="1510270" levelOfDetail="phone" transcripText="inh?"/>
    <syncPoint id="36" sampleInd="1514835" levelOfDetail="word" transcripText="и ш чим підійшли до риськоо саміту [inh] наші друзі по партнерству" lang="uk" speakerBriefId="korotajevskyjsh"/>
@@ -71,19 +75,19 @@
    <syncPoint id="38" sampleInd="1663407" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="96" sampleInd="1666335" levelOfDetail="word" transcripText="кишинів практично досяг безвізово режиму" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="105" sampleInd="1721818" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="50" sampleInd="1722810" levelOfDetail="word" transcripText="а дбілісі наростив свій експорт до об'єднаної європи [inh] [sp] на п'ядесят вітсотків [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="50" sampleInd="1722810" levelOfDetail="word" transcripText="а дбілісі наростив сві експор до об'єднаноі європи [inh] [sp] на п'ядесят вітсотків [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="109" sampleInd="1782825" levelOfDetail="phone" transcripText="на п'ядесят вітсотків"/>
    <syncPoint id="101" sampleInd="1812129" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="71" sampleInd="1812956" levelOfDetail="word" transcripText="азербайджан бажає [sp] але [yyy] ніяк не може пробитись на євро ринки [inh] зі своєю нафтою і газом [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="143" sampleInd="1903747" levelOfDetail="phone" transcripText="зі своєю нафтою і газом"/>
    <syncPoint id="62" sampleInd="1940014" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="140" sampleInd="1941485" levelOfDetail="word" transcripText="вірменія [sp] переорієнтувалась на єврозійський союс [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="140" sampleInd="1941485" levelOfDetail="word" transcripText="вірменія [sp] переорінтувалась на єврозійський союс [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="92" sampleInd="2007470" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="83" sampleInd="2008644" levelOfDetail="word" transcripText="а білорусь [inh] практично само(1) усунулась [inh] віт [sp] програми [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="125" sampleInd="2024901" levelOfDetail="phone" transcripText="практично само(1) усунулась"/>
    <syncPoint id="152" sampleInd="2061184" levelOfDetail="phone" transcripText="віт &lt;sil&gt; програми"/>
    <syncPoint id="49" sampleInd="2086040" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="68" sampleInd="2087677" levelOfDetail="word" transcripText="але нас з вами більше має цікавити [inh] [sp] наші власні справи" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="68" sampleInd="2087677" levelOfDetail="word" transcripText="але наз з вами більше має цікавити [inh] [sp] наші власні справи" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="132" sampleInd="2130079" levelOfDetail="phone" transcripText="very weak [inh]?"/>
    <syncPoint id="108" sampleInd="2133701" levelOfDetail="phone" transcripText="наші власні справи"/>
    <syncPoint id="120" sampleInd="2153596" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
@@ -103,7 +107,7 @@
    <syncPoint id="146" sampleInd="2471198" levelOfDetail="phone" transcripText="п'єсою бес кінця"/>
    <syncPoint id="255" sampleInd="2497410" levelOfDetail="phone" transcripText="exhale"/>
    <syncPoint id="199" sampleInd="2499725" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="193" sampleInd="2518065" levelOfDetail="word" transcripText="на цей момент [inh] відомий проект декларації що розглядатимеця у ризі [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="193" sampleInd="2518065" levelOfDetail="word" transcripText="на цей момент [inh] відомий проект деклараціі що розглядатимеця у ризі [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="90" sampleInd="2532800" levelOfDetail="phone"/>
    <syncPoint id="154" sampleInd="2538456" levelOfDetail="phone" transcripText="відомий проект декларації що розглядатимеця у ризі"/>
    <syncPoint id="204" sampleInd="2597776" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="korotajevskyjsh"/>
@@ -147,7 +151,7 @@
    <syncPoint id="202" sampleInd="3326187" levelOfDetail="phone" transcripText="light exhale?"/>
    <syncPoint id="196" sampleInd="3347338" levelOfDetail="phone" transcripText="у нього вкладено натто багато"/>
    <syncPoint id="157" sampleInd="3389327" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="213" sampleInd="3390104" levelOfDetail="word" transcripText="зрозуміло &lt;sil&gt; ми не можемо розраховувати як написав [inh] один з європейських коментаторів [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="213" sampleInd="3390104" levelOfDetail="word" transcripText="зрозуміло &lt;sil&gt; ми не можемо розраховати як написав [inh] один з європейських коментаторів [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="135" sampleInd="3452170" levelOfDetail="phone" transcripText="один з європейських коментаторів"/>
    <syncPoint id="82" sampleInd="3487361" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="124" sampleInd="3492538" levelOfDetail="word" transcripText="не марно сподіватись [inh] що всі українці пересядуть [inh] на мерседеси [inh] &lt;sil&gt; але помріяти можна" lang="uk" speakerBriefId="korotajevskyjsh"/>

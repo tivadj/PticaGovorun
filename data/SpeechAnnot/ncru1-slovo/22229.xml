@@ -15,11 +15,11 @@
    <syncPoint id="11" sampleInd="12053125" levelOfDetail="phone" transcripText="у цьому(1) контексті сказати добавити"/>
    <syncPoint id="12" sampleInd="12105367" levelOfDetail="phone" transcripText="не можна"/>
    <syncPoint id="6" sampleInd="12118200" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="bogdanovychov"/>
-   <syncPoint id="16" sampleInd="12123013" levelOfDetail="word" transcripText="[inh] воно є в українській мові [inh] його фіксують словники [inh] але сьогодні ми маємо іншу норму літературної мови" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="16" sampleInd="12123013" levelOfDetail="word" transcripText="[inh] воно є в українські мові [inh] його фіксують словники [inh] але сьогодні ми маємо іншу норму літературноі мови" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="4" sampleInd="12166705" levelOfDetail="phone" transcripText="його фіксують словники"/>
    <syncPoint id="17" sampleInd="12204989" levelOfDetail="phone" transcripText="але сьогодні ми маємо іншу норму літературної мови"/>
    <syncPoint id="23" sampleInd="12271652" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="31" sampleInd="12278879" levelOfDetail="word" transcripText="[inh] українець може попросити добавки до їжі [inh] але слова(2) ми додаємо" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="31" sampleInd="12278879" levelOfDetail="word" transcripText="[inh] украінець може попросити добавки до їжі [inh] але слова(2) ми додаємо" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="14" sampleInd="12343325" levelOfDetail="phone"/>
    <syncPoint id="33" sampleInd="12351131" levelOfDetail="phone" transcripText="але слова(2) ми додаємо"/>
    <syncPoint id="35" sampleInd="12388109" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="bogdanovychov"/>
@@ -28,7 +28,7 @@
    <syncPoint id="46" sampleInd="12486193" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="236" sampleInd="12488673" levelOfDetail="word"/>
    <syncPoint id="286" sampleInd="13152753" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="bogdanovychov"/>
-   <syncPoint id="27" sampleInd="13153729" levelOfDetail="word" transcripText="доречі в реченні такого типу [inh] часто можна почути і прочитати [inh] [sp] канцеляриські вислови на кшталт [sp] [inh]" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="27" sampleInd="13153729" levelOfDetail="word" transcripText="доречі в речення такого типу [inh] часто можна почути і прочитати [inh] [sp] канцеляриські вислови на кшталт [sp] [inh]" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="37" sampleInd="13191137" levelOfDetail="phone" transcripText="часто можна почути і прочитати"/>
    <syncPoint id="15" sampleInd="13238269" levelOfDetail="phone" transcripText="канцеляриські вислови на кшталт"/>
    <syncPoint id="28" sampleInd="13289138" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
@@ -78,7 +78,7 @@
    <syncPoint id="62" sampleInd="15424460" levelOfDetail="word"/>
    <syncPoint id="390" sampleInd="15444669" levelOfDetail="phone" transcripText="speakers mix"/>
    <syncPoint id="175" sampleInd="15678774" levelOfDetail="phone" transcripText="speakers mix"/>
-   <syncPoint id="13" sampleInd="15681453" levelOfDetail="word" transcripText="одже щоб запобіхти неправильному тлумаченню сенсу вислову [inh] треба просто змінити конструкцію речення" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="13" sampleInd="15681453" levelOfDetail="word" transcripText="одже щоб запобіхти неправильному тлумаченню сенсу вислову [inh] треба просто змінити конструкціу речення" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="60" sampleInd="15758021" levelOfDetail="phone"/>
    <syncPoint id="113" sampleInd="15766604" levelOfDetail="phone" transcripText="треба просто змінити конструкцію речення"/>
    <syncPoint id="143" sampleInd="15816531" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
@@ -125,7 +125,7 @@
    <syncPoint id="348" sampleInd="19066150" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="153" sampleInd="19066944" levelOfDetail="word" transcripText="більше за все [inh]" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="122" sampleInd="19094694" levelOfDetail="word"/>
-   <syncPoint id="100" sampleInd="19095156" levelOfDetail="word" transcripText="чи найбільший над усе" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="100" sampleInd="19095156" levelOfDetail="word" transcripText="чи найбільши над усе" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="172" sampleInd="19130000" levelOfDetail="word"/>
    <syncPoint id="211" sampleInd="19130564" levelOfDetail="phone" transcripText="music"/>
    <syncPoint id="270" sampleInd="20985906" levelOfDetail="word" transcripText="того(2) чи іншого міста(1) [inh] якоїсь місцевості гори(2) [inh] [sp] озера(1)" lang="uk" speakerBriefId="bogdanovychov"/>
@@ -149,12 +149,12 @@
    <syncPoint id="127" sampleInd="22163988" levelOfDetail="phone" transcripText="річка ірпінь"/>
    <syncPoint id="220" sampleInd="22190828" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="105" sampleInd="22194432" levelOfDetail="word" transcripText="[clk]" lang="uk" speakerBriefId="bogdanovychov"/>
-   <syncPoint id="139" sampleInd="22194846" levelOfDetail="word" transcripText="[inh] назва цієї річки(1) дуже цікава [sp] [inh] вона зберігає давнє слов'янське слово [inh] нині вже втрачене в слов'янських мовах" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="139" sampleInd="22194846" levelOfDetail="word" transcripText="[inh] назва цєї річки(1) дуже цікава [sp] [inh] вона зберігає давнє слов'янське слово [inh] нині вже втрачене в слов'янських мовах" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="185" sampleInd="22240672" levelOfDetail="phone"/>
    <syncPoint id="222" sampleInd="22249436" levelOfDetail="phone" transcripText="вона зберігає давнє слов'янське слово"/>
    <syncPoint id="312" sampleInd="22300918" levelOfDetail="phone" transcripText="нині вже втрачене в слов'янських мовах"/>
    <syncPoint id="306" sampleInd="22346628" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="164" sampleInd="22351092" levelOfDetail="word" transcripText="[inh] на думку відомого польського славіста казамира мошинського [inh]" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="164" sampleInd="22351092" levelOfDetail="word" transcripText="[inh] на думку відомого польськоо славіста казамира мошинського [inh]" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="237" sampleInd="22431448" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="269" sampleInd="22432474" levelOfDetail="word" transcripText="ірпінь [inh] давня форма ерпень [inh] у своїй власній назві має [inh] праслов'янське слово [inh] ерпа [inh] &lt;sil&gt; рупа" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="295" sampleInd="22453046" levelOfDetail="phone" transcripText="давня форма ерпень"/>
@@ -178,7 +178,7 @@
    <syncPoint id="147" sampleInd="23178216" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="317" sampleInd="23179952" levelOfDetail="word"/>
    <syncPoint id="115" sampleInd="23180712" levelOfDetail="phone" transcripText="?"/>
-   <syncPoint id="151" sampleInd="23181638" levelOfDetail="word" transcripText="річ у тім ще річка прип'ять" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="151" sampleInd="23181638" levelOfDetail="word" transcripText="річ у тім що річка прип'ять" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="381" sampleInd="23222024" levelOfDetail="word" transcripText="#має кілька приток" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="357" sampleInd="23240826" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="324" sampleInd="23249096" levelOfDetail="word" transcripText="переважно з лівого берега які також(1) називаюця случ" lang="uk" speakerBriefId="bogdanovychov"/>

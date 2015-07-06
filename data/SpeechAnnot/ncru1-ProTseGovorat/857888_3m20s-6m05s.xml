@@ -58,7 +58,7 @@
    <syncPoint id="78" sampleInd="976357" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="61" sampleInd="986676" levelOfDetail="word" transcripText="зводяця в основному до двох &lt;sil&gt; пакетів [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="59" sampleInd="1044343" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="73" sampleInd="1046096" levelOfDetail="word" transcripText="перший зовнішньо політичний україна повинна &lt;sil&gt; це за версію сепаратистів [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="73" sampleInd="1046096" levelOfDetail="word" transcripText="перши зовнішньо політични україна повинна &lt;sil&gt; це за версію сепаратистів [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="72" sampleInd="1139830" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="89" sampleInd="1141500" levelOfDetail="word" transcripText="доповнити конституцю положеням про безблоковий статус [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="232" sampleInd="1202590" levelOfDetail="phone" transcripText="has J?"/>
@@ -71,7 +71,7 @@
    <syncPoint id="85" sampleInd="1360622" levelOfDetail="phone"/>
    <syncPoint id="103" sampleInd="1368560" levelOfDetail="phone" transcripText="то він трохи довше"/>
    <syncPoint id="107" sampleInd="1395120" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="90" sampleInd="1396161" levelOfDetail="word" transcripText="особливи статус у складі україни російська мова гарантовано [inh] &lt;sil&gt; на рівні [inh] [sp] особливоо закону [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="90" sampleInd="1396161" levelOfDetail="word" transcripText="особливи статус у складі украіни російська мова гарантовано [inh] &lt;sil&gt; на рівні [inh] [sp] особливоо закону [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="102" sampleInd="1463023" levelOfDetail="phone"/>
    <syncPoint id="110" sampleInd="1469290" levelOfDetail="phone" transcripText="на рівні"/>
    <syncPoint id="111" sampleInd="1478799" levelOfDetail="phone"/>
@@ -90,6 +90,7 @@
    <syncPoint id="87" sampleInd="1728168" levelOfDetail="phone" transcripText="дев'яносто другоо року"/>
    <syncPoint id="127" sampleInd="1753586" levelOfDetail="phone"/>
    <syncPoint id="134" sampleInd="1759011" levelOfDetail="phone" transcripText="яку [sp] київ скасував"/>
+   <syncPoint id="63" sampleInd="1771447" levelOfDetail="phone" transcripText="weak v"/>
    <syncPoint id="69" sampleInd="1783834" levelOfDetail="phone" transcripText="[inh]"/>
    <syncPoint id="348" sampleInd="1787439" levelOfDetail="word"/>
    <syncPoint id="344" sampleInd="1787554" levelOfDetail="phone" transcripText="click"/>
@@ -118,16 +119,16 @@
    <syncPoint id="112" sampleInd="2188953" levelOfDetail="phone" transcripText="задля врегулювання кризи про те"/>
    <syncPoint id="250" sampleInd="2228510" levelOfDetail="phone" transcripText="weak [inh]"/>
    <syncPoint id="138" sampleInd="2231934" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="118" sampleInd="2232711" levelOfDetail="word" transcripText="навряччи це передбачає зміну [inh] [sp] національної [inh] [sp] зовнішньо політичної доктрини" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="118" sampleInd="2232711" levelOfDetail="word" transcripText="навряччи це передбачає зміну [inh] [sp] національної [inh] [sp] зовнішньо політичноі доктрини" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="149" sampleInd="2268002" levelOfDetail="phone"/>
    <syncPoint id="150" sampleInd="2275725" levelOfDetail="phone" transcripText="національної &lt;sil&gt; зовнішньо політичної доктрини"/>
    <syncPoint id="28" sampleInd="2341131" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="120" sampleInd="2343611" levelOfDetail="word" transcripText="[inh] сама(2) по собі ідея [sp] аутономізації в україні [inh] &lt;sil&gt; ріско не вітаєця [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="120" sampleInd="2343611" levelOfDetail="word" transcripText="[inh] сама(2) по собі ідея [sp] аутономізаці в україні [inh] &lt;sil&gt; ріско не вітаеця [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="45" sampleInd="2414160" levelOfDetail="phone" transcripText="&lt;sil&gt;"/>
    <syncPoint id="155" sampleInd="2418212" levelOfDetail="phone" transcripText="ріско не вітаєця"/>
    <syncPoint id="175" sampleInd="2447946" levelOfDetail="phone" transcripText="weak [inh]"/>
    <syncPoint id="62" sampleInd="2450791" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="270" sampleInd="2452213" levelOfDetail="word" transcripText="[yyy] це ще м'яко кажучи [inh] навіть [sp] той саме(1) закон про [sp] окремі території [inh] [sp] він є по суті [inh] &lt;sil&gt; поступкою [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="270" sampleInd="2452213" levelOfDetail="word" transcripText="[yyy] це ще м'яко кажучи [inh] навіть [sp] той сами(1) закон про [sp] окремі території [inh] [sp] він є по суті [inh] &lt;sil&gt; поступкою [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="140" sampleInd="2452527" levelOfDetail="phone" transcripText="ym"/>
    <syncPoint id="46" sampleInd="2478161" levelOfDetail="phone"/>
    <syncPoint id="136" sampleInd="2484428" levelOfDetail="phone" transcripText="навіть &lt;sil&gt; той саме(1) закон про окремі території"/>
@@ -140,7 +141,7 @@
    <syncPoint id="334" sampleInd="2595626" levelOfDetail="word"/>
    <syncPoint id="135" sampleInd="2610146" levelOfDetail="word" transcripText="[inh] це щоп показати заходу що ми виконуємо протоколи" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="264" sampleInd="2679720" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="234" sampleInd="2684747" levelOfDetail="word" transcripText="як відомо [inh] закон не передбачає жодних [inh] &lt;sil&gt; автономіських планів [sp] у часі він обмежений у просторі(1) теж [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="234" sampleInd="2684747" levelOfDetail="word" transcripText="як відомо [inh] закон не передбачае жодних [inh] &lt;sil&gt; автономіських планів [sp] у часі він обмежений у просторі(1) теж [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="191" sampleInd="2695232" levelOfDetail="phone"/>
    <syncPoint id="139" sampleInd="2701020" levelOfDetail="phone" transcripText="закон не передбачає жодних"/>
    <syncPoint id="229" sampleInd="2728852" levelOfDetail="phone"/>
@@ -160,17 +161,17 @@
    <syncPoint id="224" sampleInd="3006252" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="201" sampleInd="3008154" levelOfDetail="word" transcripText="але яшчо уявити собі цей момент [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="160" sampleInd="3047447" levelOfDetail="phone" transcripText="[inh]"/>
-   <syncPoint id="181" sampleInd="3048820" levelOfDetail="word"/>
+   <syncPoint id="181" sampleInd="3049068" levelOfDetail="word"/>
    <syncPoint id="284" sampleInd="3049696" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="114" sampleInd="3052938" levelOfDetail="phone" transcripText="click"/>
-   <syncPoint id="200" sampleInd="3053467" levelOfDetail="word" transcripText="відновлення контролю [inh] &lt;sil&gt; то одразу треба попередити [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="200" sampleInd="3053467" levelOfDetail="word" transcripText="відновленя контролю [inh] &lt;sil&gt; то одразу треба попередити [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="185" sampleInd="3075975" levelOfDetail="phone"/>
    <syncPoint id="66" sampleInd="3083020" levelOfDetail="phone" transcripText="то одразу треба попередити"/>
    <syncPoint id="156" sampleInd="3121949" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="100" sampleInd="3125074" levelOfDetail="word" transcripText="поступок &lt;sil&gt; навряччи варто очікувати маю на увазі [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="252" sampleInd="3182327" levelOfDetail="phone"/>
    <syncPoint id="215" sampleInd="3188049" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="183" sampleInd="3191671" levelOfDetail="word" transcripText="поступок [inh] &lt;sil&gt; [eee] в автономізації [sp] і федералізації пробачте [inh] але ці слова(2) у нас нині [inh] " lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="183" sampleInd="3191671" levelOfDetail="word" transcripText="поступок [inh] &lt;sil&gt; [eee] в автономізаціі [sp] і федералізаціі пробачте [inh] але ці слова(2) у нас нині [inh] " lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="153" sampleInd="3203429" levelOfDetail="phone"/>
    <syncPoint id="147" sampleInd="3215667" levelOfDetail="phone" transcripText="[eee]"/>
    <syncPoint id="154" sampleInd="3222960" levelOfDetail="phone" transcripText="в автономізації і федералізації пробачте"/>

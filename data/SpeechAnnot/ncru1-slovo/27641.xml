@@ -15,7 +15,7 @@
    <syncPoint id="6" sampleInd="2412176" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="854" sampleInd="2412540" levelOfDetail="word"/>
    <syncPoint id="1420" sampleInd="2412622" levelOfDetail="phone" transcripText="unk"/>
-   <syncPoint id="16" sampleInd="2413135" levelOfDetail="word" transcripText="радить кандидат філологічних наук [inh] старший науковий співробітник відділу структурно математичної лінгвістики інституту української мови [inh]" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="16" sampleInd="2413135" levelOfDetail="word" transcripText="радить кандидат філологічних наук [inh] старший науковий співробітник відділу структурно математичноі лінгвістики інституту українськоі мови [inh]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="13" sampleInd="2456166" levelOfDetail="phone"/>
    <syncPoint id="403" sampleInd="2457753" levelOfDetail="phone" transcripText="exhale"/>
    <syncPoint id="22" sampleInd="2458712" levelOfDetail="phone" transcripText="старший науковий співробітник"/>
@@ -501,13 +501,12 @@
    <syncPoint id="502" sampleInd="11149450" levelOfDetail="phone"/>
    <syncPoint id="493" sampleInd="11157041" levelOfDetail="phone" transcripText="приборкати в собі яке небудь почуття"/>
    <syncPoint id="776" sampleInd="11210986" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="bogdanovychov"/>
-   <syncPoint id="522" sampleInd="11211763" levelOfDetail="word" transcripText="впоратися с чимось [inh] шчо вимогає фізичних зусиль праці [sp] тощо [inh]" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="522" sampleInd="11211763" levelOfDetail="word" transcripText="впоратися с чимось [inh] шчо вимагає фізичних зусиль праці [sp] тощо" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="411" sampleInd="11238984" levelOfDetail="phone"/>
    <syncPoint id="118" sampleInd="11239530" levelOfDetail="phone" transcripText="[inh]"/>
    <syncPoint id="660" sampleInd="11242060" levelOfDetail="phone"/>
    <syncPoint id="679" sampleInd="11243251" levelOfDetail="phone" transcripText="шчо вимогає фізичних зусиль праці &lt;sil&gt; тощо"/>
-   <syncPoint id="985" sampleInd="11313403" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="bogdanovychov"/>
-   <syncPoint id="324" sampleInd="11316247" levelOfDetail="word" transcripText="#тож це дієслово" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="324" sampleInd="11308111" levelOfDetail="word" transcripText="#[inh] тож це дієслово" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="1179" sampleInd="11330155" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="2003" sampleInd="11344014" levelOfDetail="word" transcripText="тут [sp] недоречне" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="461" sampleInd="11370259" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
@@ -533,9 +532,11 @@
    <syncPoint id="605" sampleInd="11722871" levelOfDetail="phone" transcripText="ми вирішемо проблему пенсійного забезпечення"/>
    <syncPoint id="715" sampleInd="11790692" levelOfDetail="word"/>
    <syncPoint id="469" sampleInd="11792494" levelOfDetail="phone" transcripText="music"/>
-   <syncPoint id="399" sampleInd="12091360" levelOfDetail="word" transcripText="своїм листом(2) [inh] я хочу зробити пропозицію" lang="uk" speakerBriefId="bogdanovychov"/>
-   <syncPoint id="570" sampleInd="12114942" levelOfDetail="phone"/>
-   <syncPoint id="470" sampleInd="12121342" levelOfDetail="phone" transcripText="я хочу зробити пропозицію"/>
+   <syncPoint id="399" sampleInd="12091360" levelOfDetail="word" transcripText="своїм листом(2) [inh]" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="570" sampleInd="12120019" levelOfDetail="word"/>
+   <syncPoint id="1808" sampleInd="12120152" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="1850" sampleInd="12120301" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="470" sampleInd="12121342" levelOfDetail="word" transcripText="я хочу зробити пропозицію" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="265" sampleInd="12157758" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="371" sampleInd="12161595" levelOfDetail="word" transcripText="[inh] це речення неправильне [inh] адже зробити пропозицію листом(2) [inh] не можна" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="663" sampleInd="12192636" levelOfDetail="phone"/>
@@ -555,7 +556,7 @@
    <syncPoint id="1643" sampleInd="12422838" levelOfDetail="word" transcripText="з пропозиці" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="692" sampleInd="12441971" levelOfDetail="word"/>
    <syncPoint id="563" sampleInd="12443030" levelOfDetail="phone" transcripText="music starts"/>
-   <syncPoint id="698" sampleInd="12835432" levelOfDetail="word" transcripText="комічний ефект [inh] нагромаджуюця і заплутують слухачів [sp] [inh] [sp] як наприклат [sp] у реченні &lt;sil&gt; [inh]" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="698" sampleInd="12835432" levelOfDetail="word" transcripText="комічни ефект [inh] нагромаджуюця і заплутують слухачів [sp] [inh] [sp] як наприклат [sp] у реченні &lt;sil&gt; [inh]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="735" sampleInd="12852085" levelOfDetail="phone" transcripText="'k'"/>
    <syncPoint id="292" sampleInd="12853639" levelOfDetail="phone" transcripText="'t'"/>
    <syncPoint id="552" sampleInd="12854367" levelOfDetail="phone"/>
@@ -566,7 +567,7 @@
    <syncPoint id="1727" sampleInd="12958173" levelOfDetail="phone"/>
    <syncPoint id="1837" sampleInd="12962936" levelOfDetail="word"/>
    <syncPoint id="1546" sampleInd="12964193" levelOfDetail="phone" transcripText="click"/>
-   <syncPoint id="764" sampleInd="12964341" levelOfDetail="word" transcripText="цей закон [sp] [inh] фактично діе на усіх громадян [inh] визначеної територі" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="764" sampleInd="12964341" levelOfDetail="word" transcripText="цей закон [sp] [inh] фактично діе на усіх громадян [inh] визначеноі територіі" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="166" sampleInd="12981871" levelOfDetail="phone"/>
    <syncPoint id="1306" sampleInd="12983690" levelOfDetail="phone"/>
    <syncPoint id="841" sampleInd="12987064" levelOfDetail="phone"/>
@@ -583,7 +584,7 @@
    <syncPoint id="1252" sampleInd="13224179" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="2043" sampleInd="13228247" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="264" sampleInd="13231240" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="bogdanovychov"/>
-   <syncPoint id="817" sampleInd="13232943" levelOfDetail="word" transcripText="а вихід [inh] іс цієї ситуації простий [inh] треба було сказати" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="817" sampleInd="13232943" levelOfDetail="word" transcripText="а вихід [inh] іс цієї ситуаці простий [inh] треба було сказати" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="391" sampleInd="13286227" levelOfDetail="phone"/>
    <syncPoint id="765" sampleInd="13294976" levelOfDetail="phone" transcripText="треба було сказати"/>
    <syncPoint id="425" sampleInd="13319468" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="bogdanovychov"/>
@@ -597,6 +598,8 @@
    <syncPoint id="534" sampleInd="13474391" levelOfDetail="word"/>
    <syncPoint id="639" sampleInd="13487141" levelOfDetail="phone" transcripText="music"/>
    <syncPoint id="407" sampleInd="13835768" levelOfDetail="word" transcripText="іван вихованець порадить нам як казати правильно [sp] [inh]" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="1783" sampleInd="13836645" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="966" sampleInd="13887068" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="1311" sampleInd="13911163" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="614" sampleInd="13912387" levelOfDetail="word" transcripText="більше ста осіб [sp] [inh]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="827" sampleInd="13939343" levelOfDetail="phone" transcripText="'b'"/>
@@ -647,6 +650,7 @@
    <syncPoint id="1070" sampleInd="15242614" levelOfDetail="word" transcripText="[inh] читаємо в миколи трублаїні" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="491" sampleInd="15292391" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="676" sampleInd="15297121" levelOfDetail="word" transcripText="іван франко написав понад п'ять тисяч друкованих творів" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="755" sampleInd="15350570" levelOfDetail="phone" transcripText="тисяч e друкованих?"/>
    <syncPoint id="580" sampleInd="15373905" levelOfDetail="word" transcripText="[inh] був поетом [sp] прозаіком [inh] драматургом [inh] літературним критиком ученим [inh] етнографом [inh]" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="288" sampleInd="15415943" levelOfDetail="phone"/>
    <syncPoint id="650" sampleInd="15420259" levelOfDetail="phone" transcripText="драматургом"/>
@@ -678,14 +682,15 @@
    <syncPoint id="555" sampleInd="16446560" levelOfDetail="phone"/>
    <syncPoint id="900" sampleInd="16452944" levelOfDetail="phone" transcripText="писав іван франко"/>
    <syncPoint id="695" sampleInd="16479106" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
-   <syncPoint id="1602" sampleInd="16485804" levelOfDetail="word" transcripText="[inh] [sp] тепер біль від розлуки з рідним краєм [inh] зливався із тихим смутком спогадів [inh]" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="1602" sampleInd="16485804" levelOfDetail="word" transcripText="[inh] [sp] тепер біль від розлуки із рідним краєм [inh] зливався іс тихим смутком спогадів [inh]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="523" sampleInd="16503036" levelOfDetail="phone" transcripText="todo: exhale?"/>
    <syncPoint id="671" sampleInd="16504971" levelOfDetail="phone" transcripText="біль від розлуки з рідним краєм"/>
    <syncPoint id="438" sampleInd="16548200" levelOfDetail="phone"/>
    <syncPoint id="657" sampleInd="16557642" levelOfDetail="phone" transcripText="зливався із тихим смутком спогадів"/>
    <syncPoint id="1856" sampleInd="16621180" levelOfDetail="word"/>
    <syncPoint id="1741" sampleInd="16621361" levelOfDetail="phone" transcripText="click"/>
-   <syncPoint id="623" sampleInd="16622023" levelOfDetail="word" transcripText="читаймо у зінаїди тулуб" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="623" sampleInd="16622023" levelOfDetail="word" transcripText="читаємо у зінаїди тулуб" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="760" sampleInd="16631069" levelOfDetail="phone" transcripText="читайемо"/>
    <syncPoint id="546" sampleInd="16661316" levelOfDetail="phone" transcripText="'b'"/>
    <syncPoint id="984" sampleInd="16662656" levelOfDetail="phone" transcripText="soft 'p'"/>
    <syncPoint id="919" sampleInd="16663449" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
@@ -698,7 +703,7 @@
    <syncPoint id="1682" sampleInd="16777410" levelOfDetail="word"/>
    <syncPoint id="801" sampleInd="16777574" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="845" sampleInd="16778120" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
-   <syncPoint id="559" sampleInd="16780734" levelOfDetail="word" transcripText="[inh] менш поширений іменник біль [inh] жіночого роду [inh] які буває тільки у трьох значеннях" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="559" sampleInd="16780734" levelOfDetail="word" transcripText="[inh] менш поширени іменник біль [inh] жіночого роду [inh] які буває тільки у трьох значеннях" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="253" sampleInd="16825334" levelOfDetail="phone"/>
    <syncPoint id="804" sampleInd="16832066" levelOfDetail="phone" transcripText="жіночого роду"/>
    <syncPoint id="875" sampleInd="16853846" levelOfDetail="phone"/>
@@ -735,7 +740,7 @@
    <syncPoint id="497" sampleInd="17192220" levelOfDetail="phone"/>
    <syncPoint id="1036" sampleInd="17196304" levelOfDetail="phone" transcripText="чуємо в народній пісні(1)"/>
    <syncPoint id="693" sampleInd="17228850" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="bogdanovychov"/>
-   <syncPoint id="1887" sampleInd="17231860" levelOfDetail="word" transcripText="[inh] блазенського [inh] розцяцькованого одягу [inh] сивоок брати(1) не схотів" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="1887" sampleInd="17231860" levelOfDetail="word" transcripText="[inh] блазенського [inh] розцяцькованоо одягу [inh] сивоок брати(1) не схотів" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="654" sampleInd="17259394" levelOfDetail="phone"/>
    <syncPoint id="1007" sampleInd="17263712" levelOfDetail="phone" transcripText="розцяцькованого одягу"/>
    <syncPoint id="913" sampleInd="17295662" levelOfDetail="phone"/>
@@ -770,10 +775,14 @@
    <syncPoint id="435" sampleInd="17664050" levelOfDetail="word" transcripText="наприклат [sp] [inh]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="1891" sampleInd="17677810" levelOfDetail="phone" transcripText="t"/>
    <syncPoint id="1270" sampleInd="17684938" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
-   <syncPoint id="299" sampleInd="17687798" levelOfDetail="word" transcripText="вона стала біла як біль &lt;sil&gt; і справді налякалася" lang="uk" speakerBriefId="zakharevycho"/>
-   <syncPoint id="974" sampleInd="17724314" levelOfDetail="phone"/>
+   <syncPoint id="299" sampleInd="17687798" levelOfDetail="word" transcripText="вона стала біла як біль" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="974" sampleInd="17724264" levelOfDetail="phone"/>
    <syncPoint id="811" sampleInd="17725652" levelOfDetail="phone" transcripText="what is it?"/>
-   <syncPoint id="674" sampleInd="17734848" levelOfDetail="phone" transcripText="і справді налякалася писав михайло коцюбинський"/>
+   <syncPoint id="1886" sampleInd="17726694" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="1874" sampleInd="17729142" levelOfDetail="word"/>
+   <syncPoint id="1823" sampleInd="17732218" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="674" sampleInd="17734848" levelOfDetail="word" transcripText="#і справді налякалася" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="1670" sampleInd="17765194" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="289" sampleInd="17767874" levelOfDetail="word"/>
    <syncPoint id="1206" sampleInd="17768022" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="995" sampleInd="17768304" levelOfDetail="word" transcripText="писав михайло коцюбинський [sp] [inh]" lang="uk" speakerBriefId="zakharevycho"/>
@@ -786,7 +795,7 @@
    <syncPoint id="1057" sampleInd="17846476" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="366" sampleInd="17847766" levelOfDetail="word" transcripText="це хвороба рослин [inh]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="1181" sampleInd="17886762" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
-   <syncPoint id="818" sampleInd="17888134" levelOfDetail="word" transcripText="спочатку ростріскується оболонка кукурудзи [inh] а потім і ендосперм [sp] хвороба називаєця біллю [sp]" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="818" sampleInd="17888134" levelOfDetail="word" transcripText="спочатку ростріскууця оболонка кукурудзи [inh] а потім і ендосперм [sp] хвороба називаеця біллю [sp]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="566" sampleInd="17958584" levelOfDetail="phone"/>
    <syncPoint id="526" sampleInd="17966802" levelOfDetail="phone" transcripText="а потім і ендосперм"/>
    <syncPoint id="793" sampleInd="18006360" levelOfDetail="phone"/>
@@ -811,6 +820,7 @@
    <syncPoint id="139" sampleInd="18769648" levelOfDetail="phone" transcripText="unk"/>
    <syncPoint id="1613" sampleInd="18771104" levelOfDetail="word" transcripText="[inh] залежно віт потреби в таких словах" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="1019" sampleInd="18818682" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="233" sampleInd="18823694" levelOfDetail="word"/>
    <syncPoint id="1169" sampleInd="18823974" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="1521" sampleInd="18826538" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="1788" sampleInd="18826852" levelOfDetail="word" transcripText="[inh] якщо чужомовне слово позначає [inh] якусь нову реалію чи важливе поняття [inh] [sp] то це одна річ [inh]" lang="uk" speakerBriefId="bogdanovychov"/>
@@ -829,12 +839,12 @@
    <syncPoint id="1739" sampleInd="19106434" levelOfDetail="word"/>
    <syncPoint id="1821" sampleInd="19106700" levelOfDetail="phone" transcripText="noise"/>
    <syncPoint id="915" sampleInd="19106964" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="bogdanovychov"/>
-   <syncPoint id="943" sampleInd="19107526" levelOfDetail="word" transcripText="отак прийшли до нас [sp] і англійські слова(2) бренд і тренінх із російської мови" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="943" sampleInd="19107526" levelOfDetail="word" transcripText="отак прийшли до нас [sp] і англіські слова(2) бренд і тренінх із росіської мови" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="239" sampleInd="19219700" levelOfDetail="word"/>
    <syncPoint id="1893" sampleInd="19219948" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="1719" sampleInd="19221718" levelOfDetail="word"/>
    <syncPoint id="1293" sampleInd="19222578" levelOfDetail="phone" transcripText="click"/>
-   <syncPoint id="402" sampleInd="19223240" levelOfDetail="word" transcripText="[inh] слово бренд [inh] стосується передусім [sp] розрекламованої торгової марки певного товару" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="402" sampleInd="19223240" levelOfDetail="word" transcripText="[inh] слово бренд [inh] стосуєця передусім [sp] розрекламованої торговоі марки певного товару" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="1194" sampleInd="19253486" levelOfDetail="phone"/>
    <syncPoint id="1833" sampleInd="19254214" levelOfDetail="phone" transcripText="exhale"/>
    <syncPoint id="847" sampleInd="19257720" levelOfDetail="phone" transcripText="стосується передусім розрекламованої торгової марки певного товару"/>
@@ -843,7 +853,7 @@
    <syncPoint id="2020" sampleInd="19418712" levelOfDetail="word"/>
    <syncPoint id="2021" sampleInd="19418928" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="1796" sampleInd="19422186" levelOfDetail="phone" transcripText="not inh"/>
-   <syncPoint id="1201" sampleInd="19424286" levelOfDetail="word" transcripText="слово тренінх звичайно вказує на спеціальний тренувальний режим" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="1201" sampleInd="19424286" levelOfDetail="word" transcripText="слово тренінх [eee] звичайно вказує на спеціальни тренувальний рижим" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="868" sampleInd="19516384" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="1016" sampleInd="19523874" levelOfDetail="word" transcripText="[inh] відомий дбайливець за культуру українськоі мови святослав караванський [inh]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="1816" sampleInd="19637288" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
@@ -865,7 +875,7 @@
    <syncPoint id="656" sampleInd="20580522" levelOfDetail="phone"/>
    <syncPoint id="1240" sampleInd="20587186" levelOfDetail="phone" transcripText="що таке банк"/>
    <syncPoint id="855" sampleInd="20610306" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="1577" sampleInd="20617318" levelOfDetail="word" transcripText="[inh] усі мабудь(2) знають [inh] якій у нього вигляд сьогодні" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="1577" sampleInd="20617318" levelOfDetail="word" transcripText="[inh] усі мабудь(2) знають [inh] які у нього вигляд сьогодні" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="1120" sampleInd="20646026" levelOfDetail="phone"/>
    <syncPoint id="1133" sampleInd="20650112" levelOfDetail="phone" transcripText="якій у нього вигляд сьогодні"/>
    <syncPoint id="849" sampleInd="20683650" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="bogdanovychov"/>
@@ -881,7 +891,7 @@
    <syncPoint id="952" sampleInd="20789920" levelOfDetail="word"/>
    <syncPoint id="980" sampleInd="20790466" levelOfDetail="phone" transcripText="music"/>
    <syncPoint id="1612" sampleInd="21507084" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="bogdanovychov"/>
-   <syncPoint id="1078" sampleInd="21508010" levelOfDetail="word" transcripText="у давній греції [inh] банківські операції спочатку здійснювались [inh] [sp] у храмах" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="1078" sampleInd="21508010" levelOfDetail="word" transcripText="у давні греціі [inh] банківські операціі спочатку здійснювались [inh] [sp] у храмах" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="837" sampleInd="21528336" levelOfDetail="phone"/>
    <syncPoint id="479" sampleInd="21534222" levelOfDetail="phone" transcripText="банківські операції спочатку здійснювались"/>
    <syncPoint id="1112" sampleInd="21589226" levelOfDetail="phone"/>
@@ -964,22 +974,24 @@
    <syncPoint id="1329" sampleInd="22805840" levelOfDetail="phone"/>
    <syncPoint id="910" sampleInd="22811000" levelOfDetail="phone" transcripText="зберігаючи гроші вдома"/>
    <syncPoint id="1253" sampleInd="22857586" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
-   <syncPoint id="489" sampleInd="22858728" levelOfDetail="word" transcripText="менсарії [inh] не лише сберігали і міняли гроші [inh] [sp] але й дуже вдало пускали їх в обіг" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="489" sampleInd="22858728" levelOfDetail="word" transcripText="менсарії [inh] не лише сберігали і міняли гроші [inh] [sp] але й дуже вдало " lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="1230" sampleInd="22876306" levelOfDetail="phone"/>
    <syncPoint id="422" sampleInd="22885600" levelOfDetail="phone" transcripText="не лише сберігали і міняли гроші"/>
    <syncPoint id="787" sampleInd="22931642" levelOfDetail="phone"/>
    <syncPoint id="1185" sampleInd="22939562" levelOfDetail="phone" transcripText="але й дуже вдало пускали їх в обіг"/>
+   <syncPoint id="1459" sampleInd="22960912" levelOfDetail="word" transcripText="пускали їх в обіг" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="846" sampleInd="22984860" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="1334" sampleInd="22987836" levelOfDetail="phone" transcripText="'g'"/>
    <syncPoint id="349" sampleInd="22989092" levelOfDetail="word"/>
    <syncPoint id="1803" sampleInd="22991242" levelOfDetail="phone" transcripText="unk"/>
-   <syncPoint id="744" sampleInd="22993740" levelOfDetail="word" transcripText="[inh] давали кредити під чималі відсотки [inh] [sp] і добре наживалися на власній репутації" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="744" sampleInd="22993740" levelOfDetail="word" transcripText="[inh] давали кридити піт чималі відсотки [inh] [sp] і добре наживалися на власній репутаціі" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="1182" sampleInd="23051836" levelOfDetail="phone"/>
    <syncPoint id="1205" sampleInd="23058782" levelOfDetail="phone" transcripText="і добре наживалися на власній репутації"/>
    <syncPoint id="823" sampleInd="23112462" levelOfDetail="word"/>
    <syncPoint id="675" sampleInd="23113058" levelOfDetail="phone" transcripText="unk"/>
    <syncPoint id="510" sampleInd="23117142" levelOfDetail="phone" transcripText="unk"/>
    <syncPoint id="1165" sampleInd="23117638" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
-   <syncPoint id="992" sampleInd="23118862" levelOfDetail="word" transcripText="доречі саме(1) менсарії створили бугалтерські книшки(2) [sp] [inh] [sp] надзвичайно схожі на сучасні" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="992" sampleInd="23118862" levelOfDetail="word" transcripText="доречі саме(1) менсаріі створили бугалтерські книшки(2) [sp] [inh] [sp] надзвичайно схожі на сучасні" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="937" sampleInd="23190884" levelOfDetail="phone"/>
    <syncPoint id="1004" sampleInd="23200376" levelOfDetail="phone" transcripText="надзвичайно схожі на сучасні"/>
    <syncPoint id="670" sampleInd="23241058" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
@@ -1007,6 +1019,7 @@
    <syncPoint id="1469" sampleInd="23630846" levelOfDetail="phone"/>
    <syncPoint id="1180" sampleInd="23634518" levelOfDetail="phone" transcripText="але після розпаду римської імперії"/>
    <syncPoint id="131" sampleInd="23679946" levelOfDetail="word" transcripText="[inh] нові європейські країни почали бити власні монети [inh]" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="1163" sampleInd="23701676" levelOfDetail="phone" transcripText="has J?"/>
    <syncPoint id="1258" sampleInd="23734156" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="637" sampleInd="23768736" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="1398" sampleInd="23770292" levelOfDetail="word"/>

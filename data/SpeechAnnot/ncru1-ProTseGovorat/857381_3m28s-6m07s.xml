@@ -7,7 +7,7 @@
    <syncPoint id="2" sampleInd="58840" levelOfDetail="word"/>
    <syncPoint id="166" sampleInd="59501" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="308" sampleInd="60626" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="3" sampleInd="64000" levelOfDetail="word" transcripText="[inh] його убили за слова(2) [inh] &lt;sil&gt; таке в історії вже не рас &lt;sil&gt; бувало [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="3" sampleInd="64000" levelOfDetail="word" transcripText="[inh] його убили за слова(2) [inh] &lt;sil&gt; таке в історіі вже не рас &lt;sil&gt; бувало [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="7" sampleInd="121021" levelOfDetail="phone" transcripText="таке в історії вже"/>
    <syncPoint id="268" sampleInd="141312" levelOfDetail="phone" transcripText="?"/>
    <syncPoint id="11" sampleInd="142387" levelOfDetail="phone" transcripText="не рас &lt;sil&gt; бувало"/>
@@ -21,7 +21,7 @@
    <syncPoint id="22" sampleInd="311053" levelOfDetail="phone"/>
    <syncPoint id="17" sampleInd="318644" levelOfDetail="phone" transcripText="ні до чого(1)"/>
    <syncPoint id="23" sampleInd="340986" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="31" sampleInd="342243" levelOfDetail="word" transcripText="на широкий загал &lt;sil&gt; почався витік інформації йдеця про доповідь [inh] бориса нємцова [inh] &lt;sil&gt; війна &lt;sil&gt; путін" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="31" sampleInd="342243" levelOfDetail="word" transcripText="на широки загал &lt;sil&gt; почався витік інформаці ідеця про доповідь [inh] бориса нємцова [inh] &lt;sil&gt; війна &lt;sil&gt; путін" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="36" sampleInd="428255" levelOfDetail="phone" transcripText="бориса нємцова"/>
    <syncPoint id="21" sampleInd="453607" levelOfDetail="phone" transcripText="війна &lt;sil&gt; путін"/>
    <syncPoint id="18" sampleInd="480662" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
@@ -31,7 +31,7 @@
    <syncPoint id="28" sampleInd="561431" levelOfDetail="word" transcripText="у нас з вами проблем не має [inh] ця участь важаєця беззаперечно доведеною [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="35" sampleInd="599467" levelOfDetail="phone" transcripText="ця участь важаєця беззаперечно доведеною"/>
    <syncPoint id="37" sampleInd="668974" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="24" sampleInd="669967" levelOfDetail="word" transcripText="останні дані(1) які я чув від наших штабів [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="24" sampleInd="669967" levelOfDetail="word" transcripText="остані дані(1) які я чув від наших штабів [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="47" sampleInd="718422" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="34" sampleInd="721646" levelOfDetail="word" transcripText="дев'ять тисяч росіян то лише [inh] офіційно солдати [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="29" sampleInd="766860" levelOfDetail="phone" transcripText="офіційно солдати"/>
@@ -51,9 +51,11 @@
    <syncPoint id="214" sampleInd="1073928" levelOfDetail="phone" transcripText="[inh]"/>
    <syncPoint id="83" sampleInd="1087869" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="292" sampleInd="1098404" levelOfDetail="word"/>
-   <syncPoint id="72" sampleInd="1099826" levelOfDetail="word" transcripText="[inh] одже те що борис єфимович [inh] &lt;sil&gt; пише доповідь [inh] було відомо ще пів роки(1) тому(2) [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="72" sampleInd="1099826" levelOfDetail="word" transcripText="[inh] одже те що борис єфимович [inh] &lt;sil&gt; пише доповіть" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="84" sampleInd="1136159" levelOfDetail="phone" transcripText="[inh]"/>
-   <syncPoint id="60" sampleInd="1166819" levelOfDetail="phone" transcripText="було відомо ще пів роки(1) тому(2)"/>
+   <syncPoint id="296" sampleInd="1160370" levelOfDetail="word"/>
+   <syncPoint id="132" sampleInd="1160783" levelOfDetail="phone" transcripText="?"/>
+   <syncPoint id="60" sampleInd="1161097" levelOfDetail="word" transcripText="[inh] було відомо ще пів роки(1) тому(2) [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="43" sampleInd="1209089" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="93" sampleInd="1210958" levelOfDetail="word" transcripText="[yyy] свого часу(1) він зажив слави звітом про підготовку олімпіади в сочі [inh] хоча нажаль [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="65" sampleInd="1211702" levelOfDetail="phone" transcripText="ym"/>
@@ -69,7 +71,7 @@
    <syncPoint id="5" sampleInd="1500910" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="259" sampleInd="1502068" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="289" sampleInd="1502365" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="korotajevskyjsh"/>
-   <syncPoint id="101" sampleInd="1503209" levelOfDetail="word" transcripText="тому(2) таку компіляцію [inh] &lt;sil&gt; навряччи можна вважати якімось [inh] &lt;sil&gt; віткриттям [sp] [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="101" sampleInd="1503209" levelOfDetail="word" transcripText="тому(2) таку компіляцію [inh] &lt;sil&gt; навряччи можна вважати якімось [inh] &lt;sil&gt; віткритям [sp] [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="78" sampleInd="1538731" levelOfDetail="phone" transcripText="навряччи можна вважати якімось"/>
    <syncPoint id="15" sampleInd="1572732" levelOfDetail="phone"/>
    <syncPoint id="10" sampleInd="1584143" levelOfDetail="phone" transcripText="віткриттям"/>
@@ -80,7 +82,7 @@
    <syncPoint id="119" sampleInd="1688131" levelOfDetail="phone"/>
    <syncPoint id="117" sampleInd="1689752" levelOfDetail="phone" transcripText="у повному списку просто не існує"/>
    <syncPoint id="138" sampleInd="1746723" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="96" sampleInd="1752611" levelOfDetail="word" transcripText="нємцов не встих &lt;sil&gt; [inh] тим не менше [inh] деяка інформація на загал потрапила" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="96" sampleInd="1752611" levelOfDetail="word" transcripText="німцов не встих &lt;sil&gt; [inh] тим не менше [inh] деяка інформаціа на загал потрапила" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="54" sampleInd="1775383" levelOfDetail="phone"/>
    <syncPoint id="136" sampleInd="1786000" levelOfDetail="phone" transcripText="тим не менше"/>
    <syncPoint id="81" sampleInd="1803000" levelOfDetail="phone" transcripText="деяка інформація на загал потрапила"/>
@@ -92,7 +94,7 @@
    <syncPoint id="105" sampleInd="1928173" levelOfDetail="phone"/>
    <syncPoint id="112" sampleInd="1933862" levelOfDetail="phone" transcripText="є"/>
    <syncPoint id="140" sampleInd="1947604" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="153" sampleInd="1948382" levelOfDetail="word" transcripText="однак судячи із публікацій у російські пресі та інтернет джерелах [inh] борис нємцов [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="153" sampleInd="1948382" levelOfDetail="word" transcripText="однак судячи із публікаці у російські пресі та інтернет джерелах [inh] борис нємцов [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="146" sampleInd="2029366" levelOfDetail="phone" transcripText="борис нємцов"/>
    <syncPoint id="144" sampleInd="2047359" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="164" sampleInd="2049145" levelOfDetail="word" transcripText="не мав даних або не встих їх уключити до звіту [inh] про участь [inh] регулярних частин [inh] &lt;sil&gt; ну пам'ятаєте [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
@@ -102,7 +104,7 @@
    <syncPoint id="131" sampleInd="2187084" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="99" sampleInd="2189532" levelOfDetail="word" transcripText="буряцький [sp] аеро &lt;sil&gt; кавалерійський &lt;sil&gt; дивізіон [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="133" sampleInd="2262263" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="194" sampleInd="2263487" levelOfDetail="word" transcripText="звіт стверджує що лише під дебальцевим [sp] у [inh] лютому [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="194" sampleInd="2263487" levelOfDetail="word" transcripText="звіт свержує що лише під дебальцевим [sp] у [inh] лютому [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="143" sampleInd="2313100" levelOfDetail="phone"/>
    <syncPoint id="185" sampleInd="2317631" levelOfDetail="phone" transcripText="лютому"/>
    <syncPoint id="160" sampleInd="2330646" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
@@ -135,7 +137,7 @@
    <syncPoint id="156" sampleInd="2804743" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="129" sampleInd="2805024" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="181" sampleInd="2805901" levelOfDetail="phone" transcripText="click"/>
-   <syncPoint id="123" sampleInd="2813326" levelOfDetail="word" transcripText="всі ці дані(1) ще мають бути [inh] [sp] перевірені" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="123" sampleInd="2814186" levelOfDetail="word" transcripText="всі ці дані(1) ще мають бути [inh] [sp] перевірені" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="241" sampleInd="2858060" levelOfDetail="phone" transcripText="перевірені"/>
    <syncPoint id="145" sampleInd="2869454" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="69" sampleInd="2872266" levelOfDetail="word"/>
@@ -157,7 +159,7 @@
    <syncPoint id="170" sampleInd="3156033" levelOfDetail="word"/>
    <syncPoint id="167" sampleInd="3156430" levelOfDetail="phone" transcripText="glottal"/>
    <syncPoint id="305" sampleInd="3157124" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="176" sampleInd="3157736" levelOfDetail="word" transcripText="плюс ще [inh] понад вісімдесят мільярдів [inh] утримання біженців [inh] з донецької і луганської областей(3) [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="176" sampleInd="3157736" levelOfDetail="word" transcripText="плюс че [inh] понад вісімдесят мільярдів [inh] утримання біженців [inh] з донецькоі і луганськоі областей(3) [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="253" sampleInd="3166203" levelOfDetail="phone"/>
    <syncPoint id="165" sampleInd="3171363" levelOfDetail="phone" transcripText="понад вісімдесят мільярдів"/>
    <syncPoint id="300" sampleInd="3210342" levelOfDetail="phone" transcripText="утримання біженців"/>

@@ -15,9 +15,15 @@
       <pron code="бригат" phones="B R Y H A1 T"/>
    </word>
    <word name="бу" phones="B U1"/>
+   <word name="було">
+      <pron code="боло" phones="B O L O1"/>
+   </word>
    <word name="бюдже" phones="B2 U DZH E1"/>
    <word name="більше">
       <pron code="біше" phones="B2 I1 SH E"/>
+   </word>
+   <word name="в">
+      <pron code="вви" phones="V V Y1"/>
    </word>
    <word name="вартість">
       <pron code="вартісь" phones="V A1 R T1 I S1"/>
