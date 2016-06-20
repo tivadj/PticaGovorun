@@ -3,15 +3,14 @@
 #include <memory> // std::unique_ptr
 #include <fstream> // std::ofstream
 #include <hash_map>
+#include <vector>
+#include <string>
 #include "JuliusToolNativeWrapper.h"
+#include "JuliusIfHelpers.h"
 #include "WavUtils.h"
 #include "PhoneAlignment.h"
 #include "PticaGovorunCore.h"
 
-#include "../../ThirdParty/julius4/libjulius/include/julius/julius.h"
-#include "../../ThirdParty/julius4/julius/app.h"
-
-//struct Recog;
 extern "C" int mainJuliusTool(int argc, char *argv[]);
 extern "C" void mainJuliusToolDestructor();
 extern "C" void main_recognition_stream_loop(Recog *recog);
@@ -181,6 +180,15 @@ namespace PticaGovorun {
 		int mainCode;
 		try
 		{
+			// hook to events of Julius C-library (thus the handlers can be written in C++)
+			setOnRecogStatusChanged(myRecogStatus);
+			setOnRecogOutputTextPass1(myRecogOutputTextPass1);
+			setOnRecogOutputWordSeqPass1(myRecogOutputWordSeqPass1);
+			setOnRecogOutputPhonemeSeqPass1_PushPhonemeSeq(myRecogOutputPhonemeSeqPass1_PushPhonemeSeq);
+			setOnRecogOutputPhonemeSeqPass1_AddPhoneme(myRecogOutputPhonemeSeqPass1_AddPhoneme);
+			setOnRecogOutputWordSeqPass2(myRecogOutputWordSeqPass2);
+			setOnRecogOutputPhonemeSeq1(myRecogOutputPhonemeSeq1);
+
 			mainCode = mainJuliusTool(inputParams.size(), const_cast<char**>(inputParams.data()));
 		}
 		catch (const std::exception& stdExc)
@@ -221,7 +229,7 @@ namespace PticaGovorun {
 		// run
 
 		adin_file_standby(recognizerSettings_.SampleRate, (void*)recognizerSettings_.FileListFileName.c_str());
-		main_recognition_stream_loop(myGlobalRecog_);
+		my_main_recognition_stream_loop();
 
 		//
 		// prepare results
@@ -415,7 +423,7 @@ namespace PticaGovorun {
 
 	std::tuple<bool, const char*> computeMfccFeaturesPub(const short* sampleData, int sampleDataSize, size_t frameSize, size_t frameShift, size_t mfccVecLen, std::vector<float>& mfccFeatures, int& framesCount)
 	{
-		Recog* recog = myGlobalRecog_;
+		Recog* recog = myGlobalRecog();
 		if (recog == nullptr)
 			return std::make_tuple(false, "computeMfccFeaturesPub: Global recognizer is not initialized");
 
@@ -588,7 +596,7 @@ namespace PticaGovorun {
 
 		//
 
-		Recog *recog = myGlobalRecog_;
+		Recog *recog = myGlobalRecog();
 		size_t frameSize = -1;
 		size_t frameShift = -1;
 		size_t mfccVecLen = -1;
