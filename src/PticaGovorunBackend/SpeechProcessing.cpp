@@ -627,7 +627,7 @@ namespace PticaGovorun
 	}
 
 	std::tuple<bool, const char*> trainMonophoneClassifier(const std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector, int mfccVecLen, int numClusters,
-		std::map<std::string, std::unique_ptr<PticaGovorun::EMQuick>>& phoneNameToEMObj)
+		std::map<std::string, std::unique_ptr<cv::EM>>& phoneNameToEMObj)
 	{
 		std::vector<double> mfccFeaturesDouble;
 
@@ -654,7 +654,7 @@ namespace PticaGovorun
 				return std::make_tuple(false, "Not enough frames to train phone");
 
 			auto termCrit = cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 1000, FLT_EPSILON);
-			std::unique_ptr<PticaGovorun::EMQuick> pEm = std::make_unique<PticaGovorun::EMQuick>(nclusters, cv::EM::COV_MAT_DIAGONAL, termCrit);
+			std::unique_ptr<cv::EM> pEm = std::make_unique<cv::EM>(nclusters, cv::EM::COV_MAT_DIAGONAL, termCrit);
 			bool trainOp = pEm->train(mfccFeaturesMat);
 			if (!trainOp)
 				return std::make_tuple(false, "Can't train the cv::EM for phone");

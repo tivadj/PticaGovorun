@@ -6,6 +6,7 @@
 #include "InteropPython.h"
 #include "SpeechProcessing.h"
 #include "JuliusToolNativeWrapper.h"
+#include <opencv2/ml.hpp>
 
 namespace PticaGovorun {
 	int globalResourceIdCounter_ = 100;
@@ -17,7 +18,7 @@ namespace PticaGovorun {
 	std::map<int, std::map<std::string, std::vector<float>>> globalIdToPhoneNameToFeaturesVector_;
 
 	// classifiers
-	std::map<int, std::map<std::string, std::unique_ptr<PticaGovorun::EMQuick>>> globalPhoneNameToEMObj_;
+	std::map<int, std::map<std::string, std::unique_ptr<cv::EM>>> globalPhoneNameToEMObj_;
 
 	std::vector<const char*> phoneIdToPhoneName_ = { "a", "e", "y", "i", "o", "u" };
 	std::map<std::string, int> phoneNameToPhoneId_;
@@ -178,7 +179,7 @@ namespace PticaGovorun {
 		}
 
 		std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector = mapIt->second;
-		std::map<std::string, std::unique_ptr<PticaGovorun::EMQuick>> phoneNameToEMObj;
+		std::map<std::string, std::unique_ptr<cv::EM>> phoneNameToEMObj;
 		auto trainOp = trainMonophoneClassifier(phoneNameToFeaturesVector, mfccVecLen, numClusters, phoneNameToEMObj);
 		if (!std::get<0>(trainOp))
 		{
@@ -208,18 +209,15 @@ namespace PticaGovorun {
 			return false;
 		}
 
-		std::map<std::string, std::unique_ptr<PticaGovorun::EMQuick>>& phoneNameToEMObj = mapIt->second;
+		std::map<std::string, std::unique_ptr<cv::EM>>& phoneNameToEMObj = mapIt->second;
 
 		// take number of clusters from any trained classifer
 		// assumes, there exist one classfier and it was trained
-		int numClusters = std::begin(phoneNameToEMObj)->second->getNClusters();
+		int numClusters = std::begin(phoneNameToEMObj)->second->getInt("nclusters");
 		std::wcout << "numClusters=" << numClusters <<std::endl;
 
 		//
 		std::vector<double> featuresDouble(featuresCountPerFrame);
-
-		cv::Mat cacheL;
-		cacheL.create(1, numClusters, CV_64FC1);
 
 		for (int frameInd = 0; frameInd < framesCount; ++frameInd)
 		{
@@ -231,14 +229,14 @@ namespace PticaGovorun {
 				const std::string& phoneName = phoneEMPair.first;
 				int phoneId = phoneNameToPhoneId(phoneName);
 
-				PticaGovorun::EMQuick& em = *phoneEMPair.second.get();
+				cv::EM& em = *phoneEMPair.second.get();
 
 				// convert float features to double
 				featuresDouble.assign(features + frameInd * featuresCountPerFrame, features + (frameInd + 1) * featuresCountPerFrame);
 				cv::Mat oneFeatsVector(1, featuresCountPerFrame, CV_64FC1, featuresDouble.data());
 
 				//
-				cv::Vec2d resP2 = PticaGovorun::EMQuick::predict2(oneFeatsVector, em.getMeans(), em.getInvCovsEigenValuesPar(), em.getLogWeightDivDetPar(), cacheL);
+				cv::Vec2d resP2 = em.predict(oneFeatsVector);
 				double logProb = resP2[0];
 				if (logProb > maxLogProb)
 				{

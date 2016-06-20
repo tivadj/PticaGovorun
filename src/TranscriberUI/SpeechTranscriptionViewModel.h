@@ -327,12 +327,7 @@ public:	// recongizer
 
 	void alignPhonesForCurrentSegmentRequest();
 	size_t silencePadAudioFramesCount() const;
-	
-	void computeMfccRequest();
-	void testMfccRequest();
-	void classifyMfccIntoPhones();
 private:
-	std::map<std::string, std::unique_ptr<PticaGovorun::EMQuick>> phoneNameToEMObj_;
 	std::map<std::string, std::vector<float>> phoneNameToFeaturesVector_;
 
 public: // segment composer

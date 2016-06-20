@@ -9,6 +9,7 @@
 #include <QObject>
 #include <QFileInfo>
 #include <boost/utility/string_ref.hpp>
+#include <opencv2/ml.hpp>
 
 #include "PticaGovorunCore.h"
 #include "MLUtils.h"
@@ -246,7 +247,7 @@ PG_EXPORTS std::tuple<bool, const char*> collectMfccFeatures(const QFileInfo& fo
 PG_EXPORTS int featuresFramesCount(int featuresTotalCount, int mfccVecLen);
 
 PG_EXPORTS std::tuple<bool, const char*> trainMonophoneClassifier(const std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector, int mfccVecLen, int numClusters,
-	std::map<std::string, std::unique_ptr<PticaGovorun::EMQuick>>& phoneNameToEMObj);
+	std::map<std::string, std::unique_ptr<cv::EM>>& phoneNameToEMObj);
 
 PG_EXPORTS void preEmphasisInplace(wv::slice<float> xs, float preEmph);
 
