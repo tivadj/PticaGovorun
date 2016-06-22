@@ -247,7 +247,7 @@ PG_EXPORTS std::tuple<bool, const char*> collectMfccFeatures(const QFileInfo& fo
 PG_EXPORTS int featuresFramesCount(int featuresTotalCount, int mfccVecLen);
 
 PG_EXPORTS std::tuple<bool, const char*> trainMonophoneClassifier(const std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector, int mfccVecLen, int numClusters,
-	std::map<std::string, std::unique_ptr<cv::EM>>& phoneNameToEMObj);
+	std::map<std::string, cv::Ptr<cv::ml::EM>>& phoneNameToEMObj);
 
 PG_EXPORTS void preEmphasisInplace(wv::slice<float> xs, float preEmph);
 

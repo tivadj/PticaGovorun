@@ -18,7 +18,7 @@ namespace PticaGovorun {
 	std::map<int, std::map<std::string, std::vector<float>>> globalIdToPhoneNameToFeaturesVector_;
 
 	// classifiers
-	std::map<int, std::map<std::string, std::unique_ptr<cv::EM>>> globalPhoneNameToEMObj_;
+	std::map<int, std::map<std::string, cv::Ptr<cv::ml::EM>>> globalPhoneNameToEMObj_;
 
 	std::vector<const char*> phoneIdToPhoneName_ = { "a", "e", "y", "i", "o", "u" };
 	std::map<std::string, int> phoneNameToPhoneId_;
@@ -179,7 +179,7 @@ namespace PticaGovorun {
 		}
 
 		std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector = mapIt->second;
-		std::map<std::string, std::unique_ptr<cv::EM>> phoneNameToEMObj;
+		std::map<std::string, cv::Ptr<cv::ml::EM>> phoneNameToEMObj;
 		auto trainOp = trainMonophoneClassifier(phoneNameToFeaturesVector, mfccVecLen, numClusters, phoneNameToEMObj);
 		if (!std::get<0>(trainOp))
 		{
@@ -209,11 +209,11 @@ namespace PticaGovorun {
 			return false;
 		}
 
-		std::map<std::string, std::unique_ptr<cv::EM>>& phoneNameToEMObj = mapIt->second;
+		std::map<std::string, cv::Ptr<cv::ml::EM>>& phoneNameToEMObj = mapIt->second;
 
 		// take number of clusters from any trained classifer
 		// assumes, there exist one classfier and it was trained
-		int numClusters = std::begin(phoneNameToEMObj)->second->getInt("nclusters");
+		int numClusters = std::begin(phoneNameToEMObj)->second->getClustersNumber();
 		std::wcout << "numClusters=" << numClusters <<std::endl;
 
 		//
@@ -229,7 +229,7 @@ namespace PticaGovorun {
 				const std::string& phoneName = phoneEMPair.first;
 				int phoneId = phoneNameToPhoneId(phoneName);
 
-				cv::EM& em = *phoneEMPair.second.get();
+				cv::ml::EM& em = *phoneEMPair.second.get();
 
 				// convert float features to double
 				featuresDouble.assign(features + frameInd * featuresCountPerFrame, features + (frameInd + 1) * featuresCountPerFrame);

@@ -627,12 +627,13 @@ namespace PticaGovorun
 	}
 
 	std::tuple<bool, const char*> trainMonophoneClassifier(const std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector, int mfccVecLen, int numClusters,
-		std::map<std::string, std::unique_ptr<cv::EM>>& phoneNameToEMObj)
+		std::map<std::string, cv::Ptr<cv::ml::EM>>& phoneNameToEMObj)
 	{
-		std::vector<double> mfccFeaturesDouble;
+		std::vector<float> mfccFeaturesFloat;
 
 		// train GMMs
 
+		int responsePhoneId = 1;
 		for (const auto& pair : phoneNameToFeaturesVector)
 		{
 			const auto& phoneName = pair.first;
@@ -640,12 +641,12 @@ namespace PticaGovorun
 			const std::vector<float>& mfccFeatures = pair.second;
 
 			// cv::EM requires features of double type
-			mfccFeaturesDouble.resize(mfccFeatures.size());
-			std::transform(std::begin(mfccFeatures), std::end(mfccFeatures), std::begin(mfccFeaturesDouble), [](float x) { return (double)x; });
+			mfccFeaturesFloat.resize(mfccFeatures.size());
+			std::transform(std::begin(mfccFeatures), std::end(mfccFeatures), std::begin(mfccFeaturesFloat), [](float x) { return (float)x; });
 
-			cv::Mat mfccFeaturesMat(mfccFeaturesDouble, false);
+			cv::Mat mfccFeaturesMat(mfccFeaturesFloat, false);
 
-			int framesCount = featuresFramesCount(mfccFeaturesDouble.size(), mfccVecLen);
+			int framesCount = featuresFramesCount(mfccFeaturesFloat.size(), mfccVecLen);
 			mfccFeaturesMat = mfccFeaturesMat.reshape(1, framesCount);
 
 			//
@@ -654,12 +655,20 @@ namespace PticaGovorun
 				return std::make_tuple(false, "Not enough frames to train phone");
 
 			auto termCrit = cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 1000, FLT_EPSILON);
-			std::unique_ptr<cv::EM> pEm = std::make_unique<cv::EM>(nclusters, cv::EM::COV_MAT_DIAGONAL, termCrit);
-			bool trainOp = pEm->train(mfccFeaturesMat);
+
+			cv::Ptr<cv::ml::EM> pEm = cv::ml::EM::create();
+			pEm->setClustersNumber(nclusters);
+			pEm->setTermCriteria(termCrit);
+			pEm->setCovarianceMatrixType(cv::ml::EM::COV_MAT_DIAGONAL);
+
+			std::vector<float> responses(framesCount, responsePhoneId); // TODO: check test; construct correct responseMat for training
+			auto trainData = cv::ml::TrainData::create(mfccFeaturesMat, cv::ml::SampleTypes::COL_SAMPLE, responses);
+			bool trainOp = pEm->train(trainData);
 			if (!trainOp)
 				return std::make_tuple(false, "Can't train the cv::EM for phone");
 
-			phoneNameToEMObj.insert(std::make_pair(phoneName, std::move(pEm)));
+			phoneNameToEMObj.insert(std::make_pair(phoneName, pEm));
+			responsePhoneId++;
 		}
 
 		std::make_tuple(true, "");
