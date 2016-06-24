@@ -4877,10 +4877,7 @@
    <word name="перш" phones="P E1 R SH"/>
    <word name="перша" phones="P E1 R SH A"/>
    <word name="перше" phones="P E1 R SH E"/>
-   <word name="перший">
-      <pron code="перший" phones="P E1 R SH Y J"/>
-      <pron code="перши" phones="P E1 R SH Y"/>
-   </word>
+   <word name="перший" phones="P E1 R SH Y J"/>
    <word name="першим" phones="P E1 R SH Y M"/>
    <word name="перших" phones="P E1 R SH Y KH"/>
    <word name="першого" phones="P E1 R SH O H O"/>
@@ -5706,9 +5703,6 @@
    <word name="прочитали" phones="P R O CH Y T A1 L Y"/>
    <word name="прочитання" phones="P R O CH Y T A1 N1 N1 A"/>
    <word name="прочитано" phones="P R O CH Y1 T A N O"/>
-   <word name="прочитаного">
-      <pron code="прочитано" phones="P R O CH Y1 T A N O"/>
-   </word>
    <word name="прочитати" phones="P R O CH Y T A1 T Y"/>
    <word name="пряжа" phones="P R1 A1 ZH A"/>
    <word name="прям" phones="P R1 A1 M"/>
