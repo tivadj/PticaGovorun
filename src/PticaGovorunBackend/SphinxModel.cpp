@@ -285,9 +285,9 @@ namespace PticaGovorun
 		}
 
 		int randSeed = 1932;
-		bool swapTrainTestData = true; // swaps train/test portions of data, so that opposite data can be tested when random generator's seed is fixed
+		bool swapTrainTestData = false; // swaps train/test portions of data, so that opposite data can be tested when random generator's seed is fixed
 		bool includeBrownBear = false;
-		bool outputWav = true;
+		bool outputWav = false;
 		bool outputPhoneticDictAndLangModel = true;
 		bool padSilence = true; // pad the audio segment with the silence segment
 		bool allowSoftHardConsonant = true;
@@ -296,8 +296,11 @@ namespace PticaGovorun
 		bool useBrokenPronsInTrainOnly = true;
 		const double trainCasesRatio = 0.7;
 		const float outFrameRate = 16000; // Sphinx requires 16k
+		
+		// words with greater usage counter are inlcuded in language model
 		// note, the positive threshold may evict the rare words
-		int maxWordPartUsage = 10;
+		// -1=to ignore the parameter
+		int minWordPartUsage = 10;
 		//int maxWordPartUsage = -1;
 		//int maxUnigramsCount = 10000;
 		int maxUnigramsCount = -1;
@@ -357,13 +360,13 @@ namespace PticaGovorun
 			// .dic and .arpa files are different
 			// broken words goes in dict and lang model in train phase only
 			// alternatively we can always ignore broken words, but it is a pity to not use the markup
-			std::tie(op, errMsg) = buildPhaseSpecificParts(ResourceUsagePhase::Train, maxWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, trainPhoneIds);
+			std::tie(op, errMsg) = buildPhaseSpecificParts(ResourceUsagePhase::Train, minWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, trainPhoneIds);
 			if (!op)
 			{
 				errMsg_ = QString("Can't build phase specific parts. %1").arg(errMsg);
 				return;
 			}
-			std::tie(op, errMsg) = buildPhaseSpecificParts(ResourceUsagePhase::Test, maxWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, trainPhoneIds);
+			std::tie(op, errMsg) = buildPhaseSpecificParts(ResourceUsagePhase::Test, minWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, trainPhoneIds);
 			if (!op)
 			{
 				errMsg_ = QString("Can't build phase specific parts. %1").arg(errMsg);
@@ -491,7 +494,7 @@ namespace PticaGovorun
 			populatePronCodes(phoneticDictWordsBrownBear_, pronCodeToObjWellFormed_, duplicatePronCodes);
 	}
 
-	std::tuple<bool, const char*> SphinxTrainDataBuilder::buildPhaseSpecificParts(ResourceUsagePhase phase, int maxWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, const std::set<PhoneId>& trainPhoneIds)
+	std::tuple<bool, const char*> SphinxTrainDataBuilder::buildPhaseSpecificParts(ResourceUsagePhase phase, int minWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, const std::set<PhoneId>& trainPhoneIds)
 	{
 		// well known dictionaries are WellFormed, Broken and Filler
 		auto expandWellKnownPronCodeFun = [phase, this](boost::wstring_ref pronCode) -> const PronunciationFlavour*
@@ -503,7 +506,7 @@ namespace PticaGovorun
 		};
 
 		std::vector<const WordPart*> seedUnigrams;
-		chooseSeedUnigrams(phoneticSplitter_, maxWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, phoneReg_, expandWellKnownPronCodeFun, trainPhoneIds, seedUnigrams);
+		chooseSeedUnigrams(phoneticSplitter_, minWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, phoneReg_, expandWellKnownPronCodeFun, trainPhoneIds, seedUnigrams);
 		std::cout << "phase=" << (phase == ResourceUsagePhase::Train ? "train" : "test")
 			<< " seed unigrams count=" << seedUnigrams.size() << std::endl;
 
@@ -1155,14 +1158,15 @@ namespace PticaGovorun
 			const VecPerFile& segs = pair.second;
 			
 			// load wav file
-			std::string srcWavPath = QString::fromStdWString(wavFilePath).toStdString();
-			std::cout << "wav=" << srcWavPath <<std::endl;
+			std::string srcAudioPath = QString::fromStdWString(wavFilePath).toStdString();
+			std::cout << "wav=" << srcAudioPath <<std::endl;
 
 			srcAudioFrames.clear();
-			auto readOp = readAllSamples(srcWavPath, srcAudioFrames, &srcAudioFrameRate);
+			auto readOp = readAllSamplesFormatAware(srcAudioPath.c_str(), srcAudioFrames, &srcAudioFrameRate);
 			if (!std::get<0>(readOp))
 			{
-				errMsg_ = "Can't read wav file";
+				errMsg_ = "Can't read audio file. ";
+				errMsg_ += std::get<1>(readOp);
 				return;
 			}
 

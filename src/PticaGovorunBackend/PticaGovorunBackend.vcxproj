@@ -66,6 +66,7 @@
     <Import Project="..\build-config\LibSampleRate.props" />
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
+    <Import Project="..\build-config\FLAC.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -80,6 +81,7 @@
     <Import Project="..\build-config\LibSampleRate.props" />
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
+    <Import Project="..\build-config\FLAC.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -94,6 +96,7 @@
     <Import Project="..\build-config\LibSampleRate.props" />
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
+    <Import Project="..\build-config\FLAC.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -108,6 +111,7 @@
     <Import Project="..\build-config\LibSampleRate.props" />
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
+    <Import Project="..\build-config\FLAC.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -196,6 +200,7 @@
     <ClInclude Include="ClnUtils.h" />
     <ClInclude Include="ComponentsInfrastructure.h" />
     <ClInclude Include="CoreUtils.h" />
+    <ClInclude Include="FlacUtils.h" />
     <ClInclude Include="InteropPython.h" />
     <ClInclude Include="JuliusToolNativeWrapper.h" />
     <ClInclude Include="LangStat.h" />
@@ -233,6 +238,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="FlacUtils.cpp" />
     <ClCompile Include="InteropPython.cpp" />
     <ClCompile Include="JuliusToolNativeWrapper.cpp" />
     <ClCompile Include="LangStat.cpp" />

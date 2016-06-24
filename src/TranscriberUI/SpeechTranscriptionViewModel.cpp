@@ -62,7 +62,7 @@ SpeechTranscriptionViewModel::SpeechTranscriptionViewModel()
 	audioSamples_.clear();
 	diagramSegments_.clear();
 
-	auto readOp = PticaGovorun::readAllSamples(audioFilePathAbs_.toStdString(), audioSamples_, &audioFrameRate_);
+	auto readOp = PticaGovorun::readAllSamplesFormatAware(audioFilePathAbs_.toStdString().c_str(), audioSamples_, &audioFrameRate_);
 	if (!std::get<0>(readOp))
 	{
 		auto msg = std::get<1>(readOp);

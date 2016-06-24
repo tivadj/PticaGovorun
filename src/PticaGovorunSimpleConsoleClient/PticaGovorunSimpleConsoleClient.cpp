@@ -22,6 +22,7 @@ namespace RunTextParserNS { void runMain(int argc, wchar_t* argv[]); }
 namespace RunBuildLanguageModelNS { void runMain(int argc, wchar_t* argv[]); }
 namespace PrepareSphinxTrainDataNS { void run(); }
 namespace DslDictionaryConvertRunnerNS { void run(); }
+namespace FlacRunnerNS { void run(); }
 
 int mainCore(int argc, TCHAR* argv[])
 {
@@ -38,10 +39,11 @@ int mainCore(int argc, TCHAR* argv[])
 	//PdfReaderRunnerNS::run();
 	//RunTextParserNS::runMain(argc, argv);
 	//RunBuildLanguageModelNS::runMain(argc, argv);
-	PrepareSphinxTrainDataNS::run();
-	//RecognizeSpeechSphinxTester::run();
+	//PrepareSphinxTrainDataNS::run(); // 1
+	RecognizeSpeechSphinxTester::run(); // 2
 	//RecognizeSpeechInBatchTester::runMain(argc, argv);
 	//DslDictionaryConvertRunnerNS::run();
+	//FlacRunnerNS::run();
 	return 0;
 }
 

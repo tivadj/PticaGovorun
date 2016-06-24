@@ -2,6 +2,8 @@
 #include <array>
 #include "WavUtils.h"
 #include <samplerate.h>
+#include <QString>
+#include "FlacUtils.h"
 
 namespace PticaGovorun {
 
@@ -138,4 +140,29 @@ std::tuple<bool, const char*> resampleFrames(wv::slice<short> audioSamples, floa
 
 	return std::make_tuple(true, nullptr);
 }
+
+std::tuple<bool, const char*> readAllSamplesFormatAware(const char* fileName, std::vector<short>& result, float *frameRate)
+{
+	QString fileNameQ(fileName);
+	if (fileNameQ.endsWith(".flac"))
+		return readAllSamplesFlac(fileName, result, frameRate);
+	if (fileNameQ.endsWith(".wav"))
+	{
+		auto op = readAllSamples(fileName, result, frameRate);
+		if (!std::get<0>(op))
+			return std::make_tuple(false, "Error: readAllSamplesWav");
+		return std::make_tuple(true, nullptr);
+	}
+	return std::make_tuple(false, "Error: unknown audio file extension");
+}
+
+bool isSupportedAudioFile(const wchar_t* fileName)
+{
+	QString fileNameQ = QString::fromWCharArray(fileName);
+	if (fileNameQ.endsWith(".flac") ||
+		fileNameQ.endsWith(".wav"))
+		return true;
+	return false;
+}
+
 }

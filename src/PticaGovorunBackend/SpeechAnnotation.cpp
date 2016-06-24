@@ -314,26 +314,35 @@ namespace PticaGovorun
 		void populateItemsRec(const QFileInfo& fileInfo, AnnotSpeechDirNode& parent)
 		{
 			QString fileName = fileInfo.fileName();
-			if (fileInfo.isFile() && fileName.endsWith(".wav", Qt::CaseInsensitive))
+			if (fileInfo.isFile() && fileName.endsWith(".xml", Qt::CaseInsensitive))
 			{
-				QString audioFilePath = fileInfo.absoluteFilePath();
+				QString annotPath = fileInfo.absoluteFilePath();
 
-				QString audioFileRelPath = audioRootDir->relativeFilePath(audioFilePath);
+				QString annotRelPath = xmlRootDir->relativeFilePath(annotPath);
 
-				int wavInd = audioFileRelPath.lastIndexOf(".wav", -1, Qt::CaseInsensitive);
-				QString xmlAudioFileRelPath = audioFileRelPath.left(wavInd);
-				xmlAudioFileRelPath.append(".xml");
+				int extInd = annotRelPath.lastIndexOf(".xml", -1, Qt::CaseInsensitive);
+				QString annotRelPathNoExt = annotRelPath.left(extInd);
 
-				QString xmlFilePath = xmlRootDir->absoluteFilePath(xmlAudioFileRelPath);
-				
-				QFileInfo xmlFileInfo(xmlFilePath);
-				if (!xmlFileInfo.exists())
+				// search for corresponding audio file
+				QString audioPath;
+				QFileInfo audioFileInfo;
+				std::array<const char*, 2> audioExts = { ".flac", ".wav" };
+				for (const char* ext : audioExts)
+				{
+					audioPath = audioRootDir->absoluteFilePath(annotRelPathNoExt + ext);
+
+					audioFileInfo = QFileInfo(audioPath);
+					if (audioFileInfo.exists())
+						break;
+				}
+
+				if (!audioFileInfo.exists())
 					return;
 
 				AnnotSpeechFileNode fileRecord;
-				fileRecord.FileNameNoExt = xmlFileInfo.completeBaseName();
-				fileRecord.WavFilePath = audioFilePath;
-				fileRecord.SpeechAnnotationXmlFilePath = xmlFilePath;
+				fileRecord.FileNameNoExt = audioFileInfo.completeBaseName();
+				fileRecord.AudioPath = audioPath;
+				fileRecord.SpeechAnnotationPath = annotPath;
 				parent.AnnotFiles.push_back(fileRecord);
 			}
 			else if (fileInfo.isDir())
@@ -373,7 +382,7 @@ namespace PticaGovorun
 		SpeechAnnotationWorkspaceBuilder annotStructure;
 		annotStructure.audioRootDir = &audioSubDir;
 		annotStructure.xmlRootDir = &annotSubDir;
-		annotStructure.populateSubItemsWithoutItemItselfRec(audioSubDir.absolutePath(), pseudoRoot);
+		annotStructure.populateSubItemsWithoutItemItselfRec(annotSubDir.absolutePath(), pseudoRoot);
 	}
 
 	void flat(const AnnotSpeechDirNode& node, std::vector<AnnotSpeechFileNode>& result)

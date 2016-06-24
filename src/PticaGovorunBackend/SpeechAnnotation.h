@@ -125,8 +125,8 @@ namespace PticaGovorun
 	struct PG_EXPORTS AnnotSpeechFileNode
 	{
 		QString FileNameNoExt;
-		QString WavFilePath;
-		QString SpeechAnnotationXmlFilePath;
+		QString AudioPath;
+		QString SpeechAnnotationPath;
 	};
 
 	struct PG_EXPORTS AnnotSpeechDirNode

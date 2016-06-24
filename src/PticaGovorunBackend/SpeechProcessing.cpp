@@ -306,12 +306,12 @@ namespace PticaGovorun
 
 		// process wav file path
 
-		QString wavFilePath = folderOrWavFilePath.absoluteFilePath();
+		QString audioFilePath = folderOrWavFilePath.absoluteFilePath();
 
-		QString extension = folderOrWavFilePath.suffix();
-		if (extension.compare("wav", Qt::CaseInsensitive)) // skip non wav files
+		// skip non audio files
+		if (!isSupportedAudioFile(audioFilePath.toStdWString().c_str()))
 			return std::make_pair(true, "");
-
+			
 		QString xmlFilePath = QString::fromStdWString(speechAnnotationFilePathAbs(folderOrWavFilePath.absoluteFilePath().toStdWString(), wavRootDir, annotRootDir));
 		QFileInfo xmlFilePathInfo(xmlFilePath);
 		if (!xmlFilePathInfo.exists()) // wav has no corresponding markup
@@ -413,7 +413,7 @@ namespace PticaGovorun
 			seg.StartMarker = *blankSeg.StartMarker;
 			seg.EndMarker = *blankSeg.EndMarker;
 			seg.ContentMarker = *blankSeg.ContentMarker;
-			seg.FilePath = wavFilePath.toStdWString();
+			seg.FilePath = audioFilePath.toStdWString();
 			seg.AudioStartsWithSilence = blankSeg.HasStartSilence;
 			seg.AudioEndsWithSilence = blankSeg.HasEndSilence;
 			seg.StartSilenceFramesCount = blankSeg.StartSilenceFramesCount;
@@ -462,7 +462,7 @@ namespace PticaGovorun
 				if (speechFrames.empty())
 				{
 					// load wav file
-					auto readOp = readAllSamples(wavFilePath.toStdString(), speechFrames, &frameRate);
+					auto readOp = readAllSamples(audioFilePath.toStdString(), speechFrames, &frameRate);
 					if (!std::get<0>(readOp))
 						return std::make_pair(false, "Can't read wav file");
 				}

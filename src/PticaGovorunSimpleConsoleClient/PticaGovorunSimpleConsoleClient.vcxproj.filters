@@ -83,5 +83,8 @@
     <ClCompile Include="PrepareSphinxTrainData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FlacRunner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

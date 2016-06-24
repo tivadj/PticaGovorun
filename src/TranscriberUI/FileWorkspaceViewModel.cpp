@@ -38,7 +38,7 @@ namespace PticaGovorun
 		{
 			QTreeWidgetItem* item = new QTreeWidgetItem();
 			item->setText(0, fileItem.FileNameNoExt);
-			item->setData(0, Qt::UserRole, QVariant::fromValue(fileItem.WavFilePath));
+			item->setData(0, Qt::UserRole, QVariant::fromValue(fileItem.AudioPath));
 			parent->addChild(item);
 		}
 	}

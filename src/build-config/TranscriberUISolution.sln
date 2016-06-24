@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build-config", "build-confi
 		array_view.props = array_view.props
 		boost.props = boost.props
 		Catch.props = Catch.props
+		FLAC.props = FLAC.props
 		LibSampleRate.props = LibSampleRate.props
 		LibSndFile.props = LibSndFile.props
 		MatlabBuild.props = MatlabBuild.props

@@ -32,12 +32,12 @@ namespace PticaGovorun
 		{
 			// do not consider badly marked markup
 			// TODO: fix finance.ua-pynzenykvm markup
-			bool isBadMarkup = fileItem.SpeechAnnotationXmlFilePath.contains("finance.ua-pynzenykvm");
+			bool isBadMarkup = fileItem.SpeechAnnotationPath.contains("finance.ua-pynzenykvm");
 
 			SpeechAnnotation annot;
 			bool loadOp;
 			const char* errMsg;
-			std::tie(loadOp, errMsg) = loadAudioMarkupFromXml(fileItem.SpeechAnnotationXmlFilePath.toStdWString(), annot);
+			std::tie(loadOp, errMsg) = loadAudioMarkupFromXml(fileItem.SpeechAnnotationPath.toStdWString(), annot);
 			if (!loadOp)
 			{
 				checkMsgs.push_back(QString::fromLatin1(errMsg));
@@ -54,7 +54,7 @@ namespace PticaGovorun
 
 				if (!fileItemMsgs.empty())
 				{
-					checkMsgs << QString::fromStdWString(L"File=") << fileItem.SpeechAnnotationXmlFilePath << "\n";
+					checkMsgs << QString::fromStdWString(L"File=") << fileItem.SpeechAnnotationPath << "\n";
 					checkMsgs << fileItemMsgs << "\n";
 				}
 			}
