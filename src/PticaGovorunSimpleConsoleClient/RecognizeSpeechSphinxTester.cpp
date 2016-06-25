@@ -11,6 +11,7 @@
 #include <QDir>
 #include <QTextCodec>
 #include <QDebug>
+#include <QXmlStreamWriter>
 
 #include "ps_alignment.h"
 #include "state_align_search.h"
@@ -858,6 +859,83 @@ namespace RecognizeSpeechSphinxTester
 		return std::make_tuple(true, nullptr);
 	}
 
+	std::tuple<bool, const char*> dumpDecoderExpectActualResultsXml(boost::wstring_ref filePath, const std::vector<TwoUtterances>& recogUtterances, const std::wstring& speechModelVerStr)
+	{
+		QFile file(toQString(filePath));
+		if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+			return std::make_tuple(false, "Can't open file for writing");
+
+		QXmlStreamWriter xmlWriter(&file);
+		xmlWriter.setCodec("utf-8");
+		xmlWriter.setAutoFormatting(true);
+		xmlWriter.setAutoFormattingIndent(3);
+
+		xmlWriter.writeStartDocument("1.0");
+		xmlWriter.writeStartElement("decRecogResult");
+
+		const std::wstring separ(L" ");
+		std::wstringstream buff;
+		CharPhonationGroupCosts c;
+		EditDistance<wchar_t, CharPhonationGroupCosts> editDist;
+		for (int i = 0; i < recogUtterances.size(); ++i)
+		{
+			const TwoUtterances& utter = recogUtterances[i];
+
+			// note, dump utterances with utter.ErrorWord == 0 too
+
+			xmlWriter.writeStartElement("utter");
+
+			xmlWriter.writeAttribute("relWavPath", QString::fromStdWString(utter.Segment.RelFilePathNoExt));
+
+			xmlWriter.writeAttribute("speechVer", QString::fromStdWString(speechModelVerStr));
+			xmlWriter.writeAttribute("wordDist", QString::number(utter.ErrorWord));
+			xmlWriter.writeAttribute("charDist", QString::number(utter.ErrorChars));
+			xmlWriter.writeAttribute("expWordsNum", QString::number(utter.WordsExpected.size()));
+
+			xmlWriter.writeTextElement("pronsExpect", QString::fromStdWString(utter.Segment.Transcription));
+
+			buff.str(L"");
+			PticaGovorun::join(utter.PronIdsActualRaw.cbegin(), utter.PronIdsActualRaw.cend(), separ, buff);
+			xmlWriter.writeTextElement("pronsActual", QString::fromStdWString(buff.str()));
+
+			buff.str(L"");
+			for (int wordInd = 0; wordInd < utter.PronIdsActualRaw.size(); ++wordInd)
+			{
+				buff << utter.PronIdsActualRaw[wordInd] <<" ";
+				buff << QString("%1").arg(utter.WordProbs[wordInd], 0, 'f', 2).toStdWString() << " ";
+			}
+			xmlWriter.writeTextElement("wordProbs", QString::fromStdWString(buff.str()));
+
+			buff.str(L"");
+			PticaGovorun::join(utter.WordsExpected.cbegin(), utter.WordsExpected.cend(), separ, buff);
+			std::wstring expectWords = buff.str();
+			xmlWriter.writeTextElement("wordsExpect", QString::fromStdWString(expectWords));
+
+			buff.str(L"");
+			PticaGovorun::join(utter.WordsActual.cbegin(), utter.WordsActual.cend(), separ, buff);
+			std::wstring actualWords = buff.str();
+			xmlWriter.writeTextElement("wordsActual", QString::fromStdWString(actualWords));
+
+			//
+			editDist.estimateAllDistances(expectWords, actualWords, c);
+			std::vector<EditStep> editRecipe;
+			editDist.minCostRecipe(editRecipe);
+			std::vector<wchar_t> alignWord1;
+			std::vector<wchar_t> alignWord2;
+			alignWords(wv::make_view(expectWords), wv::make_view(actualWords), editRecipe, L'_', alignWord1, alignWord2);
+			xmlWriter.writeTextElement("alignWordsExpect", QString::fromStdWString(std::wstring(alignWord1.begin(), alignWord1.end())));
+			xmlWriter.writeTextElement("alignWordsActual", QString::fromStdWString(std::wstring(alignWord2.begin(), alignWord2.end())));
+
+			// expected-actual phones
+			xmlWriter.writeTextElement("alignPhonesExpect", QString::fromStdString(utter.PhonesExpectedAlignedStr));
+			xmlWriter.writeTextElement("alignPhonesActual", QString::fromStdString(utter.PhonesActualAlignedStr));
+
+			xmlWriter.writeEndElement(); // "utter"
+		}
+		xmlWriter.writeEndElement(); // "decRecogCache"
+		return std::make_tuple(true, nullptr);
+	}
+
 	void testSphincDecoder()
 	{
 		const char* hmmPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";
@@ -872,6 +950,11 @@ namespace RecognizeSpeechSphinxTester
 		const wchar_t* fileIdPath =  LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian_test.fileids)path";
 		const wchar_t* transcrPath = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian_test.transcription)path";
 		const wchar_t* audioDir =    LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\wav\)path";
+
+		QDir baseDir = QFileInfo(hmmPath).dir();
+		baseDir.cdUp();
+		baseDir.cdUp();
+		std::wstring speechModelVerStr = sphinxModelVersionStr(baseDir.absolutePath().toStdWString());
 
 		//
 		int segsMax = -1;
@@ -993,7 +1076,7 @@ namespace RecognizeSpeechSphinxTester
 		// brief info
 
 		{
-			dumpFileName << L"wordErrorDump." << timeStampStr << L"_brief.txt";
+			dumpFileName << L"wordErrorDump_" << speechModelVerStr << "_" << timeStampStr << L"_brief.txt";
 
 			QFile dumpFile(toQString(dumpFileName.str()));
 			if (!dumpFile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -1017,8 +1100,17 @@ namespace RecognizeSpeechSphinxTester
 		});
 
 		dumpFileName.str(L"");
-		dumpFileName << L"wordErrorDump." << timeStampStr << L"_byWordErr.txt";
+		dumpFileName << L"wordErrorDump_" << speechModelVerStr <<"_" << timeStampStr << L"_byWordErr.txt";
 		std::tie(op,errMsg) = dumpDecoderExpectActualResults(dumpFileName.str(), recogUtterances);
+		if (!op)
+		{
+			std::cerr << errMsg << std::endl;
+			return;
+		}
+
+		dumpFileName.str(L"");
+		dumpFileName << L"wordErrorDump_" << speechModelVerStr << "_" << timeStampStr << L"_byWordErr.xml";
+		std::tie(op, errMsg) = dumpDecoderExpectActualResultsXml(dumpFileName.str(), recogUtterances, speechModelVerStr);
 		if (!op)
 		{
 			std::cerr << errMsg << std::endl;
@@ -1033,8 +1125,17 @@ namespace RecognizeSpeechSphinxTester
 		});
 
 		dumpFileName.str(L"");
-		dumpFileName << L"wordErrorDump." << timeStampStr << L"_byFile.txt";
+		dumpFileName << L"wordErrorDump_" << speechModelVerStr << "_" << timeStampStr << L"_byFile.txt";
 		std::tie(op,errMsg) = dumpDecoderExpectActualResults(dumpFileName.str(), recogUtterances);
+		if (!op)
+		{
+			std::cerr << errMsg << std::endl;
+			return;
+		}
+
+		dumpFileName.str(L"");
+		dumpFileName << L"wordErrorDump_" << speechModelVerStr << "_" << timeStampStr << L"_byFile.xml";
+		std::tie(op, errMsg) = dumpDecoderExpectActualResultsXml(dumpFileName.str(), recogUtterances, speechModelVerStr);
 		if (!op)
 		{
 			std::cerr << errMsg << std::endl;
@@ -1043,7 +1144,7 @@ namespace RecognizeSpeechSphinxTester
 
 		// print confusion matrix
 		dumpFileName.str(L"");
-		dumpFileName << L"wordErrorDump." << timeStampStr << "_confusionMat.htm";
+		dumpFileName << L"wordErrorDump_" << speechModelVerStr << "_" << timeStampStr << "_confusionMat.htm";
 		dumpConfusionMatrix(phoneConfusionMat, phonesCount, dumpFileName.str(), phoneReg);
 	}
 

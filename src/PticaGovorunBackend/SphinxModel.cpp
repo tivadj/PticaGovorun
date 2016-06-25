@@ -12,6 +12,49 @@
 
 namespace PticaGovorun
 {
+	std::wstring sphinxModelVersionStr(boost::wstring_ref modelDir)
+	{
+		QDir modelDirQ(toQString(modelDir));
+		if (!modelDirQ.cd("etc"))
+			return L"";
+
+		QString trainConfigPath = modelDirQ.absoluteFilePath("sphinx_train.cfg");
+		QFile configFile(trainConfigPath);
+		if (!configFile.open(QIODevice::ReadOnly))
+			return L"";
+
+		// find the line with Sphinx model base path
+
+		// eg the line
+		// $CFG_BASE_DIR = "C:/TrainSphinx/persian.v39";
+		QString baseDirLine;
+		QTextStream txt(&configFile);
+		while (!txt.atEnd())
+		{
+			QString line = txt.readLine();
+			int ind1 = line.indexOf("$CFG_BASE_DIR");
+			if (ind1 != -1)
+			{
+				baseDirLine = line;
+				break;
+			}
+		}
+
+		if (baseDirLine.isNull())
+			return L"";
+
+		const QChar doubleQuoute('\"');
+		int i1 = baseDirLine.indexOf(doubleQuoute);
+		int i2 = baseDirLine.lastIndexOf(doubleQuoute);
+		if (i1 == -1 || i2 == -1)
+			return L"";
+
+		QString baseDirath = baseDirLine.mid(i1 + 1, i2 - i1 - 1);
+		QDir dirInfo(baseDirath);
+		QString sphinxDirName = dirInfo.dirName(); // name of the deepest dir
+		return sphinxDirName.toStdWString();
+	}
+
 	// Collects all phones used in the set of phonetic dictionaries.
 	class PhoneAccumulator
 	{

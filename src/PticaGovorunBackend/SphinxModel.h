@@ -27,6 +27,10 @@ namespace PticaGovorun
 		};
 	}
 
+	// Gets the string which can be used as a version of a trained speech model.
+	// Returns the name of the directory where the sphinx model resides.
+	PG_EXPORTS std::wstring sphinxModelVersionStr(boost::wstring_ref modelDir);
+
 	// Creates data required to train Sphinx engine.
 	class PG_EXPORTS SphinxTrainDataBuilder
 	{
