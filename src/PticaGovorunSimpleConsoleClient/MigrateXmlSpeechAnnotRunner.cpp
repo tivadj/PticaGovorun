@@ -29,7 +29,7 @@ namespace MigrateXmlSpeechAnnotRunnerNS
 			}
 
 			// add lang attr
-			for (int markerInd = 0; markerInd < speechAnnot.markers().size(); ++markerInd)
+			for (int markerInd = 0; markerInd < speechAnnot.markersSize(); ++markerInd)
 			{
 				PticaGovorun::TimePointMarker& m = speechAnnot.marker(markerInd);
 

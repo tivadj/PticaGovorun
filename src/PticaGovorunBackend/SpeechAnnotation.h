@@ -27,7 +27,10 @@ namespace PticaGovorun
 		friend PG_EXPORTS std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioFilePathAbs, SpeechAnnotation& speechAnnot);
 		std::vector<SpeechAnnotationParameter> parameters_;
 		std::vector<SpeakerFantom> speakers_;
-		std::vector<TimePointMarker> frameIndMarkers_; // stores markers of all level (word, phone)
+		
+		// Stores markers of all level (word, phone)
+		// The markers are ordered by increased SampleInd.
+		std::vector<TimePointMarker> frameIndMarkers_;
 		std::hash_set<int> usedMarkerIds_; // stores ids of all markers; used to generate new free marker id
 	public:
 		SpeechAnnotation();
@@ -55,6 +58,8 @@ namespace PticaGovorun
 		// Validate marker's speech language
 		void validateMarkers(QStringList& checkMsgs) const;
 
+		size_t markersSize() const;
+
 		const std::vector<TimePointMarker>& markers() const;
 
 		TimePointMarker& marker(int markerInd);
@@ -71,6 +76,15 @@ namespace PticaGovorun
 		// Finds the speaker who has spoken recently, starting from given marker and goes back.
 		// Returns Speaker.BriefId or empty string if the last speaker was not found.
 		const std::wstring inferRecentSpeaker(int markerInd) const;
+
+		// Update marker's frameInd and ensures that markers collection is ordered by FrameInd.
+		// Returns true if the marker was updated.
+		bool setMarkerFrameInd(int markerId, long frameInd);
+	private:
+		// Search for marker by Id. Returns pointer to the marker and index of the marker in the 
+		// markers collection.
+		// Note: marker.SampleInd can't be changed.
+		TimePointMarker* markerById(int markerId, size_t* resultMarkerInd);
 	};
 
 	// returns the closest segment which contains given frameInd. The segment is described by two indices in

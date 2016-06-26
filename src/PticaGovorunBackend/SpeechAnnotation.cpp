@@ -18,6 +18,11 @@ namespace PticaGovorun
 	{
 	}
 
+	size_t SpeechAnnotation::markersSize() const
+	{
+		return frameIndMarkers_.size();
+	}
+
 	const std::vector<TimePointMarker>& SpeechAnnotation::markers() const
 	{
 		return frameIndMarkers_;
@@ -42,6 +47,38 @@ namespace PticaGovorun
 				return i;
 		}
 		return -1;
+	}
+	
+	TimePointMarker* SpeechAnnotation::markerById(int markerId, size_t* resultMarkerInd)
+	{
+		for (size_t i = 0; i < frameIndMarkers_.size(); ++i)
+		{
+			auto& marker = frameIndMarkers_[i];
+			if (marker.Id == markerId)
+			{
+				if (resultMarkerInd != nullptr) 
+					*resultMarkerInd = i;
+				return &marker;
+			}
+		}
+		return nullptr;
+	}
+	
+	bool SpeechAnnotation::setMarkerFrameInd(int markerId, long frameInd)
+	{
+		size_t markerInd = (size_t)-1;
+		auto pMarker = markerById(markerId, &markerInd);
+		if (pMarker == nullptr || pMarker ->SampleInd == frameInd)
+			return false;
+
+		// keep markers collection ordered by FrameInd
+		pMarker->SampleInd = frameInd;
+		std::sort(std::begin(frameIndMarkers_), std::end(frameIndMarkers_), 
+			[](const TimePointMarker& a, const TimePointMarker& b)
+		{
+			return a.SampleInd < b.SampleInd;
+		});
+		return true;
 	}
 
 	int SpeechAnnotation::getClosestMarkerInd(long frameInd, long* dist)

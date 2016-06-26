@@ -261,7 +261,7 @@ private:
 	PticaGovorun::SpeechLanguage templateMarkerSpeechLanguage_ = PticaGovorun::SpeechLanguage::Ukrainian;
 	QPointF draggingLastViewportPos_; // used to avoid frequent repaints when mouse pos doesn't change
 	bool isDraggingMarker_ = false;
-	int draggingMarkerInd_ = -1;
+	int draggingMarkerId_ = -1;
 	float lastMousePressDocPosX_ = -1;
 
 public:
@@ -307,7 +307,7 @@ public:
 	PticaGovorun::MarkerLevelOfDetail templateMarkerLevelOfDetail() const;
 	PticaGovorun::SpeechLanguage templateMarkerSpeechLanguage() const;
 
-	void dragMarkerStart(const QPointF& localPos, int markerInd);
+	void dragMarkerStart(const QPointF& localPos, int markerId);
 	void dragMarkerStop();
 	void dragMarkerContinue(const QPointF& localPos);
 private:

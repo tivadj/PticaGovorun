@@ -754,7 +754,7 @@ void SpeechTranscriptionViewModel::deleteRequest(bool isControl)
 			std::tie(start, end) = cursorOrdered();
 
 			// delete markers covered by cursor
-			for (int markerInd = speechAnnot_.markers().size() - 1; markerInd >= 0; --markerInd)
+			for (int markerInd = speechAnnot_.markersSize() - 1; markerInd >= 0; --markerInd)
 			{
 				long markerFrameInd = speechAnnot_.marker(markerInd).SampleInd;
 				if (markerFrameInd >= start && markerFrameInd < end)
@@ -877,10 +877,10 @@ PticaGovorun::SpeechLanguage SpeechTranscriptionViewModel::templateMarkerSpeechL
 	return templateMarkerSpeechLanguage_;
 }
 
-void SpeechTranscriptionViewModel::dragMarkerStart(const QPointF& localPos, int markerInd)
+void SpeechTranscriptionViewModel::dragMarkerStart(const QPointF& localPos, int markerId)
 {
 	qDebug() << "dragMarkerStart";
-	draggingMarkerInd_ = markerInd;
+	draggingMarkerId_ = markerId;
 	isDraggingMarker_ = true;
 	draggingLastViewportPos_ = localPos;
 }
@@ -890,7 +890,7 @@ void SpeechTranscriptionViewModel::dragMarkerStop()
 	if (isDraggingMarker_)
 	{
 		qDebug() << "dragMarkerStop";
-		draggingMarkerInd_ = -1;
+		draggingMarkerId_ = -1;
 		isDraggingMarker_ = false;
 	}
 }
@@ -900,6 +900,7 @@ void SpeechTranscriptionViewModel::dragMarkerContinue(const QPointF& localPos)
 	if (isDraggingMarker_ && draggingLastViewportPos_ != localPos)
 	{
 		qDebug() << "dragMarkerContinue";
+		PG_DbgAssert(draggingMarkerId_ != -1);
 
 		float mouseMoveLocalDocPosX = -1;
 		if (!viewportPosToLocalDocPosX(localPos, mouseMoveLocalDocPosX))
@@ -908,7 +909,10 @@ void SpeechTranscriptionViewModel::dragMarkerContinue(const QPointF& localPos)
 		float mouseMoveDocPosX = docOffsetX_ + mouseMoveLocalDocPosX;
 		long frameInd = (long)docPosXToSampleInd(mouseMoveDocPosX);
 
-		speechAnnot_.marker(draggingMarkerInd_).SampleInd = frameInd;
+		bool updateOp = speechAnnot_.setMarkerFrameInd(draggingMarkerId_, frameInd);
+		if (!updateOp)
+			return; // The dragged marker's SampleInd was not changed
+
 		draggingLastViewportPos_ = localPos;
 
 		// redraw current marker
@@ -947,8 +951,8 @@ void SpeechTranscriptionViewModel::setLastMousePressPos(const QPointF& localPos,
 	
 	if (doDragging)
 	{
-
-		dragMarkerStart(localPos, closestMarkerInd);
+		const auto& marker = speechAnnot_.marker(closestMarkerInd);
+		dragMarkerStart(localPos, marker.Id);
 		// do not change cursor
 	}
 	else
