@@ -491,7 +491,7 @@ namespace PticaGovorun
 				markersOfInterest.push_back(&marker);
 		}
 
-		for (size_t markerInd = 0; markerInd < markersOfInterest.size() - 1; ++markerInd)
+		for (int markerInd = 0; markerInd < (int)markersOfInterest.size() - 1; ++markerInd)
 		{
 			const PticaGovorun::TimePointMarker* marker1 = markersOfInterest[markerInd];
 			if (!marker1->TranscripText.isEmpty())
