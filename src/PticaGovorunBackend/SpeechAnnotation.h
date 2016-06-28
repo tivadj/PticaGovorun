@@ -25,6 +25,8 @@ namespace PticaGovorun
 	class PG_EXPORTS SpeechAnnotation
 	{
 		friend PG_EXPORTS std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioFilePathAbs, SpeechAnnotation& speechAnnot);
+		std::wstring audioFileRelPath_; // the relative path to corresponding audio file
+	private:
 		std::vector<SpeechAnnotationParameter> parameters_;
 		std::vector<SpeakerFantom> speakers_;
 		
@@ -35,6 +37,9 @@ namespace PticaGovorun
 	public:
 		SpeechAnnotation();
 		~SpeechAnnotation();
+
+		std::wstring audioFileRelPath() const;
+		void setAudioFileRelPath(std::wstring value);
 
 		void clear();
 
@@ -139,8 +144,8 @@ namespace PticaGovorun
 	struct PG_EXPORTS AnnotSpeechFileNode
 	{
 		QString FileNameNoExt;
-		QString AudioPath;
-		QString SpeechAnnotationPath;
+		//QString AudioPath;
+		QString SpeechAnnotationAbsPath;
 	};
 
 	struct PG_EXPORTS AnnotSpeechDirNode

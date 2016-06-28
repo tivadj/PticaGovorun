@@ -116,7 +116,7 @@ public:
 	SpeechTranscriptionViewModel();
 	void init(std::shared_ptr<SharedServiceProvider> serviceProvider);
 
-    void loadAudioFileRequest();
+    void loadAnnotAndAudioFileRequest();
 
 	// Plays the current segment of audio.
 	// restoreCurFrameInd=true, if current frame must be restored when playing finishes.
@@ -141,17 +141,14 @@ public:
 	// updateViewportOffset is true to keep viewport above the playing caret.
 	void setPlayingSampleInd(long value, bool updateViewportOffset);
 
-	QString audioMarkupFilePathAbs() const;
 	//
-
-	void loadAudioMarkupFromXml();
 	void saveAudioMarkupToXml();
 
 	void saveCurrentRangeAsWavRequest();
 
 	QString modelShortName() const;
-	QString audioFilePath() const;
-    void setAudioFilePath(const QString& filePath);
+	QString annotFilePath() const;
+	void setAnnotFilePath(const QString& filePath);
 
 	// Number of pixels per one sample in X direction. Used to construct a samples graph.
 	float pixelsPerSample() const;
@@ -361,7 +358,7 @@ private:
 private:
 	std::vector<short> audioSamples_;
 	float audioFrameRate_; // frame (sample) rate of current audio
-    QString audioFilePathAbs_;
+    QString annotFilePathAbs_; // abs path to speech annotation (xml) file
 
 	// Represents internal audio player's data.
 	// The range (StartPlayingFrameInd;FinishPlayingFrameInd) of frames is played.

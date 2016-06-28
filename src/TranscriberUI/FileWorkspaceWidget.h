@@ -23,7 +23,7 @@ namespace PticaGovorun
 		void setFileWorkspaceViewModel(std::shared_ptr<FileWorkspaceViewModel> model);
 	private slots:
 		void treeWidgetFileItems_itemDoubleClicked(QTreeWidgetItem * item, int column);
-		void fileWorkspaceModel_workingDirChanged(const std::wstring& oldWorkingDir);
+		void fileWorkspaceModel_annotDirChanged(const std::wstring& oldWorkingDir);
 	private:
 		void updateUI();
 	private:

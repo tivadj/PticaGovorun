@@ -20,6 +20,7 @@ namespace PticaGovorun {
 
 namespace {
 	static const char* XmlDocName = "audioAnnotation";
+	static const char* AnnotAudioFile = "audioFile";
 	static const char* AnnotHeaderName = "header";
 	static const char* HeaderSpeakerNodeName = "speaker";
 	static const char* HeaderSpeakerBriefIdName = "briefId";
@@ -52,6 +53,8 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMa
 
 	QDomElement docElem = xml.documentElement();
 	//qDebug() << docElem.tagName();
+	QString audioFileQ = docElem.attribute(AnnotAudioFile, "");
+	annot.setAudioFileRelPath(audioFileQ.toStdWString());
 
 	//
 	QDomNodeList nodeList = docElem.childNodes();
@@ -150,6 +153,7 @@ PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const SpeechAnnota
 
 	xmlWriter.writeStartDocument("1.0");
 	xmlWriter.writeStartElement(XmlDocName);
+	xmlWriter.writeAttribute(AnnotAudioFile, QString::fromStdWString(annot.audioFileRelPath()));
 
 	if (!annot.speakers().empty())
 	{

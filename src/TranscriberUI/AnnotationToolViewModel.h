@@ -71,7 +71,7 @@ namespace PticaGovorun
 
 	private slots:
 		// file workspace
-		void fileWorkspaceViewModel_openAudioFile(const std::wstring& filePath);
+		void fileWorkspaceViewModel_openAnnotFile(const std::wstring& annotFilePath);
 	private:
 		void nextNotification(const QString& message) const;
 	private:

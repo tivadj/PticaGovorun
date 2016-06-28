@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<audioAnnotation>
+<audioAnnotation audioFile="../../SpeechAudio/ncru1-slovo/685849.flac">
    <header>
       <speaker briefId="zakharevycho" name="Захаревич Олена"/>
       <speaker briefId="khorkindm" name="Хоркін Дмитро Миколайович"/>

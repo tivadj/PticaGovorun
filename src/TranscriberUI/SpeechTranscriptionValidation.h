@@ -6,6 +6,6 @@
 
 namespace PticaGovorun
 {
-	void validateAllOnDiskSpeechAnnotations(boost::wstring_ref speechDataDir, PhoneticDictionaryViewModel& phoneticDictModel, QStringList& checkMsgs);
+	void validateAllOnDiskSpeechAnnotations(boost::wstring_ref annotDir, PhoneticDictionaryViewModel& phoneticDictModel, QStringList& checkMsgs);
 	void validateSpeechAnnotation(const SpeechAnnotation& annot, PhoneticDictionaryViewModel& phoneticDictModel, QStringList& checkMsgs);
 }

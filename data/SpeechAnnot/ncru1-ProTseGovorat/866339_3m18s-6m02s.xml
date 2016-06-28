@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<audioAnnotation>
+<audioAnnotation audioFile="../../SpeechAudio/ncru1-ProTseGovorat/866339_3m18s-6m02s.flac">
    <header>
       <speaker briefId="korotajevskyjsh" name="Коротаєвський Сергій Генадійович"/>
    </header>

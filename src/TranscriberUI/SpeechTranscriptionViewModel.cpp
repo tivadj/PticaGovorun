@@ -56,13 +56,29 @@ SpeechTranscriptionViewModel::SpeechTranscriptionViewModel()
 		juliusRecognizerProvider_ = serviceProvider->juliusRecognizerProvider();
 	}
 
-	void SpeechTranscriptionViewModel::loadAudioFileRequest()
+	void SpeechTranscriptionViewModel::loadAnnotAndAudioFileRequest()
 {
-	using namespace PticaGovorun;
+	PG_DbgAssert(QFileInfo::exists(annotFilePathAbs_) && "Annotation file must be specified");
+
+	speechAnnot_.clear();
+	bool loadOp;
+	const char* errMsg;
+	std::tie(loadOp, errMsg) = loadAudioMarkupFromXml(annotFilePathAbs_.toStdWString(), speechAnnot_);
+	if (!loadOp)
+	{
+		nextNotification(errMsg);
+		return;
+	}
+
+	QString audioFileRelPathQ = QString::fromStdWString(speechAnnot_.audioFileRelPath());
+	QDir annotFileDir = QFileInfo(annotFilePathAbs_).absoluteDir();
+	QString audioFilePath =  QFileInfo(annotFileDir, audioFileRelPathQ).canonicalFilePath();
+
+	//
 	audioSamples_.clear();
 	diagramSegments_.clear();
 
-	auto readOp = PticaGovorun::readAllSamplesFormatAware(audioFilePathAbs_.toStdString().c_str(), audioSamples_, &audioFrameRate_);
+	auto readOp = PticaGovorun::readAllSamplesFormatAware(audioFilePath.toStdString().c_str(), audioSamples_, &audioFrameRate_);
 	if (!std::get<0>(readOp))
 	{
 		auto msg = std::get<1>(readOp);
@@ -86,12 +102,10 @@ SpeechTranscriptionViewModel::SpeechTranscriptionViewModel()
 
 	emit audioSamplesChanged();
 
-	QString msg = QString("Loaded '%1' FrameRate=%2 FramesCount=%3").arg(audioFilePathAbs_).arg(audioFrameRate_).arg(audioSamples_.size());
+	QString msg = QString("Loaded '%1' FrameRate=%2 FramesCount=%3").arg(audioFilePath).arg(audioFrameRate_).arg(audioSamples_.size());
 	nextNotification(msg);
 
 	//
-	loadAudioMarkupFromXml();
-
 	setCursorInternal(0, true ,false);
 
 	emit audioSamplesLoaded();
@@ -487,44 +501,9 @@ void SpeechTranscriptionViewModel::setPlayingSampleInd(long value, bool updateVi
 	}
 }
 
-QString SpeechTranscriptionViewModel::audioMarkupFilePathAbs() const
-{
-	QSettings settings(IniFileName, QSettings::IniFormat);
-	QString speechWavDirStr = settings.value("SpeechWavDir", QString(".\\")).toString();
-	QString speechAnnotDirStr = settings.value("SpeechAnnotDir", QString(".\\")).toString();
-
-	std::wstring audioFilePathW = audioFilePath().toStdWString();
-	std::wstring annotPathAbsW = PticaGovorun::speechAnnotationFilePathAbs(audioFilePathW, speechWavDirStr.toStdWString(), speechAnnotDirStr.toStdWString());
-	QString annotPathAbs = QString::fromStdWString(annotPathAbsW);
-	return annotPathAbs;
-}
-
-void SpeechTranscriptionViewModel::loadAudioMarkupFromXml()
-{
-	QString audioMarkupPathAbs = audioMarkupFilePathAbs();
-	if (!QFileInfo::exists(audioMarkupPathAbs))
-	{
-		nextNotification(QString("Can' find annotation file '%1'").arg(audioMarkupPathAbs));
-		return;
-	}
-	
-	//
-	speechAnnot_.clear();
-	bool loadOp;
-	const char* errMsg;
-	std::tie(loadOp, errMsg) = PticaGovorun::loadAudioMarkupFromXml(audioMarkupPathAbs.toStdWString(), speechAnnot_);
-	if (!loadOp)
-	{
-		nextNotification(errMsg);
-		return;
-	}
-}
-
 void SpeechTranscriptionViewModel::saveAudioMarkupToXml()
 {
-	QString audioMarkupPathAbs = audioMarkupFilePathAbs();
-	
-	PticaGovorun::saveAudioMarkupToXml(speechAnnot_, audioMarkupPathAbs.toStdWString());
+	PticaGovorun::saveAudioMarkupToXml(speechAnnot_, annotFilePathAbs_.toStdWString());
 	
 	nextNotification(formatLogLineWithTime("Saved xml markup."));
 }
@@ -552,21 +531,21 @@ void SpeechTranscriptionViewModel::saveCurrentRangeAsWavRequest()
 
 	QString SpeechTranscriptionViewModel::modelShortName() const
 	{
-		QFileInfo audioFileInfo(audioFilePathAbs_);
+		QFileInfo audioFileInfo(annotFilePathAbs_);
 		return audioFileInfo.baseName();
 	}
 
-	QString SpeechTranscriptionViewModel::audioFilePath() const
-{
-    return audioFilePathAbs_;
-}
+	QString SpeechTranscriptionViewModel::annotFilePath() const
+	{
+		return annotFilePathAbs_;
+	}
 
-void SpeechTranscriptionViewModel::setAudioFilePath(const QString& filePath)
-{
-    audioFilePathAbs_ = filePath;
-}
+	void SpeechTranscriptionViewModel::setAnnotFilePath(const QString& filePath)
+	{
+		annotFilePathAbs_ = filePath;
+	}
 
-float SpeechTranscriptionViewModel::pixelsPerSample() const
+	float SpeechTranscriptionViewModel::pixelsPerSample() const
 {
 	return scale_;
 }

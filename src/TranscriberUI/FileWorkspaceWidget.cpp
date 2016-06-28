@@ -22,21 +22,21 @@ namespace PticaGovorun
 	{
 		model_ = model;
 
-		QObject::connect(model_.get(), SIGNAL(workingDirChanged(const std::wstring&)), this, SLOT(fileWorkspaceModel_workingDirChanged(const std::wstring&)));
+		QObject::connect(model_.get(), SIGNAL(annotDirChanged(const std::wstring&)), this, SLOT(fileWorkspaceModel_annotDirChanged(const std::wstring&)));
 
 		updateUI();
 	}
 
 	void FileWorkspaceWidget::treeWidgetFileItems_itemDoubleClicked(QTreeWidgetItem* item, int column)
 	{
-		QVariant wavPathVar = item->data(0, Qt::UserRole);
-		if (wavPathVar.isNull())
+		QVariant strVar = item->data(0, Qt::UserRole);
+		if (strVar.isNull())
 			return;
-		QString wavFilePath = wavPathVar.toString();
-		model_->openAudioFile(wavFilePath.toStdWString());
+		QString annotFilePath = strVar.toString();
+		model_->openAnnotFile(annotFilePath.toStdWString());
 	}
 
-	void FileWorkspaceWidget::fileWorkspaceModel_workingDirChanged(const std::wstring& oldWorkingDir)
+	void FileWorkspaceWidget::fileWorkspaceModel_annotDirChanged(const std::wstring& oldWorkingDir)
 	{
 		updateUI();
 	}

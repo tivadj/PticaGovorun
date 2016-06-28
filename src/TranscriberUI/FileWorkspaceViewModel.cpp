@@ -8,19 +8,26 @@ namespace PticaGovorun
 	{
 	}
 
-	void FileWorkspaceViewModel::setWorkingDirectory(const std::wstring& dir)
+	void FileWorkspaceViewModel::setAnnotDir(const std::wstring& dir)
 	{
-		if (curDir_ != dir)
+		if (annotDir_ != dir)
 		{
-			auto oldDir = curDir_;
-			curDir_ = dir;
-			emit workingDirChanged(oldDir);
+			auto oldDir = annotDir_;
+			annotDir_ = dir;
+			emit annotDirChanged(oldDir);
 		}
+	}
+
+	std::wstring FileWorkspaceViewModel::annotDir() const
+	{
+		return annotDir_;
 	}
 
 	void FileWorkspaceViewModel::populateItems(QList<QTreeWidgetItem*>& items) const
 	{
-		QString curDirQ = QString::fromStdWString(curDir_);
+		if (annotDir_.empty())
+			return;
+		QString curDirQ = QString::fromStdWString(annotDir_);
 
 		AnnotSpeechDirNode annotStructure;
 		populateAnnotationFileStructure(curDirQ, annotStructure);
@@ -44,7 +51,7 @@ namespace PticaGovorun
 		{
 			QTreeWidgetItem* item = new QTreeWidgetItem();
 			item->setText(0, fileItem.FileNameNoExt);
-			item->setData(0, Qt::UserRole, QVariant::fromValue(fileItem.AudioPath));
+			item->setData(0, Qt::UserRole, QVariant::fromValue(fileItem.SpeechAnnotationAbsPath));
 			parent->addChild(item);
 		}
 	}

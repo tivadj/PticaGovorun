@@ -118,9 +118,9 @@ namespace PticaGovorun
 		annotationToolModel_->playComposingRecipeRequest(composingRecipe);
 	}
 
-	void AnnotationToolMainWindow::audioTranscriptionToolModel_addedAudioTranscription(const std::wstring& filePath)
+	void AnnotationToolMainWindow::audioTranscriptionToolModel_addedAudioTranscription(const std::wstring& annotFilePath)
 	{
-		std::shared_ptr<SpeechTranscriptionViewModel> transcriberModel = annotationToolModel_->audioTranscriptionModelByFilePathAbs(filePath);
+		std::shared_ptr<SpeechTranscriptionViewModel> transcriberModel = annotationToolModel_->audioTranscriptionModelByFilePathAbs(annotFilePath);
 		PG_DbgAssert(transcriberModel != nullptr && "Can't find created model");
 
 		auto wdg = std::make_unique<SpeechTranscriptionWidget>();

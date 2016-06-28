@@ -1,6 +1,8 @@
 #include "AnnotationToolViewModel.h"
 #include <memory>
 #include <QSettings>
+#include <QDir>
+#include <QFileInfo>
 #include "PresentationHelpers.h"
 #include "SpeechTranscriptionValidation.h"
 
@@ -9,8 +11,8 @@ namespace PticaGovorun
 	namespace
 	{
 		const char* IniFileName = "TranscriberUI.ini"; // where to store settings
-		const char* SpeechDataRoot = "SpeechDataRoot"; // where wav and annotation files reside
-		const char* WavFilePath = "WavFilePath"; // last opened wav file path
+		const char* RecentAnnotDir = "RecentAnnotDir"; // where xml annotation files reside
+		const char* RecentAnnotFileRelPath = "RecentAnnotFileRelPath"; // relative path to last opened xml annot file
 	}
 
 	AnnotationToolViewModel::AnnotationToolViewModel()
@@ -28,7 +30,7 @@ namespace PticaGovorun
 		notificationService_ = serviceProvider->notificationService();
 
 		fileWorkspaceViewModel_ = std::make_shared<FileWorkspaceViewModel>();
-		QObject::connect(fileWorkspaceViewModel_.get(), SIGNAL(openAudioFile(const std::wstring&)), this, SLOT(fileWorkspaceViewModel_openAudioFile(const std::wstring&)));
+		QObject::connect(fileWorkspaceViewModel_.get(), SIGNAL(openAnnotFile(const std::wstring&)), this, SLOT(fileWorkspaceViewModel_openAnnotFile(const std::wstring&)));
 
 		audioMarkupNavigator_ = std::make_shared<AudioMarkupNavigator>();
 		phoneticDictModel_ = std::make_shared<PhoneticDictionaryViewModel>();
@@ -49,24 +51,38 @@ namespace PticaGovorun
 
 		QSettings settings(IniFileName, QSettings::IniFormat); // reads from current directory
 		
-		QString recentAnnotDir = settings.value(SpeechDataRoot, QString("")).toString();
-		fileWorkspaceViewModel_->setWorkingDirectory(recentAnnotDir.toStdWString());
+		QString recentAnnotDir = settings.value(RecentAnnotDir, QString("")).toString();
+		fileWorkspaceViewModel_->setAnnotDir(recentAnnotDir.toStdWString());
 
-		QString speechWavDirVar = settings.value(WavFilePath, QString("")).toString();
-		if (!speechWavDirVar.isEmpty())
-			fileWorkspaceViewModel_openAudioFile(speechWavDirVar.toStdWString());
+		QString recentAnnotFileRelPath = settings.value(RecentAnnotFileRelPath, QString("")).toString();
+		if (!recentAnnotFileRelPath.isEmpty())
+		{
+			QString recentAnnotFilePath = QFileInfo(recentAnnotDir, recentAnnotFileRelPath).canonicalFilePath();
+			fileWorkspaceViewModel_openAnnotFile(recentAnnotFilePath.toStdWString());
+		}
 	}
 
 	void AnnotationToolViewModel::saveStateSettings()
 	{
 		QSettings settings(IniFileName, QSettings::IniFormat);
-		
-		QString lastAudioFilePath;
-		auto transcrModel = activeTranscriptionModel();
-		if (transcrModel != nullptr)
-			lastAudioFilePath = transcrModel->audioFilePath();
 
-		settings.setValue(WavFilePath, lastAudioFilePath);
+		auto annotDirQ = QString::fromStdWString(fileWorkspaceViewModel_->annotDir());
+		if (!annotDirQ.isEmpty())
+		{
+			settings.setValue(RecentAnnotDir, annotDirQ);
+
+			// save relative path to the last opened audio file
+			auto transcrModel = activeTranscriptionModel();
+			QString audioFileRelPath;
+			if (transcrModel != nullptr)
+			{
+				QString recentAudioFilePath = transcrModel->annotFilePath();
+
+				audioFileRelPath = QDir(annotDirQ).relativeFilePath(recentAudioFilePath);
+			}
+
+			settings.setValue(RecentAnnotFileRelPath, audioFileRelPath);
+		}
 		settings.sync();
 	}
 
@@ -89,7 +105,7 @@ namespace PticaGovorun
 	{
 		auto it = std::find_if(audioTranscriptionModels_.begin(), audioTranscriptionModels_.end(), [&filePath](std::shared_ptr<SpeechTranscriptionViewModel> pTranscriptionModel)
 		{
-			auto p = pTranscriptionModel->audioFilePath().toStdWString();
+			auto p = pTranscriptionModel->annotFilePath().toStdWString();
 			return p == filePath;
 		});
 		if (it == audioTranscriptionModels_.end())
@@ -115,12 +131,12 @@ namespace PticaGovorun
 
 		QSettings settings(IniFileName, QSettings::IniFormat); // reads from current directory
 
-		QString audioDataDir = settings.value(SpeechDataRoot, QString("")).toString();
+		QString recentAnnotDir = settings.value(RecentAnnotDir, QString("")).toString();
 
 		std::vector<wchar_t> pathBuff;
-		boost::wstring_ref audioDataPath = toWStringRef(audioDataDir, pathBuff);
+		boost::wstring_ref recentAnnotDirRef = toWStringRef(recentAnnotDir, pathBuff);
 
-		validateAllOnDiskSpeechAnnotations(audioDataPath, *phoneticDictModel_, checkMsgs);
+		validateAllOnDiskSpeechAnnotations(recentAnnotDirRef, *phoneticDictModel_, checkMsgs);
 
 		QString msg;
 		if (checkMsgs.isEmpty())
@@ -152,18 +168,25 @@ namespace PticaGovorun
 			m->navigateToMarkerRequest();
 	}
 
-	void AnnotationToolViewModel::fileWorkspaceViewModel_openAudioFile(const std::wstring& filePath)
+	void AnnotationToolViewModel::fileWorkspaceViewModel_openAnnotFile(const std::wstring& annotFilePath)
 	{
-		QString filePathQ = QString::fromStdWString(filePath);
+		if (annotFilePath.empty())
+			return;
+		QString annotFilePathQ = QString::fromStdWString(annotFilePath);
+		if (!QFileInfo(annotFilePathQ).exists())
+		{
+			nextNotification(QString("Can't find annotation file '%1'").arg(annotFilePathQ));
+			return;
+		}
 
 		auto transcriberModel = std::make_shared<SpeechTranscriptionViewModel>();
+		transcriberModel->setAnnotFilePath(annotFilePathQ);
 		transcriberModel->setAudioMarkupNavigator(audioMarkupNavigator_);
 		transcriberModel->setPhoneticDictViewModel(phoneticDictModel_);
 		transcriberModel->init(serviceProvider_);
-		transcriberModel->setAudioFilePath(filePathQ);
-		transcriberModel->loadAudioFileRequest();
+		transcriberModel->loadAnnotAndAudioFileRequest();
 		audioTranscriptionModels_.push_back(transcriberModel);
-		emit addedAudioTranscription(filePath);
+		emit addedAudioTranscription(annotFilePath);
 
 		activeAudioTranscriptionModelInd_ = (int)audioTranscriptionModels_.size() - 1;
 		emit activeAudioTranscriptionChanged(activeAudioTranscriptionModelInd_);
@@ -174,7 +197,7 @@ namespace PticaGovorun
 		QString dirQ = newAnnotDirQuery();
 		if (dirQ.isEmpty())
 			return;
-		fileWorkspaceViewModel_->setWorkingDirectory(dirQ.toStdWString());
+		fileWorkspaceViewModel_->setAnnotDir(dirQ.toStdWString());
 
 		//
 		activeAudioTranscriptionModelInd_ = -1;
@@ -184,7 +207,7 @@ namespace PticaGovorun
 
 	void AnnotationToolViewModel::closeAnnotDirRequest()
 	{
-		fileWorkspaceViewModel_->setWorkingDirectory(L"");
+		fileWorkspaceViewModel_->setAnnotDir(L"");
 
 		//
 		activeAudioTranscriptionModelInd_ = -1;

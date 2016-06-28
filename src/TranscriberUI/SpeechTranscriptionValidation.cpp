@@ -17,9 +17,9 @@ namespace PticaGovorun
 		phoneticDictModel.validateSpeechAnnotationsHavePhoneticTranscription(annot, checkMsgs);
 	}
 
-	void validateAllOnDiskSpeechAnnotations(boost::wstring_ref speechDataDir, PhoneticDictionaryViewModel& phoneticDictModel, QStringList& checkMsgs)
+	void validateAllOnDiskSpeechAnnotations(boost::wstring_ref annotDir, PhoneticDictionaryViewModel& phoneticDictModel, QStringList& checkMsgs)
 	{
-		QString curDirQ = toQString(speechDataDir);
+		QString curDirQ = toQString(annotDir);
 
 		AnnotSpeechDirNode annotStructure;
 		populateAnnotationFileStructure(curDirQ, annotStructure);
@@ -32,12 +32,12 @@ namespace PticaGovorun
 		{
 			// do not consider badly marked markup
 			// TODO: fix finance.ua-pynzenykvm markup
-			bool isBadMarkup = fileItem.SpeechAnnotationPath.contains("finance.ua-pynzenykvm");
+			bool isBadMarkup = fileItem.SpeechAnnotationAbsPath.contains("finance.ua-pynzenykvm");
 
 			SpeechAnnotation annot;
 			bool loadOp;
 			const char* errMsg;
-			std::tie(loadOp, errMsg) = loadAudioMarkupFromXml(fileItem.SpeechAnnotationPath.toStdWString(), annot);
+			std::tie(loadOp, errMsg) = loadAudioMarkupFromXml(fileItem.SpeechAnnotationAbsPath.toStdWString(), annot);
 			if (!loadOp)
 			{
 				checkMsgs.push_back(QString::fromLatin1(errMsg));
@@ -54,7 +54,7 @@ namespace PticaGovorun
 
 				if (!fileItemMsgs.empty())
 				{
-					checkMsgs << QString::fromStdWString(L"File=") << fileItem.SpeechAnnotationPath << "\n";
+					checkMsgs << QString::fromStdWString(L"File=") << fileItem.SpeechAnnotationAbsPath << "\n";
 					checkMsgs << fileItemMsgs << "\n";
 				}
 			}

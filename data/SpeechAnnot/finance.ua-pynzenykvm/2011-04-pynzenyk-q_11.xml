@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<audioAnnotation>
+<audioAnnotation audioFile="../../SpeechAudio/finance.ua-pynzenykvm/2011-04-pynzenyk-q_11.flac">
    <header>
       <speaker briefId="pynzenykvm" name="Пинзеник Віктор Михайлович"/>
    </header>
