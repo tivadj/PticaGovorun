@@ -169,6 +169,14 @@
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpenAnnotDir"/>
+    <addaction name="actionCloseAnnotDir"/>
+   </widget>
+   <addaction name="menuFile"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -178,6 +186,19 @@
     <bool>false</bool>
    </attribute>
   </widget>
+  <action name="actionOpenAnnotDir">
+   <property name="text">
+    <string>Open Annot Dir</string>
+   </property>
+   <property name="shortcut">
+    <string extracomment="Open directory with speech annotations">F3</string>
+   </property>
+  </action>
+  <action name="actionCloseAnnotDir">
+   <property name="text">
+    <string>Close Annot Dir</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

@@ -1,6 +1,7 @@
 #include "FileWorkspaceWidget.h"
 #include "ui_FileWorkspaceWidget.h"
 #include <QDebug>
+#include <QFileDialog>
 namespace PticaGovorun
 {
 	FileWorkspaceWidget::FileWorkspaceWidget(QWidget *parent) :
@@ -21,12 +22,9 @@ namespace PticaGovorun
 	{
 		model_ = model;
 
-		QList<QTreeWidgetItem*> rootItems;
-		model->populateItems(rootItems);
+		QObject::connect(model_.get(), SIGNAL(workingDirChanged(const std::wstring&)), this, SLOT(fileWorkspaceModel_workingDirChanged(const std::wstring&)));
 
-		ui->treeWidgetFileItems->clear();
-		ui->treeWidgetFileItems->addTopLevelItems(rootItems);
-		ui->treeWidgetFileItems->expandAll();
+		updateUI();
 	}
 
 	void FileWorkspaceWidget::treeWidgetFileItems_itemDoubleClicked(QTreeWidgetItem* item, int column)
@@ -36,5 +34,20 @@ namespace PticaGovorun
 			return;
 		QString wavFilePath = wavPathVar.toString();
 		model_->openAudioFile(wavFilePath.toStdWString());
+	}
+
+	void FileWorkspaceWidget::fileWorkspaceModel_workingDirChanged(const std::wstring& oldWorkingDir)
+	{
+		updateUI();
+	}
+
+	void FileWorkspaceWidget::updateUI()
+	{
+		QList<QTreeWidgetItem*> rootItems;
+		model_->populateItems(rootItems);
+
+		ui->treeWidgetFileItems->clear();
+		ui->treeWidgetFileItems->addTopLevelItems(rootItems);
+		ui->treeWidgetFileItems->expandAll();
 	}
 }

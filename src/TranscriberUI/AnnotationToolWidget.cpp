@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QMouseEvent>
 #include <QSize>
+#include <QFileDialog>
 #include <QTextDocumentFragment>
 #include "SoundUtils.h"
 #include "PhoneticDictionaryDialog.h"
@@ -48,6 +49,8 @@ namespace PticaGovorun
 		QObject::connect(ui->pushButtonSegmentComposerPlay, SIGNAL(clicked()), this, SLOT(pushButtonSegmentComposerPlay_Clicked()));
 		QObject::connect(ui->lineEditRecognizerName, SIGNAL(editingFinished()), this, SLOT(lineEditRecognizerName_editingFinished()));
 		QObject::connect(ui->tabWidgetSpeechTranscriptionTabs, SIGNAL(tabCloseRequested(int)), this, SLOT(tabWidgetSpeechTranscriptionTabs_tabCloseRequested(int)));
+		QObject::connect(ui->actionOpenAnnotDir, SIGNAL(triggered()), this, SLOT(actionOpenAnnotDir_triggered()));
+		QObject::connect(ui->actionCloseAnnotDir, SIGNAL(triggered()), this, SLOT(actionCloseAnnotDir_triggered()));
 
 		//
 		sharedServiceProviderImpl_ = std::make_shared<SharedServiceProviderImpl>(*this);
@@ -58,6 +61,9 @@ namespace PticaGovorun
 			SLOT(audioTranscriptionToolModel_activeAudioTranscriptionChanged(int)));
 		QObject::connect(annotationToolModel_.get(), SIGNAL(audioTranscriptionRemoved(int)), this, 
 			SLOT(audioTranscriptionToolModel_audioTranscriptionRemoved(int)));
+		QObject::connect(annotationToolModel_.get(), SIGNAL(audioTranscriptionListCleared()), this,
+			SLOT(audioTranscriptionToolModel_audioTranscriptionListCleared()));
+		QObject::connect(annotationToolModel_.get(), SIGNAL(newAnnotDirQuery()), this, SLOT(fileWorkspaceModel_newAnnotDirQuery()));
 		annotationToolModel_->init(sharedServiceProviderImpl_);
 
 		std::shared_ptr<FileWorkspaceViewModel> fileWorkspaceModel = annotationToolModel_->fileWorkspaceModel();
@@ -74,6 +80,16 @@ namespace PticaGovorun
 	void AnnotationToolMainWindow::updateUI()
 	{
 		ui->lineEditRecognizerName->setText(annotationToolModel_->recognizerName());
+	}
+
+	void AnnotationToolMainWindow::actionOpenAnnotDir_triggered()
+	{
+		annotationToolModel_->openAnnotDirRequest();
+	}
+
+	void AnnotationToolMainWindow::actionCloseAnnotDir_triggered()
+	{
+		annotationToolModel_->closeAnnotDirRequest();
 	}
 
 	void AnnotationToolMainWindow::tabWidgetSpeechTranscriptionTabs_tabCloseRequested(int index)
@@ -123,6 +139,17 @@ namespace PticaGovorun
 		ui->tabWidgetSpeechTranscriptionTabs->removeTab(ind);
 	}
 
+	void AnnotationToolMainWindow::audioTranscriptionToolModel_audioTranscriptionListCleared()
+	{
+		ui->tabWidgetSpeechTranscriptionTabs->clear();
+	}
+
+	QString AnnotationToolMainWindow::fileWorkspaceModel_newAnnotDirQuery()
+	{
+		QString dirQ = QFileDialog::getExistingDirectory(this, "Select speech annotation directory", QString(), QFileDialog::ShowDirsOnly);
+		return dirQ;
+	}
+
 	void AnnotationToolMainWindow::nextNotification(const QString& message)
 	{
 		ui->plainTextEditLogger->moveCursor(QTextCursor::End);
@@ -132,7 +159,10 @@ namespace PticaGovorun
 
 	void AnnotationToolMainWindow::keyPressEvent(QKeyEvent* ke)
 	{
-		if (ke->key() == Qt::Key_P && ke->modifiers().testFlag(Qt::ControlModifier))
+		if (ke->key() == Qt::Key_F3)
+			annotationToolModel_->openAnnotDirRequest();
+
+		else if (ke->key() == Qt::Key_P && ke->modifiers().testFlag(Qt::ControlModifier))
 		{
 			PhoneticDictionaryDialog phoneticDictDlg;
 			phoneticDictDlg.setPhoneticViewModel(annotationToolModel_->phoneticDictModel());

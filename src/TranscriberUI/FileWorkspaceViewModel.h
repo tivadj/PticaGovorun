@@ -19,6 +19,10 @@ namespace PticaGovorun
 	signals :
 		// Occurs when audio samples where successfully loaded from a file.
 		void openAudioFile(const std::wstring& filePath);
+
+		// Occurs when current directory changed.
+		void workingDirChanged(const std::wstring& oldWorkingDir);
+
 	public:
 		FileWorkspaceViewModel();
 
@@ -31,4 +35,6 @@ namespace PticaGovorun
 	private:
 		std::wstring curDir_;
 	};
+
+	
 }

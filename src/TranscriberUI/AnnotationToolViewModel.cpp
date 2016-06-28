@@ -49,8 +49,8 @@ namespace PticaGovorun
 
 		QSettings settings(IniFileName, QSettings::IniFormat); // reads from current directory
 		
-		QString audioDataDir = settings.value(SpeechDataRoot, QString("")).toString();
-		fileWorkspaceViewModel_->setWorkingDirectory(audioDataDir.toStdWString());
+		QString recentAnnotDir = settings.value(SpeechDataRoot, QString("")).toString();
+		fileWorkspaceViewModel_->setWorkingDirectory(recentAnnotDir.toStdWString());
 
 		QString speechWavDirVar = settings.value(WavFilePath, QString("")).toString();
 		if (!speechWavDirVar.isEmpty())
@@ -167,6 +167,29 @@ namespace PticaGovorun
 
 		activeAudioTranscriptionModelInd_ = (int)audioTranscriptionModels_.size() - 1;
 		emit activeAudioTranscriptionChanged(activeAudioTranscriptionModelInd_);
+	}
+
+	void AnnotationToolViewModel::openAnnotDirRequest()
+	{
+		QString dirQ = newAnnotDirQuery();
+		if (dirQ.isEmpty())
+			return;
+		fileWorkspaceViewModel_->setWorkingDirectory(dirQ.toStdWString());
+
+		//
+		activeAudioTranscriptionModelInd_ = -1;
+		audioTranscriptionModels_.clear();
+		emit activeAudioTranscriptionChanged(activeAudioTranscriptionModelInd_);
+	}
+
+	void AnnotationToolViewModel::closeAnnotDirRequest()
+	{
+		fileWorkspaceViewModel_->setWorkingDirectory(L"");
+
+		//
+		activeAudioTranscriptionModelInd_ = -1;
+		audioTranscriptionModels_.clear();
+		emit audioTranscriptionListCleared();
 	}
 
 	void AnnotationToolViewModel::nextNotification(const QString& message) const

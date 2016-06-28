@@ -1,5 +1,6 @@
 #include "FileWorkspaceViewModel.h"
 #include <QDirIterator>
+#include <QString>
 
 namespace PticaGovorun
 {
@@ -9,7 +10,12 @@ namespace PticaGovorun
 
 	void FileWorkspaceViewModel::setWorkingDirectory(const std::wstring& dir)
 	{
-		curDir_ = dir;
+		if (curDir_ != dir)
+		{
+			auto oldDir = curDir_;
+			curDir_ = dir;
+			emit workingDirChanged(oldDir);
+		}
 	}
 
 	void FileWorkspaceViewModel::populateItems(QList<QTreeWidgetItem*>& items) const

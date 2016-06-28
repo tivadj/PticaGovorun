@@ -33,6 +33,8 @@ namespace PticaGovorun
 		void closeEvent(QCloseEvent*) override;
 
 	private slots:
+		void actionOpenAnnotDir_triggered();
+		void actionCloseAnnotDir_triggered();
 		void tabWidgetSpeechTranscriptionTabs_tabCloseRequested(int index);
 	
 		// REMOVE
@@ -47,6 +49,8 @@ namespace PticaGovorun
 		void audioTranscriptionToolModel_addedAudioTranscription(const std::wstring& filePath);
 		void audioTranscriptionToolModel_activeAudioTranscriptionChanged(int ind);
 		void audioTranscriptionToolModel_audioTranscriptionRemoved(int ind);
+		void audioTranscriptionToolModel_audioTranscriptionListCleared();
+		QString fileWorkspaceModel_newAnnotDirQuery();
 
 	private:
 		class SharedServiceProviderImpl : public SharedServiceProvider
@@ -66,6 +70,5 @@ namespace PticaGovorun
 		std::shared_ptr<AnnotationToolViewModel> annotationToolModel_;
 		std::shared_ptr<FileWorkspaceViewModel> fileWorkspaceModel_;
 	};
-
 }
 #endif // TRANSCRIBERMAINWINDOW_H

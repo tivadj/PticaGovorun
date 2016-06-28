@@ -19,7 +19,10 @@ namespace PticaGovorun
 		void addedAudioTranscription(const std::wstring& filePath);
 		void activeAudioTranscriptionChanged(int ind);
 		void audioTranscriptionRemoved(int tabIndex);
+		void audioTranscriptionListCleared();
 
+		// Notifies view to ask a user to set the new speech annotation directory.
+		QString newAnnotDirQuery();
 	public:
 		AnnotationToolViewModel();
 		~AnnotationToolViewModel();
@@ -27,6 +30,12 @@ namespace PticaGovorun
 		void onClose();
 
 		void closeAudioTranscriptionTab(int tabIndex);
+
+		// Declares a user intent to open new speech annotation directory.
+		void openAnnotDirRequest();
+
+		// Declares a user intent to close new speech annotation directory.
+		void closeAnnotDirRequest();
 
 		// Loads UI state.
 		void loadStateSettings();

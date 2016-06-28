@@ -430,7 +430,7 @@ namespace PticaGovorun
 
 		// experimental
 
-		else if (ke->key() == Qt::Key_F3)
+		else if (ke->key() == Qt::Key_F6)
 			transcriberModel_->analyzeUnlabeledSpeech();
 		else if (ke->key() == Qt::Key_F4)
 			transcriberModel_->dumpSilence();
