@@ -1,8 +1,19 @@
 #pragma once
-#include "PticaGovorunCore.h"
+#include <string>
+#include "PticaGovorunCore.h" // PG_EXPORTS
 
 namespace PticaGovorun
 {
+	PG_EXPORTS int phoneNameToPhoneId(const std::string& phoneName);
+
+	// Also used for drawing phones grid.
+	PG_EXPORTS void phoneIdToByPhoneName(int phoneId, std::string& phoneName);
+
+	//extern "C" PG_EXPORTS int phoneMonoCount();
+	extern "C" __declspec(dllexport) int phoneMonoCount();
+	
+	// The MFCC functionality is implemented based on Julius recognizer.
+#ifdef PG_HAS_JULIUS
 	// Creates phone -> MFCC features map.
 	extern "C" PG_EXPORTS int createPhoneToMfccFeaturesMap();
 	
@@ -18,10 +29,5 @@ namespace PticaGovorun
 
 	// Simulates classifier on the given feature vector.
 	extern "C" PG_EXPORTS bool evaluateMonophoneClassifier(int classifierId, const float* features, int featuresCountPerFrame, int framesCount, int* phoneIdArray, float* logProbArray);
-
-	extern "C" PG_EXPORTS int phoneNameToPhoneId(const std::string& phoneName);
-
-	extern "C" PG_EXPORTS void phoneIdToByPhoneName(int phoneId, std::string& phoneName);
-
-	extern "C" PG_EXPORTS int phoneMonoCount();
+#endif
 }

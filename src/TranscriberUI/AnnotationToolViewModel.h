@@ -9,8 +9,10 @@
 
 namespace PticaGovorun
 {
-	class AnnotationToolViewModel : public QObject,
-		public RecognizerNameHintProvider
+	class AnnotationToolViewModel : public QObject
+#ifdef PG_HAS_JULIUS
+		, public RecognizerNameHintProvider // represents the Julius recognizer name to 
+#endif
 	{
 	private:
 		Q_OBJECT
@@ -48,9 +50,10 @@ namespace PticaGovorun
 		// recognizer
 		QString recognizerName() const;
 		void setRecognizerName(const QString& filePath);
+#ifdef PG_HAS_JULIUS
 		std::string recognizerNameHint() override;
 		std::shared_ptr<JuliusRecognizerProvider> juliusRecognizerProvider();
-
+#endif
 		std::shared_ptr<SpeechTranscriptionViewModel> activeTranscriptionModel();
 		std::shared_ptr<SpeechTranscriptionViewModel> audioTranscriptionModelByFilePathAbs(const std::wstring& filePath);
 		std::shared_ptr<FileWorkspaceViewModel> fileWorkspaceModel();
@@ -86,7 +89,9 @@ namespace PticaGovorun
 
 		// recognition
 		QString curRecognizerName_;
+#ifdef PG_HAS_JULIUS
 		std::shared_ptr<JuliusRecognizerProvider> juliusRecognizerProvider_;
+#endif
 	};
 
 }

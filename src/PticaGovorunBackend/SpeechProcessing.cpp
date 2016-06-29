@@ -17,6 +17,7 @@
 #include "InteropPython.h"
 #include "PticaGovorunCore.h"
 #include "PhoneticService.h"
+#include "InteropPython.h" // phoneNameToPhoneId
 
 namespace PticaGovorun 
 {

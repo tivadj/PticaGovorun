@@ -58,8 +58,10 @@ namespace PticaGovorun
 		public:
 			explicit SharedServiceProviderImpl(AnnotationToolMainWindow& outer);
 			std::shared_ptr<VisualNotificationService> notificationService() override;
+#ifdef PG_HAS_JULIUS
 			std::shared_ptr<JuliusRecognizerProvider> juliusRecognizerProvider() override;
 			std::shared_ptr<RecognizerNameHintProvider> recognizerNameHintProvider() override;
+#endif
 		private:
 			//std::reference_wrapper<TranscriberMainWindow> outer_; // TODO: type_traits(584): error C2139: 'PticaGovorun::TranscriberMainWindow' : an undefined class is not allowed as an argument to compiler intrinsic type trait '__is_abstract'
 			AnnotationToolMainWindow& outer_;

@@ -1,4 +1,6 @@
 #include "stdafx.h"
+
+#ifdef PG_HAS_JULIUS
 #include <sstream>
 #include <memory> // std::unique_ptr
 #include <fstream> // std::ofstream
@@ -746,3 +748,4 @@ namespace PticaGovorun {
 	}
 
 }
+#endif

@@ -9,6 +9,8 @@
 
     <LibSuffix Condition="'$(Configuration)' == 'Debug'">d</LibSuffix>
     <LibSuffix Condition="'$(Configuration)' != 'Debug'"></LibSuffix>
+
+    <MSBuild_PG_HAS_JULIUS>True</MSBuild_PG_HAS_JULIUS>
   </PropertyGroup>
   
   <!--Suffixes should be added for dll/libs (except executables) -->
@@ -32,6 +34,12 @@
       <!--Assigns extra intermediate variables in algorithms for debugging; validation logic. Code is not critical for runtime.-->
       <PreprocessorDefinitions>PG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions>PG_HAS_FLAC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PG_HAS_SPHINX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+
+      <!-- NOTE: Use MSBuild_PG_HAS_JULIUS to define C++ PG_HAS_JULIUS definition.
+           MSBuild_PG_HAS_JULIUS also links Julius libs into PticaGovorunBackend project.
+       -->
+      <PreprocessorDefinitions Condition="'$(MSBuild_PG_HAS_JULIUS)' == 'True'">PG_HAS_JULIUS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
 </Project>

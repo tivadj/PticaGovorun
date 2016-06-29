@@ -422,11 +422,29 @@ namespace PticaGovorun
 
 		// analyze
 		else if (ke->key() == Qt::Key_R && ke->modifiers().testFlag(Qt::ControlModifier))
+		{
+#ifdef PG_HAS_JULIUS
 			transcriberModel_->recognizeCurrentSegmentJuliusRequest();
-		else if (ke->key() == Qt::Key_F1)
-			transcriberModel_->recognizeCurrentSegmentSphinxRequest();
+#else
+			transcriberModel_->nextNotification(QString("WARN: Julius dependency was not compiled in (define PG_HAS_JULIUS)."));
+#endif
+		}
 		else if (ke->key() == Qt::Key_A)
-			transcriberModel_->alignPhonesForCurrentSegmentRequest();
+		{
+#ifdef PG_HAS_JULIUS
+			transcriberModel_->alignPhonesForCurrentSegmentJuliusRequest();
+#else
+			transcriberModel_->nextNotification(QString("WARN: Julius dependency was not compiled in (define PG_HAS_JULIUS)."));
+#endif
+		}
+		else if (ke->key() == Qt::Key_F1)
+		{
+#if PG_HAS_SPHINX
+			transcriberModel_->recognizeCurrentSegmentSphinxRequest();
+#else
+			transcriberModel_->nextNotification(QString("WARN: Sphinx dependency was not compiled in (define PG_HAS_SPHINX)."));
+#endif
+		}
 
 		// experimental
 

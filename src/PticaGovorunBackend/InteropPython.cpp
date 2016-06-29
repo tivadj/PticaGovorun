@@ -1,12 +1,51 @@
 #include "stdafx.h"
 #include <map>
 #include <vector>
-#include <string>
-#include <iostream>
 #include "InteropPython.h"
+
+namespace PticaGovorun
+{
+	namespace
+	{
+		std::vector<const char*> phoneIdToPhoneName_ = { "a", "e", "y", "i", "o", "u" };
+		std::map<std::string, int> phoneNameToPhoneId_;
+	}
+
+	int phoneNameToPhoneId(const std::string& phoneName)
+	{
+		if (phoneNameToPhoneId_.empty())
+		{
+			int phoneId = 0;
+			for (const char* phoneNameCStr : phoneIdToPhoneName_)
+				phoneNameToPhoneId_[phoneNameCStr] = phoneId++;
+		}
+
+		auto it = phoneNameToPhoneId_.find(phoneName);
+		if (it == std::end(phoneNameToPhoneId_))
+			return -1;
+		int id = it->second;
+		return id;
+	}
+
+	void phoneIdToByPhoneName(int phoneId, std::string& phoneName)
+	{
+		if (phoneId < phoneIdToPhoneName_.size())
+			phoneName = phoneIdToPhoneName_[phoneId];
+		else
+			phoneName = "?";
+	}
+
+	int phoneMonoCount()
+	{
+		return phoneIdToPhoneName_.size();
+	}
+}
+
+#ifdef PG_HAS_JULIUS
+#include <iostream>
 #include "SpeechProcessing.h"
-#include "JuliusToolNativeWrapper.h"
 #include <opencv2/ml.hpp>
+#include "JuliusToolNativeWrapper.h"
 
 namespace PticaGovorun {
 	int globalResourceIdCounter_ = 100;
@@ -19,9 +58,6 @@ namespace PticaGovorun {
 
 	// classifiers
 	std::map<int, std::map<std::string, cv::Ptr<cv::ml::EM>>> globalPhoneNameToEMObj_;
-
-	std::vector<const char*> phoneIdToPhoneName_ = { "a", "e", "y", "i", "o", "u" };
-	std::map<std::string, int> phoneNameToPhoneId_;
 
 	bool globalInitialized_ = false;
 	bool initialize()
@@ -253,33 +289,5 @@ namespace PticaGovorun {
 
 		return true;
 	}
-
-	int phoneNameToPhoneId(const std::string& phoneName)
-	{
-		if (phoneNameToPhoneId_.empty())
-		{
-			int phoneId = 0;
-			for (const char* phoneNameCStr : phoneIdToPhoneName_)
-				phoneNameToPhoneId_[phoneNameCStr] = phoneId++;
-		}
-
-		auto it = phoneNameToPhoneId_.find(phoneName);
-		if (it == std::end(phoneNameToPhoneId_))
-			return -1;
-		int id = it->second;
-		return id;
-	}
-
-	void phoneIdToByPhoneName(int phoneId, std::string& phoneName)
-	{
-		if (phoneId < phoneIdToPhoneName_.size())
-			phoneName = phoneIdToPhoneName_[phoneId];
-		else
-			phoneName = "?";
-	}
-
-	int phoneMonoCount()
-	{
-		return phoneIdToPhoneName_.size();
-	}
 }
+#endif

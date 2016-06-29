@@ -18,9 +18,6 @@
   </PropertyGroup>
   
   <ItemDefinitionGroup>
-    <ClCompile>
-      <PreprocessorDefinitions>HAS_POCKETSPHINX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
     <Link>
       <AdditionalDependencies>pocketsphinx.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalDependencies>sphinxbase.lib;%(AdditionalDependencies)</AdditionalDependencies>

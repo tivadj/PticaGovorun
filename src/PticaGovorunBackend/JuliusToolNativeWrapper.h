@@ -7,6 +7,7 @@
 #include "SpeechProcessing.h"
 #include "ComponentsInfrastructure.h"
 
+#ifdef PG_HAS_JULIUS
 namespace PticaGovorun {
 
 struct RecognizerSettings
@@ -89,3 +90,4 @@ PG_EXPORTS std::tuple<bool,const char*> computeMfccFeaturesPub(const short* samp
 void JuliusClearCache();
 
 }
+#endif

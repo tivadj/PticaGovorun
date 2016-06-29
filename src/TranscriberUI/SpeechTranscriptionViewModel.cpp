@@ -16,7 +16,7 @@
 
 #include <samplerate.h>
 
-#if HAS_POCKETSPHINX
+#if PG_HAS_SPHINX
 #include <pocketsphinx.h>
 #include <pocketsphinx_internal.h> // ps_decoder_s
 #include <fe_internal.h> // fe_s
@@ -41,8 +41,6 @@
 
 namespace PticaGovorun
 {
-
-const char* IniFileName = "TranscriberUI.ini"; // where to store settings
 static const decltype(paComplete) SoundPlayerCompleteOrAbortTechnique = paComplete; // paComplete or paAbort
 
 SpeechTranscriptionViewModel::SpeechTranscriptionViewModel()
@@ -52,8 +50,10 @@ SpeechTranscriptionViewModel::SpeechTranscriptionViewModel()
 	void SpeechTranscriptionViewModel::init(std::shared_ptr<SharedServiceProvider> serviceProvider)
 	{
 		notificationService_ = serviceProvider->notificationService();
+#ifdef PG_HAS_JULIUS
 		recognizerNameHintProvider_ = serviceProvider->recognizerNameHintProvider();
 		juliusRecognizerProvider_ = serviceProvider->juliusRecognizerProvider();
+#endif
 	}
 
 	void SpeechTranscriptionViewModel::loadAnnotAndAudioFileRequest()
@@ -753,7 +753,9 @@ void SpeechTranscriptionViewModel::deleteRequest(bool isControl)
 
 void SpeechTranscriptionViewModel::refreshRequest()
 {
+#ifdef PG_HAS_JULIUS
 	loadAuxiliaryPhoneticDictionaryRequest();
+#endif
 }
 
 const std::vector<short>& SpeechTranscriptionViewModel::audioSamples() const
@@ -1296,6 +1298,7 @@ void SpeechTranscriptionViewModel::setCurrentMarkerStopOnPlayback(bool stopsPlay
 		emit currentMarkerIndChanged();
 	}
 
+#ifdef PG_HAS_JULIUS
 	void SpeechTranscriptionViewModel::ensureRecognizerIsCreated()
 {
 	// initialize the recognizer lazily
@@ -1313,7 +1316,6 @@ void SpeechTranscriptionViewModel::setCurrentMarkerStopOnPlayback(bool stopsPlay
 
 void SpeechTranscriptionViewModel::recognizeCurrentSegmentJuliusRequest()
 {
-	using namespace PticaGovorun;
 	ensureRecognizerIsCreated();
 
 	if (recognizer_ == nullptr)
@@ -1390,7 +1392,149 @@ void SpeechTranscriptionViewModel::recognizeCurrentSegmentJuliusRequest()
 	nextNotification(diagSeg.RecogSegmentWords);
 }
 
-#if HAS_POCKETSPHINX
+void SpeechTranscriptionViewModel::alignPhonesForCurrentSegmentJuliusRequest()
+{
+	ensureRecognizerIsCreated();
+
+	if (recognizer_ == nullptr)
+		return;
+
+	ensureWordToPhoneListVocabularyLoaded();
+
+	int outLeftMarkerInd = -1;
+	long curSegBeg;
+	long curSegEnd;
+	std::tie(curSegBeg, curSegEnd) = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
+	auto len = curSegEnd - curSegBeg;
+
+	//
+	QString alignText;
+	if (!cursorTextToAlign_.isEmpty())
+		alignText = cursorTextToAlign_;
+	else if (outLeftMarkerInd != -1)
+	{
+		// there is a marker assiciated with this alignment operation
+		alignText = speechAnnot_.marker(outLeftMarkerInd).TranscripText;
+	}
+
+	if (alignText.isEmpty()) // nothing to align
+		return;
+
+	// make all words lowercase, because all words in phonetic dictionary are in lowercase
+	alignText = alignText.toLower();
+
+	auto wordToPhoneListFun = [this](const std::wstring& word, std::vector<std::string>& wordPhones)->bool
+	{
+		auto it = wordToPhoneListDict_.find(word);
+		if (it != std::end(wordToPhoneListDict_))
+		{
+			const std::vector<std::string>& dictWordPhones = it->second;
+			std::copy(std::begin(dictWordPhones), std::end(dictWordPhones), std::back_inserter(wordPhones));
+			return true;
+		}
+		it = wordToPhoneListAuxiliaryDict_.find(word);
+		if (it != std::end(wordToPhoneListAuxiliaryDict_))
+		{
+			const std::vector<std::string>& dictWordPhones = it->second;
+			std::copy(std::begin(dictWordPhones), std::end(dictWordPhones), std::back_inserter(wordPhones));
+			return true;
+		}
+		return false;
+	};
+
+	bool insertShortPause = false;
+	std::vector<std::string> speechPhones;
+	std::tuple<bool, std::wstring> convOp = convertTextToPhoneList(alignText.toStdWString(), wordToPhoneListFun, insertShortPause, speechPhones);
+	if (!std::get<0>(convOp))
+	{
+		std::wstring errMsg = std::get<1>(convOp);
+		nextNotification(QString::fromStdWString(errMsg));
+		return;
+	}
+
+	// pad the audio with silince
+	padSilence(&audioSamples_[curSegBeg], len, silencePadAudioSamplesCount_, audioSegmentBuffer_);
+
+	PticaGovorun::AlignmentParams alignmentParams;
+	alignmentParams.FrameSize = recognizer_->settings().FrameSize;
+	alignmentParams.FrameShift = recognizer_->settings().FrameShift;
+	alignmentParams.TakeSample = FrameToSamplePicker;
+
+	int phoneStateDistrributionTailSize = 5;
+	PticaGovorun::PhoneAlignmentInfo alignmentResult;
+	recognizer_->alignPhones(audioSegmentBuffer_.data(), audioSegmentBuffer_.size(), speechPhones, alignmentParams, phoneStateDistrributionTailSize, alignmentResult);
+
+	//
+	DiagramSegment diagSeg;
+	diagSeg.SampleIndBegin = curSegBeg;
+	diagSeg.SampleIndEnd = curSegEnd;
+	diagSeg.RecogAlignedPhonemeSeqPadded = true;
+	diagSeg.TextToAlign = alignText;
+	diagSeg.TranscripTextPhones = alignmentResult;
+	diagramSegments_.push_back(diagSeg);
+
+	nextNotification(QString("Alignment score=%1").arg(alignmentResult.AlignmentScore));
+
+	// redraw current segment
+	emit audioSamplesChanged();
+}
+
+void SpeechTranscriptionViewModel::ensureWordToPhoneListVocabularyLoaded()
+{
+	using namespace PticaGovorun;
+
+	QTextCodec* pTextCodec = QTextCodec::codecForName(PGEncodingStr);
+	PG_Assert(pTextCodec != nullptr && "Can't load text encoding");
+
+	// TODO: vocabulary is recognizer dependent
+	if (wordToPhoneListDict_.empty())
+	{
+		QString dicPath = QString::fromStdString(recognizer_->settings().DictionaryFilePath);
+
+		clock_t startTime = std::clock();
+		std::tuple<bool, const char*> loadOp = PticaGovorun::loadPronunciationVocabulary(dicPath.toStdWString(), wordToPhoneListDict_, *pTextCodec);
+		double elapsedTime1 = static_cast<double>(clock() - startTime) / CLOCKS_PER_SEC;
+		if (!std::get<0>(loadOp))
+		{
+			nextNotification(QString(std::get<1>(loadOp)));
+			return;
+		}
+		nextNotification(QString("Loaded pronunciation dictionary in %1 secs").arg(elapsedTime1, 2));
+	}
+
+	if (wordToPhoneListAuxiliaryDict_.empty())
+		loadAuxiliaryPhoneticDictionaryRequest();
+}
+
+void SpeechTranscriptionViewModel::loadAuxiliaryPhoneticDictionaryRequest()
+{
+	using namespace PticaGovorun;
+	QTextCodec* pTextCodec = QTextCodec::codecForName(PGEncodingStr);
+	PG_Assert(pTextCodec != nullptr && "Can't load text encoding");
+
+	const char* dicPatCStr = qgetenv("PG_AUX_DICT_PATH").constData();
+	QString dicPath = QString(dicPatCStr);
+	if (dicPath.isEmpty())
+	{
+		nextNotification("Specify path PG_AUX_DICT_PATH to auxiliary dictionary");
+		return;
+	}
+
+	clock_t startTime = std::clock();
+	wordToPhoneListAuxiliaryDict_.clear();
+	std::tuple<bool, const char*> loadOp = PticaGovorun::loadPronunciationVocabulary(dicPath.toStdWString(), wordToPhoneListAuxiliaryDict_, *pTextCodec);
+	double elapsedTime1 = static_cast<double>(clock() - startTime) / CLOCKS_PER_SEC;
+	if (!std::get<0>(loadOp))
+	{
+		nextNotification(QString(std::get<1>(loadOp)));
+		return;
+	}
+	nextNotification(QString("Loaded pronunciation AX dictionary in %1 secs").arg(elapsedTime1, 2));
+}
+#endif
+
+
+#if PG_HAS_SPHINX
 void SpeechTranscriptionViewModel::recognizeCurrentSegmentSphinxRequest()
 {
 	using namespace PticaGovorun;
@@ -1670,147 +1814,6 @@ void SpeechTranscriptionViewModel::analyzeUnlabeledSpeech()
 	}
 	
 	std::cout << std::endl;
-}
-
-void SpeechTranscriptionViewModel::ensureWordToPhoneListVocabularyLoaded()
-{
-	using namespace PticaGovorun;
-
-	QTextCodec* pTextCodec = QTextCodec::codecForName(PGEncodingStr);
-	PG_Assert(pTextCodec != nullptr && "Can't load text encoding");
-
-	// TODO: vocabulary is recognizer dependent
-	if (wordToPhoneListDict_.empty())
-	{
-		QString dicPath = QString::fromStdString(recognizer_->settings().DictionaryFilePath);
-
-		clock_t startTime = std::clock();
-		std::tuple<bool, const char*> loadOp = PticaGovorun::loadPronunciationVocabulary(dicPath.toStdWString(), wordToPhoneListDict_, *pTextCodec);
-		double elapsedTime1 = static_cast<double>(clock() - startTime) / CLOCKS_PER_SEC;
-		if (!std::get<0>(loadOp))
-		{
-			nextNotification(QString(std::get<1>(loadOp)));
-			return;
-		}
-		nextNotification(QString("Loaded pronunciation dictionary in %1 secs").arg(elapsedTime1, 2));
-	}
-
-	if (wordToPhoneListAuxiliaryDict_.empty())
-		loadAuxiliaryPhoneticDictionaryRequest();
-}
-
-void SpeechTranscriptionViewModel::loadAuxiliaryPhoneticDictionaryRequest()
-{
-	using namespace PticaGovorun;
-	QTextCodec* pTextCodec = QTextCodec::codecForName(PGEncodingStr);
-	PG_Assert(pTextCodec != nullptr && "Can't load text encoding");
-
-	const char* dicPatCStr = qgetenv("PG_AUX_DICT_PATH").constData();
-	QString dicPath = QString(dicPatCStr);
-	if (dicPath.isEmpty())
-	{
-		nextNotification("Specify path PG_AUX_DICT_PATH to auxiliary dictionary");
-		return;
-	}
-
-	clock_t startTime = std::clock();
-	wordToPhoneListAuxiliaryDict_.clear();
-	std::tuple<bool,const char*> loadOp = PticaGovorun::loadPronunciationVocabulary(dicPath.toStdWString(), wordToPhoneListAuxiliaryDict_, *pTextCodec);
-	double elapsedTime1 = static_cast<double>(clock() - startTime) / CLOCKS_PER_SEC;
-	if (!std::get<0>(loadOp))
-	{
-		nextNotification(QString(std::get<1>(loadOp)));
-		return;
-	}
-	nextNotification(QString("Loaded pronunciation AX dictionary in %1 secs").arg(elapsedTime1, 2));
-}
-
-void SpeechTranscriptionViewModel::alignPhonesForCurrentSegmentRequest()
-{
-	using namespace PticaGovorun;
-	ensureRecognizerIsCreated();
-
-	if (recognizer_ == nullptr)
-		return;
-
-	ensureWordToPhoneListVocabularyLoaded();
-
-	int outLeftMarkerInd = -1;
-	long curSegBeg;
-	long curSegEnd;
-	std::tie(curSegBeg, curSegEnd) = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin, &outLeftMarkerInd);
-	auto len = curSegEnd - curSegBeg;
-
-	//
-	QString alignText;
-	if (!cursorTextToAlign_.isEmpty())
-		alignText = cursorTextToAlign_;
-	else if (outLeftMarkerInd != -1)
-	{
-		// there is a marker assiciated with this alignment operation
-		alignText = speechAnnot_.marker(outLeftMarkerInd).TranscripText;
-	}
-	
-	if (alignText.isEmpty()) // nothing to align
-		return;
-	
-	// make all words lowercase, because all words in phonetic dictionary are in lowercase
-	alignText = alignText.toLower();
-
-	auto wordToPhoneListFun = [this](const std::wstring& word, std::vector<std::string>& wordPhones)->bool
-	{
-		auto it = wordToPhoneListDict_.find(word);
-		if (it != std::end(wordToPhoneListDict_))
-		{
-			const std::vector<std::string>& dictWordPhones = it->second;
-			std::copy(std::begin(dictWordPhones), std::end(dictWordPhones), std::back_inserter(wordPhones));
-			return true;
-		}
-		it = wordToPhoneListAuxiliaryDict_.find(word);
-		if (it != std::end(wordToPhoneListAuxiliaryDict_))
-		{
-			const std::vector<std::string>& dictWordPhones = it->second;
-			std::copy(std::begin(dictWordPhones), std::end(dictWordPhones), std::back_inserter(wordPhones));
-			return true;
-		}
-		return false;
-	};
-
-	bool insertShortPause = false;
-	std::vector<std::string> speechPhones;
-	std::tuple<bool, std::wstring> convOp = convertTextToPhoneList(alignText.toStdWString(), wordToPhoneListFun, insertShortPause, speechPhones);
-	if (!std::get<0>(convOp))
-	{
-		std::wstring errMsg = std::get<1>(convOp);
-		nextNotification(QString::fromStdWString(errMsg));
-		return;
-	}
-
-	// pad the audio with silince
-	padSilence(&audioSamples_[curSegBeg], len, silencePadAudioSamplesCount_, audioSegmentBuffer_);
-
-	PticaGovorun::AlignmentParams alignmentParams;
-	alignmentParams.FrameSize = recognizer_->settings().FrameSize;
-	alignmentParams.FrameShift = recognizer_->settings().FrameShift;
-	alignmentParams.TakeSample = FrameToSamplePicker;
-
-	int phoneStateDistrributionTailSize = 5;
-	PticaGovorun::PhoneAlignmentInfo alignmentResult;
-	recognizer_->alignPhones(audioSegmentBuffer_.data(), audioSegmentBuffer_.size(), speechPhones, alignmentParams, phoneStateDistrributionTailSize, alignmentResult);
-
-	//
-	DiagramSegment diagSeg;
-	diagSeg.SampleIndBegin = curSegBeg;
-	diagSeg.SampleIndEnd = curSegEnd;
-	diagSeg.RecogAlignedPhonemeSeqPadded = true;
-	diagSeg.TextToAlign = alignText;
-	diagSeg.TranscripTextPhones = alignmentResult;
-	diagramSegments_.push_back(diagSeg);
-
-	nextNotification(QString("Alignment score=%1").arg(alignmentResult.AlignmentScore));
-
-	// redraw current segment
-	emit audioSamplesChanged();
 }
 
 size_t SpeechTranscriptionViewModel::silencePadAudioFramesCount() const

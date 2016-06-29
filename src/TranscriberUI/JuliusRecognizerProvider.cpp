@@ -1,5 +1,6 @@
 #include "JuliusRecognizerProvider.h"
 
+#ifdef PG_HAS_JULIUS
 namespace PticaGovorun
 {
 	bool JuliusRecognizerProvider::hasError() const
@@ -44,3 +45,4 @@ namespace PticaGovorun
 		}
 	}
 }
+#endif

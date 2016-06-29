@@ -612,6 +612,7 @@ namespace PticaGovorun
 			ch == L'÷' || ch == L'×';
 	}
 
+#ifdef PG_HAS_JULIUS
 	std::tuple<bool, const char*> loadPronunciationVocabulary(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<std::string>>& wordToPhoneList, const QTextCodec& textCodec)
 	{
 		// file contains text in Windows-1251 encoding
@@ -666,6 +667,7 @@ namespace PticaGovorun
 
 		return std::make_tuple(true, nullptr);
 	}
+#endif
 
 	void parsePronId(boost::wstring_ref pronId, boost::wstring_ref& pronName)
 	{

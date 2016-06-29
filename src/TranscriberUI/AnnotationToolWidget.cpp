@@ -26,6 +26,7 @@ namespace PticaGovorun
 		return std::shared_ptr<VisualNotificationService>(p, NoDeleteFunctor<VisualNotificationService>());
 	}
 
+#ifdef PG_HAS_JULIUS
 	std::shared_ptr<JuliusRecognizerProvider> AnnotationToolMainWindow::SharedServiceProviderImpl::juliusRecognizerProvider()
 	{
 		return outer_.annotationToolModel_->juliusRecognizerProvider();
@@ -36,6 +37,7 @@ namespace PticaGovorun
 		auto p = dynamic_cast<RecognizerNameHintProvider*>(outer_.annotationToolModel_.get());
 		return std::shared_ptr<RecognizerNameHintProvider>(p, NoDeleteFunctor<RecognizerNameHintProvider>());
 	}
+#endif
 
 	AnnotationToolMainWindow::AnnotationToolMainWindow(QWidget *parent) :
 		QMainWindow(parent),

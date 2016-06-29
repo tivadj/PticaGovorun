@@ -35,7 +35,9 @@ namespace PticaGovorun
 		audioMarkupNavigator_ = std::make_shared<AudioMarkupNavigator>();
 		phoneticDictModel_ = std::make_shared<PhoneticDictionaryViewModel>();
 
+#ifdef PG_HAS_JULIUS
 		juliusRecognizerProvider_ = std::make_shared<JuliusRecognizerProvider>();
+#endif
 
 		loadStateSettings();
 	}
@@ -266,6 +268,7 @@ namespace PticaGovorun
 		curRecognizerName_ = filePath;
 	}
 
+#ifdef PG_HAS_JULIUS
 	std::string AnnotationToolViewModel::recognizerNameHint()
 	{
 		return recognizerName().toStdString();
@@ -275,4 +278,5 @@ namespace PticaGovorun
 	{
 		return juliusRecognizerProvider_;
 	}
+#endif
 }

@@ -210,11 +210,13 @@ namespace PticaGovorun
 	// Loads stressed vowel definitions from file.
 	PG_EXPORTS std::tuple<bool, const char*> loadStressedSyllableDictionaryXml(boost::wstring_ref dictFilePath, std::unordered_map<std::wstring, int>& wordToStressedSyllableInd);
 
+#ifdef PG_HAS_JULIUS
 	// Loads dictionary of word -> (phone list) from text file.
 	// File usually has 'voca' extension.
 	// File has Windows-1251 encodeding.
 	// Each word may have multiple pronunciations (1-* relation); for now we neglect it and store data into map (1-1 relation).
 	PG_EXPORTS std::tuple<bool, const char*> loadPronunciationVocabulary(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<std::string>>& wordToPhoneList, const QTextCodec& textCodec); // TODO: remove
+#endif
 	PG_EXPORTS void parsePronId(boost::wstring_ref pronId, boost::wstring_ref& pronName);
 	PG_EXPORTS bool isWordStressAssigned(const PhoneRegistry& phoneReg, const std::vector<PhoneId>& phoneIds);
 

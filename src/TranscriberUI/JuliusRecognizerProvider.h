@@ -1,6 +1,8 @@
 #pragma once
-#include "JuliusToolNativeWrapper.h"
 #include <memory>
+
+#ifdef PG_HAS_JULIUS
+#include "JuliusToolNativeWrapper.h"
 
 namespace PticaGovorun
 {
@@ -26,3 +28,4 @@ namespace PticaGovorun
 		std::string errorString_;
 	};
 }
+#endif

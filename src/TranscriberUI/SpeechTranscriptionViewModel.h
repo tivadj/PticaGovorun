@@ -311,9 +311,12 @@ private:
 	void setCurrentMarkerIndInternal(int markerInd, bool updateCursor, bool updateViewportOffset);
 
 public:	// recongizer
+#ifdef PG_HAS_JULIUS
 	void ensureRecognizerIsCreated();
 	void recognizeCurrentSegmentJuliusRequest();
-#if HAS_POCKETSPHINX
+	void alignPhonesForCurrentSegmentJuliusRequest();
+#endif
+#if PG_HAS_SPHINX
 	void recognizeCurrentSegmentSphinxRequest();
 #endif
 	void dumpSilence();
@@ -322,7 +325,6 @@ public:	// recongizer
 	void ensureWordToPhoneListVocabularyLoaded();
 	void loadAuxiliaryPhoneticDictionaryRequest();
 
-	void alignPhonesForCurrentSegmentRequest();
 	size_t silencePadAudioFramesCount() const;
 private:
 	std::map<std::string, std::vector<float>> phoneNameToFeaturesVector_;
@@ -351,8 +353,8 @@ private:
 	
 public:
 	void setNotificationService(std::shared_ptr<VisualNotificationService>);
-private:
 	void nextNotification(const QString& message) const;
+private:
 	std::shared_ptr<VisualNotificationService> notificationService_;
 
 private:
@@ -387,11 +389,13 @@ private:
 	long playingSampleInd_ = PticaGovorun::NullSampleInd; // the plyaing sample or -1 if audio is not playing
 
 	// recognition
+#ifdef PG_HAS_JULIUS
 	std::shared_ptr<RecognizerNameHintProvider> recognizerNameHintProvider_;
 	std::shared_ptr<JuliusRecognizerProvider> juliusRecognizerProvider_;
 	JuliusToolWrapper* recognizer_ = nullptr;
 	std::map<std::wstring, std::vector<std::string>> wordToPhoneListDict_;
 	std::map<std::wstring, std::vector<std::string>> wordToPhoneListAuxiliaryDict_;
+#endif
 	std::vector<short> audioSegmentBuffer_; // the buffer to keep the padded audio segments
 	
 	// number of padding silence samples to the left and right of audio segment
