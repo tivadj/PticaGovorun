@@ -293,6 +293,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnnotationToolWidget.cpp" />
+    <ClCompile Include="AppHelpers.cpp" />
     <ClCompile Include="AudioMarkupNavigator.cpp" />
     <ClCompile Include="AudioMarkupNavigatorDialog.cpp" />
     <ClCompile Include="AnnotationToolViewModel.cpp" />
@@ -407,6 +408,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DBOOST_ALL_DYN_LINK -DHAS_POCKETSPHINX -DHAS_MATLAB888 -DPG_DEBUG -D_MBCS "-I.\GeneratedFiles"</Command>
     </CustomBuild>
+    <ClInclude Include="AppHelpers.h" />
     <ClInclude Include="GeneratedFiles\ui_AnnotationToolWidget.h" />
     <ClInclude Include="GeneratedFiles\ui_SpeechTranscriptionPaintWidget.h" />
     <ClInclude Include="GeneratedFiles\ui_SpeechTranscriptionWidget.h" />

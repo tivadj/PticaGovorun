@@ -67,7 +67,10 @@ namespace PticaGovorun {
 
 		//
 		RecognizerSettings rs;
-		if (!initRecognizerConfiguration("shrekky", rs))
+		// TODO: think how python should configure Julius recognizer (pathes relative to backend dll?)
+		//bool initOp = initRecognizerConfiguration("shrekky", rs);
+		bool initOp = false;
+		if (!initOp)
 		{
 			std::wcerr <<"Can't find speech recognizer configuration";
 			return false;

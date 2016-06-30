@@ -6,6 +6,8 @@
 
 namespace PticaGovorun
 {
+	PG_EXPORTS bool initRecognizerConfiguration(const std::string& recogName, RecognizerSettings& rs);
+
 	class RecognizerNameHintProvider
 	{
 	public:

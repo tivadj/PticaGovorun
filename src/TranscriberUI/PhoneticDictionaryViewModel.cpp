@@ -6,14 +6,31 @@
 #include <ClnUtils.h>
 #include "SpeechProcessing.h"
 #include "SpeechAnnotation.h"
+#include "AppHelpers.h"
 
 namespace PticaGovorun
 {
-	const wchar_t* shrekkyDictPath = LR"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyDic.voca)path";
-	const wchar_t* persianDictPath = LR"path(C:\devb\PticaGovorunProj\srcrep\data\phoneticDictUkKnown.xml)path";
-	const wchar_t* brokenDictPath = LR"path(C:\devb\PticaGovorunProj\srcrep\data\phoneticDictUkBroken.xml)path";
-	const wchar_t* fillerDictPath = LR"path(C:\devb\PticaGovorunProj\srcrep\data\phoneticDictFiller.xml)path";
 	static const size_t WordsCount = 200000;
+
+	std::wstring shrekkyDictPath()
+	{
+		return AppHelpers::mapPath("data/Julius/shrekky/shrekkyDic.voca").toStdWString();
+	}
+
+	std::wstring persianDictPath()
+	{
+		return AppHelpers::mapPath("data/PhoneticDict/phoneticDictUkKnown.xml").toStdWString();
+	}
+
+	std::wstring brokenDictPath()
+	{
+		return AppHelpers::mapPath("data/PhoneticDict/phoneticDictUkBroken.xml").toStdWString();
+	}
+
+	std::wstring fillerDictPath()
+	{
+		return AppHelpers::mapPath("data/PhoneticDict/phoneticDictFiller.xml").toStdWString();
+	}
 
 	PhoneticDictionaryViewModel::PhoneticDictionaryViewModel()
 		: stringArena_(WordsCount * 6) // W*C, W words, C chars per word
@@ -44,7 +61,7 @@ namespace PticaGovorun
 			std::chrono::time_point<Clock> now1 = Clock::now();
 			
 			phoneticDictWords.reserve(WordsCount);
-			std::tie(loadOp, errMsg) = loadPhoneticDictionaryPronIdPerLine(shrekkyDictPath, *phoneReg_, *pTextCodec, phoneticDictWords, brokenLines, stringArena_);
+			std::tie(loadOp, errMsg) = loadPhoneticDictionaryPronIdPerLine(shrekkyDictPath(), *phoneReg_, *pTextCodec, phoneticDictWords, brokenLines, stringArena_);
 			
 			std::chrono::time_point<Clock> now2 = Clock::now();
 			auto elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
@@ -64,7 +81,7 @@ namespace PticaGovorun
 			const char* errMsg;
 			phoneticDictWords.clear();
 			phoneticDictWords.reserve(WordsCount);
-			std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(persianDictPath, *phoneReg_, phoneticDictWords, stringArena_);
+			std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(persianDictPath(), *phoneReg_, phoneticDictWords, stringArena_);
 			if (!loadOp)
 				qDebug(errMsg);
 			else
@@ -76,7 +93,7 @@ namespace PticaGovorun
 			const char* errMsg;
 			phoneticDictWords.clear();
 			phoneticDictWords.reserve(WordsCount);
-			std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(brokenDictPath, *phoneReg_, phoneticDictWords, stringArena_);
+			std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(brokenDictPath(), *phoneReg_, phoneticDictWords, stringArena_);
 			if (!loadOp)
 				qDebug(errMsg);
 			else
@@ -88,7 +105,7 @@ namespace PticaGovorun
 			const char* errMsg;
 			phoneticDictWords.clear();
 			phoneticDictWords.reserve(WordsCount);
-			std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(fillerDictPath, *phoneReg_, phoneticDictWords, stringArena_);
+			std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(fillerDictPath(), *phoneReg_, phoneticDictWords, stringArena_);
 			if (!loadOp)
 				qDebug(errMsg);
 			else
@@ -277,12 +294,12 @@ namespace PticaGovorun
 
 		std::vector<PhoneticWord> words(phoneticDictWellFormed_.size());
 		std::transform(std::begin(phoneticDictWellFormed_), std::end(phoneticDictWellFormed_), std::begin(words), selectSecondFun);
-		savePhoneticDictionaryXml(words, persianDictPath, *phoneReg_);
+		savePhoneticDictionaryXml(words, persianDictPath(), *phoneReg_);
 
 		//
 		words.resize(phoneticDictBroken_.size());
 		std::transform(std::begin(phoneticDictBroken_), std::end(phoneticDictBroken_), std::begin(words), selectSecondFun);
-		savePhoneticDictionaryXml(words, brokenDictPath, *phoneReg_);
+		savePhoneticDictionaryXml(words, brokenDictPath(), *phoneReg_);
 	}
 
 	void PhoneticDictionaryViewModel::validateWordsHavePhoneticTranscription(const QString& text, QStringList& checkMsgs)

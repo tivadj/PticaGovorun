@@ -705,47 +705,5 @@ namespace PticaGovorun {
 	{
 		return recognizerSettings_;
 	}
-
-	bool initRecognizerConfiguration(const std::string& recogName, RecognizerSettings& rs)
-	{
-		if (recogName == "shrekky")
-		{
-			rs.FrameSize = FrameSize;
-			rs.FrameShift = FrameShift;
-			rs.SampleRate = SampleRate;
-			rs.UseWsp = false;
-
-			rs.DictionaryFilePath = R"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyDic.voca)path";
-			rs.LanguageModelFilePath = R"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyLM.blm)path";
-			rs.AcousticModelFilePath = R"path(C:\devb\PticaGovorunProj\data\shrekky\shrekkyAM.bam)path";
-
-			rs.LogFile = recogName + "-LogFile.txt";
-			rs.FileListFileName = recogName + "-FileList.txt";
-			rs.TempSoundFile = recogName + "-TmpAudioFile.wav";
-			rs.CfgFileName = recogName + "-Config.txt";
-			rs.CfgHeaderFileName = recogName + "-ConfigHeader.txt";
-		}
-		else if (recogName == "persian")
-		{
-			rs.FrameSize = FrameSize;
-			rs.FrameShift = FrameShift;
-			rs.SampleRate = SampleRate;
-			rs.UseWsp = false; //?
-
-			rs.DictionaryFilePath = R"path(C:\progs\cygwin\home\mmore\voxforge_p111-117\lexicon\voxforge_lexicon)path";
-			rs.LanguageModelFilePath = R"path(C:\progs\cygwin\home\mmore\voxforge_p111-117\auto\persian.ArpaLM.bi.bin)path";
-			rs.AcousticModelFilePath = R"path(C:\progs\cygwin\home\mmore\voxforge_p111-117\auto\acoustic_model_files\hmmdefs)path";
-			rs.TiedListFilePath = R"path(C:\progs\cygwin\home\mmore\voxforge_p111-117\auto\acoustic_model_files\tiedlist)path";
-
-			rs.LogFile = recogName + "-LogFile.txt";
-			rs.FileListFileName = recogName + "-FileList.txt";
-			rs.TempSoundFile = recogName + "-TmpAudioFile.wav";
-			rs.CfgFileName = recogName + "-Config.txt";
-			rs.CfgHeaderFileName = recogName + "-ConfigHeader.txt";
-		}
-
-		return true;
-	}
-
 }
 #endif

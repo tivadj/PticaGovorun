@@ -402,7 +402,7 @@ namespace PticaGovorun
 		//else if (ke->key() == Qt::Key_Backslash)
 		//	transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::CurrentCursor);
 
-		if (ke->key() == Qt::Key_Space)
+		else if (ke->key() == Qt::Key_Space)
 			transcriberModel_->soundPlayerTogglePlayPause();
 		// F9 is used to start playing when typing transcript text in
 		else if (ke->key() == Qt::Key_F9)

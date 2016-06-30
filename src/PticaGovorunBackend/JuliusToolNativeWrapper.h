@@ -79,8 +79,6 @@ public:
 	const RecognizerSettings& settings() const;
 };
 
-PG_EXPORTS bool initRecognizerConfiguration(const std::string& recogName, RecognizerSettings& rs);
-
 PG_EXPORTS auto createJuliusRecognizer(const RecognizerSettings& recognizerSettings, std::unique_ptr<QTextCodec, NoDeleteFunctor<QTextCodec>> textCodec)->std::tuple < bool, std::string, std::unique_ptr<JuliusToolWrapper> >;
 
 // Computes MFCC features using global initialized 'Recog' object.

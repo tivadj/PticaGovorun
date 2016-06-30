@@ -24,6 +24,7 @@ static const char* PGShortPause = "sp";
 // we work with Julius in 'Windows-1251' encoding
 static const char* PGEncodingStr = "windows-1251";
 
+// TODO: determine dependent code
 static const int SampleRate = 22050;
 static const int FrameSize = 400;
 static const int FrameShift = 160;

@@ -38,6 +38,7 @@
 #include "PhoneticService.h"
 #include "PresentationHelpers.h"
 #include "SharedServiceProvider.h"
+#include "AppHelpers.h"
 
 namespace PticaGovorun
 {
@@ -128,6 +129,12 @@ void SpeechTranscriptionViewModel::soundPlayerPlay(const short* audioSouce, long
 	data.FinishPlayingFrameInd = finishPlayingFrameInd;
 	data.CurPlayingFrameInd = startPlayingFrameInd;
 	data.MoveCursorToLastPlayingPosition = !restoreCurFrameInd;
+
+	auto logPaError = [](PaError err)
+	{
+		auto msg = Pa_GetErrorText(err);
+		qDebug() << msg;
+	};
 
 	//
 	PaDeviceIndex deviceIndex = Pa_GetDefaultOutputDevice(); /* default output device */
@@ -258,7 +265,10 @@ void SpeechTranscriptionViewModel::soundPlayerPlay(const short* audioSouce, long
 		patestCallback,
 		&data);
 	if (err != paNoError)
+	{
+		logPaError(err);
 		return;
+	}
 
 	data.stream = stream;
 
@@ -301,7 +311,10 @@ void SpeechTranscriptionViewModel::soundPlayerPlay(const short* audioSouce, long
 
 	err = Pa_SetStreamFinishedCallback(stream, StreamFinished);
 	if (err != paNoError)
+	{
+		logPaError(err);
 		return;
+	}
 
 	// play
 
@@ -310,7 +323,10 @@ void SpeechTranscriptionViewModel::soundPlayerPlay(const short* audioSouce, long
 
 	err = Pa_StartStream(stream);
 	if (err != paNoError)
+	{
+		logPaError(err);
 		return;
+	}
 }
 
 template <typename MarkerPred>
@@ -981,6 +997,9 @@ void SpeechTranscriptionViewModel::setCursorInternal(std::pair<long,long> value,
 		auto oldValue = cursor_;
 
 		cursor_ = value;
+		// TODO: the line below emits Qt warning when playing stops
+		// QObject::connect: Cannot queue arguments of type 'std::pair<long,long>'
+		//	(Make sure 'std::pair<long,long>' is registered using qRegisterMetaType().)
 		emit cursorChanged(oldValue);
 
 		// reset current marker
@@ -1547,16 +1566,13 @@ void SpeechTranscriptionViewModel::recognizeCurrentSegmentSphinxRequest()
 	// pad the audio with silince
 	PticaGovorun::padSilence(&audioSamples_[curSegBeg], len, silencePadAudioSamplesCount_, audioSegmentBuffer_);
 
-	//PticaGovorun::JuiliusRecognitionResult recogResult;
-	//auto recogOp = recognizer_->recognize(FrameToSamplePicker, audioSegmentBuffer_.data(), audioSegmentBuffer_.size(), recogResult);
-
-	const char* hmmPath =       R"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\model_parameters\persian.cd_cont_200)path";
-	const char* langModelPath = R"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian.lm.DMP)path";
-	const char* dictPath =      R"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian.dic)path";
+	std::string hmmPath = AppHelpers::mapPathStdString("data/Sphinx/persian/model_parameters/persian.cd_cont_200");
+	std::string langModelPath = AppHelpers::mapPathStdString("data/Sphinx/persian/etc/persian.lm.DMP");
+	std::string dictPath = AppHelpers::mapPathStdString("data/Sphinx/persian/etc/persian.dic");
 	cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
-		"-hmm", hmmPath,
-		"-lm", langModelPath,
-		"-dict", dictPath,
+		"-hmm", hmmPath.c_str(),
+		"-lm", langModelPath.c_str(),
+		"-dict", dictPath.c_str(),
 		nullptr);
 	if (config == nullptr)
 		return;
