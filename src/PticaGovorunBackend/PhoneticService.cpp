@@ -9,6 +9,7 @@
 #include <QString>
 #include "CoreUtils.h"
 #include <utility>
+#include "assertImpl.h"
 
 namespace PticaGovorun
 {
@@ -116,7 +117,7 @@ namespace PticaGovorun
 #if PG_DEBUG
 		static std::string phoneStr;
 		bool toStrOp = phoneToStr(*this, validPhoneId, phoneStr);
-		PG_DbgAssert(toStrOp && "Invalid PhoneId:int");
+		PG_Assert2(toStrOp, "Invalid PhoneId:int");
 		result.fillStr(phoneStr);
 #endif
 		return result;
@@ -129,7 +130,7 @@ namespace PticaGovorun
 #ifdef PG_DEBUG
 		int basicPhoneStrInd = basicPhoneId - 1;
 
-		PG_DbgAssert(basicPhoneStrInd >= 0 && basicPhoneStrInd < basicPhones_.size());
+		PG_Assert(basicPhoneStrInd >= 0 && basicPhoneStrInd < basicPhones_.size());
 		const BasicPhone& basicPhone = basicPhones_[basicPhoneStrInd];
 
 		result.fillStr(basicPhone.Name);
@@ -783,7 +784,7 @@ namespace PticaGovorun
 				}
 
 				// start new group
-				PG_DbgAssert(curPronGroup.Pronunciations.empty() && "Old pronunciation data must be purged");
+				PG_DbgAssert2(curPronGroup.Pronunciations.empty(), "Old pronunciation data must be purged");
 				curPronGroup.Word = arenaWordRef;
 			}
 
@@ -1720,7 +1721,7 @@ namespace PticaGovorun
 			if (isNoisyUnvoicedConsonant(*phoneReg_, prevPh.BasicPhoneId) && isNoisyVoicedConsonant(*phoneReg_, ph.BasicPhoneId))
 			{
 				boost::optional<PhoneRegistry::BasicPhoneIdT> partnerBasicPhoneId = getVoicedUnvoicedConsonantPair(*phoneReg_, prevPh.BasicPhoneId);
-				PG_Assert(partnerBasicPhoneId != nullptr && "Can't find paired consonant");
+				PG_Assert2(partnerBasicPhoneId != nullptr, "Can't find paired consonant");
 
 				const BasicPhone* partnerBasicPhone = phoneReg_->basicPhone(partnerBasicPhoneId.get());
 
@@ -1766,7 +1767,7 @@ namespace PticaGovorun
 	{
 		bool success = false;
 		BasicPhoneIdT basicId = phoneReg_->basicPhoneId(basicPhoneStr, &success);
-		PG_Assert(success && "Unknown basic phone str");
+		PG_Assert2(success, "Unknown basic phone str");
 
 		PhoneBillet billet;
 		billet.BasicPhoneId = basicId;
@@ -1779,7 +1780,7 @@ namespace PticaGovorun
 	{
 		bool success = false;
 		BasicPhoneIdT basicId = phoneReg_->basicPhoneId(basicPhoneStr, &success);
-		PG_Assert(success && "Unknown basic phone str");
+		PG_Assert2(success, "Unknown basic phone str");
 
 		PhoneBillet billet;
 		billet.BasicPhoneId = basicId;
@@ -2830,7 +2831,7 @@ namespace PticaGovorun
 			{
 				if (suffixEnd.TakeCharsCount > suffixEnd.MatchSuffix.size())
 				{
-					PG_Assert(false && "actual suffix size must be <= of possible suffix size");
+					PG_Assert2(false, "actual suffix size must be <= of possible suffix size");
 				}
 			}
 			std::sort(sureSuffixes.begin(), sureSuffixes.end(), [](SuffixEnd& a, SuffixEnd& b)
@@ -2844,7 +2845,7 @@ namespace PticaGovorun
 				const auto& curSuffix = sureSuffixes[i].MatchSuffix;
 				if (curSuffix == sureSuffixes[i + 1].MatchSuffix && sureSuffixes[i].WordClass == sureSuffixes[i+1].WordClass)
 				{
-					PG_Assert(false && "Duplicate suffixs");
+					PG_Assert2(false, "Duplicate suffixs");
 				}
 			}
 		}
@@ -3065,7 +3066,7 @@ namespace PticaGovorun
 					continue;
 				const std::wstring& s1 = prefixes[i];
 				const std::wstring& s2 = prefixes[j];
-				assert(s1.size() <= s2.size() && "Strings are ordered in ascending order");
+				PG_DbgAssert2(s1.size() <= s2.size(), "Strings are ordered in ascending order");
 
 				size_t prefixSize = commonPrefixSize<wchar_t>(s1, s2);
 				auto countConsonant = [](wchar_t ch) { return isUkrainianConsonant(ch); };
@@ -3138,9 +3139,9 @@ namespace PticaGovorun
 	{
 		bool wasAdded = false;
 		sentStartWordPart_ = wordUsage_.getOrAddWordPart(L"<s>", WordPartSide::WholeWord, &wasAdded);
-		CV_Assert(wasAdded);
+		PG_Assert(wasAdded);
 		sentEndWordPart_ = wordUsage_.getOrAddWordPart(L"</s>", WordPartSide::WholeWord, &wasAdded);
-		CV_Assert(wasAdded);
+		PG_Assert(wasAdded);
 	}
 
 	void UkrainianPhoneticSplitter::bootstrap(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& words, const std::wstring& targetWord, const std::unordered_set<std::wstring>& processedWords)

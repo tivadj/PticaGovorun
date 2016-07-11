@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <functional>
+#include "assertImpl.h"
 #include "PticaGovorunCore.h"
 
 // temporary implementation of a slice

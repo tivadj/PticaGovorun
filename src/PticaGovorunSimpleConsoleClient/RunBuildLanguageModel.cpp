@@ -20,9 +20,9 @@
 #include "TextProcessing.h"
 #include "LangStat.h"
 #include "PhoneticService.h"
-#include "PticaGovorunCore.h"
 #include "CoreUtils.h"
 #include "ArpaLanguageModel.h"
+#include "assertImpl.h"
 
 namespace RunBuildLanguageModelNS
 {
@@ -313,7 +313,7 @@ namespace RunBuildLanguageModelNS
 		QString usedCountQ;
 		for (const WordSeqUsage* wordSeq : wordSeqOrder)
 		{
-			PG_Assert(wordSeq->Key.PartCount == 1 && "Not implemented");
+			PG_Assert2(wordSeq->Key.PartCount == 1, "Not implemented");
 
 			xmlWriter.writeStartElement(WordName);
 

@@ -15,6 +15,7 @@
 #include <WavUtils.h>
 #include <SpeechAnnotation.h>
 #include <XmlAudioMarkup.h>
+#include "assertImpl.h"
 
 namespace DslDictionaryConvertRunnerNS
 {

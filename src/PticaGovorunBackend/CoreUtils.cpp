@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "CoreUtils.h"
 #include <ctime> // time_t
-#include <cassert>
 #include <array>
+#include "CoreUtils.h"
+#include "assertImpl.h"
 
 namespace PticaGovorun
 {
@@ -22,7 +22,7 @@ void appendTimeStampNow(std::stringstream& str)
 	// Convert now to tm struct for local timezone
 	tm now1;
 	errno_t err = localtime_s(&now1, &t1);
-	assert(err == 0);
+	PG_Assert(err == 0);
 
 	char buf[80];
 	strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &now1); // 20120601070015
@@ -37,7 +37,7 @@ void appendTimeStampNow(std::wstring& str)
 	// Convert now to tm struct for local timezone
 	tm now1;
 	errno_t err = localtime_s(&now1, &t1);
-	assert(err == 0);
+	PG_Assert(err == 0);
 
 	std::array<char, 80> buf;
 	size_t len = strftime(buf.data(), buf.size(), "%Y%m%d%H%M%S", &now1); // 20120601070015

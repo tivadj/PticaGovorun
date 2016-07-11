@@ -8,6 +8,7 @@
 #include <boost/utility/string_ref.hpp>
 
 #include "PticaGovorunCore.h"
+#include "assertImpl.h"
 
 namespace PticaGovorun
 {
@@ -23,7 +24,7 @@ namespace PticaGovorun
 		// Convert now to tm struct for local timezone
 		tm now1;
 		errno_t err = localtime_s(&now1, &t1);
-		assert(err == 0);
+		PG_Assert(err == 0);
 
 		char buf[80];
 		strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &now1); // 20120601070015

@@ -3,6 +3,7 @@
 #include <functional>
 #include <boost/optional.hpp>
 #include "ClnUtils.h"
+#include "assertImpl.h"
 
 namespace PticaGovorun
 {
@@ -213,7 +214,7 @@ namespace PticaGovorun
 
 		CostType distance() const
 		{
-			PG_Assert(rowsCount_ >= 1 && colsCount_ >= 1 && "Call estimateAllDistances() first");
+			PG_Assert2(rowsCount_ >= 1 && colsCount_ >= 1, "Call estimateAllDistances() first");
 			size_t topRightInd = dim1Index(colsCount_ - 1, rowsCount_ - 1);
 			PG_Assert(topRightInd < buff_.size());
 			return buff_[topRightInd].Cost;
@@ -221,7 +222,7 @@ namespace PticaGovorun
 
 		void minCostRecipe(std::vector<EditStep>& recipe)
 		{
-			PG_Assert(rowsCount_ >= 1 && colsCount_ >= 1 && "Call estimateAllDistances() first");
+			PG_Assert2(rowsCount_ >= 1 && colsCount_ >= 1, "Call estimateAllDistances() first");
 			for (size_t rowInd = rowsCount_ - 1, colInd = colsCount_ - 1; rowInd >= 1 || colInd >= 1; )
 			{
 				size_t cellInd = dim1Index(colInd, rowInd);
@@ -257,7 +258,7 @@ namespace PticaGovorun
 			}
 
 			bool isValid = validateRecipe(recipe, first_, second_);
-			PG_DbgAssert(isValid && "Created invalid recipe");
+			PG_DbgAssert2(isValid, "Created invalid recipe");
 		}
 	private:
 		inline size_t dim1Index(size_t firstInd, size_t secondInd) const
@@ -395,7 +396,7 @@ namespace PticaGovorun
 		std::reverse(firstAlignedStr.begin(), firstAlignedStr.end());
 		std::reverse(secondAlignedStr.begin(), secondAlignedStr.end());
 
-		PG_DbgAssert(firstAlignedStr.size() == secondAlignedStr.size() && "Two words must have equal size");
+		PG_DbgAssert2(firstAlignedStr.size() == secondAlignedStr.size(), "Two words must have equal size");
 	}
 
 	// overload for decltype(Symbol) = decltype(TextChar)
@@ -437,7 +438,7 @@ namespace PticaGovorun
 				insertOrder = opCounter;
 			else if (op == 'S')
 				substituteOrder = opCounter;
-			else PG_Assert("Unknown character in editOpOrderRIS");
+			else PG_Assert2(false, "Unknown character in editOpOrderRIS");
 			opCounter++;
 		}
 		PG_Assert(removeOrder != -1);

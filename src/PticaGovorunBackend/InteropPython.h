@@ -24,8 +24,10 @@ namespace PticaGovorun
 	extern "C" PG_EXPORTS int reshapeAsTable_GetRowsCount(int phoneToMfccFeaturesMapId, int mfccVecLen);
 	extern "C" PG_EXPORTS bool reshapeAsTable(int phoneToMfccFeaturesMapId, int mfccVecLen, int tableRowsCount, float* outFeaturesByFrame, int* outPhoneIds);
 	
+#if PG_HAS_OPENCV
 	// Trains one cv::EM object per phone.
 	extern "C" PG_EXPORTS bool trainMonophoneClassifier(int phoneToMfccFeaturesMapId, int mfccVecLen, int numClusters, int* classifierId);
+#endif
 
 	// Simulates classifier on the given feature vector.
 	extern "C" PG_EXPORTS bool evaluateMonophoneClassifier(int classifierId, const float* features, int featuresCountPerFrame, int framesCount, int* phoneIdArray, float* logProbArray);

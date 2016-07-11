@@ -9,12 +9,15 @@
 #include <QObject>
 #include <QFileInfo>
 #include <boost/utility/string_ref.hpp>
+#include <boost/optional/optional.hpp>
+
+#if PG_HAS_OPENCV
 #include <opencv2/ml.hpp>
+#endif
 
 #include "PticaGovorunCore.h"
 #include "MLUtils.h"
 #include "ClnUtils.h"
-#include <boost/optional/optional.hpp>
 
 namespace PticaGovorun {
 
@@ -247,8 +250,11 @@ PG_EXPORTS std::tuple<bool, const char*> collectMfccFeatures(const QFileInfo& fo
 // Gets the number of frames. Eatch frame contains 'mfccVecLen' features. Total number of features is 'featuresTotalCount'.
 PG_EXPORTS int featuresFramesCount(int featuresTotalCount, int mfccVecLen);
 
+#if PG_HAS_OPENCV
+// IMPL: uses cv::ml::EM to train the classifiers.
 PG_EXPORTS std::tuple<bool, const char*> trainMonophoneClassifier(const std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector, int mfccVecLen, int numClusters,
 	std::map<std::string, cv::Ptr<cv::ml::EM>>& phoneNameToEMObj);
+#endif
 
 PG_EXPORTS void preEmphasisInplace(wv::slice<float> xs, float preEmph);
 

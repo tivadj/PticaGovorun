@@ -5,6 +5,7 @@
 #include <QFileInfo>
 #include "PresentationHelpers.h"
 #include "SpeechTranscriptionValidation.h"
+#include "assertImpl.h"
 
 namespace PticaGovorun
 {

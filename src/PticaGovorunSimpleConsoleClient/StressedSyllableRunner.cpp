@@ -7,6 +7,7 @@
 #include <QXmlStreamWriter>
 #include "PhoneticService.h"
 #include <CoreUtils.h>
+#include "assertImpl.h"
 
 namespace StressedSyllableRunnerNS
 {
@@ -252,7 +253,7 @@ namespace StressedSyllableRunnerNS
 				std::transform(firstStressedVowelInds.begin(), firstStressedVowelInds.end(), std::back_inserter(vowelOrder), [&firstWord](int charInd)
 				{
 					int ord = vowelCharIndToSyllableIndUk(firstWord, charInd);
-					PG_Assert(ord != -1 && "The index of input char must be vowel");
+					PG_Assert2(ord != -1, "The index of input char must be vowel");
 					return ord+1; // +1 for 1-based index
 				});
 				

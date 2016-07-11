@@ -25,6 +25,7 @@
 #include "ClnUtils.h"
 #include "PhoneticService.h"
 #include "SphinxModel.h"
+#include "assertImpl.h"
 
 namespace RecognizeSpeechSphinxTester
 {
@@ -576,7 +577,7 @@ namespace RecognizeSpeechSphinxTester
 				for (boost::wstring_ref pronCode : pronCodes)
 				{
 					const PronunciationFlavour* pron = expandPronCodeFun(pronCode);
-					PG_Assert(pron != nullptr && "The pronCode used in transcription must exist in primary/filler phonetic dictionary");
+					PG_Assert2(pron != nullptr, "The pronCode used in transcription must exist in primary/filler phonetic dictionary");
 
 					std::copy(pron->Phones.begin(), pron->Phones.end(), std::back_inserter(phones));
 				}

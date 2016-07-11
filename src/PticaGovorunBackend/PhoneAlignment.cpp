@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "PhoneAlignment.h"
-#include <cassert>
 #include <limits>
-//#include <algorithm>
+#include "assertImpl.h"
 
 using namespace std;
 
@@ -67,12 +66,12 @@ void PhoneAlignment::compute(std::vector<std::tuple<size_t,size_t>>& resultAlign
     resultAlignedStates.reserve(statesCount_);
     populateOptimalAlignment(resultAlignedStates);
 
-    assert(resultAlignedStates.size() == statesCount_ && "All frames must be consequently assigned to the states");
+	PG_DbgAssert2(resultAlignedStates.size() == statesCount_, "All frames must be consequently assigned to the states");
 }
 
 void PhoneAlignment::populateOptimalAlignment(std::vector<std::tuple<size_t,size_t>>& resultAlignedStates)
 {
-    assert(resultAlignedStates.empty());
+	PG_DbgAssert(resultAlignedStates.empty());
 
     if (framesCount_ < 1 || statesCount_ < 1) // no data to process
         return;
@@ -93,7 +92,7 @@ void PhoneAlignment::populateOptimalAlignment(std::vector<std::tuple<size_t,size
         }
 
         if (timeInd == 0)
-            assert(stateInd == 0 && "In the frame == 0 only state == 0 is possible (to end up in the beginning cell)");
+			PG_DbgAssert2(stateInd == 0, "In the frame == 0 only state == 0 is possible (to end up in the beginning cell)");
 
         auto prob = state(stateInd, timeInd-1); // step from the same state
 
@@ -144,7 +143,7 @@ void PhoneAlignment::populateStateDistributions(const std::vector<std::tuple<siz
 
             if (stateDistrib.OffsetFrameIndex == -1)
             {
-                assert(frameIndex >= 0 && "valid index must be found");
+				PG_DbgAssert2(frameIndex >= 0, "valid index must be found");
                 stateDistrib.OffsetFrameIndex = (size_t)frameIndex;
             }
 
@@ -165,7 +164,7 @@ double PhoneAlignment::emitFunSafe(size_t stateIndex, size_t frameIndex) const
     auto prob = emitFun_(stateIndex, frameIndex);
 
     // check prob is not infinity
-    assert(prob != std::numeric_limits<double>::lowest() && "Emit probability can't be infinity");
+	PG_DbgAssert2(prob != std::numeric_limits<double>::lowest(), "Emit probability can't be infinity");
     return prob;
 }
 

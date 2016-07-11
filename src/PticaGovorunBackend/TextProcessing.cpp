@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "TextProcessing.h"
+#include "assertImpl.h"
 #include <QChar>
 
 namespace PticaGovorun
@@ -147,7 +148,7 @@ namespace PticaGovorun
 		if (gotApostrophe_ || gotHyphen_)
 			wordEndIndExcl -= 1;
 
-		PG_Assert(wordStartInd_ < wordEndIndExcl && "Word has at least one character");
+		PG_Assert2(wordStartInd_ < wordEndIndExcl, "Word has at least one character");
 
 		int len = wordEndIndExcl - wordStartInd_;
 		wv::slice<wchar_t> wordSlice = wv::make_view(&mutText_[wordStartInd_], len);

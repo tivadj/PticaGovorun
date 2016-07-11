@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include <vector>
 #include <array>
-#include <cassert>
 #include <iostream>
 #include "FlacUtils.h"
 #include "WavUtils.h"
+#include "assertImpl.h"
 
 namespace FlacRunnerNS
 {

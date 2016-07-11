@@ -7,6 +7,7 @@
 #include "SpeechProcessing.h"
 #include "SpeechAnnotation.h"
 #include "AppHelpers.h"
+#include "assertImpl.h"
 
 namespace PticaGovorun
 {

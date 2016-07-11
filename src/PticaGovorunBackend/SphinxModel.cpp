@@ -8,7 +8,7 @@
 #include "WavUtils.h"
 #include "ClnUtils.h"
 #include "ArpaLanguageModel.h"
-
+#include "assertImpl.h"
 
 namespace PticaGovorun
 {
@@ -154,7 +154,7 @@ namespace PticaGovorun
 				for (const PronunciationFlavour& pron : word.Pronunciations)
 				{
 					const WordPart* pronPart = wordUsage.wordPartByValue(toStdWString(pron.PronCode), WordPartSide::WholeWord);
-					PG_Assert(pronPart != nullptr && "PronIds were added in step1");
+					PG_Assert2(pronPart != nullptr, "PronIds were added in step1");
 					parts.push_back(pronPart);
 				}
 			};
@@ -1019,7 +1019,7 @@ namespace PticaGovorun
 			return std::any_of(pronCodes.begin(), pronCodes.end(), [this, &rarePhoneIds](boost::wstring_ref pronCode) -> bool
 			{
 				const PronunciationFlavour* pron = expandWellKnownPronCode(pronCode, true);
-				PG_Assert(pron != nullptr && "PronCode can't be expanded into phones, but has been successfully expanded before");
+				PG_Assert2(pron != nullptr, "PronCode can't be expanded into phones, but has been successfully expanded before");
 				
 				return std::any_of(pron->Phones.begin(), pron->Phones.end(), [&rarePhoneIds](PhoneId phId) -> bool
 				{

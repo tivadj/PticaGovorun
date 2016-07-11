@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <pocketsphinx.h>
 #include "ClnUtils.h"
+#include "PticaGovorunCore.h"
 
 namespace PticaGovorun
 {

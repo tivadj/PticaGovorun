@@ -8,8 +8,8 @@ namespace PticaGovorun
 // The routine is similar to Matlab 'linspace' function.
 void linearSpace(float min, float max, int numPoints, wv::slice<float> points)
 {
-	assert(numPoints >= 2);
-	assert(points.size() >= numPoints && "Space for points must be allocated");
+	PG_Assert(numPoints >= 2);
+	PG_Assert(points.size() >= numPoints && "Space for points must be allocated");
 
 	// to prevent float round offs, set the first and the last points to expected min and max vlues
 	points[0] = min;

@@ -30,7 +30,7 @@
 
 #include "WavUtils.h"
 #include "SpeechTranscriptionViewModel.h"
-#include "PticaGovorunCore.h"
+#include "assertImpl.h"
 #include "ClnUtils.h"
 //#include "algos_amp.cpp"
 #include "InteropPython.h"
@@ -59,7 +59,7 @@ SpeechTranscriptionViewModel::SpeechTranscriptionViewModel()
 
 	void SpeechTranscriptionViewModel::loadAnnotAndAudioFileRequest()
 {
-	PG_DbgAssert(QFileInfo::exists(annotFilePathAbs_) && "Annotation file must be specified");
+	PG_DbgAssert2(QFileInfo::exists(annotFilePathAbs_), "Annotation file must be specified");
 
 	speechAnnot_.clear();
 	bool loadOp;
@@ -115,7 +115,7 @@ SpeechTranscriptionViewModel::SpeechTranscriptionViewModel()
 void SpeechTranscriptionViewModel::soundPlayerPlay(const short* audioSouce, long startPlayingFrameInd, long finishPlayingFrameInd, bool restoreCurFrameInd)
 {
 	using namespace PticaGovorun;
-	assert(startPlayingFrameInd <= finishPlayingFrameInd && "Must play start <= end");
+	PG_DbgAssert2(startPlayingFrameInd <= finishPlayingFrameInd, "Must play start <= end");
 
 	if (soundPlayerIsPlaying())
 		return;
@@ -348,7 +348,7 @@ void SpeechTranscriptionViewModel::transformMarkersIf(const std::vector<PticaGov
 
 std::tuple<long, long> SpeechTranscriptionViewModel::getSampleRangeToPlay(long curSampleInd, SegmentStartFrameToPlayChoice startFrameChoice, int* outLeftMarkerInd)
 {
-	PG_Assert(!audioSamples_.empty() && "Audio samples must be loaded");
+	PG_Assert2(!audioSamples_.empty(), "Audio samples must be loaded");
 
 	auto cur = cursor();
 	
@@ -377,7 +377,7 @@ std::tuple<long, long> SpeechTranscriptionViewModel::getSampleRangeToPlay(long c
 	int rightMarkerInd = -1;
 	auto markerFrameIndSelector = [](const MarkerRefToOrigin& m) { return m.Marker.SampleInd;  };
 	bool foundSegOp = PticaGovorun::findSegmentMarkerInds(markerRefs, markerFrameIndSelector, curSampleInd, true, leftMarkerInd, rightMarkerInd);
-	PG_Assert(foundSegOp && "The segment to play must be found");
+	PG_Assert2(foundSegOp, "The segment to play must be found");
 
 	if (outLeftMarkerInd != nullptr)
 	{
@@ -421,9 +421,9 @@ std::tuple<long, long> SpeechTranscriptionViewModel::getSampleRangeToPlay(long c
 		}
 	}
 	
-	PG_Assert(startPlayFrameInd != -1 && "Must be valid frameInd");
-	PG_Assert(endPlayFrameInd != -1 && "Must be valid frameInd");
-	PG_Assert(startPlayFrameInd < endPlayFrameInd && "Must be valid range of frames");
+	PG_Assert2(startPlayFrameInd != -1, "Must be valid frameInd");
+	PG_Assert2(endPlayFrameInd != -1, "Must be valid frameInd");
+	PG_Assert2(startPlayFrameInd < endPlayFrameInd, "Must be valid range of frames");
 
 	//return std::make_tuple<long,long>(startPlayFrameInd, endPlayFrameInd); // TODO: error C2664: 'std::tuple<long,long> std::make_tuple<long,long>(long &&,long &&)' : cannot convert argument 1 from 'long' to 'long &&'
 	return std::tuple<long,long>(startPlayFrameInd, endPlayFrameInd);
@@ -709,7 +709,7 @@ bool SpeechTranscriptionViewModel::docPosToViewport(float docX, ViewportHitInfo&
 	// determine lane
 	float laneWidth = viewportSize_.width();
 	int laneInd = (int)(viewportDocX / laneWidth);
-	assert(laneInd < lanesCount_ && "DocPos must hit some lane");
+	PG_DbgAssert2(laneInd < lanesCount_, "DocPos must hit some lane");
 
 	float insideLaneOffset = viewportDocX - laneInd * viewportSize_.width();
 	
@@ -755,7 +755,7 @@ void SpeechTranscriptionViewModel::deleteRequest(bool isControl)
 				if (markerFrameInd >= start && markerFrameInd < end)
 				{
 					bool delMarkerOp = deleteMarker(markerInd);
-					assert(delMarkerOp);
+					PG_DbgAssert(delMarkerOp);
 				}
 			}
 		}
@@ -1051,7 +1051,7 @@ std::pair<long, long> SpeechTranscriptionViewModel::cursor() const
 
 std::pair<long, long> SpeechTranscriptionViewModel::cursorOrdered() const
 {
-	assert(cursorKind() == TranscriberCursorKind::Range);
+	PG_DbgAssert(cursorKind() == TranscriberCursorKind::Range);
 	long start = std::min(cursor_.first, cursor_.second);
 	long end   = std::max(cursor_.first, cursor_.second);
 	return std::make_pair(start,end);
@@ -1068,7 +1068,7 @@ TranscriberCursorKind SpeechTranscriptionViewModel::cursorKind() const
 	}
 	else 
 	{
-		assert(cursor_.second == PticaGovorun::NullSampleInd && "Cursor invariant: when first position is empty, the second position must be empty too");
+		PG_DbgAssert2(cursor_.second == PticaGovorun::NullSampleInd, "Cursor invariant: when first position is empty, the second position must be empty too");
 		return TranscriberCursorKind::Empty;
 	}
 }
@@ -1144,7 +1144,7 @@ void SpeechTranscriptionViewModel::selectMarkerInternal(bool moveForward)
 	int nextMarkerInd = -1;
 	if (moveForward && rightMarkerInd != -1)
 	{
-		assert(rightMarkerInd < speechAnnot_.markers().size());
+		PG_DbgAssert(rightMarkerInd < speechAnnot_.markers().size());
 		nextMarkerInd = rightMarkerInd;
 	}
 	else if (!moveForward && leftMarkerInd != -1)
@@ -1503,7 +1503,7 @@ void SpeechTranscriptionViewModel::ensureWordToPhoneListVocabularyLoaded()
 	using namespace PticaGovorun;
 
 	QTextCodec* pTextCodec = QTextCodec::codecForName(PGEncodingStr);
-	PG_Assert(pTextCodec != nullptr && "Can't load text encoding");
+	PG_Assert2(pTextCodec != nullptr, "Can't load text encoding");
 
 	// TODO: vocabulary is recognizer dependent
 	if (wordToPhoneListDict_.empty())
@@ -1529,7 +1529,7 @@ void SpeechTranscriptionViewModel::loadAuxiliaryPhoneticDictionaryRequest()
 {
 	using namespace PticaGovorun;
 	QTextCodec* pTextCodec = QTextCodec::codecForName(PGEncodingStr);
-	PG_Assert(pTextCodec != nullptr && "Can't load text encoding");
+	PG_Assert2(pTextCodec != nullptr, "Can't load text encoding");
 
 	const char* dicPatCStr = qgetenv("PG_AUX_DICT_PATH").constData();
 	QString dicPath = QString(dicPatCStr);
@@ -1804,14 +1804,14 @@ void SpeechTranscriptionViewModel::analyzeUnlabeledSpeech()
 		if (i >= wndsCount)
 			break;
 
-		assert(wndIsSilence[i]);
+		PG_DbgAssert(wndIsSilence[i]);
 
 		long left = wnds[i].Start;
 
 		// find end of silence
 		for (i = i + 1; i < wndsCount && wndIsSilence[i]; ++i) {}
 
-		assert(wndIsSilence[i-1]);
+		PG_DbgAssert(wndIsSilence[i - 1]);
 
 		TwoFrameInds bndsLast = wnds[i - 1];
 		long rightExcl = bndsLast.Start + bndsLast.Count;

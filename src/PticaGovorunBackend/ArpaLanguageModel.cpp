@@ -3,6 +3,7 @@
 #include <iostream>
 #include <QFile>
 #include "PhoneticService.h"
+#include "assertImpl.h"
 
 namespace PticaGovorun
 {

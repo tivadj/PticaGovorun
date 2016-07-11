@@ -11,7 +11,7 @@
 #include "JuliusIfHelpers.h"
 #include "WavUtils.h"
 #include "PhoneAlignment.h"
-#include "PticaGovorunCore.h"
+#include "assertImpl.h"
 
 extern "C" int mainJuliusTool(int argc, char *argv[]);
 extern "C" void mainJuliusToolDestructor();
@@ -254,7 +254,7 @@ namespace PticaGovorun {
 			result.AlignmentErrorMessage = err.str();
 		}
 
-		PG_Assert(textCodec_ != nullptr && "Text codec must be initialized at construction time");
+		PG_Assert2(textCodec_ != nullptr, "Text codec must be initialized at construction time");
 
 		encodeVectorOfStrs(recogOutputTextPass1_, *textCodec_, result.TextPass1);
 
@@ -307,8 +307,8 @@ namespace PticaGovorun {
 	extern "C" VECT logNormalProb(HTK_HMM_Dens* pDens, VECT* x, size_t xsize)
 	{
 		HTK_HMM_Dens& dens = *pDens;
-		assert(dens.meanlen == xsize);
-		assert(dens.var->len == xsize);
+		PG_DbgAssert(dens.meanlen == xsize);
+		PG_DbgAssert(dens.var->len == xsize);
 
 		// assumes variances are inversed
 		float* invVar = dens.var->vec;
@@ -337,8 +337,8 @@ namespace PticaGovorun {
 
 		auto res = -0.5f * (gconst + power);
 
-		assert(res <= 0 && "Logarithm of probability must be <= 0");
-		assert(res != std::numeric_limits<decltype(res)>::infinity() && "LogProbability can't be infinity");
+		PG_DbgAssert2(res <= 0, "Logarithm of probability must be <= 0");
+		PG_DbgAssert2(res != std::numeric_limits<decltype(res)>::infinity(), "LogProbability can't be infinity");
 
 		return res;
 	}

@@ -19,6 +19,7 @@
 #include "PhoneticDictionaryViewModel.h"
 #include "VisualNotificationService.h"
 #include "JuliusRecognizerProvider.h"
+#include "AppHelpers.h"
 
 namespace PticaGovorun
 {

@@ -3,6 +3,7 @@
 #include <QBrush>
 #include <QDebug>
 #include "InteropPython.h"
+#include "AppHelpers.h"
 
 SpeechTranscriptionPaintWidget::SpeechTranscriptionPaintWidget(QWidget *parent) :
     QWidget(parent)

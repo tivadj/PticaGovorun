@@ -13,7 +13,7 @@
 #include <QTextStream>
 #include <QXmlStreamWriter>
 
-#include "PticaGovorunCore.h"
+#include "assertImpl.h"
 #include "XmlAudioMarkup.h"
 
 namespace PticaGovorun {

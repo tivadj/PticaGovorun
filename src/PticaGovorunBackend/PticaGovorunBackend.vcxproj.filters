@@ -84,6 +84,9 @@
     <ClInclude Include="FlacUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="assertImpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

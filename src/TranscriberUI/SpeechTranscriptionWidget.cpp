@@ -1,6 +1,8 @@
 #include "SpeechTranscriptionWidget.h"
 #include "ui_SpeechTranscriptionWidget.h"
 #include <QDebug>
+#include "AppHelpers.h"
+#include "assertImpl.h"
 
 namespace PticaGovorun
 {
@@ -84,7 +86,7 @@ namespace PticaGovorun
 
 			// cursor length
 
-			assert(firstDocX != -1);
+			PG_DbgAssert(firstDocX != -1);
 			long len = cursor.second - cursor.first;
 			msg.str("");
 			msg << len;
@@ -191,7 +193,7 @@ namespace PticaGovorun
 			if (newCursor.second != PticaGovorun::NullSampleInd)
 				cursorBounds[cursorBoundsCount++] = newCursor.second;
 
-			assert(cursorBoundsCount > 0 && "Must be some cursor boundaries on cursor change");
+			PG_DbgAssert2(cursorBoundsCount > 0, "Must be some cursor boundaries on cursor change");
 
 			auto minIt = std::min_element(cursorBounds.begin(), cursorBounds.begin() + cursorBoundsCount);
 			auto maxIt = std::max_element(cursorBounds.begin(), cursorBounds.begin() + cursorBoundsCount);
@@ -290,7 +292,7 @@ namespace PticaGovorun
 		auto playingSampleInd = transcriberModel_->playingSampleInd();
 		if (oldPlayingSampleInd != PticaGovorun::NullSampleInd && playingSampleInd != PticaGovorun::NullSampleInd)
 		{
-			assert(oldPlayingSampleInd <= playingSampleInd && "Audio must be played forward?");
+			PG_DbgAssert2(oldPlayingSampleInd <= playingSampleInd, "Audio must be played forward?");
 
 			auto minSampleInd = oldPlayingSampleInd;
 			auto maxSampleInd = playingSampleInd;

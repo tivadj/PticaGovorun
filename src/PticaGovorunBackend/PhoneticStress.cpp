@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QXmlStreamReader>
 #include <QString>
+#include "assertImpl.h"
 
 namespace PticaGovorun
 {
@@ -33,7 +34,7 @@ namespace PticaGovorun
 		else if (numVowels == 1)
 		{
 			// one vowel in a word is always stressed (not works with abbreviation eg USA)
-			PG_DbgAssert(stressedCharInd != -1 && "The result index is already initialized");
+			PG_DbgAssert2(stressedCharInd != -1, "The result index is already initialized");
 			return true;
 		}
 		return false;

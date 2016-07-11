@@ -12,6 +12,7 @@
 #include "PhoneticDictionaryDialog.h"
 #include "SpeechTranscriptionWidget.h"
 #include "ComponentsInfrastructure.h"
+#include "assertImpl.h"
 
 namespace PticaGovorun
 {
@@ -123,7 +124,7 @@ namespace PticaGovorun
 	void AnnotationToolMainWindow::audioTranscriptionToolModel_addedAudioTranscription(const std::wstring& annotFilePath)
 	{
 		std::shared_ptr<SpeechTranscriptionViewModel> transcriberModel = annotationToolModel_->audioTranscriptionModelByFilePathAbs(annotFilePath);
-		PG_DbgAssert(transcriberModel != nullptr && "Can't find created model");
+		PG_DbgAssert2(transcriberModel != nullptr, "Can't find created model");
 
 		auto wdg = std::make_unique<SpeechTranscriptionWidget>();
 		wdg->setTranscriberViewModel(transcriberModel);

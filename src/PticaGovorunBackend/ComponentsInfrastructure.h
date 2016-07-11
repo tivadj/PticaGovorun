@@ -4,8 +4,9 @@
 #include <memory>
 #include <unordered_map>
 #include <boost/utility/string_ref.hpp>
-#include "PticaGovorunCore.h"
+#include "assertImpl.h"
 #include "CoreUtils.h"
+#include "assertImpl.h"
 
 namespace PticaGovorun
 {

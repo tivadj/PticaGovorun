@@ -1,11 +1,10 @@
 #include "stdafx.h"
-#include "PhoneticService.h"
-
 #include <fstream>
 #include <QFile>
 #include <QXmlStreamWriter>
 
-#include "ClnUtils.h"
+#include "PhoneticService.h"
+#include "assertImpl.h"
 
 namespace
 {
@@ -144,7 +143,7 @@ namespace PticaGovorun
 				if (singlePronPerWord)
 					return std::make_tuple(true, "Word contains phones inside word tag and as child pron tag");
 
-				PG_DbgAssert(!wordPron.Word.empty() && "The word must have been started");
+				PG_DbgAssert2(!wordPron.Word.empty(), "The word must have been started");
 
 				PronunciationFlavour pron;
 

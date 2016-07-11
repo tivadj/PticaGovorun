@@ -6,18 +6,15 @@
 
 #include <QDir>
 
-#include <opencv2\core.hpp> // cv::Mat
-#include <opencv2\ml.hpp> // cv::EM
-
 #include "SpeechProcessing.h"
 #include "XmlAudioMarkup.h"
 #include "WavUtils.h"
 #include "MLUtils.h"
 #include "JuliusToolNativeWrapper.h"
 #include "InteropPython.h"
-#include "PticaGovorunCore.h"
 #include "PhoneticService.h"
 #include "InteropPython.h" // phoneNameToPhoneId
+#include "assertImpl.h"
 
 namespace PticaGovorun 
 {
@@ -253,7 +250,7 @@ namespace PticaGovorun
 			break;
 		}
 		default:
-			PG_Assert(false && "Unrecognized value of LastFrameSample enum");
+			PG_Assert2(false, "Unrecognized value of LastFrameSample enum");
 		}
 	}
 
@@ -623,10 +620,11 @@ namespace PticaGovorun
 	int featuresFramesCount(int featuresTotalCount, int mfccVecLen)
 	{
 		int framesCount = featuresTotalCount / mfccVecLen;
-		PG_Assert(framesCount * mfccVecLen == featuresTotalCount && "There must be features for the whole number of frames");
+		PG_Assert2(framesCount * mfccVecLen == featuresTotalCount, "There must be features for the whole number of frames");
 		return framesCount;
 	}
 
+#if PG_HAS_OPENCV
 	std::tuple<bool, const char*> trainMonophoneClassifier(const std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector, int mfccVecLen, int numClusters,
 		std::map<std::string, cv::Ptr<cv::ml::EM>>& phoneNameToEMObj)
 	{
@@ -674,6 +672,7 @@ namespace PticaGovorun
 
 		std::make_tuple(true, "");
 	}
+#endif // PG_HAS_OPENCV
 
 
 // Applies first order derivative to signal.
@@ -834,7 +833,7 @@ void buildTriangularFilterBank(float sampleRate, int binsCount, int fftNum, Tria
 			// shift to the next bin
 			++curBin;
 
-			assert(curBin + 1 < binPointFreqsHz.size() && "There are DFT frequencis greater then the last filter point");
+			PG_DbgAssert2(curBin + 1 < binPointFreqsHz.size(), "There are DFT frequencis greater then the last filter point");
 
 			// for i-th bin the coordinate of its center point is (i+1)
 			binCenterHz = binPointFreqsHz[curBin + 1];
@@ -849,20 +848,20 @@ void buildTriangularFilterBank(float sampleRate, int binsCount, int fftNum, Tria
 		const FilterHitInfo& filterHit = filterBank.fftFreqIndToHitInfo[fftFreqInd];
 		if (filterHit.LeftBinInd == FilterHitInfo::NoBin)
 		{
-			assert(filterHit.RightBinInd != FilterHitInfo::NoBin);
-			assert(filterHit.LeftFilterResponse == 0);
+			PG_DbgAssert(filterHit.RightBinInd != FilterHitInfo::NoBin);
+			PG_DbgAssert(filterHit.LeftFilterResponse == 0);
 		}
 		if (filterHit.RightBinInd == FilterHitInfo::NoBin)
 		{
-			assert(filterHit.LeftBinInd != FilterHitInfo::NoBin);
-			assert(filterHit.RightFilterResponse == 0);
+			PG_DbgAssert(filterHit.LeftBinInd != FilterHitInfo::NoBin);
+			PG_DbgAssert(filterHit.RightFilterResponse == 0);
 		}
 
 		if (filterHit.LeftBinInd != FilterHitInfo::NoBin && filterHit.RightBinInd != FilterHitInfo::NoBin)
 		{
 			// if freq hits two bins, then response from two bins must be unity
 			float resp = filterHit.LeftFilterResponse + filterHit.RightFilterResponse;
-			assert(std::abs(resp - 1) < 0.001);
+			PG_DbgAssert(std::abs(resp - 1) < 0.001);
 		}
 	}
 }
@@ -927,8 +926,8 @@ void FFT(float *xRe, float *xIm, int p)
 // For windowHalf = 1 this function is just the difference of two neighbour elements divided by 2.
 void rateOfChangeWindowed(const wv::slice<float> xs, int windowHalf, wv::slice<float> ys)
 {
-	assert(windowHalf >= 1 && "Radius of averaging must be positive");
-	assert(ys.size() >= xs.size() && "Allocate space for the result");
+	PG_DbgAssert2(windowHalf >= 1, "Radius of averaging must be positive");
+	PG_DbgAssert2(ys.size() >= xs.size(), "Allocate space for the result");
 	// assert xs and ys do not overlap
 
 	float denom = 0;
@@ -939,7 +938,7 @@ void rateOfChangeWindowed(const wv::slice<float> xs, int windowHalf, wv::slice<f
 	}
 	// denom = 0.5sum(r=1..windowHalf, r^2)
 	float denom2 = windowHalf * (windowHalf + 1) * (2 * windowHalf + 1) / 3;
-	assert(denom == denom2);
+	PG_DbgAssert(denom == denom2);
 
 	//
 
@@ -963,7 +962,7 @@ void rateOfChangeWindowed(const wv::slice<float> xs, int windowHalf, wv::slice<f
 
 float Cepstral0Coeff(const wv::slice<float> bankBinCoeffs)
 {
-	assert(!bankBinCoeffs.empty());
+	PG_Assert(!bankBinCoeffs.empty());
 
 	float sum = std::accumulate(std::begin(bankBinCoeffs), std::end(bankBinCoeffs), 0);
 	float sqrt2var = std::sqrt(2.0 / bankBinCoeffs.size());
@@ -979,7 +978,7 @@ void weightSignalInplace(const wv::slice<FilterHitInfo>& filterBank, wv::slice<f
 // pCepstral0, not null to compute zero cepstral coefficients.
 void computeMfcc(wv::slice<float> samplesFloat, const TriangularFilterBank& filterBank, int mfccCount, wv::slice<float> mfcc, float* pCepstral0 = nullptr)
 {
-	assert(mfcc.size() >= mfccCount && "Not enough space for all MFCC");
+	PG_Assert(mfcc.size() >= mfccCount && "Not enough space for all MFCC");
 	
 	const float preEmph = 0.97;
 	preEmphasisInplace(samplesFloat, preEmph);
@@ -1053,16 +1052,16 @@ int slidingWindowsCount(long framesCount, int windowSize, int windowShift)
 		return 0;
 
 	int wndCount = 1 + (framesCount - windowSize) / windowShift;
-	assert((wndCount - 1) * windowShift + windowSize <= framesCount && "The must be frames for each sliding window");
+	PG_DbgAssert2((wndCount - 1) * windowShift + windowSize <= framesCount, "The must be frames for each sliding window");
 	return wndCount;
 }
 
 void slidingWindows(long startFrameInd, long framesCount, int windowSize, int windowShift, wv::slice<TwoFrameInds> windowBounds)
 {
 	int wndCount = slidingWindowsCount(framesCount, windowSize, windowShift);
-	assert(wndCount == windowBounds.size() && "Preallocate space for windows bounds");
+	PG_Assert(wndCount == windowBounds.size() && "Preallocate space for windows bounds");
 	if (wndCount >= 1)
-		assert((wndCount - 1) * windowShift + windowSize <= framesCount && "The must be frames for each sliding window");
+		PG_Assert((wndCount - 1) * windowShift + windowSize <= framesCount && "The must be frames for each sliding window");
 
 	for (int i = 0; i < wndCount; ++i)
 	{

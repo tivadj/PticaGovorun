@@ -202,6 +202,7 @@ namespace PticaGovorun {
 		return true;
 	}
 
+#if PG_HAS_OPENCV
 	bool trainMonophoneClassifier(int phoneToMfccFeaturesMapId, int mfccVecLen, int numClusters, int* classifierId)
 	{
 		auto mapIt = globalIdToPhoneNameToFeaturesVector_.find(phoneToMfccFeaturesMapId);
@@ -232,6 +233,7 @@ namespace PticaGovorun {
 
 		return true;
 	}
+#endif
 
 	bool evaluateMonophoneClassifier(int classifierId, const float* features, int featuresCountPerFrame, int framesCount, int* phoneIdArray, float* logProbArray)
 	{

@@ -33,6 +33,7 @@
 
       <!--Assigns extra intermediate variables in algorithms for debugging; validation logic. Code is not critical for runtime.-->
       <PreprocessorDefinitions>PG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PG_HAS_OPENCV999;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions>PG_HAS_FLAC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions>PG_HAS_SPHINX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 

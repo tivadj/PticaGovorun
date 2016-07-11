@@ -3,8 +3,9 @@
 #include <vector>
 #include <tuple>
 #include <hash_set>
-#include "SpeechProcessing.h"
 #include <boost/utility/string_ref.hpp>
+#include "SpeechProcessing.h"
+#include "assertImpl.h"
 
 namespace PticaGovorun
 {
@@ -130,8 +131,8 @@ namespace PticaGovorun
 		leftMarkerInd = hitMarkerInd;
 		rightMarkerInd = hitMarkerInd + 1;
 
-		PG_Assert(leftMarkerInd >= 0 && "Marker index is out of range");
-		PG_Assert(rightMarkerInd < markers.size() && "Marker index is out of range");
+		PG_Assert2(leftMarkerInd >= 0, "Marker index is out of range");
+		PG_Assert2(rightMarkerInd < markers.size(), "Marker index is out of range");
 		return true;
 	}
 

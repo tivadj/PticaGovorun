@@ -196,6 +196,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ArpaLanguageModel.h" />
+    <ClInclude Include="assertImpl.h" />
     <ClInclude Include="AudioSpeechDecoder.h" />
     <ClInclude Include="ClnUtils.h" />
     <ClInclude Include="ComponentsInfrastructure.h" />

@@ -1,6 +1,7 @@
 #include "stdafx.h"
-#include "LangStat.h"
 #include <numeric>
+#include "LangStat.h"
+#include "assertImpl.h"
 
 namespace PticaGovorun
 {
@@ -64,7 +65,7 @@ namespace PticaGovorun
 		else if (b.partSide() == WordPartSide::RightPart)
 			return false;
 
-		PG_Assert(false && "Unrecognized WordPartSide enum");
+		PG_Assert2(false, "Unrecognized WordPartSide enum");
 		return false;
 	}
 
@@ -84,7 +85,7 @@ namespace PticaGovorun
 
 	WordSeqKey::WordSeqKey(std::initializer_list<int> wordIds)
 	{
-		PG_Assert(wordIds.size() <= PartIds.size() && "Not enough space to store all word ids");
+		PG_Assert2(wordIds.size() <= PartIds.size(), "Not enough space to store all word ids");
 		PartIds.assign(0);
 		std::copy_n(wordIds.begin(), wordIds.size(), PartIds.begin());
 		PartCount = (int)wordIds.size();
@@ -253,7 +254,7 @@ namespace PticaGovorun
 	{
 		for (const auto& pair : wordSeqKeyToUsage_)
 		{
-			PG_Assert(pair.first.PartCount >= 0 && "Word seq must contain some parts");
+			PG_Assert2(pair.first.PartCount >= 0, "Word seq must contain some parts");
 			int accumInd = pair.first.PartCount - 1;
 			if (accumInd < wordsSeqSizes.size())
 			{
