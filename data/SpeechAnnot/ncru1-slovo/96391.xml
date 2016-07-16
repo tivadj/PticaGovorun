@@ -448,7 +448,7 @@
    <syncPoint id="1051" sampleInd="15139932" levelOfDetail="word"/>
    <syncPoint id="638" sampleInd="15141288" levelOfDetail="phone" transcripText="music"/>
    <syncPoint id="252" sampleInd="15236015" levelOfDetail="phone"/>
-   <syncPoint id="335" sampleInd="15253379" levelOfDetail="word" transcripText="структури сучасної української мови [inh] часом потрапляють [sp] чужомовні елементи [inh]" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="335" sampleInd="15253379" levelOfDetail="word" transcripText="структури сучасної української мови [inh] часом(1) потрапляють [sp] чужомовні елементи [inh]" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="341" sampleInd="15302860" levelOfDetail="phone"/>
    <syncPoint id="64" sampleInd="15308797" levelOfDetail="phone" transcripText="часом потрапляють &lt;sil&gt; чужомовні елементи"/>
    <syncPoint id="346" sampleInd="15371308" levelOfDetail="word" transcripText="#які" lang="uk" speakerBriefId="khorkindm"/>

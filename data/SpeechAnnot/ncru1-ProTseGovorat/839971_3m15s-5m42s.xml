@@ -129,7 +129,7 @@
    <syncPoint id="238" sampleInd="2503496" levelOfDetail="phone" transcripText="noise"/>
    <syncPoint id="254" sampleInd="2506605" levelOfDetail="word"/>
    <syncPoint id="228" sampleInd="2508160" levelOfDetail="phone" transcripText="?"/>
-   <syncPoint id="163" sampleInd="2521737" levelOfDetail="word" transcripText="часом перетворитись [inh] на спільний [inh] українсько білоруський резерват [inh] площею понад [sp] пів мільйона гектарів [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="163" sampleInd="2521737" levelOfDetail="word" transcripText="часом(1) перетворитись [inh] на спільний [inh] українсько білоруський резерват [inh] площею понад [sp] пів мільйона гектарів [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="303" sampleInd="2549718" levelOfDetail="phone" transcripText="на спільний"/>
    <syncPoint id="77" sampleInd="2567910" levelOfDetail="phone" transcripText="українсько білоруський &lt;sil&gt; резерват"/>
    <syncPoint id="118" sampleInd="2618117" levelOfDetail="phone" transcripText="площею понад &lt;sil&gt; пів мільйона гектарів"/>

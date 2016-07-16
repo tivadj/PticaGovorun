@@ -31,7 +31,7 @@
    <syncPoint id="30" sampleInd="1061988" levelOfDetail="phone" transcripText="народна демократія як тоді висловлювались"/>
    <syncPoint id="26" sampleInd="1119969" levelOfDetail="word"/>
    <syncPoint id="347" sampleInd="1121573" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="39" sampleInd="1124930" levelOfDetail="word" transcripText="у тисяча дев'яцот сорок сьомому [inh] тим часом гавел закінчив середню школу та потрапив до школи інтернату для хлопчиків у подєбрадах" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="39" sampleInd="1124930" levelOfDetail="word" transcripText="у тисяча дев'яцот сорок сьомому [inh] тим часом(1) гавел закінчив середню школу та потрапив до школи інтернату для хлопчиків у подєбрадах" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="27" sampleInd="1169697" levelOfDetail="phone" transcripText="тим часом гавел закінчив середню школу та потрапив до школи інтернату для хлопчиків у подєбрадах"/>
    <syncPoint id="34" sampleInd="1312068" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="37" sampleInd="1314962" levelOfDetail="word" transcripText="містечку неподалік від праги" lang="uk" speakerBriefId="shapovalji"/>
@@ -167,7 +167,7 @@
    <syncPoint id="230" sampleInd="4501358" levelOfDetail="phone" transcripText="різні думки(2) про гавела"/>
    <syncPoint id="29" sampleInd="4531936" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="397" sampleInd="4533755" levelOfDetail="word"/>
-   <syncPoint id="210" sampleInd="4536286" levelOfDetail="word" transcripText="часом дуже критичні" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="210" sampleInd="4536286" levelOfDetail="word" transcripText="часом(1) дуже критичні" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="98" sampleInd="4569939" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="151" sampleInd="4571014" levelOfDetail="word"/>
    <syncPoint id="128" sampleInd="4572618" levelOfDetail="phone" transcripText="noise"/>

@@ -544,7 +544,7 @@
    <syncPoint id="547" sampleInd="22575474" levelOfDetail="word" transcripText="[inh] вічним пером [sp] на полі сторінки(2) [inh] читаємо в натана рибака" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="647" sampleInd="22636182" levelOfDetail="phone" transcripText="читаємо в натана рибака"/>
    <syncPoint id="761" sampleInd="22675822" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="780" sampleInd="22681974" levelOfDetail="word" transcripText="на таких полях і справді часом [inh] багато чого(2) можна прочитати дописаного від руки(2)" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="780" sampleInd="22681974" levelOfDetail="word" transcripText="на таких полях і справді часом(1) [inh] багато чого(2) можна прочитати дописаного від руки(2)" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="586" sampleInd="22735292" levelOfDetail="phone" transcripText="багато чого(2) можна прочитати дописаного від руки(2)"/>
    <syncPoint id="814" sampleInd="22814308" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="484" sampleInd="22818392" levelOfDetail="word" transcripText="школярі дуже люблять малювати на полях [inh] якщо нудяться на уроках а студенти [inh]" lang="uk" speakerBriefId="khorkindm"/>
@@ -566,7 +566,7 @@
    <syncPoint id="932" sampleInd="23359450" levelOfDetail="word" transcripText="топто криси [inh] &lt;sil&gt; такі поля(2) капелюхів [inh]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="821" sampleInd="23381412" levelOfDetail="phone" transcripText="[inh]"/>
    <syncPoint id="915" sampleInd="23387878" levelOfDetail="phone" transcripText="такі поля(2) капелюхів"/>
-   <syncPoint id="422" sampleInd="23421598" levelOfDetail="word" transcripText="#мають часом величезний діаметр" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="422" sampleInd="23421598" levelOfDetail="word" transcripText="#мають часом(1) величезний діаметр" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="983" sampleInd="23438136" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="448" sampleInd="23465620" levelOfDetail="word"/>
    <syncPoint id="669" sampleInd="23467936" levelOfDetail="word" transcripText="#[inh] тож тінь" lang="uk" speakerBriefId="zakharevycho"/>
@@ -578,7 +578,7 @@
    <syncPoint id="559" sampleInd="23594910" levelOfDetail="word"/>
    <syncPoint id="467" sampleInd="23595208" levelOfDetail="phone" transcripText="?"/>
    <syncPoint id="861" sampleInd="23596284" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="911" sampleInd="23597260" levelOfDetail="word" transcripText="та й при снігопадові крислатий капелюх не завадить а навпаки [inh] врятує лице від сніжинок [inh] які чомусь дуже люблять залітати саме(1) в очі" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="911" sampleInd="23597260" levelOfDetail="word" transcripText="та й при снігопадові крислатий капелюх не завадить а навпаки [inh] врятує лице від сніжинок [inh] які чомусь(2) дуже люблять залітати саме(1) в очі" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="909" sampleInd="23683486" levelOfDetail="phone" transcripText="врятує лице від сніжинок"/>
    <syncPoint id="549" sampleInd="23723490" levelOfDetail="phone" transcripText="які чомусь дуже люблять залітати саме(1) в очі"/>
    <syncPoint id="420" sampleInd="23787838" levelOfDetail="word" transcripText="[clk]" lang="uk" speakerBriefId="zakharevycho"/>

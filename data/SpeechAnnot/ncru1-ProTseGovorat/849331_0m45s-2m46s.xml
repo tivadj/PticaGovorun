@@ -93,7 +93,7 @@
    <syncPoint id="97" sampleInd="1669626" levelOfDetail="word" transcripText="особливо наголошува на [inh] [sp] гуманітарно політичні складовій &lt;sil&gt; підгрупа с політичних питань уже [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="88" sampleInd="1703329" levelOfDetail="phone" transcripText="гуманітарно політичні складовій &lt;sil&gt; підгрупа с політичних питань уже"/>
    <syncPoint id="128" sampleInd="1790382" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="66" sampleInd="1791590" levelOfDetail="word" transcripText="найбличим часом почне розглядати організацію [inh]" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
+   <syncPoint id="66" sampleInd="1791590" levelOfDetail="word" transcripText="найбличим часом(1) почне розглядати організацію [inh]" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="126" sampleInd="1845105" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="62" sampleInd="1846577" levelOfDetail="word" transcripText="і проведення виборів [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="159" sampleInd="1879933" levelOfDetail="word" transcripText="&lt;sil&gt;"/>

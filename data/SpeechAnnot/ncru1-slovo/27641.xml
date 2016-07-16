@@ -1006,7 +1006,7 @@
    <syncPoint id="1079" sampleInd="23406912" levelOfDetail="word"/>
    <syncPoint id="1403" sampleInd="23407706" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="1745" sampleInd="23408252" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
-   <syncPoint id="1276" sampleInd="23409128" levelOfDetail="word" transcripText="давній рим іс часом перетворився на величезну імперію [inh] з єдиною валютною одиницею для всіх" lang="uk" speakerBriefId="bogdanovychov"/>
+   <syncPoint id="1276" sampleInd="23409128" levelOfDetail="word" transcripText="давній рим іс часом(1) перетворився на величезну імперію [inh] з єдиною валютною одиницею для всіх" lang="uk" speakerBriefId="bogdanovychov"/>
    <syncPoint id="710" sampleInd="23481926" levelOfDetail="phone" transcripText="[inh]"/>
    <syncPoint id="722" sampleInd="23489500" levelOfDetail="phone" transcripText="з єдиною валютною одиницею для всіх"/>
    <syncPoint id="636" sampleInd="23542420" levelOfDetail="phone" transcripText="'h'"/>

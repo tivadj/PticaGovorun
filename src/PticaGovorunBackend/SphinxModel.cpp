@@ -330,7 +330,7 @@ namespace PticaGovorun
 		int randSeed = 1932;
 		bool swapTrainTestData = false; // swaps train/test portions of data, so that opposite data can be tested when random generator's seed is fixed
 		bool includeBrownBear = false;
-		bool outputWav = false;
+		bool outputWav = true;
 		bool outputPhoneticDictAndLangModel = true;
 		bool padSilence = true; // pad the audio segment with the silence segment
 		bool allowSoftHardConsonant = true;
@@ -475,21 +475,21 @@ namespace PticaGovorun
 		// load phonetic vocabularies
 		bool loadOp;
 		const char* errMsg = nullptr;
-		const wchar_t* persianDictPathKnown = LR"path(C:\devb\PticaGovorunProj\srcrep\data\phoneticDictUkKnown.xml)path";
+		const wchar_t* persianDictPathKnown = LR"path(C:\devb\PticaGovorunProj\srcrep\data\PhoneticDict\phoneticDictUkKnown.xml)path";
 		std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(persianDictPathKnown, phoneReg_, phoneticDictWordsWellFormed_, *stringArena_);
 		if (!loadOp)
 		{
 			errMsg_ = QString("Can't load phonetic dictionary. %1").arg(errMsg);
 			return;
 		}
-		const wchar_t* persianDictPathBroken = LR"path(C:\devb\PticaGovorunProj\srcrep\data\phoneticDictUkBroken.xml)path";
+		const wchar_t* persianDictPathBroken = LR"path(C:\devb\PticaGovorunProj\srcrep\data\PhoneticDict\phoneticDictUkBroken.xml)path";
 		std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(persianDictPathBroken, phoneReg_, phoneticDictWordsBroken_, *stringArena_);
 		if (!loadOp)
 		{
 			errMsg_ = QString("Can't load phonetic dictionary. %1").arg(errMsg);
 			return;
 		}
-		const wchar_t* persianDictPathFiller = LR"path(C:\devb\PticaGovorunProj\srcrep\data\phoneticDictFiller.xml)path";
+		const wchar_t* persianDictPathFiller = LR"path(C:\devb\PticaGovorunProj\srcrep\data\PhoneticDict\phoneticDictFiller.xml)path";
 		std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(persianDictPathFiller, phoneReg_, phoneticDictWordsFiller_, *stringArena_);
 		if (!loadOp)
 		{
@@ -965,7 +965,7 @@ namespace PticaGovorun
 			}
 			outSegRefs.push_back(segRef);
 		}
-		if (!rejectedSegments.empty())
+		if (!rejectedSegments.empty()) // TODO: print rejected segment: annot file path, segment IDs
 			std::cout << "Rejecting " << rejectedSegments.size() << " segments" << std::endl; // info
 
 		return putSentencesWithRarePhonesInTrain(outSegRefs, trainPhoneIds);

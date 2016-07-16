@@ -981,7 +981,7 @@ namespace RecognizeSpeechSphinxTester
 		std::vector<PhoneticWord> phoneticDictKnown;
 		bool loadPhoneDict;
 		const char* errMsg = nullptr;
-		const wchar_t* persianDictPathK = LR"path(C:\devb\PticaGovorunProj\srcrep\data\phoneticDictUkKnown.xml)path";
+		const wchar_t* persianDictPathK = LR"path(C:\devb\PticaGovorunProj\srcrep\data\PhoneticDict\phoneticDictUkKnown.xml)path";
 		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryXml(persianDictPathK, phoneReg, phoneticDictKnown, stringArena);
 		if (!loadPhoneDict)
 		{

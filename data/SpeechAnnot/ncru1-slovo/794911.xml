@@ -116,5 +116,12 @@
    <syncPoint id="105" sampleInd="6096781" levelOfDetail="word" transcripText="наприклат [sp] [inh] [sp] звітки взялися такі вислови як [inh]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="108" sampleInd="6108903" levelOfDetail="phone"/>
    <syncPoint id="130" sampleInd="6119933" levelOfDetail="phone" transcripText="звітки взялися такі вислови як"/>
-   <syncPoint id="99" sampleInd="6174424" levelOfDetail="word"/>
+   <syncPoint id="99" sampleInd="6174424" levelOfDetail="word" transcripText="невірна думка невірне поняття [inh] ви невірно розумієте значеня цієї книжки(1)" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="63" sampleInd="6318863" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="186" sampleInd="6324022" levelOfDetail="word" transcripText="[inh] невірно думати що ми нінащо не здатні [inh] взято з газет" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="221" sampleInd="6412564" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="209" sampleInd="6415607" levelOfDetail="word" transcripText="[inh] і справді [inh] вживати слово невірний у цьому(1) значенні не можна [inh] погляньмо ж на його справжнє значеня" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="138" sampleInd="6590541" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="214" sampleInd="6599736" levelOfDetail="word" transcripText="невірний це не постійний не твердий у поглядах стосунках іс кимось" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="143" sampleInd="6711959" levelOfDetail="word"/>
 </audioAnnotation>

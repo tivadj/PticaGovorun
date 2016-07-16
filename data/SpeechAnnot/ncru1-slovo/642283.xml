@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<audioAnnotation audioFile="../../SpeechAudio/ncru1-slovo/642283.flac">
+   <header>
+      <speaker briefId="zakharevycho" name="Захаревич Олена"/>
+      <speaker briefId="khorkindm" name="Хоркін Дмитро Миколайович"/>
+      <speaker briefId="trachn" name="Трач Надія"/>
+   </header>
+   <syncPoint id="55" sampleInd="1783255" levelOfDetail="phone" transcripText="music"/>
+   <syncPoint id="50" sampleInd="1845651" levelOfDetail="phone" transcripText="music"/>
+   <syncPoint id="43" sampleInd="1858566" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="64" sampleInd="1860104" levelOfDetail="word" transcripText="правопорядок [inh] знають усі" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="2" sampleInd="1901795" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="5" sampleInd="1906591" levelOfDetail="word"/>
+   <syncPoint id="11" sampleInd="1906691" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="10" sampleInd="1907319" levelOfDetail="word" transcripText="це &lt;sil&gt; загально вживані слова(2) &lt;sil&gt; однак є слова(2) якими користуюця лише певні групи людей" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="7" sampleInd="2032343" levelOfDetail="word" transcripText="[inh]" speakerBriefId="zakharevycho"/>
+   <syncPoint id="6" sampleInd="2036345" levelOfDetail="word" transcripText="наприклат лікарі [inh] [sp] мусять вивчати неймовірну кількість [inh] назв хвороб діагнозів&#10;" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="9" sampleInd="2164891" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="8" sampleInd="2167834" levelOfDetail="word" transcripText="урядовці [sp] користуюця чималою кількістю слів" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="17" sampleInd="2235274" levelOfDetail="word"/>
+   <syncPoint id="19" sampleInd="2235985" levelOfDetail="word" transcripText="на позначення [sp] різноманітних функцій держави" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="12" sampleInd="2299770" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="4" sampleInd="2301689" levelOfDetail="word"/>
+   <syncPoint id="15" sampleInd="2303640" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="24" sampleInd="2305641" levelOfDetail="word" transcripText="а шанувальники музичних гуртів [inh] добре знаюця на термінології [sp] пов'язаній із творчістю їхніх улюблених композиторів співаків чи музикантів [sp]" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="13" sampleInd="2517106" levelOfDetail="word" transcripText="[inh]" speakerBriefId="zakharevycho"/>
+   <syncPoint id="23" sampleInd="2520331" levelOfDetail="word" transcripText="сьогодні ми дізнаємося про секрети термінів [sp] якими користуюця саме(1) фахівці [inh] тобто [inh] про фахові(3) мови" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="14" sampleInd="2716334" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="33" sampleInd="2721989" levelOfDetail="word" transcripText="росповідає кандидат філологічних наук [sp] надія трач" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="18" sampleInd="2801799" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="34" sampleInd="2805206" levelOfDetail="word" transcripText="сьогодні поговоримо про таке поняття як фахова мова" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="26" sampleInd="2868909" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="20" sampleInd="2869620" levelOfDetail="word" transcripText="маємо національну мову наприклад українська мова" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="39" sampleInd="2923284" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="46" sampleInd="2924392" levelOfDetail="word" transcripText="і всередині неї формуюця фахові(3) мови суб мови тобто може бути фахова мова права(1) а фахова мова комп'ютерних наук фахова мова телевізійників тощо" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="42" sampleInd="3131210" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="27" sampleInd="3131822" levelOfDetail="word" transcripText="ця мова звичайно ш грунтуєця на" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="22" sampleInd="3145002" levelOfDetail="phone" transcripText="ebeb"/>
+   <syncPoint id="54" sampleInd="3183187" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="28" sampleInd="3184510" levelOfDetail="word" transcripText="ресурсах національної мови топто вона використовує її графіку [sp] лексичний запас синтаксичні [sp] морфологічні ресурси" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="51" sampleInd="3354433" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="16" sampleInd="3356550" levelOfDetail="word" transcripText="про те вже в ній формуюця свої правила" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="58" sampleInd="3424039" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="71" sampleInd="3427711" levelOfDetail="word" transcripText="фахова мова містить терміни вони перебувають в її центрі" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="31" sampleInd="3503932" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="65" sampleInd="3504842" levelOfDetail="word" transcripText="також(2) номени професоналізма і звичайно ж також(2) загально вживану лексику" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="3" sampleInd="3604844" levelOfDetail="word"/>
+   <syncPoint id="37" sampleInd="3606646" levelOfDetail="word" transcripText="слова(2) уже змінюють своє значення у фаховій мові" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="78" sampleInd="3683810" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="61" sampleInd="3684555" levelOfDetail="word" transcripText="оболонка слова(1) може бути тією самою(1) але значеня вже зовсім відрізняєца" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="41" sampleInd="3778504" levelOfDetail="word" transcripText="[inh]" speakerBriefId="trachn"/>
+   <syncPoint id="21" sampleInd="3782258" levelOfDetail="word" transcripText="наприклат якщо ми подивимось у словники" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="66" sampleInd="3829770" levelOfDetail="word"/>
+   <syncPoint id="49" sampleInd="3830647" levelOfDetail="phone" transcripText="noise"/>
+   <syncPoint id="85" sampleInd="3881483" levelOfDetail="phone" transcripText="noise"/>
+   <syncPoint id="56" sampleInd="3895788" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="74" sampleInd="3896516" levelOfDetail="word" transcripText="там побачимо загальне визначення" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="101" sampleInd="3939894" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="103" sampleInd="3940687" levelOfDetail="word" transcripText="те як ми розуміємо в звичайному вжитку але якщо ми подивимось термінологічні словники скажімо словник комп'ютерних термінів буде фіксувати" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="89" sampleInd="4126635" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="38" sampleInd="4128008" levelOfDetail="word" transcripText="термін дерево с такими значеня граф у якому є тільки один шлях між двома вершинами" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="92" sampleInd="4244051" levelOfDetail="word" transcripText="[inh]" speakerBriefId="trachn"/>
+   <syncPoint id="52" sampleInd="4246730" levelOfDetail="word" transcripText="концептуальне чи графічне поданя даних" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="32" sampleInd="4299386" levelOfDetail="word" transcripText="у фізичному словнику теж будуть вже інші приклади(1) такі як дерево подій фрактальне дерево дерево помилок" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="100" sampleInd="4452573" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="25" sampleInd="4455020" levelOfDetail="word" transcripText="одже бачимо що в межах фахової мови значення змінюєця стає закритим і доступним більш [eee] для фахівців ніж для всіх носіїв мови" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="45" sampleInd="4649369" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="60" sampleInd="4650874" levelOfDetail="word" transcripText="всередині фахових мов формуюця свої системи понять" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="104" sampleInd="4747073" levelOfDetail="word" transcripText="наприклад для комп'ютерної термінології центральним є поняття комп'ютера і росписуєця система понять" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="95" sampleInd="4820201" levelOfDetail="phone" transcripText="um"/>
+   <syncPoint id="35" sampleInd="4893512" levelOfDetail="word" transcripText="топто навколо(2) цього(1) терміна функціонують такі [eee] архітектура" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="125" sampleInd="4976266" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="111" sampleInd="4977423" levelOfDetail="word" transcripText="комп'ютера аналоговий комп'ютер біологічний гібридний комп'ютер нового покоління персональний комп'ютер цифровий кишеньковий та багато інших" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="29" sampleInd="5187334" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="47" sampleInd="5188177" levelOfDetail="word" transcripText="с іншого боку [sp] фахова мова має свою професійну норму топто тут можуть функціонувати багато професоналізмів жаргонізмів які використовуюця ф усному вжитку" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="106" sampleInd="5396814" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="115" sampleInd="5397575" levelOfDetail="word" transcripText="так для позначення слова(1) комп'ютер словники сленгу та жаргону фіксують багато синонімів" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="97" sampleInd="5520746" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="91" sampleInd="5522102" levelOfDetail="word" transcripText="такі як бандура бук двушка динозавр заліска комп компутер [inh] лептоп станок огризок трактор [inh] та багато інших" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="68" sampleInd="5642727" levelOfDetail="phone" transcripText="exhale"/>
+   <syncPoint id="142" sampleInd="5745954" levelOfDetail="word" transcripText="професійні словники фіксують цю професійну норму тому(2) що вона є часто вживаною серед фахівці" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="109" sampleInd="5878965" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="141" sampleInd="5879775" levelOfDetail="word" transcripText="наприклат шчодо комп'ютерних термініф [sp] браузер програма веб перегляду навігатор" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="148" sampleInd="5996861" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="137" sampleInd="5998515" levelOfDetail="word" transcripText="поруч у словнику подано і такі слова(2) як дивилка бродилка с позначкою розмовне" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="124" sampleInd="6118709" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="30" sampleInd="6120495" levelOfDetail="word" transcripText="або ш до англіського даунлотс [eee] подано нейтральні українські вітповідники завантажувати пересилати і водночас(2) скачувати с позначкою професійне" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="72" sampleInd="6334987" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="81" sampleInd="6337666" levelOfDetail="word" transcripText="часом(2) фахівці самими професіоналізмами визначають нові поняття так скажімо новий термін гаджет визначено як штуковина прибамбас наворот технічна новинка" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="108" sampleInd="6582107" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="134" sampleInd="6584471" levelOfDetail="word" transcripText="це вказує на те що фахова мова є живою яка має і письмовий і усний формат" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="79" sampleInd="6722278" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="130" sampleInd="6724230" levelOfDetail="word" transcripText="як я вже говорила фахова мова це система якій властиві свої правила і вона функціонує на різніх рівнях" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="150" sampleInd="6869677" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="1" sampleInd="6870636" levelOfDetail="word" transcripText="на морфенному рівні вона прецтавлена терміно елементами [inh] на лексичному термінами на синтаксичному терміно сполуками і правилами формування речень у науковому стилі&#10;[inh]  на текстовому фаховими(1) жанрави" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="114" sampleInd="7143720" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="135" sampleInd="7144795" levelOfDetail="word" transcripText="наприклат терміно елементами мови права(1) є такі як анти" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="151" sampleInd="7237074" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="73" sampleInd="7239224" levelOfDetail="word" transcripText="наприклат анти конституційна діяльність де девальвація денансація ре реабілітація ревізія реституція" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="126" sampleInd="7408353" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="112" sampleInd="7410073" levelOfDetail="word" transcripText="на лексичному рівні серед правничих термінів" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="48" sampleInd="7464680" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="160" sampleInd="7466019" levelOfDetail="word" transcripText="асоціація біженець касація та багато інших" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="138" sampleInd="7539198" levelOfDetail="word"/>
+   <syncPoint id="105" sampleInd="7539925" levelOfDetail="word" transcripText="синтаксичний рівень фахової мови права(1) становлять численні(2) терміно сполуки" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="166" sampleInd="7636719" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="96" sampleInd="7638489" levelOfDetail="word" transcripText="наприклат індифікаційний номер платника податків [sp] постанова прокурора [inh] принципи загально обов'язкового пенсійного убеспечення суб'єкти права(1) інтелектуальної власності" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="63" sampleInd="7851823" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="110" sampleInd="7853873" levelOfDetail="word" transcripText="текстовий рівень прецтавлено такими жанрами як конституція закон постанова" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="190" sampleInd="7963831" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="189" sampleInd="7966444" levelOfDetail="word" transcripText="акт судова промова вирок суду(1) лист запит контракт наукова розвітка дебати тошчо" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="53" sampleInd="8105376" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="59" sampleInd="8107542" levelOfDetail="word" transcripText="і власне вже за межами фахової мови [sp] термін де спеціалізуєця тобто втрачає своє спеціальне значення і вживаєця трохи в іншому вжитку" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="187" sampleInd="8300965" levelOfDetail="word" transcripText="наприклат комп'ютерний термін віртуальний що означає уявний гіпотетичний у межах фахової мови утворює" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="179" sampleInd="8459229" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="162" sampleInd="8461296" levelOfDetail="word" transcripText="терміно сполуки віртуальна адреса(2) віртуальний адресний простір віртуальний канал віртуальний конференц центр віртуальна пам'ять" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="143" sampleInd="8636957" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="99" sampleInd="8638280" levelOfDetail="word" transcripText="проте вже поза межами комп'ютерної фахової мови термін сполучаєця с іншими словами такими як віртуальне кохання віртуальна компанія і тут уже значення його значно змінюєця" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="156" sampleInd="8893173" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="146" sampleInd="8898200" levelOfDetail="word" transcripText="фахова мова головно реалізує себе(2) через науковий стиль та його підвиди власне науковий науково популярний науково публіцистичний" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="87" sampleInd="9071629" levelOfDetail="word"/>
+   <syncPoint id="40" sampleInd="9073365" levelOfDetail="word" transcripText="про те її вкраплення можна побачити й інших стилях скажімо автором фахового тексту гуманітаристики може бути не тіки науковець який працює в гуманітарній сфері а й письменник культурний діяч" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="228" sampleInd="9345407" levelOfDetail="word" transcripText="скажімо зарас популярними є віткриті лекції українських письменників юрій андрухович оксана забушко тарас прохасько  дають свої лекції тобто це теж частина фахової мови" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="159" sampleInd="9595157" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="144" sampleInd="9596926" levelOfDetail="word" transcripText="жанрово фахова мова гуманітаристики [sp] прецтавлена такими жанрами як монографія наукова та науково популярна стаття огляд літератури нарис ессей" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="164" sampleInd="9805282" levelOfDetail="word" transcripText=" і такі жанри які тяжіють до усного викладу [sp] це [eee] лекція семінар дискусія презентація книжки(1) захист дисертації інтерв'ю" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="215" sampleInd="9994256" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="194" sampleInd="9998407" levelOfDetail="word" transcripText="одже фахові(3) мови це перспективний напрям для дослідження оскільки вони активно формуєця на сьогодні в україні" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="172" sampleInd="10185595" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="93" sampleInd="10187232" levelOfDetail="word" transcripText="цікаво подивитися якою є центральна система понять у кожній іс фахових мов" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="191" sampleInd="10290327" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="242" sampleInd="10291038" levelOfDetail="word"/>
+   <syncPoint id="175" sampleInd="10292378" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="198" sampleInd="10293998" levelOfDetail="word" transcripText="[eee] яким є цей компонент професоналізмів жаргонізмів котрі(2) фахівці використовують в усному вжитку" lang="uk" speakerBriefId="trachn"/>
+   <syncPoint id="224" sampleInd="10435014" levelOfDetail="word"/>
+   <syncPoint id="246" sampleInd="10436766" levelOfDetail="phone" transcripText="inh?"/>
+   <syncPoint id="83" sampleInd="10441695" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="62" sampleInd="10443911" levelOfDetail="word" transcripText="це була росповідь кандидата філологічних наук надії" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="147" sampleInd="10516130" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="226" sampleInd="10517883" levelOfDetail="word"/>
+   <syncPoint id="171" sampleInd="10521389" levelOfDetail="phone" transcripText="music"/>
+   <syncPoint id="123" sampleInd="10707436" levelOfDetail="word" transcripText="[inh] нас часто закликають швитше проводити чи здійснювати [inh] висатку та посатку" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="253" sampleInd="10847922" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="132" sampleInd="10851924" levelOfDetail="word" transcripText="[inh] погодьтеся [inh] неоковирно і дивно звучить [inh] шановні пасажири [inh] здійснюйте посатку швитше" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="145" sampleInd="11026262" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="127" sampleInd="11030049" levelOfDetail="word" transcripText="коли можна сказати [inh] просимо швитше виходити і заходити до вагонів" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="44" sampleInd="11128464" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="177" sampleInd="11135559" levelOfDetail="word" transcripText="тож мусимо нагадати що висатка і посатка пасажирів [inh] це скалькований із росіського вислів [inh] іс перекрученим значенням" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="267" sampleInd="11317438" levelOfDetail="word" transcripText="[inh] в українській мові [sp] йому не місце" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="239" sampleInd="11371483" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="258" sampleInd="11374856" levelOfDetail="word" transcripText="можна посадити саджанці певних рослин у землю щоб вони виросли і тішили око" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="283" sampleInd="11496721" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="277" sampleInd="11501781" levelOfDetail="word" transcripText="розвивалися виробляли кисень і давали плоди" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="195" sampleInd="11570313" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="206" sampleInd="11573637" levelOfDetail="word" transcripText="[inh] висадити можна будь кого із будь якого транспорту" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="257" sampleInd="11646088" levelOfDetail="word" transcripText="[inh] наприклад щороку під час великих пожеш повеней чи землетрусів [inh] рятувальники приїздять припливають або прилітають до [inh] постраждалих людей і тварин [inh] перевозять їх у [sp] беспечні місця(2) [inh] і там висаджують" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="256" sampleInd="11944755" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="274" sampleInd="11950229" levelOfDetail="word" transcripText="але пасажирів громацькоо транспорту стосуюця лиш одне іс цих дієслів" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="36" sampleInd="12040672" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="120" sampleInd="12042971" levelOfDetail="word" transcripText="а іменники висадка і посатка взагалі [sp] не можна застосовувати" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="264" sampleInd="12141650" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="266" sampleInd="12147736" levelOfDetail="word" transcripText="тож правильне оголошення у транспорті має звучати так" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="133" sampleInd="12214697" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="230" sampleInd="12215904" levelOfDetail="word"/>
+   <syncPoint id="275" sampleInd="12234475" levelOfDetail="phone" transcripText="noise"/>
+   <syncPoint id="88" sampleInd="12484787" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="203" sampleInd="12487201" levelOfDetail="word" transcripText="наші слухачі часто скаржуця на так званий [inh] [sp] пересадочний вузол" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="188" sampleInd="12590247" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="285" sampleInd="12594811" levelOfDetail="word" transcripText="так чомусь(2) називають місце де можна перейти з однієї станціі на іншу&#10;" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="121" sampleInd="12696302" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="152" sampleInd="12700618" levelOfDetail="word" transcripText="це ще одна калька якій не місце в українській мові" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="254" sampleInd="12779039" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="131" sampleInd="12782197" levelOfDetail="word" transcripText="[inh] місця(2) розв'язок(2) транспорту і переход між станціями [inh] справді називаєця вузлами" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="330" sampleInd="12915242" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="225" sampleInd="12917094" levelOfDetail="word" transcripText="однак вони точно не пересадочні [inh] а [sp] персадні" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="174" sampleInd="13005007" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="291" sampleInd="13007885" levelOfDetail="word"/>
+   <syncPoint id="295" sampleInd="13012267" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="292" sampleInd="13014318" levelOfDetail="word" transcripText="тож &lt;sil&gt; пасажири метрополітенів [inh] переходять із однієї станціі на іншу [inh] не черес пересадочні а саме(1) [inh] через [inh]" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="262" sampleInd="13191749" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="214" sampleInd="13193105" levelOfDetail="word"/>
+   <syncPoint id="280" sampleInd="13211279" levelOfDetail="phone" transcripText="music"/>
+   <syncPoint id="201" sampleInd="13347333" levelOfDetail="word" transcripText="ось яку помилку(1) нам нещодавно надіслали&#10;" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="84" sampleInd="13408307" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="349" sampleInd="13413384" levelOfDetail="word" transcripText="грошовий вираз вартості будинку [inh] складає двісті тисяч гривень" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="170" sampleInd="13518877" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="221" sampleInd="13525508" levelOfDetail="word" transcripText="здивований слухач просить пояснити [sp] звітки тут узявся [inh] якийсь [inh] грошовий вираз вартості" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="210" sampleInd="13668938" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="346" sampleInd="13671204" levelOfDetail="word"/>
+   <syncPoint id="216" sampleInd="13678993" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="77" sampleInd="13681292" levelOfDetail="word" transcripText="річ у тім [inh] що це калька із російського вислову [inh]" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="342" sampleInd="13758902" levelOfDetail="word" transcripText="денежное выражение стоимости" lang="ru" speakerBriefId="khorkindm"/>
+   <syncPoint id="163" sampleInd="13806530" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="122" sampleInd="13810929" levelOfDetail="word" transcripText="[inh] насправді [sp] українською мовою [inh] це називаєця [inh] грошове обчисленя вартості" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="229" sampleInd="13933505" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="293" sampleInd="13940600" levelOfDetail="word" transcripText="просимо запам'ятати обличя людини може набувати виразу" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="232" sampleInd="14042305" levelOfDetail="word"/>
+   <syncPoint id="154" sampleInd="14050491" levelOfDetail="word" transcripText="однак в усіх інших випатках мають бути й інші слова(2) [inh] наприклад [sp] вислів [inh] це те шо людина каже [inh] у гніві ми [inh] не добираємо слів [inh] щоб висловити своє обурення" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="223" sampleInd="14293989" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="345" sampleInd="14305103" levelOfDetail="word" transcripText="за поганий вислів [inh] ми перепрошуємо даруйте на слові" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="312" sampleInd="14380299" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="234" sampleInd="14385591" levelOfDetail="word" transcripText="[inh] результат нашої роботи(2) виливаєця [inh] наприклад купівля фабрики із виробництва одягу виливаєця у прибуток" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="318" sampleInd="14553794" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="355" sampleInd="14561930" levelOfDetail="word" transcripText="[inh] свої плани і наміри [inh] ми окреслюємо [inh] а думки(2) [sp] роскриваємо" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="390" sampleInd="14668349" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="250" sampleInd="14677676" levelOfDetail="word" transcripText="і звісно ж [inh] вартість речей і кількість грошей [inh] ми опчислюємо" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="183" sampleInd="14792992" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="287" sampleInd="14797259" levelOfDetail="word" transcripText="[inh] в українські мові і справді [inh] надзвичайно багато слів із точним і влучним значенням" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="222" sampleInd="14917883" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="173" sampleInd="14921902" levelOfDetail="word"/>
+   <syncPoint id="69" sampleInd="14934437" levelOfDetail="phone" transcripText="music"/>
+   <syncPoint id="118" sampleInd="15637645" levelOfDetail="word"/>
+   <syncPoint id="338" sampleInd="15666966" levelOfDetail="phone" transcripText="click?"/>
+   <syncPoint id="289" sampleInd="15679551" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="365" sampleInd="15682676" levelOfDetail="word" transcripText="тирлю тирлю коло плота [inh] яка заплата така і робота(2)" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="155" sampleInd="15776841" levelOfDetail="word"/>
+   <syncPoint id="263" sampleInd="15778362" levelOfDetail="phone" transcripText="click" exclude="train"/>
+   <syncPoint id="400" sampleInd="15779206" levelOfDetail="word" transcripText="[inh] я вам ніколи(2) нічого(2) злого не вчинив [inh] окрім того(1) що наробився вам як віл [inh] без найменшої заплати(2) [inh] писав марко кропивницький" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="389" sampleInd="16001536" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="270" sampleInd="16009176" levelOfDetail="word"/>
+   <syncPoint id="117" sampleInd="16009987" levelOfDetail="phone" transcripText="noise"/>
+   <syncPoint id="167" sampleInd="16011243" levelOfDetail="word" transcripText="вчасно доплили ми до вижниці за свій труд одержали заплату [inh] накупили дечого для дому [inh] читаємо в івана франка" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="259" sampleInd="16197439" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="231" sampleInd="16199176" levelOfDetail="word" transcripText="[inh] одинацяти томний тлумачний словник українськоі мови [inh] фіксує також(2) значення однакове зі значенням іменника вітплата [inh] топто помста за заподіяне зло" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="324" sampleInd="16448396" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="336" sampleInd="16453274" levelOfDetail="word" transcripText="[inh] заплата жде його за біль моєї рідної землі(2) [inh] писав дмитро павличко" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="325" sampleInd="16576776" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="429" sampleInd="16582283" levelOfDetail="word"/>
+   <syncPoint id="341" sampleInd="16584218" levelOfDetail="word" transcripText="іменнику платня не так пощастило [inh] у двацятому сторіччі його чомусь(2) перетворили на зарплату а тепер і шче додали води(2) в криницю перекроївши його на зарплатню" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="323" sampleInd="16844518" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="332" sampleInd="16851976" levelOfDetail="word" transcripText="дивно звучить [inh] бо є звичне українське слово платня [inh] яке має значення систематична оплата постійної роботи(2)" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="370" sampleInd="17020808" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="284" sampleInd="17025372" levelOfDetail="word" transcripText="[inh] навіщо було підмінювати значення слова(1) через такі [sp] звукові махінації [inh] ми не уявляємо" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="381" sampleInd="17142392" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="399" sampleInd="17146940" levelOfDetail="word" transcripText="[inh] а щодо плати(1) [inh] то виявляєця вона має чимало синонімів [inh] наприклад буває плата згори [inh] коли ви платите перш ніш отримати щось" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="139" sampleInd="17346812" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="268" sampleInd="17349954" levelOfDetail="word" transcripText="[inh] плата за оренду приміщення називаєця чинш [inh] плата за працю упродовж певного часу(1) [sp] часове [sp] плата за кожну окрему річ [sp] вітштучне" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="192" sampleInd="17569176" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="180" sampleInd="17577858" levelOfDetail="word" transcripText="плата за квартиру [sp] комірне [sp] погодинна праця це погодинне [inh] а перекладачі можуть отримувати плату за кожне" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="319" sampleInd="17758232" levelOfDetail="word"/>
+   <syncPoint id="207" sampleInd="17772966" levelOfDetail="phone" transcripText="music"/>
+   <syncPoint id="448" sampleInd="18283844" levelOfDetail="phone" transcripText="music"/>
+   <syncPoint id="465" sampleInd="18285248" levelOfDetail="word" transcripText="ми часто отримаємо листи слухачів [inh] захоплених відвагою захисників вітчизни" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="140" sampleInd="18397010" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="334" sampleInd="18401970" levelOfDetail="word" transcripText="у цих листах [inh] нас просять росповісти про те [inh] які значення мають такі слова(2) як [inh] відвага&#10;" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="397" sampleInd="18535180" levelOfDetail="word" transcripText="[inh] звитяга мужність геройство переможність і не переможність [inh] сила борня бессмертя тощо" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="449" sampleInd="18712810" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="347" sampleInd="18719490" levelOfDetail="word" transcripText="[inh] як і шче можна величати героїв [inh] як описувати їхні перемоги і бесстрашність отош сьогодні" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="236" sampleInd="18873256" levelOfDetail="word"/>
+   <syncPoint id="255" sampleInd="18882070" levelOfDetail="phone" transcripText="music"/>
+   <syncPoint id="202" sampleInd="19306042" levelOfDetail="word" transcripText="вперед братове(2) [inh] я вже бачу наступну радість в нас гарячу [inh] звитягу військ моїх нову [inh] читаємо у ярослава шпорти" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="423" sampleInd="19531332" levelOfDetail="word"/>
+   <syncPoint id="388" sampleInd="19531448" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="273" sampleInd="19531648" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="475" sampleInd="19537618" levelOfDetail="word" transcripText="також(2) звитяга [sp] це героїчний подвиг" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="442" sampleInd="19607406" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="473" sampleInd="19613144" levelOfDetail="word" transcripText="звитяга майдану зуміла переконати нас усіх у тому(1) [inh] що сторічна брехня [inh] не зуміє перекреслити україну як державу [inh] приклад узято з газети" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="360" sampleInd="19857552" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="314" sampleInd="19866134" levelOfDetail="word" transcripText="[inh] називають звитягою і досягненя успіхи [inh] здобуті подоланням [sp] труднощів у чомусь(1) [inh] наполегливою працею [inh] демонструванням свого мистецтва тошчо" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="204" sampleInd="20121936" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="405" sampleInd="20127196" levelOfDetail="word" transcripText="[inh] хвала тобі всесвітній переможче [inh] на струнах ти шче краще ніж в бою(2) [inh] здобув собі звитягу найдорожчу [inh] дівоче серце [inh] горлицю твою [inh] писав іван кочерга" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="506" sampleInd="20458540" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="119" sampleInd="20464346" levelOfDetail="word" transcripText="[inh] складно здобути перемогу у цьому(1) виді спорту [inh] але повноцінне життя [inh] з однією рукою і однією ногою [inh] це вже величезна звитяга [inh] приклад узято" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="311" sampleInd="20709762" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="471" sampleInd="20711532" levelOfDetail="word"/>
+   <syncPoint id="395" sampleInd="20712126" levelOfDetail="phone" transcripText="music"/>
+   <syncPoint id="304" sampleInd="21291286" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="447" sampleInd="21303624" levelOfDetail="word" transcripText="тепер він мав іти [sp] безоружий [inh] мав стати звитяжцем озброєних до зубів [inh] не схитних у своїй запеклості ворогів [sp] писав павло загребельний" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="329" sampleInd="21528500" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="393" sampleInd="21533842" levelOfDetail="word" transcripText="[inh] називають звитяжцями героїв витязів лицарів бійців і воїнів&#10;" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="290" sampleInd="21646578" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="434" sampleInd="21661694" levelOfDetail="word" transcripText="це [sp] звіци [inh] запоріської січі" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="271" sampleInd="21728654" levelOfDetail="word"/>
+   <syncPoint id="409" sampleInd="21728918" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="67" sampleInd="21729414" levelOfDetail="word" transcripText="[inh] вилітали хоробрі звитяжці [inh] які захищали народ свій [inh] від напасників чужинців читаємо в івана цюпи" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="94" sampleInd="21895534" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="205" sampleInd="21904200" levelOfDetail="word" transcripText="звитясцями [inh] повертаюця с передової лінії хлопці і мужні чоловіки" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="482" sampleInd="22010850" levelOfDetail="word"/>
+   <syncPoint id="462" sampleInd="22012488" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="136" sampleInd="22013116" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="444" sampleInd="22022012" levelOfDetail="word" transcripText="приклад узято з газетної статті" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="245" sampleInd="22068830" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="433" sampleInd="22076372" levelOfDetail="word" transcripText="[inh] я хотів його відмовити [inh] але глянув у вічі і побачив шчо це марно [inh] розуміти він хотів стати" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="298" sampleInd="22216478" levelOfDetail="word"/>
+   <syncPoint id="386" sampleInd="22217320" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="476" sampleInd="22217668" levelOfDetail="word" transcripText="[inh] звитясцем [inh] за будь яку ціну(2) [inh] приклад узято з інтернетної статті" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="313" sampleInd="22327658" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="227" sampleInd="22336142" levelOfDetail="word" transcripText="[inh] також(1) звитясці [inh] це ті хто [sp] перемагаючи труднощі [inh] наполегливою працею і само(1) вдосконаленням [inh] досягає у чомусь(1)" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="377" sampleInd="22516384" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="90" sampleInd="22518634" levelOfDetail="word"/>
+   <syncPoint id="539" sampleInd="22520966" levelOfDetail="phone" transcripText="music"/>
+   <syncPoint id="494" sampleInd="23278566" levelOfDetail="word" transcripText="звитяжним є те шчо закінчуєця звитягою" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="82" sampleInd="23335950" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="522" sampleInd="23349262" levelOfDetail="word" transcripText="пісні(2) поета кликали синів і дочок україни на звитяжний бій із окупантом нелюдом [inh] приклад узято із журналу" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="184" sampleInd="23533144" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="575" sampleInd="23542984" levelOfDetail="word" transcripText="[inh] звитяжним є той хто домагаєця звитяги [inh] завжди перемагає" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="371" sampleInd="23644292" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="316" sampleInd="23650658" levelOfDetail="word" transcripText="[inh] молодий отаман [inh] великого розуму козак і в бою(2) звитяжний воїн [inh] писав яків кочура" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="441" sampleInd="23848514" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="391" sampleInd="23859808" levelOfDetail="word" transcripText="бувають навіть звитяжні звуки" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="516" sampleInd="23918500" levelOfDetail="word"/>
+   <syncPoint id="303" sampleInd="23918632" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="366" sampleInd="23924966" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="561" sampleInd="23928952" levelOfDetail="word" transcripText="з високого замка(1) зі дзвіниці" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="451" sampleInd="23984832" levelOfDetail="word"/>
+   <syncPoint id="305" sampleInd="23985708" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="574" sampleInd="23986254" levelOfDetail="word" transcripText="[inh] на зустріч звитяжному галасу линув урочистий дзвін [inh] читаємо в михайла старицького" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="248" sampleInd="24134662" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="376" sampleInd="24143740" levelOfDetail="word" transcripText="[inh] називають звитяжними і [inh] геройських доблесних людей [inh] угруповання міста(2) і цілі країни" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="458" sampleInd="24273510" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
+   <syncPoint id="402" sampleInd="24280788" levelOfDetail="word" transcripText="наприклад читаємо у газетні статті про українську повстанську" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="398" sampleInd="24371296" levelOfDetail="word"/>
+   <syncPoint id="490" sampleInd="24371496" levelOfDetail="phone" transcripText="click"/>
+   <syncPoint id="579" sampleInd="24372356" levelOfDetail="word" transcripText="армію" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="116" sampleInd="24384394" levelOfDetail="word"/>
+</audioAnnotation>
