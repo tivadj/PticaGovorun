@@ -12,11 +12,10 @@
    <syncPoint id="43" sampleInd="187584" levelOfDetail="phone" transcripText="[inh]"/>
    <syncPoint id="11" sampleInd="207363" levelOfDetail="word" transcripText="звісно не бракуватиме так званих [sp] добрих слів [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="8" sampleInd="267328" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="12" sampleInd="268238" levelOfDetail="word" transcripText="але обіцянки як" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="12" sampleInd="268238" levelOfDetail="word" transcripText="але обіцянки як це робилось уже неодноразово [inh] виглядатимуть [inh] &lt;sil&gt; не чіткими [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="178" sampleInd="280227" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="95" sampleInd="289555" levelOfDetail="phone" transcripText="click"/>
-   <syncPoint id="287" sampleInd="289885" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="korotajevskyjsh"/>
-   <syncPoint id="175" sampleInd="290580" levelOfDetail="word" transcripText="це робилось уже неодноразово [inh] виглядатимуть [inh] &lt;sil&gt; не чіткими [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="175" sampleInd="290580" levelOfDetail="phone" transcripText="це робилось уже неодноразово [inh] виглядатимуть [inh] &lt;sil&gt; не чіткими [inh]"/>
    <syncPoint id="16" sampleInd="331626" levelOfDetail="phone" transcripText="виглядатимуть &lt;sil&gt; не чіткими"/>
    <syncPoint id="162" sampleInd="346642" levelOfDetail="phone" transcripText="inh"/>
    <syncPoint id="259" sampleInd="374954" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
@@ -133,7 +132,7 @@
    <syncPoint id="210" sampleInd="3023650" levelOfDetail="word" transcripText="натомість до деклараці потрапило дещо інше [inh] двері європейськоо співробітництва [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="153" sampleInd="3084954" levelOfDetail="phone" transcripText="двері європейськоо співробітництва"/>
    <syncPoint id="176" sampleInd="3127026" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="korotajevskyjsh"/>
-   <syncPoint id="100" sampleInd="3127853" levelOfDetail="word" transcripText="завжди віччинені [inh] [eee] в тому(1) числі і для росії приблизно так [inh] як висловилась [inh] федеріка могеріні" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="100" sampleInd="3127853" levelOfDetail="word" transcripText="завжди(1) віччинені [inh] [eee] в тому(1) числі і для росії приблизно так [inh] як висловилась [inh] федеріка могеріні" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="172" sampleInd="3146490" levelOfDetail="phone"/>
    <syncPoint id="270" sampleInd="3154478" levelOfDetail="phone" transcripText="в тому(1) числі і для росії приблизно так"/>
    <syncPoint id="186" sampleInd="3199162" levelOfDetail="phone"/>

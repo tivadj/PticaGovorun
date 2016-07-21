@@ -197,8 +197,8 @@
    <syncPoint id="353" sampleInd="4763842" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="173" sampleInd="4770291" levelOfDetail="word"/>
    <syncPoint id="402" sampleInd="4775302" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="210" sampleInd="4776360" levelOfDetail="word" transcripText="оскіки нарот [inh] завжди вбачає в його діях такий собі [inh]" lang="uk" speakerBriefId="shapovalji"/>
-   <syncPoint id="275" sampleInd="4801332" levelOfDetail="phone" transcripText="завжди вбачає в його діях такий собі"/>
+   <syncPoint id="210" sampleInd="4776360" levelOfDetail="word" transcripText="оскіки нарот [inh] завжди(1) вбачає в його діях такий собі [inh]" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="275" sampleInd="4801332" levelOfDetail="phone" transcripText="завжди(1) вбачає в його діях такий собі"/>
    <syncPoint id="434" sampleInd="4854699" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="141" sampleInd="4857444" levelOfDetail="word" transcripText="# позитивний піттекст" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="383" sampleInd="4877156" levelOfDetail="phone" transcripText="click"/>

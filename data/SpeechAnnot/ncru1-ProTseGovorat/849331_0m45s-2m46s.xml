@@ -56,9 +56,9 @@
    <syncPoint id="213" sampleInd="1090730" levelOfDetail="phone" transcripText="&lt;sil&gt;"/>
    <syncPoint id="72" sampleInd="1092963" levelOfDetail="phone" transcripText="не обговорювалось конкретно"/>
    <syncPoint id="89" sampleInd="1139218" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="10" sampleInd="1140641" levelOfDetail="word" transcripText="що ж до заяв росіі то вони виглядають [inh] &lt;sil&gt; як завжди [inh] [sp] непевно на кшталт [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="10" sampleInd="1140641" levelOfDetail="word" transcripText="що ж до заяв росіі то вони виглядають [inh] &lt;sil&gt; як завжди(1) [inh] [sp] непевно на кшталт [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="92" sampleInd="1182811" levelOfDetail="phone"/>
-   <syncPoint id="77" sampleInd="1194354" levelOfDetail="phone" transcripText="як завжди"/>
+   <syncPoint id="77" sampleInd="1194354" levelOfDetail="phone" transcripText="як завжди(1)"/>
    <syncPoint id="83" sampleInd="1206460" levelOfDetail="phone"/>
    <syncPoint id="82" sampleInd="1212562" levelOfDetail="phone" transcripText="непевно на кшталт"/>
    <syncPoint id="20" sampleInd="1241817" levelOfDetail="word" transcripText="&lt;sil&gt;"/>

@@ -453,9 +453,9 @@
    <syncPoint id="1023" sampleInd="20656280" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="552" sampleInd="20656742" levelOfDetail="word" transcripText="[inh] до речі" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="747" sampleInd="20673462" levelOfDetail="word" transcripText="[clk]" lang="uk" speakerBriefId="khorkindm"/>
-   <syncPoint id="466" sampleInd="20673892" levelOfDetail="word" transcripText="[inh] бутте з ними обережні [inh] магнітне поле завжди утворюєця навколо(2) побутовоі техніки і може негативно впливати" lang="uk" speakerBriefId="khorkindm"/>
+   <syncPoint id="466" sampleInd="20673892" levelOfDetail="word" transcripText="[inh] бутте з ними обережні [inh] магнітне поле завжди(1) утворюєця навколо(2) побутовоі техніки і може негативно впливати" lang="uk" speakerBriefId="khorkindm"/>
    <syncPoint id="725" sampleInd="20718080" levelOfDetail="phone"/>
-   <syncPoint id="602" sampleInd="20723140" levelOfDetail="phone" transcripText="магнітне поле завжди утворюєця навколо(2) &lt;sil&gt; побутової техніки і може негативно впливати"/>
+   <syncPoint id="602" sampleInd="20723140" levelOfDetail="phone" transcripText="магнітне поле завжди(1) утворюєця навколо(2) &lt;sil&gt; побутової техніки і може негативно впливати"/>
    <syncPoint id="621" sampleInd="20843568" levelOfDetail="word"/>
    <syncPoint id="666" sampleInd="20843716" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="517" sampleInd="21075522" levelOfDetail="word" transcripText="[inh] таке мовляв поле передо мною [sp] і женитись [sp] і на дяка стати " lang="uk" speakerBriefId="khorkindm"/>
@@ -597,8 +597,8 @@
    <syncPoint id="844" sampleInd="24149232" levelOfDetail="phone"/>
    <syncPoint id="925" sampleInd="24155714" levelOfDetail="phone" transcripText="що то не нашого поля(1) ягода "/>
    <syncPoint id="200" sampleInd="24199886" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="232" sampleInd="24203376" levelOfDetail="word" transcripText="у вас городових усе не по люцьки робиця [inh] їдять зі срібних мисок [inh] а лошки при душі катма [inh] писав пантелеймон куліш" lang="uk" speakerBriefId="zakharevycho"/>
-   <syncPoint id="118" sampleInd="24268930" levelOfDetail="phone" transcripText="їдять зі срібних мисок &lt;sil&gt; а лошки при душі катма"/>
+   <syncPoint id="232" sampleInd="24203376" levelOfDetail="word" transcripText="у вас городових усе не по люцьки робиця [inh] їдять зі срібних мисок [inh] а лошки при душі(2) катма [inh] писав пантелеймон куліш" lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="118" sampleInd="24268930" levelOfDetail="phone" transcripText="їдять зі срібних мисок &lt;sil&gt; а лошки при душі(2) катма"/>
    <syncPoint id="704" sampleInd="24351666" levelOfDetail="phone"/>
    <syncPoint id="592" sampleInd="24359638" levelOfDetail="phone" transcripText="писав пантелеймон куліш"/>
    <syncPoint id="522" sampleInd="24397756" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>

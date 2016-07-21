@@ -9,7 +9,7 @@
    <syncPoint id="701" sampleInd="75559" levelOfDetail="word"/>
    <syncPoint id="594" sampleInd="77097" levelOfDetail="word" transcripText="Очевидно" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="245" sampleInd="91568" levelOfDetail="word"/>
-   <syncPoint id="127" sampleInd="105856" levelOfDetail="word" transcripText="наш автор не завжди слухав мене" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="127" sampleInd="105856" levelOfDetail="word" transcripText="наш автор не завжди(1) слухав мене" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="463" sampleInd="145660" levelOfDetail="word"/>
    <syncPoint id="131" sampleInd="150573" levelOfDetail="word" transcripText="тому шо я" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="729" sampleInd="166631" levelOfDetail="word"/>
@@ -234,8 +234,8 @@
    <syncPoint id="1030" sampleInd="4777584" levelOfDetail="word"/>
    <syncPoint id="928" sampleInd="4801282" levelOfDetail="word" transcripText="Чи використають ці ризики е" lang="uk" speakerBriefId="pynzenykvm"/>
    <syncPoint id="596" sampleInd="4834738" levelOfDetail="word"/>
-   <syncPoint id="556" sampleInd="4846281" levelOfDetail="word" transcripText="коли є дірка завжди знайдуться люди які це використ" lang="uk" speakerBriefId="pynzenykvm"/>
-   <syncPoint id="419" sampleInd="4859842" levelOfDetail="phone" transcripText="завжди знайдуться люди які це викорис"/>
+   <syncPoint id="556" sampleInd="4846281" levelOfDetail="word" transcripText="коли є дірка завжди(1) знайдуться люди які це використ" lang="uk" speakerBriefId="pynzenykvm"/>
+   <syncPoint id="419" sampleInd="4859842" levelOfDetail="phone" transcripText="завжди(1) знайдуться люди які це викорис"/>
    <syncPoint id="216" sampleInd="4882522" levelOfDetail="phone" transcripText="які це викорис"/>
    <syncPoint id="651" sampleInd="4900441" levelOfDetail="word"/>
    <syncPoint id="225" sampleInd="4902558" levelOfDetail="phone" transcripText="я не хочу сказа"/>

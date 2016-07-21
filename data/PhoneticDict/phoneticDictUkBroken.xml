@@ -29,6 +29,7 @@
       <pron code="вартісь" phones="V A1 R T1 I S1"/>
    </word>
    <word name="вау" phones="V A1 U"/>
+   <word name="ветош" phones="V E1 T O SH"/>
    <word name="вещас" phones="V E SH CH A1 S"/>
    <word name="вижниці" phones="V Y1 ZH N Y TS1 I"/>
    <word name="використати">
@@ -101,6 +102,7 @@
    <word name="зразок">
       <pron code="зьразок" phones="Z1 R A Z O1 K"/>
    </word>
+   <word name="зінаїда" phones="Z1 I N A J I1 D A"/>
    <word name="и" phones="Y1"/>
    <word name="ишин" phones="Y1 SH Y N"/>
    <word name="кагебізаці" phones="K A H E B2 I Z A1 TS1 I"/>
@@ -140,6 +142,9 @@
    <word name="маємо">
       <pron code="маїмо" phones="M A1 J I M O"/>
    </word>
+   <word name="миндалеві" phones="M Y N D A L E1 V2 I"/>
+   <word name="миндаливидну" phones="M Y N D A L Y V Y1 D N U"/>
+   <word name="миндаль" phones="M Y N D A1 L1"/>
    <word name="мовами">
       <pron code="мом" phones="M O1 M"/>
    </word>
