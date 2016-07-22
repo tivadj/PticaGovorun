@@ -2,7 +2,9 @@
 #include "SphinxModel.h"
 #include <vector>
 #include <random>
+#include <chrono> // std::chrono::system_clock
 #include <QDir>
+#include <QDateTime>
 #include "SpeechProcessing.h"
 #include "PhoneticService.h"
 #include "WavUtils.h"
@@ -313,8 +315,13 @@ namespace PticaGovorun
 
 	void SphinxTrainDataBuilder::run()
 	{
+		// start timer
+		typedef std::chrono::system_clock Clock;
+		std::chrono::time_point<Clock> now1 = Clock::now();
+
 		dbName_ = "persian";
 
+		QDateTime generationDate = QDateTime::currentDateTime();
 		std::string timeStamp;
 		appendTimeStampNow(timeStamp);
 
@@ -403,13 +410,13 @@ namespace PticaGovorun
 			// .dic and .arpa files are different
 			// broken words goes in dict and lang model in train phase only
 			// alternatively we can always ignore broken words, but it is a pity to not use the markup
-			std::tie(op, errMsg) = buildPhaseSpecificParts(ResourceUsagePhase::Train, minWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, trainPhoneIds);
+			std::tie(op, errMsg) = buildPhaseSpecificParts(ResourceUsagePhase::Train, minWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, trainPhoneIds, &dictWordsCountTrain_, &phonesCountTrain_);
 			if (!op)
 			{
 				errMsg_ = QString("Can't build phase specific parts. %1").arg(errMsg);
 				return;
 			}
-			std::tie(op, errMsg) = buildPhaseSpecificParts(ResourceUsagePhase::Test, minWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, trainPhoneIds);
+			std::tie(op, errMsg) = buildPhaseSpecificParts(ResourceUsagePhase::Test, minWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, trainPhoneIds, &dictWordsCountTest_, &phonesCountTest_);
 			if (!op)
 			{
 				errMsg_ = QString("Can't build phase specific parts. %1").arg(errMsg);
@@ -468,6 +475,15 @@ namespace PticaGovorun
 			if (!errMsg_.isEmpty())
 				return;
 		}
+
+		// generate statistics
+		generateDataStat(phaseAssignedSegs);
+
+		// stop timer
+		std::chrono::time_point<Clock> now2 = Clock::now();
+		dataGenerationDurSec_ = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
+
+		printDataStat(generationDate, filePath("dataStats.txt"));
 	}
 
 	void SphinxTrainDataBuilder::loadKnownPhoneticDicts(bool includeBrownBear)
@@ -499,7 +515,7 @@ namespace PticaGovorun
 
 		if (includeBrownBear)
 		{
-			const wchar_t* brownBearDictPath = LR"path(C:\devb\PticaGovorunProj\srcrep\data\phoneticBrownBear.xml)path";
+			const wchar_t* brownBearDictPath = LR"path(C:\devb\PticaGovorunProj\srcrep\data\PhoneticDict\phoneticBrownBear.xml)path";
 			std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(brownBearDictPath, phoneReg_, phoneticDictWordsBrownBear_, *stringArena_);
 			if (!loadOp)
 			{
@@ -537,7 +553,8 @@ namespace PticaGovorun
 			populatePronCodes(phoneticDictWordsBrownBear_, pronCodeToObjWellFormed_, duplicatePronCodes);
 	}
 
-	std::tuple<bool, const char*> SphinxTrainDataBuilder::buildPhaseSpecificParts(ResourceUsagePhase phase, int minWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, const std::set<PhoneId>& trainPhoneIds)
+	std::tuple<bool, const char*> SphinxTrainDataBuilder::buildPhaseSpecificParts(ResourceUsagePhase phase, int minWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, const std::set<PhoneId>& trainPhoneIds,
+		int* dictWordsCount, int* phonesCount)
 	{
 		// well known dictionaries are WellFormed, Broken and Filler
 		auto expandWellKnownPronCodeFun = [phase, this](boost::wstring_ref pronCode) -> const PronunciationFlavour*
@@ -568,6 +585,9 @@ namespace PticaGovorun
 		if (!op)
 			return std::make_tuple(false, "Can't build phonetic dictionary");
 
+		if (dictWordsCount != nullptr)
+			*dictWordsCount = phoneticDictWords.size();
+
 		std::tie(op, errMsg) = writePhoneticDictSphinx(phoneticDictWords, phoneReg_, filePath(dbName_ + fileSuffix + ".dic"));
 		if (!op)
 			return std::make_tuple(false, "Can't write phonetic dictionary");
@@ -580,6 +600,9 @@ namespace PticaGovorun
 
 		std::vector<std::string> phoneList;
 		phoneAcc.buildPhoneList(phoneReg_, phoneList);
+
+		if (phonesCount != nullptr)
+			*phonesCount = phoneList.size();
 
 		// phone list contains all phones used in phonetic dictionary, including SIL
 		op = writePhoneList(phoneList, filePath(dbName_ + fileSuffix + ".phone"));
@@ -1265,6 +1288,17 @@ namespace PticaGovorun
 				//if (padSilence && seg.EndSilenceFramesCount < minSilLenFrames)
 					std::copy(silenceFrames.begin(), silenceFrames.end(), std::back_inserter(paddedSegFramesOut));
 
+				// statistics
+				double durSec = paddedSegFramesOut.size() / (double)targetFrameRate; // speech + padded silence
+				double& durCounter = segRef->Phase == ResourceUsagePhase::Train ? audioDurationSecTrain_ : audioDurationSecTest_;
+				durCounter += durSec;
+
+				double noPadDurSec = segFrames.size() / (double)targetFrameRate; // only speech (no padded silence)
+				double& noPadDurCounter = segRef->Phase == ResourceUsagePhase::Train ? audioDurationNoPaddingSecTrain_ : audioDurationNoPaddingSecTest_;
+				noPadDurCounter += noPadDurSec;
+
+				speakerIdToAudioDurSec_[seg.ContentMarker.SpeakerBriefId] += durSec;
+
 				// write output wav segment
 
 				std::string wavSegOutPath = (segRef->OutAudioSegPathParts.AudioSegFilePathNoExt + ".wav").toStdString();
@@ -1276,6 +1310,66 @@ namespace PticaGovorun
 					return;
 				}
 			}
+		}
+	}
+
+	void SphinxTrainDataBuilder::generateDataStat(const std::vector<details::AssignedPhaseAudioSegment>& phaseAssignedSegs)
+	{
+		if (!errMsg_.isEmpty()) return;
+		std::vector<boost::wstring_ref> words;
+		for (const auto& segRef : phaseAssignedSegs)
+		{
+			int& utterCounter = segRef.Phase == ResourceUsagePhase::Train ? utterCountTrain_ : utterCountTest_;
+			utterCounter += 1;
+
+			words.clear();
+			splitUtteranceIntoWords(segRef.Seg->TranscriptText, words);
+
+			int& wordCounter = segRef.Phase == ResourceUsagePhase::Train ? wordCountTrain_ : wordCountTest_;
+			wordCounter += (int)words.size();
+		}
+	}
+
+	void SphinxTrainDataBuilder::printDataStat(QDateTime genDate, const QString& statFilePath)
+	{
+		if (!errMsg_.isEmpty()) return;
+
+		QFile outFile(statFilePath);
+		if (!outFile.open(QIODevice::WriteOnly | QIODevice::Text))
+		{
+			errMsg_ = QString("Can't create file (%1)").arg(statFilePath);
+			return;
+		}
+
+		QTextStream outStream(&outFile);
+		outStream.setCodec("UTF-8");
+		outStream.setGenerateByteOrderMark(false);
+
+		const int TimePrec = 4;
+
+		QString curDateStr = genDate.toString("dd.MM.yyyy HH:mm::ss");
+		outStream << QString("generationDate=%1").arg(curDateStr) << "\n";
+		outStream << QString("generationDurH=%1").arg(dataGenerationDurSec_ / 3600.0, 0, 'f', TimePrec) << "\n";
+
+		outStream << QString("audioDurH(Train, Test)=(%1, %2)").arg(audioDurationSecTrain_ / 3600, 0, 'f', TimePrec).arg(audioDurationSecTest_ / 3600, 0, 'f', TimePrec) << "\n";
+		outStream << QString("audioDurNoPaddingH=(%1, %2)").arg(audioDurationNoPaddingSecTrain_ / 3600, 0, 'f', TimePrec).arg(audioDurationNoPaddingSecTest_ / 3600, 0, 'f', TimePrec) << "\n";
+		outStream << QString("utterCount=(%1, %2)").arg(utterCountTrain_).arg(utterCountTest_) << "\n";
+		outStream << QString("wordCount=(%1, %2)").arg(wordCountTrain_).arg(wordCountTest_) << "\n";
+		outStream << QString("distSize=(%1, %2)").arg(dictWordsCountTrain_).arg(dictWordsCountTest_) << "\n";
+		outStream << QString("phonesCount=(%1, %2)").arg(phonesCountTrain_).arg(phonesCountTest_) << "\n";
+
+		// audio duration per speaker, order hi-lo
+		std::vector<std::wstring> speakerIds;
+		std::transform(std::begin(speakerIdToAudioDurSec_), std::end(speakerIdToAudioDurSec_), std::back_inserter(speakerIds),
+			[](const std::pair<std::wstring, double>& pair) { return pair.first; });
+		std::sort(std::begin(speakerIds), std::end(speakerIds),
+			[&](const std::wstring& a, const std::wstring& b) { return speakerIdToAudioDurSec_[a] > speakerIdToAudioDurSec_[b]; });
+
+		outStream << "\n#speakerId hours (hi to lo)" << "\n";
+		for (const std::wstring& speakerId : speakerIds)
+		{
+			double durSec = speakerIdToAudioDurSec_[speakerId];
+			outStream << QString("%1 %2").arg(toQString(speakerId)).arg(durSec / 3600, 0, 'f', TimePrec) << "\n";
 		}
 	}
 

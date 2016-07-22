@@ -44,7 +44,8 @@ namespace PticaGovorun
 		bool isBrokenUtterance(boost::wstring_ref text) const;
 		const PronunciationFlavour* expandWellKnownPronCode(boost::wstring_ref pronCode, bool useBrokenDict) const;
 
-		std::tuple<bool, const char*> buildPhaseSpecificParts(ResourceUsagePhase phase, int maxWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, const std::set<PhoneId>& trainPhoneIds);
+		std::tuple<bool, const char*> buildPhaseSpecificParts(ResourceUsagePhase phase, int maxWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, const std::set<PhoneId>& trainPhoneIds,
+			int* dictWordsCount = nullptr, int* phonesCount = nullptr);
 
 		void findWordsWithoutPronunciation(const std::vector<AnnotatedSpeechSegment>& segments, bool useBroken, std::vector<boost::wstring_ref>& unkWords) const;
 
@@ -82,6 +83,11 @@ namespace PticaGovorun
 		std::tuple<bool, const char*>  loadSilenceSegment(std::vector<short>& frames, float framesFrameRate) const;
 		void buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segRefs, float targetFrameRate, bool padSilence, const std::vector<short>& silenceFrames);
 
+		void generateDataStat(const std::vector<details::AssignedPhaseAudioSegment>& phaseAssignedSegs);
+		
+		// Prints data statistics (speech segments, dictionaries).
+		void printDataStat(QDateTime genDate, const QString& statFilePath);
+
 	public:
 		QString errMsg_;
 	private:
@@ -106,6 +112,22 @@ namespace PticaGovorun
 		UkrainianPhoneticSplitter phoneticSplitter_;
 
 		std::vector<AnnotatedSpeechSegment> segments_;
+
+		// statistics
+		long long dataGenerationDurSec_ = -1; // duration (sec) was taken to generate data
+		int dictWordsCountTrain_ = -1;
+		int dictWordsCountTest_ = -1;
+		int utterCountTrain_ = -1;
+		int utterCountTest_ = -1;
+		int wordCountTrain_ = -1;
+		int wordCountTest_ = -1;
+		int phonesCountTrain_ = -1;
+		int phonesCountTest_ = -1;
+		double audioDurationSecTrain_ = 0; // duration (in seconds) of speech with padded silence
+		double audioDurationSecTest_ = 0;
+		double audioDurationNoPaddingSecTrain_ = 0; // duration (in seconds) of speech only (no padded silence)
+		double audioDurationNoPaddingSecTest_ = 0;
+		std::map<std::wstring, double> speakerIdToAudioDurSec_;
 	};
 
 	// Writes phonetic dictionary to file.
