@@ -396,6 +396,7 @@ namespace RecognizeSpeechSphinxTester
 				speechFramesActual = &speechFramesResamp;
 			}
 
+			std::wcout << L"SpeechFile=" << seg.RelFilePathNoExt << std::endl;
 			int rv = ps_start_utt(ps, "goforward");
 			if (rv < 0)
 			{
@@ -1039,7 +1040,12 @@ namespace RecognizeSpeechSphinxTester
 			"-hmm", hmmPath,
 			"-lm", langModelPath, // accepts both TXT and DMP formats
 			"-dict", dictPath,
-			nullptr);
+			"-verbose", "yes",
+			"-debug", "3",
+			"-backtrace", "yes",
+			"-senlogdir", "C:\\devb\\PticaGovorunProj\\srcrep\\build\\x64\\Release\\declog",
+			nullptr               // args list terminator
+		);
 		if (config == nullptr)
 			return;
 

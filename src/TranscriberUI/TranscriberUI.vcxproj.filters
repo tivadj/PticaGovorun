@@ -152,9 +152,6 @@
     <ClCompile Include="SpeechTranscriptionValidation.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="AppHelpers.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="AudioMarkupNavigatorDialog.ui">
@@ -241,9 +238,6 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="SpeechTranscriptionValidation.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AppHelpers.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>

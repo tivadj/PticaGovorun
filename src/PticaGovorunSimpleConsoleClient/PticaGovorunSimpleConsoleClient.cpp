@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include <iostream>
 #include <chrono> // std::chrono::system_clock
+#include <QtCore>
 
 namespace MatlabTesterNS { void run(); }
 namespace SliceTesterNS { void run(); }
@@ -24,7 +25,7 @@ namespace PrepareSphinxTrainDataNS { void run(); }
 namespace DslDictionaryConvertRunnerNS { void run(); }
 namespace FlacRunnerNS { void run(); }
 
-int mainCore(int argc, TCHAR* argv[])
+int mainCore(int argc, char* argv[])
 {
 	//SliceTesterNS::run();
 	//MatlabTesterNS::run();
@@ -47,10 +48,12 @@ int mainCore(int argc, TCHAR* argv[])
 	return 0;
 }
 
-int _tmain(int argc, TCHAR* argv[])
+int _tmain(int argc, char* argv[])
 {
 	typedef std::chrono::system_clock Clock;
 	std::chrono::time_point<Clock> now1 = Clock::now();
+
+	QCoreApplication a(argc, argv); // initialize for QApplication::applicationFilePath() to work
 
 	int result = mainCore(argc, argv);
 

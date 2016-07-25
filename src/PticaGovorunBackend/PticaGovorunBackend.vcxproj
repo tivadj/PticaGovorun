@@ -195,6 +195,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AppHelpers.h" />
     <ClInclude Include="ArpaLanguageModel.h" />
     <ClInclude Include="assertImpl.h" />
     <ClInclude Include="AudioSpeechDecoder.h" />
@@ -221,6 +222,7 @@
     <ClInclude Include="XmlAudioMarkup.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AppHelpers.cpp" />
     <ClCompile Include="ArpaLanguageModel.cpp" />
     <ClCompile Include="AudioSpeechDecoder.cpp" />
     <ClCompile Include="ClnUtils.cpp" />

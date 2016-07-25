@@ -11,6 +11,7 @@
 #include "ClnUtils.h"
 #include "ArpaLanguageModel.h"
 #include "assertImpl.h"
+#include "AppHelpers.h"
 
 namespace PticaGovorun
 {
@@ -334,17 +335,17 @@ namespace PticaGovorun
 			return;
 		}
 
-		int randSeed = 1932;
-		bool swapTrainTestData = false; // swaps train/test portions of data, so that opposite data can be tested when random generator's seed is fixed
-		bool includeBrownBear = false;
-		bool outputWav = true;
+		int randSeed = AppHelpers::configParamInt("randSeed", 1932);
+		bool swapTrainTestData = AppHelpers::configParamBool("swapTrainTestData", false); // swaps train/test portions of data, so that opposite data can be tested when random generator's seed is fixed
+		bool includeBrownBear = AppHelpers::configParamBool("includeBrownBear", false);
+		bool outputWav = AppHelpers::configParamBool("outputWav", true);
 		bool outputPhoneticDictAndLangModel = true;
-		bool padSilence = true; // pad the audio segment with the silence segment
+		bool padSilence = AppHelpers::configParamBool("padSilence", true); // pad the audio segment with the silence segment
 		bool allowSoftHardConsonant = true;
 		bool allowVowelStress = true;
 		PalatalSupport palatalSupport = PalatalSupport::AsHard;
 		bool useBrokenPronsInTrainOnly = true;
-		const double trainCasesRatio = 0.7;
+		const double trainCasesRatio = AppHelpers::configParamDouble("trainCasesRatio", 0.7);
 		const float outFrameRate = 16000; // Sphinx requires 16k
 		
 		// words with greater usage counter are inlcuded in language model
@@ -364,11 +365,11 @@ namespace PticaGovorun
 		if (!errMsg_.isEmpty()) return;
 
 		// load annotation
-		const wchar_t* speechWavRootDir = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAudio\)path";
-		const wchar_t* speechAnnotRootDir = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAnnot\)path";
-		const wchar_t* wavDirToAnalyze = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAudio\)path";
+		std::wstring speechWavRootDir = AppHelpers::mapPath("data/SpeechAudio").toStdWString();
+		std::wstring speechAnnotRootDir = AppHelpers::mapPath("data/SpeechAnnot").toStdWString();
+		std::wstring wavDirToAnalyze = AppHelpers::mapPath("data/SpeechAudio").toStdWString();
 
-		loadAudioAnnotation(speechWavRootDir, speechAnnotRootDir, wavDirToAnalyze, includeBrownBear);
+		loadAudioAnnotation(speechWavRootDir.c_str(), speechAnnotRootDir.c_str(), wavDirToAnalyze.c_str(), includeBrownBear);
 
 		// do checks
 
@@ -441,7 +442,7 @@ namespace PticaGovorun
 		QString outDirWavTrain = audioOutDirPath + dataPartNameTrain + "/";
 		QString outDirWavTest = audioOutDirPath + dataPartNameTest + "/";
 
-		auto audioSrcRootDir = QString::fromWCharArray(speechWavRootDir);
+		auto audioSrcRootDir = QString::fromStdWString(speechWavRootDir);
 
 		// find where to put output audio segments
 		fixWavSegmentOutputPathes(audioSrcRootDir, audioOutDirPath, ResourceUsagePhase::Train, outDirWavTrain, phaseAssignedSegs);
@@ -491,21 +492,21 @@ namespace PticaGovorun
 		// load phonetic vocabularies
 		bool loadOp;
 		const char* errMsg = nullptr;
-		const wchar_t* persianDictPathKnown = LR"path(C:\devb\PticaGovorunProj\srcrep\data\PhoneticDict\phoneticDictUkKnown.xml)path";
+		std::wstring persianDictPathKnown = AppHelpers::mapPath("data/PhoneticDict/phoneticDictUkKnown.xml").toStdWString();
 		std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(persianDictPathKnown, phoneReg_, phoneticDictWordsWellFormed_, *stringArena_);
 		if (!loadOp)
 		{
 			errMsg_ = QString("Can't load phonetic dictionary. %1").arg(errMsg);
 			return;
 		}
-		const wchar_t* persianDictPathBroken = LR"path(C:\devb\PticaGovorunProj\srcrep\data\PhoneticDict\phoneticDictUkBroken.xml)path";
+		std::wstring persianDictPathBroken = AppHelpers::mapPath("data/PhoneticDict/phoneticDictUkBroken.xml").toStdWString();
 		std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(persianDictPathBroken, phoneReg_, phoneticDictWordsBroken_, *stringArena_);
 		if (!loadOp)
 		{
 			errMsg_ = QString("Can't load phonetic dictionary. %1").arg(errMsg);
 			return;
 		}
-		const wchar_t* persianDictPathFiller = LR"path(C:\devb\PticaGovorunProj\srcrep\data\PhoneticDict\phoneticDictFiller.xml)path";
+		std::wstring persianDictPathFiller = AppHelpers::mapPath("data/PhoneticDict/phoneticDictFiller.xml").toStdWString();
 		std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(persianDictPathFiller, phoneReg_, phoneticDictWordsFiller_, *stringArena_);
 		if (!loadOp)
 		{
@@ -515,7 +516,7 @@ namespace PticaGovorun
 
 		if (includeBrownBear)
 		{
-			const wchar_t* brownBearDictPath = LR"path(C:\devb\PticaGovorunProj\srcrep\data\PhoneticDict\phoneticBrownBear.xml)path";
+			std::wstring brownBearDictPath = AppHelpers::mapPath("data/PhoneticDict/phoneticBrownBear.xml").toStdWString();
 			std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(brownBearDictPath, phoneReg_, phoneticDictWordsBrownBear_, *stringArena_);
 			if (!loadOp)
 			{
@@ -953,7 +954,7 @@ namespace PticaGovorun
 			{
 				isAlwaysTrain |= broken;
 			}
-			isAlwaysTrain |= seg.ContentMarker.SpeakerBriefId == L"BrownBear1";
+			//isAlwaysTrain |= seg.ContentMarker.SpeakerBriefId == L"BrownBear1";
 
 			if (isAlwaysTrain && isAlwaysTest)
 			{
@@ -1181,8 +1182,8 @@ namespace PticaGovorun
 	{
 		std::vector<short> silenceFrames;
 		float silenceFrameRate = -1;
-		const char* silenceWavPath = R"path(C:\devb\PticaGovorunProj\data\TrainSphinx\SpeechModels\pynzenyk-background-200ms.wav)path";
-		auto readOp = readAllSamples(silenceWavPath, silenceFrames, &silenceFrameRate);
+		std::string silenceWavPath = AppHelpers::mapPathStdString("data/Sphinx2/SpeechModels/pynzenyk-background-200ms.wav");
+		auto readOp = readAllSamples(silenceWavPath.c_str(), silenceFrames, &silenceFrameRate);
 		if (!std::get<0>(readOp))
 			return std::make_tuple(false, "Can't read silence wav file");
 		PG_DbgAssert(silenceFrameRate != -1);
