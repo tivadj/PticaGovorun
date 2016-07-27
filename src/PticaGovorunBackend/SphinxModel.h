@@ -147,11 +147,35 @@ namespace PticaGovorun
 	PG_EXPORTS bool checkFileIdTranscrConsistency(const std::vector<std::wstring>& dataFilePathNoExt, const std::vector<SphinxTranscriptionLine>& dataTranscr);
 
 	// move to Sphinx
-	PG_EXPORTS struct AudioData
+	struct PG_EXPORTS AudioData
 	{
 		std::vector<short> Frames;
 		float FrameRate;
 	};
 
 	PG_EXPORTS bool loadSphinxAudio(boost::wstring_ref audioDir, const std::vector<std::wstring>& audioRelPathesNoExt, boost::wstring_ref audioFileSuffix, std::vector<AudioData>& audioDataList);
+
+
 }
+
+struct SphinxConfig
+{
+	// the values are from etc/sphinx_train.cfg
+	// and are used in sphinxtrain/scripts/decode/psdecode.pl in RunTool('pocketsphinx_batch') call.
+	// these parameters are smaller, making search longer and speech recognition performance improves
+
+	static const char* DEC_CFG_LANGUAGEWEIGHT()
+	{
+		return "10"; // default=6.5
+	}
+
+	static const char* DEC_CFG_BEAMWIDTH()
+	{
+		return "1e-80"; // default=1e-48
+	}
+
+	static const char* DEC_CFG_WORDBEAM()
+	{
+		return "1e-40"; // default=7e-29
+	}
+};

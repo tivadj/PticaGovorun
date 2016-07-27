@@ -1612,7 +1612,7 @@ void SpeechTranscriptionViewModel::recognizeCurrentSegmentSphinxRequest()
 
 	//
 
-	int ret = ps_start_utt(ps, "goforward");
+	int ret = ps_start_utt(ps);
 	if (ret < 0)
 		return;
 
@@ -1627,8 +1627,7 @@ void SpeechTranscriptionViewModel::recognizeCurrentSegmentSphinxRequest()
 
 	//
 	int32 score;
-	const char* uttid;
-	const char* hyp = ps_get_hyp(ps, &score, &uttid);
+	const char* hyp = ps_get_hyp(ps, &score);
 	if (hyp == nullptr)
 	{
 		QString msg("No hypothesis is available");
@@ -1643,7 +1642,7 @@ void SpeechTranscriptionViewModel::recognizeCurrentSegmentSphinxRequest()
 
 	// word segmentation
 	std::vector<PticaGovorun::AlignedWord> wordBoundaries;
-	for (ps_seg_t *seg = ps_seg_iter(ps, &score); seg; seg = ps_seg_next(seg))
+	for (ps_seg_t *seg = ps_seg_iter(ps); seg; seg = ps_seg_next(seg))
 	{
 		const char* word = ps_seg_word(seg);
 		QString wordQStr = textCodec->toUnicode(word);

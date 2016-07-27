@@ -93,7 +93,7 @@ namespace PticaGovorun
 			return;
 		}
 
-		int rv = ps_start_utt(ps_, "goforward");
+		int rv = ps_start_utt(ps_);
 		if (rv < 0)
 		{
 			setError("Error: Can't start utterance");
@@ -119,7 +119,7 @@ namespace PticaGovorun
 		__int32 score;
 		QTextCodec* textCodec = QTextCodec::codecForName("utf8");
 		std::vector<ParsedSpeechSegment> wordsActual;
-		for (ps_seg_t *recogSeg = ps_seg_iter(ps_, &score); recogSeg; recogSeg = ps_seg_next(recogSeg))
+		for (ps_seg_t *recogSeg = ps_seg_iter(ps_); recogSeg; recogSeg = ps_seg_next(recogSeg))
 		{
 			const char* word = ps_seg_word(recogSeg);
 			std::wstring wordWStr = textCodec->toUnicode(word).toStdWString();

@@ -29,6 +29,13 @@ namespace PticaGovorun
 		}
 	}
 
+	QString AppHelpers::configParamQString(QString paramName, QString defaultValue)
+	{
+		QVariant valVar = configParamCore(paramName, QVariant(defaultValue));
+		QString result = valVar.toString();
+		return result;
+	}
+
 	int AppHelpers::configParamInt(QString paramName, int defaultValue)
 	{
 		QVariant valVar = configParamCore(paramName, QVariant(defaultValue));

@@ -26,6 +26,7 @@
 #include "PhoneticService.h"
 #include "SphinxModel.h"
 #include "assertImpl.h"
+#include "AppHelpers.h"
 
 namespace RecognizeSpeechSphinxTester
 {
@@ -75,7 +76,7 @@ namespace RecognizeSpeechSphinxTester
 		if (ps == nullptr)
 			return;
 
-		int rv = ps_start_utt(ps, "goforward");
+		int rv = ps_start_utt(ps);
 		if (rv < 0)
 			return;
 
@@ -93,9 +94,8 @@ namespace RecognizeSpeechSphinxTester
 			return;
 
 		//
-		__int32 score;
-		const char* uttid;
-		const char* hyp = ps_get_hyp(ps, &score, &uttid);
+		int32 score;
+		const char* hyp = ps_get_hyp(ps, &score);
 		if (hyp == nullptr)
 		{
 			std::cout << "No hypothesis is available" << std::endl;
@@ -111,7 +111,7 @@ namespace RecognizeSpeechSphinxTester
 
 		// print word segmentation
 		ps_seg_t *seg;
-		for (seg = ps_seg_iter(ps, &score); seg; seg = ps_seg_next(seg))
+		for (seg = ps_seg_iter(ps); seg; seg = ps_seg_next(seg))
 		{
 			const char* word = ps_seg_word(seg);
 			std::wstring wordWStr = textCodec->toUnicode(word).toStdWString();
@@ -350,7 +350,9 @@ namespace RecognizeSpeechSphinxTester
 		
 		ps_decoder_t *ps, float targetFrameRate, std::vector<TwoUtterances>& recogUtterances,
 		std::vector<int>& phoneConfusionMat, int phonesCount,
+		int& sentErrorTotalCount,
 		int& wordErrorTotalCount, int& wordTotalCount,
+		int& phoneErrorTotalCount, int& phoneTotalCount,
 		EditDistance<PhoneId, PhoneProximityCosts>& phonesEditDist,
 		const PhoneProximityCosts& editCost,
 		const std::map<boost::wstring_ref, boost::wstring_ref>& pronCodeToWordWellFormed,
@@ -397,7 +399,7 @@ namespace RecognizeSpeechSphinxTester
 			}
 
 			std::wcout << L"SpeechFile=" << seg.RelFilePathNoExt << std::endl;
-			int rv = ps_start_utt(ps, "goforward");
+			int rv = ps_start_utt(ps);
 			if (rv < 0)
 			{
 				std::cerr << "Error: Can't start utterance";
@@ -419,9 +421,8 @@ namespace RecognizeSpeechSphinxTester
 			}
 
 			//
-			__int32 score;
-			const char* uttid;
-			const char* hyp = ps_get_hyp(ps, &score, &uttid);
+			int32 score;
+			const char* hyp = ps_get_hyp(ps, &score);
 			if (hyp == nullptr)
 			{
 				// "No hypothesis is available"
@@ -433,7 +434,7 @@ namespace RecognizeSpeechSphinxTester
 			// find words and word probabilities
 			std::vector<std::wstring> pronIdsActualRaw;
 			std::vector<float> wordsActualProbs;
-			for (ps_seg_t *recogSeg = ps_seg_iter(ps, &score); recogSeg; recogSeg = ps_seg_next(recogSeg))
+			for (ps_seg_t *recogSeg = ps_seg_iter(ps); recogSeg; recogSeg = ps_seg_next(recogSeg))
 			{
 				const char* word = ps_seg_word(recogSeg);
 				std::wstring wordWStr = textCodec->toUnicode(word).toStdWString();
@@ -658,6 +659,9 @@ namespace RecognizeSpeechSphinxTester
 
 			wordErrorTotalCount += (int)distWord;
 			wordTotalCount += (int)wordsExpected.size();
+			phoneErrorTotalCount += (int)distChar;
+			phoneTotalCount += (int)expectedPhones.size();
+			if (distWord > 0) sentErrorTotalCount += 1;
 		}
 	}
 
@@ -940,31 +944,35 @@ namespace RecognizeSpeechSphinxTester
 
 	void testSphincDecoder()
 	{
-		const char* hmmPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";
-		//const char* langModelPath   = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.lm.DMP)path";
-		//const char* dictPath        = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.dic)path";
-		//const char* langModelPath   = R"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Release\persian.lm.DMP)path";
-		const char* langModelPath     = R"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian.arpa)path";
-		const char* dictPath          = R"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian.dic)path";
-		const wchar_t* dictPathW      = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian.dic)path";
-		const wchar_t* dictPathFiller = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian.filler)path";
+		QString decodeSpeechModelDefault = AppHelpers::mapPath("data/TrainSphinx/persian");
+		QString decodeSpeechModel = AppHelpers::configParamQString("decodeSpeechModel", decodeSpeechModelDefault);
+		QDir decodeSpeechModelDir = QDir(decodeSpeechModel);
+		std::wcout << "decodeSpeechModelDir=" << decodeSpeechModel.toStdWString() << std::endl;
 
-		const wchar_t* fileIdPath =  LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian_test.fileids)path";
-		const wchar_t* transcrPath = LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\etc\persian_test.transcription)path";
-		const wchar_t* audioDir =    LR"path(C:\devb\PticaGovorunProj\data\TrainSphinx\persian\wav\)path";
+		// NOTE: must have the trailing slash to correctly find the speechModelVerStr below
+		QString hmmPath =       decodeSpeechModelDir.filePath("model_parameters/persian.cd_cont_200/");
+		QString langModelPath = decodeSpeechModelDir.filePath("etc/persian_test.lm.DMP");
+		QString dictPath =      decodeSpeechModelDir.filePath("etc/persian_test.dic");
+		QString dictPathFiller =decodeSpeechModelDir.filePath(QString::fromWCharArray(L"etc/persian.filler"));
+
+		QString fileIdPath =    decodeSpeechModelDir.filePath(QString::fromWCharArray(L"etc/persian_test.fileids"));
+		QString transcrPath =   decodeSpeechModelDir.filePath(QString::fromWCharArray(L"etc/persian_test.transcription"));
+		QString audioDir =      decodeSpeechModelDir.filePath(QString::fromWCharArray(L"wav"));
 
 		QDir baseDir = QFileInfo(hmmPath).dir();
 		baseDir.cdUp();
 		baseDir.cdUp();
 		std::wstring speechModelVerStr = sphinxModelVersionStr(baseDir.absolutePath().toStdWString());
+		PG_DbgAssert(!speechModelVerStr.empty() && "Can't recognize speech model version")
+		std::wcout << "speechModelVerStr=" << speechModelVerStr << std::endl;
 
 		//
 		int segsMax = -1;
 		std::vector<TranscribedAudioSegment> segments;
-		bool op = loadSpeechSegmentsToDecode(segsMax, fileIdPath, transcrPath, audioDir, segments);
+		bool op = loadSpeechSegmentsToDecode(segsMax, fileIdPath.toStdWString(), transcrPath.toStdWString(), audioDir.toStdWString(), segments);
 		if (!op)
 		{
-			std::cerr << "can't read Sphinx fileId file" << fileIdPath << std::endl;
+			std::wcerr << L"can't read Sphinx fileId file" << fileIdPath.toStdWString() << std::endl;
 			return;
 		}
 
@@ -982,7 +990,7 @@ namespace RecognizeSpeechSphinxTester
 		std::vector<PhoneticWord> phoneticDictKnown;
 		bool loadPhoneDict;
 		const char* errMsg = nullptr;
-		const wchar_t* persianDictPathK = LR"path(C:\devb\PticaGovorunProj\srcrep\data\PhoneticDict\phoneticDictUkKnown.xml)path";
+		std::wstring persianDictPathK = AppHelpers::mapPath("data/PhoneticDict/phoneticDictUkKnown.xml").toStdWString();
 		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryXml(persianDictPathK, phoneReg, phoneticDictKnown, stringArena);
 		if (!loadPhoneDict)
 		{
@@ -993,7 +1001,7 @@ namespace RecognizeSpeechSphinxTester
 		QTextCodec* pTextCodec = QTextCodec::codecForName("utf8");
 		std::vector<std::string> brokenLines;
 		std::vector<PhoneticWord> phoneticDictTest;
-		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryPronIdPerLine(dictPathW, phoneReg, *pTextCodec, phoneticDictTest, brokenLines, stringArena);
+		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryPronIdPerLine(dictPath.toStdWString(), phoneReg, *pTextCodec, phoneticDictTest, brokenLines, stringArena);
 		if (!loadPhoneDict)
 		{
 			std::cerr << errMsg << std::endl;
@@ -1001,7 +1009,7 @@ namespace RecognizeSpeechSphinxTester
 		}
 
 		std::vector<PhoneticWord> phoneticDictFiller;
-		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryPronIdPerLine(dictPathFiller, phoneReg, *pTextCodec, phoneticDictFiller, brokenLines, stringArena);
+		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryPronIdPerLine(dictPathFiller.toStdWString(), phoneReg, *pTextCodec, phoneticDictFiller, brokenLines, stringArena);
 		if (!loadPhoneDict)
 		{
 			std::cerr << errMsg << std::endl;
@@ -1036,14 +1044,35 @@ namespace RecognizeSpeechSphinxTester
 		populatePronCodes(phoneticDictFiller, pronCodeToPronObjFiller, duplicatePronCodes);
 
 		//
+		std::wstring timeStampStr;
+		appendTimeStampNow(timeStampStr);
+
+		std::wstringstream dumpFileName;
+
+		//
+		dumpFileName.str(L"");
+		dumpFileName << L"wordErrorDump_" << speechModelVerStr << "_" << timeStampStr << L"_logfn.txt";
+
 		cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
-			"-hmm", hmmPath,
-			"-lm", langModelPath, // accepts both TXT and DMP formats
-			"-dict", dictPath,
+			"-hmm", hmmPath.toStdString().c_str(),
+			"-lm", langModelPath.toStdString().c_str(), // accepts both TXT and DMP formats
+			"-dict", dictPath.toStdString().c_str(),
 			"-verbose", "yes",
-			"-debug", "3",
+			"-debug", "0",        // value>0 crashes pocketsphinx-5prelease on debug output
 			"-backtrace", "yes",
-			"-senlogdir", "C:\\devb\\PticaGovorunProj\\srcrep\\build\\x64\\Release\\declog",
+			"-logfn", AppHelpers::mapPathStdString(toQString(dumpFileName.str())).c_str(),
+
+			"-lw", SphinxConfig::DEC_CFG_LANGUAGEWEIGHT(),
+			"-fwdflatlw", SphinxConfig::DEC_CFG_LANGUAGEWEIGHT(),
+			"-bestpathlw", SphinxConfig::DEC_CFG_LANGUAGEWEIGHT(),
+
+			"-beam", SphinxConfig::DEC_CFG_BEAMWIDTH(),
+			"-wbeam", SphinxConfig::DEC_CFG_WORDBEAM(),
+			"-fwdflatbeam", SphinxConfig::DEC_CFG_BEAMWIDTH(),
+			"-fwdflatwbeam", SphinxConfig::DEC_CFG_WORDBEAM(),
+			"-pbeam", SphinxConfig::DEC_CFG_BEAMWIDTH(),
+			"-lpbeam", SphinxConfig::DEC_CFG_BEAMWIDTH(),
+			"-lponlybeam", SphinxConfig::DEC_CFG_BEAMWIDTH(),
 			nullptr               // args list terminator
 		);
 		if (config == nullptr)
@@ -1057,16 +1086,21 @@ namespace RecognizeSpeechSphinxTester
 		//
 		PhoneProximityCosts phoneCosts(phoneReg);
 		EditDistance<PhoneId, PhoneProximityCosts> phonesEditDist;
-		int phonesCount = phoneReg.phonesCount() + 1; // +1 to keep NIL phone in the first row/column
+		int regPhonesCount = phoneReg.phonesCount() + 1; // +1 to keep NIL phone in the first row/column
 		phoneReg.assumeSequentialPhoneIdsWithoutGaps();
-		std::vector<int> phoneConfusionMat(phonesCount*phonesCount, 0);
+		std::vector<int> phoneConfusionMat(regPhonesCount*regPhonesCount, 0);
 
+		int sentErrorTotalCount = 0;
 		int wordErrorTotalCount = 0;
 		int wordTotalCount = 0;
+		int phoneErrorTotalCount = 0;
+		int phoneTotalCount = 0;
 		float targetFrameRate = CmuSphinxFrameRate;
 		std::vector<TwoUtterances> recogUtterances;
 		decodeSpeechSegments(segments, ps, targetFrameRate, recogUtterances,
-			phoneConfusionMat, phonesCount, wordErrorTotalCount, wordTotalCount, phonesEditDist, phoneCosts, 
+			phoneConfusionMat, regPhonesCount, 
+			sentErrorTotalCount, wordErrorTotalCount, wordTotalCount, phoneErrorTotalCount, phoneTotalCount,
+			phonesEditDist, phoneCosts,
 			pronCodeToWordWellFormed,
 			pronCodeToObjTest, pronCodeToPronObjFiller,
 			phoneReg, excludeSilFromDecOutput);
@@ -1074,15 +1108,18 @@ namespace RecognizeSpeechSphinxTester
 		// the call may crash if phonetic dictionary was not correctly initialized (eg .dict file is empty)
 		ps_free(ps);
 
-		//
-		std::wstring timeStampStr;
-		appendTimeStampNow(timeStampStr);
-
-		std::wstringstream dumpFileName;
+		// output brief statistics
+		double sentErrAvg = sentErrorTotalCount / (double)segments.size();
+		double wordErrAvg = wordErrorTotalCount / (double)wordTotalCount;
+		double phoneErrAvg = phoneErrorTotalCount / (double)phoneTotalCount;
+		std::cout << "SentErr=" << sentErrAvg << std::endl;
+		std::cout << "WordErr=" << wordErrAvg << std::endl;
+		std::cout << "PhonErr=" << phoneErrAvg << std::endl;
 
 		// brief info
 
 		{
+			dumpFileName.str(L"");
 			dumpFileName << L"wordErrorDump_" << speechModelVerStr << "_" << timeStampStr << L"_brief.txt";
 
 			QFile dumpFile(toQString(dumpFileName.str()));
@@ -1094,9 +1131,9 @@ namespace RecognizeSpeechSphinxTester
 
 			QTextStream dumpFileStream(&dumpFile);
 			dumpFileStream.setCodec("UTF-8");
-
-			double wordErrorAvg = wordErrorTotalCount / (double)wordTotalCount;
-			dumpFileStream << "WordErrorAvg=" << wordErrorAvg << " UtterCount=" << segments.size() << "\n";
+			dumpFileStream << QString("SentErr=%1 (%2/%3)").arg(sentErrAvg, 0, 'f', 5).arg(sentErrorTotalCount).arg(segments.size()) << "\n";
+			dumpFileStream << QString("WordErr=%1 (%2/%3)").arg(wordErrAvg, 0, 'f', 5).arg(wordErrorTotalCount).arg(wordTotalCount) << "\n";
+			dumpFileStream << QString("PhonErr=%1 (%2/%3)").arg(phoneErrAvg, 0, 'f', 5).arg(phoneErrorTotalCount).arg(phoneTotalCount) << "\n";
 		}
 
 		// order by word error large to small
@@ -1152,7 +1189,7 @@ namespace RecognizeSpeechSphinxTester
 		// print confusion matrix
 		dumpFileName.str(L"");
 		dumpFileName << L"wordErrorDump_" << speechModelVerStr << "_" << timeStampStr << "_confusionMat.htm";
-		dumpConfusionMatrix(phoneConfusionMat, phonesCount, dumpFileName.str(), phoneReg);
+		dumpConfusionMatrix(phoneConfusionMat, regPhonesCount, dumpFileName.str(), phoneReg);
 	}
 
 	void run()

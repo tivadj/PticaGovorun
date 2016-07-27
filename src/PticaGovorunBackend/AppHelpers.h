@@ -13,6 +13,7 @@ namespace PticaGovorun
 		static QString     mapPath(QString appExeRelPath);
 		static std::string mapPathStdString(QString appExeRelPath);
 
+		static QString configParamQString(QString paramName, QString  defaultValue);
 		static int  configParamInt(QString paramName, int  defaultValue);
 		static bool configParamBool(QString paramName, bool defaultValue);
 		static double configParamDouble(QString paramName, double defaultValue);

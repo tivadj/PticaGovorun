@@ -3,18 +3,18 @@
   <ImportGroup Label="PropertySheets" />
 
   <PropertyGroup Label="UserMacros">
-    <SphinxBaseDir>C:\devb\PticaGovorunProj\srcrep\ThirdParty\CmuSphinx-0.8\sphinxbase-0.8\</SphinxBaseDir>
-    <PocketSphinxDir>C:\devb\PticaGovorunProj\srcrep\ThirdParty\CmuSphinx-0.8\pocketsphinx-0.8\</PocketSphinxDir>
+    <SphinxBaseDir>C:\devb\PticaGovorunProj\srcrep\ThirdParty\CmuSphinx-5prealpha\sphinxbase-5prealpha-win32\sphinxbase\</SphinxBaseDir>
+    <PocketSphinxDir>C:\devb\PticaGovorunProj\srcrep\ThirdParty\CmuSphinx-5prealpha\pocketsphinx-5prealpha-win32\pocketsphinx\</PocketSphinxDir>
   </PropertyGroup>
   
   <PropertyGroup>
     <IncludePath>$(SphinxBaseDir)include\;$(IncludePath)</IncludePath>
     <IncludePath>$(SphinxBaseDir)src\libsphinxbase\fe\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SphinxBaseDir)bin\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SphinxBaseDir)bin\$(Configuration)\$(PlatformShortName)\;$(LibraryPath)</LibraryPath>
 
     <IncludePath>$(PocketSphinxDir)include;$(IncludePath)</IncludePath>
     <IncludePath>$(PocketSphinxDir)src\libpocketsphinx;$(IncludePath)</IncludePath>
-    <LibraryPath>$(PocketSphinxDir)bin\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(PocketSphinxDir)bin\$(Configuration)\$(PlatformShortName)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   
   <ItemDefinitionGroup>
@@ -26,7 +26,7 @@
   <ItemGroup />
 
   <Target Name="CmuSphinxCopyBinaries" AfterTargets="Build">
-    <Copy     SourceFiles="$(SphinxBaseDir)bin\$(Configuration)\sphinxbase.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
-    <Copy     SourceFiles="$(PocketSphinxDir)bin\$(Configuration)\pocketsphinx.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
+    <Copy     SourceFiles="$(SphinxBaseDir)bin\$(Configuration)\$(PlatformShortName)\sphinxbase.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
+    <Copy     SourceFiles="$(PocketSphinxDir)bin\$(Configuration)\$(PlatformShortName)\pocketsphinx.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
   </Target>
 </Project>
