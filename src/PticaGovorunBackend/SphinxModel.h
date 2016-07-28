@@ -2,7 +2,9 @@
 #include <vector>
 #include <chrono> // std::chrono::system_clock
 #include <set>
+#include <map>
 #include <QString>
+#include <QVariant>
 #include <QDir>
 #include "PhoneticService.h"
 #include "SpeechProcessing.h"
@@ -86,7 +88,7 @@ namespace PticaGovorun
 		void generateDataStat(const std::vector<details::AssignedPhaseAudioSegment>& phaseAssignedSegs);
 		
 		// Prints data statistics (speech segments, dictionaries).
-		void printDataStat(QDateTime genDate, const QString& statFilePath);
+		void printDataStat(QDateTime genDate, const std::map<std::string,QVariant> speechModelConfig, const QString& statFilePath);
 
 	public:
 		QString errMsg_;

@@ -335,17 +335,29 @@ namespace PticaGovorun
 			return;
 		}
 
-		int randSeed = AppHelpers::configParamInt("randSeed", 1932);
-		bool swapTrainTestData = AppHelpers::configParamBool("swapTrainTestData", false); // swaps train/test portions of data, so that opposite data can be tested when random generator's seed is fixed
-		bool includeBrownBear = AppHelpers::configParamBool("includeBrownBear", false);
-		bool outputWav = AppHelpers::configParamBool("outputWav", true);
+		const char* ConfigRandSeed = "randSeed";
+		const char* ConfigSwapTrainTestData = "swapTrainTestData";
+		const char* ConfigIncludeBrownBear = "includeBrownBear";
+		const char* ConfigOutputWav = "outputWav";
+		const char* ConfigPadSilence = "padSilence";
+		const char* ConfigTrainCasesRatio = "trainCasesRatio";
+		const char* ConfigUseBrokenPronsInTrainOnly = "useBrokenPronsInTrainOnly";
+		const char* ConfigAllowSoftHardConsonant = "allowSoftHardConsonant";
+		const char* ConfigAllowVowelStress = "allowVowelStress";
+		const char* ConfigMinWordPartUsage = "minWordPartUsage";
+		const char* ConfigMaxUnigramsCount = "maxUnigramsCount";
+
+		int randSeed = AppHelpers::configParamInt(ConfigRandSeed, 1932);
+		bool swapTrainTestData = AppHelpers::configParamBool(ConfigSwapTrainTestData, false); // swaps train/test portions of data, so that opposite data can be tested when random generator's seed is fixed
+		bool includeBrownBear = AppHelpers::configParamBool(ConfigIncludeBrownBear, false);
+		bool outputWav = AppHelpers::configParamBool(ConfigOutputWav, true);
 		bool outputPhoneticDictAndLangModel = true;
-		bool padSilence = AppHelpers::configParamBool("padSilence", true); // pad the audio segment with the silence segment
+		bool padSilence = AppHelpers::configParamBool(ConfigPadSilence, true); // pad the audio segment with the silence segment
 		bool allowSoftHardConsonant = true;
 		bool allowVowelStress = true;
 		PalatalSupport palatalSupport = PalatalSupport::AsHard;
 		bool useBrokenPronsInTrainOnly = true;
-		const double trainCasesRatio = AppHelpers::configParamDouble("trainCasesRatio", 0.7);
+		const double trainCasesRatio = AppHelpers::configParamDouble(ConfigTrainCasesRatio, 0.7);
 		const float outFrameRate = 16000; // Sphinx requires 16k
 		
 		// words with greater usage counter are inlcuded in language model
@@ -484,7 +496,19 @@ namespace PticaGovorun
 		std::chrono::time_point<Clock> now2 = Clock::now();
 		dataGenerationDurSec_ = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
 
-		printDataStat(generationDate, filePath("dataStats.txt"));
+		std::map<std::string, QVariant> speechModelConfig;
+		speechModelConfig[ConfigRandSeed] = QVariant::fromValue(randSeed);
+		speechModelConfig[ConfigSwapTrainTestData] = QVariant::fromValue(swapTrainTestData);
+		speechModelConfig[ConfigIncludeBrownBear] = QVariant::fromValue(includeBrownBear);
+		speechModelConfig[ConfigOutputWav] = QVariant::fromValue(outputWav);
+		speechModelConfig[ConfigPadSilence] = QVariant::fromValue(padSilence);
+		speechModelConfig[ConfigTrainCasesRatio] = QVariant::fromValue(trainCasesRatio);
+		speechModelConfig[ConfigUseBrokenPronsInTrainOnly] = QVariant::fromValue(useBrokenPronsInTrainOnly);
+		speechModelConfig[ConfigAllowSoftHardConsonant] = QVariant::fromValue(allowSoftHardConsonant);
+		speechModelConfig[ConfigAllowVowelStress] = QVariant::fromValue(allowVowelStress);
+		speechModelConfig[ConfigMinWordPartUsage] = QVariant::fromValue(minWordPartUsage);
+		speechModelConfig[ConfigMaxUnigramsCount] = QVariant::fromValue(maxUnigramsCount);
+		printDataStat(generationDate, speechModelConfig, filePath("dataStats.txt"));
 	}
 
 	void SphinxTrainDataBuilder::loadKnownPhoneticDicts(bool includeBrownBear)
@@ -954,6 +978,7 @@ namespace PticaGovorun
 			{
 				isAlwaysTrain |= broken;
 			}
+			// #includeBrownBear
 			//isAlwaysTrain |= seg.ContentMarker.SpeakerBriefId == L"BrownBear1";
 
 			if (isAlwaysTrain && isAlwaysTest)
@@ -1331,7 +1356,7 @@ namespace PticaGovorun
 		}
 	}
 
-	void SphinxTrainDataBuilder::printDataStat(QDateTime genDate, const QString& statFilePath)
+	void SphinxTrainDataBuilder::printDataStat(QDateTime genDate, const std::map<std::string, QVariant> speechModelConfig, const QString& statFilePath)
 	{
 		if (!errMsg_.isEmpty()) return;
 
@@ -1352,6 +1377,12 @@ namespace PticaGovorun
 		outStream << QString("generationDate=%1").arg(curDateStr) << "\n";
 		outStream << QString("generationDurH=%1").arg(dataGenerationDurSec_ / 3600.0, 0, 'f', TimePrec) << "\n";
 
+		for (const auto& pair : speechModelConfig)
+		{
+			outStream << QString::fromStdString(pair.first) << "=" << pair.second.toString() << "\n";
+		}
+
+		outStream << "\n";
 		outStream << QString("audioDurH(Train, Test)=(%1, %2)").arg(audioDurationSecTrain_ / 3600, 0, 'f', TimePrec).arg(audioDurationSecTest_ / 3600, 0, 'f', TimePrec) << "\n";
 		outStream << QString("audioDurNoPaddingH=(%1, %2)").arg(audioDurationNoPaddingSecTrain_ / 3600, 0, 'f', TimePrec).arg(audioDurationNoPaddingSecTest_ / 3600, 0, 'f', TimePrec) << "\n";
 		outStream << QString("utterCount=(%1, %2)").arg(utterCountTrain_).arg(utterCountTest_) << "\n";
