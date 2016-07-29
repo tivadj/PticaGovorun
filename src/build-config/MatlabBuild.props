@@ -3,10 +3,11 @@
   <ImportGroup Label="PropertySheets" />
 
   <PropertyGroup Label="UserMacros">
+    <HasMatlabMSBuild>False</HasMatlabMSBuild> 
     <MatlabDir>E:\Programs\MATLAB\R2014a\</MatlabDir>
   </PropertyGroup>
 
-  <PropertyGroup>
+  <PropertyGroup Condition="$(HasMatlabMSBuild) == 'True'">
     <IncludePath>$(MatlabDir)extern\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(MatlabDir)extern\lib\win64\microsoft;$(LibraryPath)</LibraryPath>
   
@@ -14,7 +15,7 @@
     <LibraryPath>$(SolutionDir)..\..\build\x64\Debug\PticaGovorunMatlabProxy\for_testing\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
 
-  <ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="$(HasMatlabMSBuild) == 'True'">
     <ClCompile>
       <PreprocessorDefinitions>HAS_MATLAB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -27,7 +28,8 @@
     </Link>
   </ItemDefinitionGroup>
 
-  <Target Name="MatlabProxyCopyBinaries" AfterTargets="Build">
+  <Target Name="MatlabProxyCopyBinaries" AfterTargets="Build" Condition="$(HasMatlabMSBuild) == 'True'">
   </Target>
 
+  
 </Project>

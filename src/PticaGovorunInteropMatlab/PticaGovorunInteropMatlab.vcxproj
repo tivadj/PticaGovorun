@@ -196,7 +196,7 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <!-- From input Matlab *.m files builds the dll -->
-  <Target Name="BuildMatlabProxy" BeforeTargets="Build" Inputs="@(None)" Outputs="$(IntDir)$(ProjectName).dll;$(OutDir)$(ProjectName).dll;">
+  <Target Name="BuildMatlabProxy" BeforeTargets="Build" Inputs="@(None)" Outputs="$(IntDir)$(ProjectName).dll;$(OutDir)$(ProjectName).dll;" Condition="$(HasMatlabMSBuild) == 'True'">
     <Message Text="Building Matlab proxy" Importance="high" />
     <Message Text="MatlabDir=$(MatlabDir)" Importance="high" />
     <Message Text="BuildDir=$(IntDir)" Importance="high" />
