@@ -370,6 +370,7 @@ namespace PticaGovorun
 		const char* ConfigSwapTrainTestData = "swapTrainTestData";
 		const char* ConfigIncludeBrownBear = "includeBrownBear";
 		const char* ConfigOutputWav = "outputWav";
+		const char* ConfigGramDim = "gramDim";
 		const char* ConfigPadSilence = "padSilence";
 		const char* ConfigTrainCasesRatio = "trainCasesRatio";
 		const char* ConfigUseBrokenPronsInTrainOnly = "useBrokenPronsInTrainOnly";
@@ -383,6 +384,7 @@ namespace PticaGovorun
 		bool includeBrownBear = AppHelpers::configParamBool(ConfigIncludeBrownBear, false);
 		bool outputWav = AppHelpers::configParamBool(ConfigOutputWav, true);
 		bool outputPhoneticDictAndLangModel = true;
+		int gramDim = AppHelpers::configParamInt(ConfigGramDim, 2); // 1=unigram, 2=bigram
 		bool padSilence = AppHelpers::configParamBool(ConfigPadSilence, true); // pad the audio segment with the silence segment
 		bool allowSoftHardConsonant = true;
 		bool allowVowelStress = true;
@@ -492,13 +494,13 @@ namespace PticaGovorun
 			// .dic and .arpa files are different
 			// broken words goes in dict and lang model in train phase only
 			// alternatively we can always ignore broken words, but it is a pity to not use the markup
-			std::tie(op, errMsg) = buildPhaseSpecificParts(ResourceUsagePhase::Train, minWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, trainPhoneIds, &dictWordsCountTrain_, &phonesCountTrain_);
+			std::tie(op, errMsg) = buildPhaseSpecificParts(ResourceUsagePhase::Train, minWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, trainPhoneIds, gramDim, &dictWordsCountTrain_, &phonesCountTrain_);
 			if (!op)
 			{
 				errMsg_ = QString("Can't build phase specific parts. %1").arg(errMsg);
 				return;
 			}
-			std::tie(op, errMsg) = buildPhaseSpecificParts(ResourceUsagePhase::Test, minWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, trainPhoneIds, &dictWordsCountTest_, &phonesCountTest_);
+			std::tie(op, errMsg) = buildPhaseSpecificParts(ResourceUsagePhase::Test, minWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, trainPhoneIds, gramDim, &dictWordsCountTest_, &phonesCountTest_);
 			if (!op)
 			{
 				errMsg_ = QString("Can't build phase specific parts. %1").arg(errMsg);
@@ -570,6 +572,7 @@ namespace PticaGovorun
 		speechModelConfig[ConfigSwapTrainTestData] = QVariant::fromValue(swapTrainTestData);
 		speechModelConfig[ConfigIncludeBrownBear] = QVariant::fromValue(includeBrownBear);
 		speechModelConfig[ConfigOutputWav] = QVariant::fromValue(outputWav);
+		speechModelConfig[ConfigGramDim] = QVariant::fromValue(gramDim);
 		speechModelConfig[ConfigPadSilence] = QVariant::fromValue(padSilence);
 		speechModelConfig[ConfigTrainCasesRatio] = QVariant::fromValue(trainCasesRatio);
 		speechModelConfig[ConfigUseBrokenPronsInTrainOnly] = QVariant::fromValue(useBrokenPronsInTrainOnly);
@@ -647,7 +650,7 @@ namespace PticaGovorun
 			populatePronCodes(phoneticDictWordsBrownBear_, pronCodeToObjWellFormed_, duplicatePronCodes);
 	}
 
-	std::tuple<bool, const char*> SphinxTrainDataBuilder::buildPhaseSpecificParts(ResourceUsagePhase phase, int minWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, const std::set<PhoneId>& trainPhoneIds,
+	std::tuple<bool, const char*> SphinxTrainDataBuilder::buildPhaseSpecificParts(ResourceUsagePhase phase, int minWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, const std::set<PhoneId>& trainPhoneIds, int gramDim,
 		int* dictWordsCount, int* phonesCount)
 	{
 		// well known dictionaries are WellFormed, Broken and Filler
@@ -666,7 +669,7 @@ namespace PticaGovorun
 
 		//
 		ArpaLanguageModel langModel;
-		langModel.setGramMaxDimensions(2);
+		langModel.setGramMaxDimensions(gramDim);
 		langModel.generate(seedUnigrams, phoneticSplitter_);
 		QString fileSuffix = phase == ResourceUsagePhase::Train ? "_train" : "_test";
 		writeArpaLanguageModel(langModel, filePath(dbName_ + fileSuffix + ".arpa").toStdWString().c_str());
