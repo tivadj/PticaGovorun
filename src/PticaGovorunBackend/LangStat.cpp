@@ -36,6 +36,16 @@ namespace PticaGovorun
 		return stdext::hash_value(partSide()) ^ stdext::hash_value(partText());
 	}
 
+	bool WordPart::removed() const
+	{
+		return removed_;
+	}
+
+	void WordPart::setRemoved(bool removed)
+	{
+		removed_ = removed;
+	}
+
 	bool operator==(const WordPart& a, const WordPart& b)
 	{
 		if (a.partSide() == b.partSide())
@@ -135,6 +145,11 @@ namespace PticaGovorun
 		return result;
 	}
 
+	const WordPart* WordsUsageInfo::pushWordPart(WordPart&& wordPart) const
+	{
+		return const_cast<WordsUsageInfo*>(this)->pushWordPart(std::move(wordPart));
+	}
+
 	//int WordsUsageInfo::pushWordPart(std::unique_ptr<WordPart> wordPart)
 	//{
 	//	PG_Assert(wordPart->id() == 0);
@@ -149,7 +164,7 @@ namespace PticaGovorun
 	//	return wordId;
 	//}
 
-	const WordPart* WordsUsageInfo::wordPartByValue(const std::wstring& partText, WordPartSide partSide) const
+	WordPart* WordsUsageInfo::wordPartByValue(const std::wstring& partText, WordPartSide partSide)
 	{
 		auto wordPartIt = partTextToWordPart_.find(partText);
 		if (wordPartIt != partTextToWordPart_.end())
@@ -168,9 +183,14 @@ namespace PticaGovorun
 		return nullptr;
 	}
 
-	const WordPart* WordsUsageInfo::getOrAddWordPart(const std::wstring& partText, WordPartSide partSide, bool* wasAdded)
+	const WordPart* WordsUsageInfo::wordPartByValue(const std::wstring& partText, WordPartSide partSide) const
 	{
-		const WordPart* existingWordPart = wordPartByValue(partText, partSide);
+		return const_cast<WordsUsageInfo*>(this)->wordPartByValue(partText, partSide);
+	}
+
+	WordPart* WordsUsageInfo::getOrAddWordPart(const std::wstring& partText, WordPartSide partSide, bool* wasAdded)
+	{
+		WordPart* existingWordPart = wordPartByValue(partText, partSide);
 		if (existingWordPart != nullptr)
 		{
 			if (wasAdded != nullptr)
@@ -186,8 +206,13 @@ namespace PticaGovorun
 		//pushWordPart(std::move(wordPart));
 
 		WordPart wordPart(partText, partSide);
-		const WordPart* result = pushWordPart(std::move(wordPart));
+		auto result = pushWordPart(std::move(wordPart));
 		return result;
+	}
+
+	const WordPart* WordsUsageInfo::getOrAddWordPart(const std::wstring& partText, WordPartSide partSide, bool* wasAdded) const
+	{
+		return const_cast<WordsUsageInfo*>(this)->getOrAddWordPart(partText, partSide, wasAdded);
 	}
 
 	const WordPart* WordsUsageInfo::wordPartById(int wordPartId) const
@@ -269,6 +294,16 @@ namespace PticaGovorun
 		for (const auto& pair : allWordParts_)
 		{
 			const WordPart* part = &pair.second;
+			wordParts.push_back(part);
+		}
+	}
+
+	void WordsUsageInfo::copyWordParts(std::vector<WordPart*>& wordParts)
+	{
+		wordParts.reserve(allWordParts_.size());
+		for (auto& pair : allWordParts_)
+		{
+			WordPart* part = &pair.second;
 			wordParts.push_back(part);
 		}
 	}

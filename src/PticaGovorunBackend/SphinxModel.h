@@ -157,7 +157,7 @@ namespace PticaGovorun
 
 	PG_EXPORTS bool loadSphinxAudio(boost::wstring_ref audioDir, const std::vector<std::wstring>& audioRelPathesNoExt, boost::wstring_ref audioFileSuffix, std::vector<AudioData>& audioDataList);
 
-
+	bool loadWordList(boost::wstring_ref filePath, std::unordered_set<std::wstring>& words);
 }
 
 struct SphinxConfig

@@ -26,6 +26,9 @@ namespace PticaGovorun
 		int id_ = 0;
 		std::wstring partText_;
 		WordPartSide partSide_;
+
+		// true if word is denied
+		bool removed_ = false;
 	public:
 		WordPart(const std::wstring& partText, WordPartSide partSide);
 		//WordPart(const WordPart&) = delete; // TODO: who refers to copy ctr?
@@ -35,6 +38,8 @@ namespace PticaGovorun
 		const std::wstring& partText() const;
 		WordPartSide partSide() const;
 		size_t hashKey() const;
+		bool removed() const;
+		void setRemoved(bool removed);
 	};
 
 	bool operator==(const WordPart& a, const WordPart& b);
@@ -100,9 +105,15 @@ namespace PticaGovorun
 	public:
 		//int pushWordPart(std::unique_ptr<WordPart> wordPart);
 		WordPart* pushWordPart(WordPart&& wordPart);
+		const WordPart* pushWordPart(WordPart&& wordPart) const;
+
 		const WordPart* wordPartById(int wordPartId) const;
+		
+		WordPart* wordPartByValue(const std::wstring& partText, WordPartSide partSide);
 		const WordPart* wordPartByValue(const std::wstring& partText, WordPartSide partSide) const;
-		const WordPart* getOrAddWordPart(const std::wstring& partText, WordPartSide partSide, bool* wasAdded = nullptr);
+
+		WordPart* getOrAddWordPart(const std::wstring& partText, WordPartSide partSide, bool* wasAdded = nullptr);
+		const WordPart* getOrAddWordPart(const std::wstring& partText, WordPartSide partSide, bool* wasAdded = nullptr) const;
 
 	public:
 		WordSeqUsage* getOrAddWordSequence(WordSeqKey wordIds, bool* wasAdded = nullptr);
@@ -112,6 +123,7 @@ namespace PticaGovorun
 		int wordSeqCount() const;
 		void wordSeqCountPerSeqSize(wv::slice<long> wordsSeqSizes) const;
 		void copyWordParts(std::vector<const WordPart*>& wordParts) const;
+		void copyWordParts(std::vector<WordPart*>& wordParts);
 		void copyWordSeq(std::vector<WordSeqKey>& wordSeqItems);
 		void copyWordSeq(std::vector<const WordSeqUsage*>& wordSeqItems) const;
 	};

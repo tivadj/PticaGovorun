@@ -105,18 +105,30 @@ namespace PticaGovorun
 			const PhoneticWord& word = pair.second;
 			std::wstring wordW = toStdWString(word.Word);
 
+			// find word usage
 			long wordTimesUsed = -1;
 			const WordPart* wordPart = wordUsage.wordPartByValue(wordW, WordPartSide::WholeWord);
 			if (wordPart != nullptr)
 			{
+				// assert: wordPart is not denied
 				WordSeqKey key = { wordPart->id() };
 				wordTimesUsed = wordUsage.getWordSequenceUsage(key);
 			}
 
+			// propogate word usage to corresponding pronCodes
+
 			for (const PronunciationFlavour& pron : word.Pronunciations)
 			{
 				bool wasAdded = false;
-				const WordPart* pronPart = wordUsage.getOrAddWordPart(toStdWString(pron.PronCode), WordPartSide::WholeWord, &wasAdded);
+				WordPart* pronPart = wordUsage.getOrAddWordPart(toStdWString(pron.PronCode), WordPartSide::WholeWord, &wasAdded);
+
+				// here we, kind of, create pronCode
+				// eg. word1='b' expands into pronunciations PronCode1='B' and PronCode2='P'
+				// we may deny word='p' and set it's removed flag to true
+				// but PronCode2='p' should be allowed
+				pronPart->setRemoved(false);
+
+				// update usage
 				if (wasAdded && wordTimesUsed != -1)
 				{
 					// evenly propogate word usage to pronIds
@@ -196,6 +208,22 @@ namespace PticaGovorun
 		}
 	}
 
+	void rejectDeniedWords(const std::unordered_set<std::wstring>& denyWords, WordsUsageInfo& wordUsage)
+	{
+		std::vector<WordPart*> allWordParts;
+		wordUsage.copyWordParts(allWordParts);
+
+		for (WordPart* wordPart : allWordParts)
+		{
+			if (denyWords.find(wordPart->partText()) != std::end(denyWords))
+			{
+				// ignore deny words
+				wordPart->setRemoved(true);
+				std::wcout << L"Ignore deny word=" << wordPart->partText() << std::endl; // debug
+			}
+		}
+	}
+
 	void addFillerWords(WordsUsageInfo& wordUsage)
 	{
 		bool isAdded = false;
@@ -219,6 +247,9 @@ namespace PticaGovorun
 
 		for (const WordPart* wordPart : allWordParts)
 		{
+			if (wordPart->removed())
+				continue;
+
 			// include <s>, </s> and ~Right parts
 			if (wordPart == phoneticSplitter.sentStartWordPart() ||
 				wordPart == phoneticSplitter.sentEndWordPart() ||
@@ -382,6 +413,7 @@ namespace PticaGovorun
 		std::wstring wavDirToAnalyze = AppHelpers::mapPath("data/SpeechAudio").toStdWString();
 
 		loadAudioAnnotation(speechWavRootDir.c_str(), speechAnnotRootDir.c_str(), wavDirToAnalyze.c_str(), includeBrownBear);
+		std::wcout << "Found annotated segments: " << segments_.size() << std::endl; // debug
 
 		// do checks
 
@@ -391,6 +423,40 @@ namespace PticaGovorun
 		{
 			errMsg_ = "Found words without phonetic specification";
 			for (const boost::wstring_ref word : unkWords)
+				errMsg_ += ", " + toQString(word);
+			return;
+		}
+
+		//
+		QString denyWordsFilePath = AppHelpers::mapPath("data/LM/denyWords.txt");
+		std::unordered_set<std::wstring> denyWords;
+		if (!loadWordList(denyWordsFilePath.toStdWString(), denyWords))
+		{
+			errMsg_ = "Can't load 'denyWords.txt' dictionary";
+			return;
+		}
+
+		// TODO: this check must be added to model's consistency checker (used in UI)
+		// consistency check: denied words can't be in transcription
+		std::vector<std::reference_wrapper<PhoneticWord>> usedWords;
+		std::copy(std::begin(phoneticDictWordsWellFormed_), std::end(phoneticDictWordsWellFormed_), std::back_inserter(usedWords));
+		std::copy(std::begin(phoneticDictWordsBroken_), std::end(phoneticDictWordsBroken_), std::back_inserter(usedWords));
+		if (includeBrownBear)
+			std::copy(std::begin(phoneticDictWordsBrownBear_), std::end(phoneticDictWordsBrownBear_), std::back_inserter(usedWords));
+
+		std::vector<boost::wstring_ref> usedDeniedWords;
+		for (const PhoneticWord& word : usedWords)
+		{
+			if (denyWords.find(toStdWString(word.Word)) != std::end(denyWords))
+			{
+				usedDeniedWords.push_back(word.Word);
+			}
+		}
+
+		if (!usedDeniedWords.empty())
+		{
+			errMsg_ = "Found used words which are denied: ";
+			for (const boost::wstring_ref word : usedDeniedWords)
 				errMsg_ += ", " + toQString(word);
 			return;
 		}
@@ -415,11 +481,14 @@ namespace PticaGovorun
 			loadDeclinationDictionary(declinedWordDict);
 			loadPhoneticSplitter(declinedWordDict, phoneticSplitter_);
 
+			// we call it before propogating pronCodes to words
+			rejectDeniedWords(denyWords, phoneticSplitter_.wordUsage());
+
 			// ensure that LM covers all pronunciations in phonetic dictionary
 			addFillerWords(phoneticSplitter_.wordUsage());
 			inferPhoneticDictPronIdsUsage(phoneticSplitter_, phoneticDictWellFormed_);
 			inferPhoneticDictPronIdsUsage(phoneticSplitter_, phoneticDictBroken_);
-			
+
 			// .dic and .arpa files are different
 			// broken words goes in dict and lang model in train phase only
 			// alternatively we can always ignore broken words, but it is a pity to not use the markup
@@ -592,8 +661,8 @@ namespace PticaGovorun
 
 		std::vector<const WordPart*> seedUnigrams;
 		chooseSeedUnigrams(phoneticSplitter_, minWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, phoneReg_, expandWellKnownPronCodeFun, trainPhoneIds, seedUnigrams);
-		std::cout << "phase=" << (phase == ResourceUsagePhase::Train ? "train" : "test")
-			<< " seed unigrams count=" << seedUnigrams.size() << std::endl;
+		std::wcout << L"phase=" << (phase == ResourceUsagePhase::Train ? L"train" : L"test")
+			<< L" seed unigrams count=" << seedUnigrams.size() << std::endl;
 
 		//
 		ArpaLanguageModel langModel;
@@ -729,9 +798,13 @@ namespace PticaGovorun
 		return true;
 	}
 
-	bool loadWordList(const std::wstring& filePath, std::unordered_set<std::wstring>& words)
+	// Reads words, one word per line.
+	// Lines with double-pound ## (anywhere in the line) are comments.
+	// Text from single pound to the end of line is a comment.
+	// Empty lines are ignored.
+	bool loadWordList(boost::wstring_ref filePath, std::unordered_set<std::wstring>& words)
 	{
-		QFile file(QString::fromStdWString(filePath));
+		QFile file(toQString(filePath));
 		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 			return false;
 
@@ -741,11 +814,23 @@ namespace PticaGovorun
 		{
 			int readBytes = file.readLine(lineBuff.data(), lineBuff.size());
 			if (readBytes == -1) // EOF
-				return true;
-			QString word = textCodec->toUnicode(lineBuff.data(), readBytes).trimmed();
+				break;
+			QString line = textCodec->toUnicode(lineBuff.data(), readBytes);
+			if (line.contains(QLatin1String("##"))) // line=comment, ignore entire line
+				continue;
+
+			QStringRef lineRef(&line);
+			int poundInd = line.indexOf(QLatin1String("#"));
+			if (poundInd != -1)
+				lineRef = line.leftRef(poundInd);
+
+			lineRef = lineRef.trimmed();
+			if (lineRef.isEmpty())
+				continue;
+
+			QString word = lineRef.toString();
 			words.insert(word.toStdWString());
 		}
-
 		return true;
 	}
 
@@ -791,16 +876,18 @@ namespace PticaGovorun
 		}
 		std::chrono::time_point<Clock> now2 = Clock::now();
 		auto elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
-		std::cout << "loaded declination dict in " << elapsedSec << "s" << std::endl;
+		std::wcout << L"loaded declination dict in " << elapsedSec << L"s" << std::endl;
 	}
 
 	void SphinxTrainDataBuilder::loadPhoneticSplitter(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWordDict, UkrainianPhoneticSplitter& phoneticSplitter)
 	{
-		//
 		wchar_t* processedWordsFile = LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk-done.txt)path";
 		std::unordered_set<std::wstring> processedWords;
-		if (!loadWordList(processedWordsFile, processedWords))
+		if (!loadWordList(boost::wstring_ref(processedWordsFile), processedWords))
+		{
+			errMsg_ = "Can't load 'uk-done.txt' dictionary";
 			return;
+		}
 
 		std::wstring targetWord;
 
@@ -808,10 +895,10 @@ namespace PticaGovorun
 		phoneticSplitter.bootstrap(declinedWordDict, targetWord, processedWords);
 		std::chrono::time_point<Clock> now2 = Clock::now();
 		auto elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
-		std::cout << "phonetic split of declinartion dict took=" << elapsedSec << "s" << std::endl;
+		std::wcout << L"phonetic split of declinartion dict took=" << elapsedSec << L"s" << std::endl;
 
 		int uniqueDeclWordsCount = uniqueDeclinedWordsCount(declinedWordDict);
-		std::cout << "wordGroupsCount=" << declinedWordDict.size() << " uniqueDeclWordsCount=" << uniqueDeclWordsCount << std::endl;
+		std::wcout << L"wordGroupsCount=" << declinedWordDict.size() << L" uniqueDeclWordsCount=" << uniqueDeclWordsCount << std::endl;
 
 		WordsUsageInfo& wordUsage = phoneticSplitter.wordUsage();
 		double uniquenessRatio = wordUsage.wordPartsCount() / (double)uniqueDeclWordsCount;
@@ -827,7 +914,7 @@ namespace PticaGovorun
 		phoneticSplitter.gatherWordPartsSequenceUsage(txtDir, totalPreSplitWords, -1, false);
 		now2 = Clock::now();
 		elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
-		std::cout << "gatherWordPartsSequenceUsage took=" << elapsedSec << "s" << std::endl;
+		std::wcout << L"gatherWordPartsSequenceUsage took=" << elapsedSec << L"s" << std::endl;
 
 		std::array<long, 2> wordSeqSizes;
 		wordUsage.wordSeqCountPerSeqSize(wordSeqSizes);
@@ -836,7 +923,7 @@ namespace PticaGovorun
 			long wordsPerNGram = wordSeqSizes[seqDim];
 			std::wcout << L"wordsPerNGram[" << seqDim + 1 << "]=" << wordsPerNGram << std::endl;
 		}
-		std::wcout << L" wordParts=" << wordUsage.wordPartsCount() << std::endl;
+		std::wcout << L"	wordParts=" << wordUsage.wordPartsCount() << std::endl;
 
 		phoneticSplitter.printSuffixUsageStatistics();
 	}
@@ -1015,7 +1102,7 @@ namespace PticaGovorun
 			outSegRefs.push_back(segRef);
 		}
 		if (!rejectedSegments.empty()) // TODO: print rejected segment: annot file path, segment IDs
-			std::cout << "Rejecting " << rejectedSegments.size() << " segments" << std::endl; // info
+			std::wcout << L"Rejecting " << rejectedSegments.size() << L" segments" << std::endl; // info
 
 		return putSentencesWithRarePhonesInTrain(outSegRefs, trainPhoneIds);
 	}
@@ -1093,7 +1180,7 @@ namespace PticaGovorun
 			}
 		}
 		if (testToTrainMove > 0)
-			std::cout << "Moved " << testToTrainMove << " sentences with rare phones to Train portion" << std::endl; // info
+			std::wcout << L"Moved " << testToTrainMove << L" sentences with rare phones to Train portion" << std::endl; // info
 
 		return std::make_tuple(true, nullptr);
 	}
@@ -1251,7 +1338,7 @@ namespace PticaGovorun
 			
 			// load wav file
 			std::string srcAudioPath = QString::fromStdWString(wavFilePath).toStdString();
-			std::cout << "wav=" << srcAudioPath <<std::endl;
+			std::wcout << L"wav=" << wavFilePath << std::endl;
 
 			srcAudioFrames.clear();
 			auto readOp = readAllSamplesFormatAware(srcAudioPath.c_str(), srcAudioFrames, &srcAudioFrameRate);
