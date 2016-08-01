@@ -98,7 +98,7 @@ namespace RecognizeSpeechSphinxTester
 		const char* hyp = ps_get_hyp(ps, &score);
 		if (hyp == nullptr)
 		{
-			std::cout << "No hypothesis is available" << std::endl;
+			std::wcout << "No hypothesis is available" << std::endl;
 			return;
 		}
 
@@ -106,7 +106,7 @@ namespace RecognizeSpeechSphinxTester
 		std::wstring hypWStr = textCodec->toUnicode(hyp).toStdWString();
 
 		printf("Recognized: %s\n", hyp);
-		std::cout << "Recognized: " << hyp << std::endl;
+		std::wcout << "Recognized: " << hyp << std::endl;
 		std::wcout << "Recognized: " << hypWStr << std::endl;
 
 		// print word segmentation
@@ -124,7 +124,7 @@ namespace RecognizeSpeechSphinxTester
 
 			float64 prob = logmath_exp(ps_get_logmath(ps), post);
 			std::wcout << wordWStr.c_str();
-			std::cout 
+			std::wcout 
 				<< " " << sf << " " <<  ef << " " <<prob
 				<< " " << ascr << " " << lscr << " " << lback << std::endl;
 		}
@@ -1112,9 +1112,9 @@ namespace RecognizeSpeechSphinxTester
 		double sentErrAvg = sentErrorTotalCount / (double)segments.size();
 		double wordErrAvg = wordErrorTotalCount / (double)wordTotalCount;
 		double phoneErrAvg = phoneErrorTotalCount / (double)phoneTotalCount;
-		std::cout << "SentErr=" << sentErrAvg << std::endl;
-		std::cout << "WordErr=" << wordErrAvg << std::endl;
-		std::cout << "PhonErr=" << phoneErrAvg << std::endl;
+		std::wcout << "SentErr=" << sentErrAvg << std::endl;
+		std::wcout << "WordErr=" << wordErrAvg << std::endl;
+		std::wcout << "PhonErr=" << phoneErrAvg << std::endl;
 
 		// brief info
 

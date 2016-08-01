@@ -47,9 +47,10 @@ namespace PticaGovorun
 				channels = metadata->data.stream_info.channels;
 				bps = metadata->data.stream_info.bits_per_sample;
 
-				fprintf(stderr, "sample rate    : %u Hz\n", sample_rate);
-				fprintf(stderr, "channels       : %u\n", channels);
-				fprintf(stderr, "bits per sample: %u\n", bps);
+				// NOTE: printing to std::cout when Unicode is set up is an ERROR (see _setmode call in main)
+				//fprintf(stderr, "sample rate    : %u Hz\n", sample_rate);
+				//fprintf(stderr, "channels       : %u\n", channels);
+				//fprintf(stderr, "bits per sample: %u\n", bps);
 				//fprintf(stderr, "total samples  : %" PRIu64 "\n", total_samples);
 
 				auto allSamples = total_samples * channels;

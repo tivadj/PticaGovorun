@@ -5,11 +5,7 @@
 #include <iostream>
 #include <chrono> // std::chrono::system_clock
 #include <QtCore>
-
-#ifdef WIN32
-#include <io.h> // _setmode
-#include <fcntl.h> // _O_U16TEXT
-#endif
+#include <AppHelpers.h>
 
 #ifdef WIN32
 #include <io.h> // _setmode
@@ -37,6 +33,18 @@ namespace FlacRunnerNS { void run(); }
 
 int mainCore(int argc, char* argv[])
 {
+	QString taskStr = PticaGovorun::AppHelpers::configParamQString("task", "");
+	if (taskStr == "createSpeechModel")
+	{
+		PrepareSphinxTrainDataNS::run(); // 1
+		return 0;
+	}
+	if (taskStr == "decode")
+	{
+		RecognizeSpeechSphinxTester::run(); // 2
+		return 0;
+	}
+
 	//SliceTesterNS::run();
 	//MatlabTesterNS::run();
 	//ComputeSpeechMfccTesterNS::run();
@@ -63,6 +71,7 @@ int _tmain(int argc, char* argv[])
 
 #ifdef WIN32
 	// enable unicode for console
+	// further, only std::wcout (not std::cout) calls are allowed http://stackoverflow.com/questions/2492077/output-unicode-strings-in-windows-console-app
 	_setmode(_fileno(stdout), _O_U16TEXT);
 	_setmode(_fileno(stderr), _O_U16TEXT);
 #endif

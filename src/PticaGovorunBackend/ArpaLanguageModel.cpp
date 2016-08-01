@@ -22,7 +22,7 @@ namespace PticaGovorun
 		for (size_t uniIndex1 = 0; uniIndex1 < unigrams_.size(); ++uniIndex1)
 		{
 			if (uniIndex1 % progressBigramStepSize == 0)
-				std::cout << "progress bigram uniIndex1=" << uniIndex1 / unigrams_.size() << std::endl;
+				std::wcout << L"progress bigram uniIndex1=" << uniIndex1 / unigrams_.size() << std::endl;
 
 			NGramRow& uni1 = *unigrams_[uniIndex1];
 

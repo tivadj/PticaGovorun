@@ -1,10 +1,7 @@
 #include "stdafx.h"
 #include "PhoneticService.h"
 #include <array>
-#include <QFile>
-#include <QDir>
 #include <QDirIterator>
-#include <QDebug>
 #include <QXmlStreamReader>
 #include <QString>
 #include "CoreUtils.h"
@@ -3446,16 +3443,16 @@ namespace PticaGovorun
 			QString txtPath = it.next();
 			if (txtPath.contains("BROKEN", Qt::CaseSensitive))
 			{
-				qDebug() << "SKIPPED " << txtPath;
+				std::wcout << L"SKIPPED " << txtPath.toStdWString() <<std::endl;
 				continue;
 			}
-			qDebug() << txtPath;
+			std::wcout << txtPath.toStdWString() <<std::endl;
 
 			//
 			QFile file(txtPath);
 			if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 			{
-				qDebug() << "Can't open file " << txtPath;
+				std::wcerr << L"Can't open file " << txtPath.toStdWString() <<std::endl;
 				return;
 			}
 

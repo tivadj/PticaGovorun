@@ -286,7 +286,7 @@ namespace RunBuildLanguageModelNS
 
 			partsFreqStream << " " << wordStat->UsedCount << endl;
 		}
-		std::cout << "wrote successfully" << std::endl;
+		std::wcout << "wrote successfully" << std::endl;
 	}
 
 
@@ -414,7 +414,7 @@ namespace RunBuildLanguageModelNS
 
 			std::chrono::time_point<Clock> now2 = Clock::now();
 			auto elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
-			std::cout << "elapsedSec=" << elapsedSec << "s" << std::endl;
+			std::wcout << "elapsedSec=" << elapsedSec << "s" << std::endl;
 
 			std::wcout << "Lang model has " << wordsStat.wordSeqCount() << " words" << std::endl;
 
@@ -444,7 +444,7 @@ namespace RunBuildLanguageModelNS
 			saveWordStatisticsXml(wordsStat, wv::make_view(wordSeqOrder.data(), usedWordsCount), wordCountsPath);
 		}
 
-		std::cout << "Processing the word statistics" << std::endl;
+		std::wcout << "Processing the word statistics" << std::endl;
 
 		typedef std::chrono::system_clock Clock;
 		std::chrono::time_point<Clock> now1 = Clock::now();
@@ -453,7 +453,7 @@ namespace RunBuildLanguageModelNS
 
 		std::chrono::time_point<Clock> now2 = Clock::now();
 		auto elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
-		std::cout << "words parts done in " << elapsedSec << "s" << std::endl;
+		std::wcout << "words parts done in " << elapsedSec << "s" << std::endl;
 	}
 
 	void runMain(int argc, wchar_t* argv[])

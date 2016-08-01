@@ -465,7 +465,7 @@ namespace DslDictionaryConvertRunnerNS
 			std::tie(readOp, errMsg) = readVorbisFrames(vorbisData, frames, &frameRate);
 			if (!readOp)
 			{
-				std::cout << errMsg << std::endl;
+				std::wcout << errMsg << std::endl;
 				return;
 			}
 
