@@ -1566,9 +1566,12 @@ void SpeechTranscriptionViewModel::recognizeCurrentSegmentSphinxRequest()
 	// pad the audio with silince
 	PticaGovorun::padSilence(&audioSamples_[curSegBeg], len, silencePadAudioSamplesCount_, audioSegmentBuffer_);
 
-	std::string hmmPath = AppHelpers::mapPathStdString("data/Sphinx/persian/model_parameters/persian.cd_cont_200");
-	std::string langModelPath = AppHelpers::mapPathStdString("data/Sphinx/persian/etc/persian.lm.DMP");
-	std::string dictPath = AppHelpers::mapPathStdString("data/Sphinx/persian/etc/persian.dic");
+	// The name of the directory with sphinx speech model data.
+	QString sphinxModelDirName = AppHelpers::configParamQString("SphinxModelDirName", "persian");
+
+	std::string hmmPath = AppHelpers::mapPathStdString(QString("data/Sphinx/%1/model_parameters/persian.cd_cont_200").arg(sphinxModelDirName));
+	std::string langModelPath = AppHelpers::mapPathStdString(QString("data/Sphinx/%1/etc/persian_test.lm.DMP").arg(sphinxModelDirName));
+	std::string dictPath = AppHelpers::mapPathStdString(QString("data/Sphinx/%1/etc/persian_test.dic").arg(sphinxModelDirName));
 	cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
 		"-hmm", hmmPath.c_str(),
 		"-lm", langModelPath.c_str(),

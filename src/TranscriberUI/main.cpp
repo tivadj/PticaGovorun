@@ -10,11 +10,18 @@
 
 int main(int argc, char *argv[])
 {
-	qDebug() << "PG_AUX_DICT_PATH=" << qgetenv("PG_AUX_DICT_PATH").constData();
-	qDebug() << "PG_WAV_FILE_PATH=" << qgetenv("PG_WAV_FILE_PATH").constData();
+	QApplication a(argc, argv);
+	
+	QString iniAbs = PticaGovorun::AppHelpers::appIniFilePathAbs();
+	qDebug() << "ini=" << iniAbs;
+	if (!QFile(iniAbs).exists())
+		qDebug() << "ERROR: can't find configuration ini file=" << iniAbs;
 
 	auto cd = QDir::currentPath();
 	qDebug() << "CD=" << cd;
+
+	qDebug() << "PG_AUX_DICT_PATH=" << qgetenv("PG_AUX_DICT_PATH").constData();
+	qDebug() << "PG_WAV_FILE_PATH=" << qgetenv("PG_WAV_FILE_PATH").constData();
 
 	//
 	qDebug() << "Initialize PortAudio runtime";
@@ -39,7 +46,6 @@ int main(int argc, char *argv[])
 	}
 #endif
 	
-	QApplication a(argc, argv);
     PticaGovorun::AnnotationToolMainWindow w;
     w.show();
 

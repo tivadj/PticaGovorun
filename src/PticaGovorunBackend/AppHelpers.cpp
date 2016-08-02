@@ -18,11 +18,17 @@ namespace PticaGovorun
 		return mapPath(appExeRelPath).toStdString();
 	}
 
+	QString AppHelpers::appIniFilePathAbs()
+	{
+		QString iniFilePath = QApplication::applicationFilePath() + ".ini";
+		return iniFilePath;
+	}
+
 	namespace
 	{
 		QVariant configParamCore(QString paramName, QVariant defaultValue)
 		{
-			QString iniFilePath = QApplication::applicationFilePath() + ".ini";
+			QString iniFilePath = AppHelpers::appIniFilePathAbs();
 			QSettings settings(iniFilePath, QSettings::IniFormat);
 			QVariant valVar = settings.value(paramName, defaultValue);
 			return valVar;

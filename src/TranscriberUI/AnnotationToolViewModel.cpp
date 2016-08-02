@@ -11,7 +11,6 @@ namespace PticaGovorun
 {
 	namespace
 	{
-		const char* IniFileName = "TranscriberUI.ini"; // where to store settings
 		const char* RecentAnnotDir = "RecentAnnotDir"; // where xml annotation files reside
 		const char* RecentAnnotFileRelPath = "RecentAnnotFileRelPath"; // relative path to last opened xml annot file
 	}
@@ -52,12 +51,10 @@ namespace PticaGovorun
 	{
 		curRecognizerName_ = "shrekky";
 
-		QSettings settings(IniFileName, QSettings::IniFormat); // reads from current directory
-		
-		QString recentAnnotDir = settings.value(RecentAnnotDir, QString("")).toString();
+		QString recentAnnotDir = AppHelpers::configParamQString(RecentAnnotDir, QString(""));
 		fileWorkspaceViewModel_->setAnnotDir(recentAnnotDir.toStdWString());
 
-		QString recentAnnotFileRelPath = settings.value(RecentAnnotFileRelPath, QString("")).toString();
+		QString recentAnnotFileRelPath = AppHelpers::configParamQString(RecentAnnotFileRelPath, QString(""));
 		if (!recentAnnotFileRelPath.isEmpty())
 		{
 			QString recentAnnotFilePath = QFileInfo(recentAnnotDir, recentAnnotFileRelPath).canonicalFilePath();
@@ -67,7 +64,8 @@ namespace PticaGovorun
 
 	void AnnotationToolViewModel::saveStateSettings()
 	{
-		QSettings settings(IniFileName, QSettings::IniFormat);
+		QString iniAbsPath = AppHelpers::appIniFilePathAbs();
+		QSettings settings(iniAbsPath, QSettings::IniFormat);
 
 		auto annotDirQ = QString::fromStdWString(fileWorkspaceViewModel_->annotDir());
 		if (!annotDirQ.isEmpty())
@@ -132,9 +130,7 @@ namespace PticaGovorun
 
 		// validate on-disk data
 
-		QSettings settings(IniFileName, QSettings::IniFormat); // reads from current directory
-
-		QString recentAnnotDir = settings.value(RecentAnnotDir, QString("")).toString();
+		QString recentAnnotDir = AppHelpers::configParamQString(RecentAnnotDir, QString(""));
 
 		std::vector<wchar_t> pathBuff;
 		boost::wstring_ref recentAnnotDirRef = toWStringRef(recentAnnotDir, pathBuff);
