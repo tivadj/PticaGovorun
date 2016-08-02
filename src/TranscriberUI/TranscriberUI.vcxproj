@@ -166,7 +166,8 @@
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>PticaGovorunBackend$(LibSuffix).lib;PticaGovorunInteropMatlab.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PticaGovorunBackend$(LibSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="$(HasMatlabMSBuild) == 'True'">PticaGovorunInteropMatlab.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <DefaultCharType>Unsigned</DefaultCharType>
@@ -205,7 +206,8 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX64</TargetMachine>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>PticaGovorunBackend$(LibSuffix).lib;PticaGovorunInteropMatlab.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PticaGovorunBackend$(LibSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="$(HasMatlabMSBuild) == 'True'">PticaGovorunInteropMatlab.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <DefaultCharType>Unsigned</DefaultCharType>
@@ -242,7 +244,8 @@
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>PticaGovorunBackend$(LibSuffix).lib;PticaGovorunInteropMatlab.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PticaGovorunBackend$(LibSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="$(HasMatlabMSBuild) == 'True'">PticaGovorunInteropMatlab.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <DefaultCharType>Unsigned</DefaultCharType>
@@ -280,7 +283,8 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX64</TargetMachine>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>PticaGovorunBackend$(LibSuffix).lib;PticaGovorunInteropMatlab.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PticaGovorunBackend$(LibSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="$(HasMatlabMSBuild) == 'True'">PticaGovorunInteropMatlab.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <DefaultCharType>Unsigned</DefaultCharType>

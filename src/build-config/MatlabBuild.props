@@ -3,7 +3,6 @@
   <ImportGroup Label="PropertySheets" />
 
   <PropertyGroup Label="UserMacros">
-    <HasMatlabMSBuild>False</HasMatlabMSBuild> 
     <MatlabDir>E:\Programs\MATLAB\R2014a\</MatlabDir>
   </PropertyGroup>
 

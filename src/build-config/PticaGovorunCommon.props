@@ -10,6 +10,7 @@
     <LibSuffix Condition="'$(Configuration)' == 'Debug'">d</LibSuffix>
     <LibSuffix Condition="'$(Configuration)' != 'Debug'"></LibSuffix>
 
+    <HasMatlabMSBuild>False</HasMatlabMSBuild>
     <MSBuild_PG_HAS_JULIUS>True</MSBuild_PG_HAS_JULIUS>
   </PropertyGroup>
   
