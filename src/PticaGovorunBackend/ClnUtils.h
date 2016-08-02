@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <functional>
+#include <boost/utility/string_ref.hpp>
 #include "assertImpl.h"
 #include "PticaGovorunCore.h"
 
@@ -229,25 +230,18 @@ auto binarySearch(const RandIt& begin, const RandIt& end, long frameIndValue, It
 	return result;
 }
 
-	template <typename Iter>
-	void join(Iter begin, Iter end, const std::string& separator, std::ostringstream& result)
-	{
-		if (begin == end)
-			return;
-		
-		result << *begin;
-		++begin;
-
-		for (; begin != end; ++begin)
-		{
-			result << separator << *begin;
-		}
-	}
-
+	/// Joins
+	/// Example:
+	/// std::wstring s1(L"abc");
+	/// std::vector<boost::wstring_ref> list2;
+	/// list2.push_back(s1);
+	/// list2.push_back(s1);
+	/// std::wostringstream buf;
+	/// join(std::begin(list2), std::end(list2), boost::wstring_ref(L", "), buf);
 	template <typename Iter, typename ElemT>
 	void join(Iter begin, Iter end, 
-		const std::basic_string<ElemT>& separator,
-		std::basic_stringstream<ElemT>& result)
+		boost::basic_string_ref<ElemT, std::char_traits<ElemT>> separator,
+		std::basic_ostringstream<ElemT>& result)
 	{
 		if (begin == end)
 			return;

@@ -258,7 +258,7 @@ namespace StressedSyllableRunnerNS
 				});
 				
 				std::ostringstream stressIndsBuf;
-				PticaGovorun::join(vowelOrder.begin(), vowelOrder.end(), std::string(" "), stressIndsBuf);
+				PticaGovorun::join(vowelOrder.begin(), vowelOrder.end(), boost::string_ref(" "), stressIndsBuf);
 
 				xmlWriter.writeStartElement("word");
 				xmlWriter.writeAttribute("name", toQString(phWord.Word));

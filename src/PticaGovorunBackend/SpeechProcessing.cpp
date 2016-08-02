@@ -442,8 +442,8 @@ namespace PticaGovorun
 					wordsNoSp.push_back(word);
 				}
 
-				std::wstringstream buf;
-				join(wordsNoSp.begin(), wordsNoSp.end(), std::wstring(L" "), buf);
+				std::wostringstream buf;
+				join(wordsNoSp.begin(), wordsNoSp.end(), boost::wstring_ref(L" "), buf);
 
 				txt = QString::fromStdWString(buf.str());
 			}

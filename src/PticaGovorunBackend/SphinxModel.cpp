@@ -5,6 +5,7 @@
 #include <chrono> // std::chrono::system_clock
 #include <QDir>
 #include <QDateTime>
+#include <boost/algorithm/string/join.hpp>
 #include "SpeechProcessing.h"
 #include "PhoneticService.h"
 #include "WavUtils.h"
@@ -439,10 +440,12 @@ namespace PticaGovorun
 		}
 
 		// TODO: this check must be added to model's consistency checker (used in UI)
-		// consistency check: denied words can't be in transcription
-		std::vector<std::reference_wrapper<PhoneticWord>> usedWords;
+		// Consistency check: denied words can't be used in Test phonetic dictionary.
+		// because of broken words are used in Train (not in Test) phonetic dictionary, the denied words should be searched
+		// in well formed dictionary and not in broken words dictionary.
+		// Train phonetic dictionary may contain broken words
+		std::vector<std::reference_wrapper<PhoneticWord>> usedWords; // only well-formed words, no broken words
 		std::copy(std::begin(phoneticDictWordsWellFormed_), std::end(phoneticDictWordsWellFormed_), std::back_inserter(usedWords));
-		std::copy(std::begin(phoneticDictWordsBroken_), std::end(phoneticDictWordsBroken_), std::back_inserter(usedWords));
 		if (includeBrownBear)
 			std::copy(std::begin(phoneticDictWordsBrownBear_), std::end(phoneticDictWordsBrownBear_), std::back_inserter(usedWords));
 
@@ -457,9 +460,10 @@ namespace PticaGovorun
 
 		if (!usedDeniedWords.empty())
 		{
-			errMsg_ = "Found used words which are denied: ";
-			for (const boost::wstring_ref word : usedDeniedWords)
-				errMsg_ += ", " + toQString(word);
+			std::wostringstream buf;
+			buf << "Found used words which are denied: ";
+			PticaGovorun::join(std::begin(usedDeniedWords), std::end(usedDeniedWords), boost::wstring_ref(L", "), buf);
+			errMsg_ = QString::fromStdWString(buf.str());
 			return;
 		}
 
@@ -488,22 +492,34 @@ namespace PticaGovorun
 
 			// ensure that LM covers all pronunciations in phonetic dictionary
 			addFillerWords(phoneticSplitter_.wordUsage());
+
+			// propogate pronunciations from well known words
+			// broken words will be pulled before Train phase
 			inferPhoneticDictPronIdsUsage(phoneticSplitter_, phoneticDictWellFormed_);
+
+			// now, well known words and no broken words are used
+			std::tie(op, errMsg) = buildPhaseSpecificParts(ResourceUsagePhase::Test, minWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, trainPhoneIds, gramDim, &dictWordsCountTest_, &phonesCountTest_);
+			if (!op)
+			{
+				if (errMsg != nullptr)
+					errMsg_ = QString("Can't build phase specific parts. %1").arg(errMsg);
+				else PG_DbgAssert(!errMsg_.isEmpty())
+				return;
+			}
+
+			// propogate also pronunciations from broken known words
 			inferPhoneticDictPronIdsUsage(phoneticSplitter_, phoneticDictBroken_);
 
 			// .dic and .arpa files are different
 			// broken words goes in dict and lang model in train phase only
 			// alternatively we can always ignore broken words, but it is a pity to not use the markup
+			// now, well known words and broken words are used
 			std::tie(op, errMsg) = buildPhaseSpecificParts(ResourceUsagePhase::Train, minWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, trainPhoneIds, gramDim, &dictWordsCountTrain_, &phonesCountTrain_);
 			if (!op)
 			{
-				errMsg_ = QString("Can't build phase specific parts. %1").arg(errMsg);
-				return;
-			}
-			std::tie(op, errMsg) = buildPhaseSpecificParts(ResourceUsagePhase::Test, minWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, trainPhoneIds, gramDim, &dictWordsCountTest_, &phonesCountTest_);
-			if (!op)
-			{
-				errMsg_ = QString("Can't build phase specific parts. %1").arg(errMsg);
+				if (errMsg != nullptr)
+					errMsg_ = QString("Can't build phase specific parts. %1").arg(errMsg);
+				else PG_DbgAssert(!errMsg_.isEmpty())
 				return;
 			}
 
@@ -681,6 +697,23 @@ namespace PticaGovorun
 		std::tie(op, errMsg) = buildPhoneticDictionary(seedUnigrams, expandWellKnownPronCodeFun, phoneticDictWords);
 		if (!op)
 			return std::make_tuple(false, "Can't build phonetic dictionary");
+
+		// test phonetic dictionary should not have broken pronunciations
+		if (phase == ResourceUsagePhase::Test)
+		{
+			std::vector<boost::wstring_ref> brokenPronCodes;
+			op = rulePhoneticDicHasNoBrokenPronCodes(phoneticDictWords, phoneticDictBroken_, &brokenPronCodes);
+			if (!op)
+			{
+				std::wostringstream buf;
+				buf << "Found broken pronunciations in phonetic dictionary: ";
+				PticaGovorun::join(std::begin(brokenPronCodes), std::end(brokenPronCodes), boost::wstring_ref(L", "), buf);
+				
+				errMsg_ = QString::fromStdWString(buf.str());
+				return std::make_tuple(false, nullptr);
+			}
+		}
+		
 
 		if (dictWordsCount != nullptr)
 			*dictWordsCount = phoneticDictWords.size();
@@ -1606,4 +1639,33 @@ namespace PticaGovorun
 		}
 		return true;
 	};
+
+	bool rulePhoneticDicHasNoBrokenPronCodes(const std::vector<PhoneticWord>& phoneticDictPronCodes, const std::map<boost::wstring_ref, PhoneticWord>& phoneticDictBroken, std::vector<boost::wstring_ref>* brokenPronCodes)
+	{
+		bool noBrokenPron = true;
+		for (const PhoneticWord& word : phoneticDictPronCodes)
+		{
+			auto brokenWordIt = phoneticDictBroken.find(word.Word);
+			if (brokenWordIt == std::end(phoneticDictBroken))
+				continue;
+
+			const PhoneticWord& brokenWord = brokenWordIt->second;
+
+			//
+			for (const PronunciationFlavour& pron : word.Pronunciations)
+			{
+				auto brokenPronIt = std::find_if(std::begin(brokenWord.Pronunciations), std::end(brokenWord.Pronunciations), [&pron](const PronunciationFlavour& x)
+				{
+					return x.PronCode == pron.PronCode;
+				});
+
+				if (brokenPronIt != std::end(brokenWord.Pronunciations))
+				{
+					noBrokenPron = false;
+					if (brokenPronCodes != nullptr) brokenPronCodes->push_back(pron.PronCode);
+				}
+			}
+		}
+		return noBrokenPron;
+	}
 }

@@ -3195,6 +3195,7 @@
       <pron code="зідемося" phones="Z1 I1 D E M O S1 A"/>
    </word>
    <word name="зіллям" phones="Z1 I1 L1 L1 A M"/>
+   <word name="зінаїда" phones="Z1 I N A J I1 D A"/>
    <word name="зінаїди" phones="Z1 I N A J I1 D Y"/>
    <word name="зіпсується">
       <pron code="зіпсуєця" phones="Z1 I P S U J E1 TS1 A"/>
@@ -9296,6 +9297,7 @@
    <word name="єрофєєва" phones="J E R O F2 E1 J E V A"/>
    <word name="єрофєєвим" phones="J E R O F2 E1 J E V Y M"/>
    <word name="єством" phones="J E S T V O1 M"/>
+   <word name="єсть" phones="J E1 S1 T1"/>
    <word name="єфимович" phones="J E F Y1 M O V Y CH"/>
    <word name="і" phones="I1"/>
    <word name="іван" phones="I V A1 N"/>

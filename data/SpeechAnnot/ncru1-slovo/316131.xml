@@ -355,9 +355,10 @@
    <syncPoint id="58" sampleInd="7597956" levelOfDetail="phone" transcripText="exhale"/>
    <syncPoint id="364" sampleInd="7620579" levelOfDetail="phone" transcripText="elongated"/>
    <syncPoint id="328" sampleInd="7621968" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="253" sampleInd="7625821" levelOfDetail="word" transcripText="ми и дішли такого висновку [eee] шчо о оскільки більше половини &lt;sil&gt; споживання" lang="uk" speakerBriefId="sokolovaso"/>
+   <syncPoint id="253" sampleInd="7625821" levelOfDetail="word" transcripText="ми [yyy] дішли такого висновку [eee] шчо о оскільки більше половини &lt;sil&gt; споживання" lang="uk" speakerBriefId="sokolovaso"/>
    <syncPoint id="539" sampleInd="7638241" levelOfDetail="phone" transcripText="elongated"/>
    <syncPoint id="689" sampleInd="7672341" levelOfDetail="phone" transcripText="[eee]"/>
+   <syncPoint id="1481" sampleInd="7683471" levelOfDetail="phone" transcripText="elongated O"/>
    <syncPoint id="10" sampleInd="7721210" levelOfDetail="phone"/>
    <syncPoint id="232" sampleInd="7722450" levelOfDetail="phone" transcripText="споживання"/>
    <syncPoint id="63" sampleInd="7741220" levelOfDetail="word" transcripText="&lt;sil&gt;"/>

@@ -549,11 +549,11 @@ namespace RecognizeSpeechSphinxTester
 			float distWord = findEditDistance(wordsExpected.begin(), wordsExpected.end(), wordsActual.begin(), wordsActual.end(), c);
 
 			// compute edit distances between whole utterances (char distance)
-			std::wstringstream strBuff;
-			PticaGovorun::join(wordsExpected.begin(), wordsExpected.end(), std::wstring(L" "), strBuff);
+			std::wostringstream strBuff;
+			PticaGovorun::join(wordsExpected.begin(), wordsExpected.end(), boost::wstring_ref(L" "), strBuff);
 			std::wstring wordsExpectedStr = strBuff.str();
 			strBuff.str(L"");
-			PticaGovorun::join(wordsActual.begin(), wordsActual.end(), std::wstring(L" "), strBuff);
+			PticaGovorun::join(wordsActual.begin(), wordsActual.end(), boost::wstring_ref(L" "), strBuff);
 			std::wstring wordsActualStr = strBuff.str();
 
 			WordErrorCosts<wchar_t> charCost;
@@ -810,8 +810,8 @@ namespace RecognizeSpeechSphinxTester
 		QTextStream dumpFileStream(&dumpFile);
 		dumpFileStream.setCodec("UTF-8");
 
-		const std::wstring separ(L" ");
-		std::wstringstream buff;
+		boost::wstring_ref separ(L" ");
+		std::wostringstream buff;
 		CharPhonationGroupCosts c;
 		EditDistance<wchar_t, CharPhonationGroupCosts> editDist;
 		for (int i = 0; i < recogUtterances.size(); ++i)
@@ -879,8 +879,8 @@ namespace RecognizeSpeechSphinxTester
 		xmlWriter.writeStartDocument("1.0");
 		xmlWriter.writeStartElement("decRecogResult");
 
-		const std::wstring separ(L" ");
-		std::wstringstream buff;
+		boost::wstring_ref separ(L" ");
+		std::wostringstream buff;
 		CharPhonationGroupCosts c;
 		EditDistance<wchar_t, CharPhonationGroupCosts> editDist;
 		for (int i = 0; i < recogUtterances.size(); ++i)

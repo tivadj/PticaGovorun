@@ -33,6 +33,28 @@ namespace PticaGovorun
 	// Returns the name of the directory where the sphinx model resides.
 	PG_EXPORTS std::wstring sphinxModelVersionStr(boost::wstring_ref modelDir);
 
+	struct SphinxConfig
+	{
+		// the values are from etc/sphinx_train.cfg
+		// and are used in sphinxtrain/scripts/decode/psdecode.pl in RunTool('pocketsphinx_batch') call.
+		// these parameters are smaller, making search longer and speech recognition performance improves
+
+		static const char* DEC_CFG_LANGUAGEWEIGHT()
+		{
+			return "10"; // default=6.5
+		}
+
+		static const char* DEC_CFG_BEAMWIDTH()
+		{
+			return "1e-80"; // default=1e-48
+		}
+
+		static const char* DEC_CFG_WORDBEAM()
+		{
+			return "1e-40"; // default=7e-29
+		}
+	};
+
 	// Creates data required to train Sphinx engine.
 	class PG_EXPORTS SphinxTrainDataBuilder
 	{
@@ -158,26 +180,8 @@ namespace PticaGovorun
 	PG_EXPORTS bool loadSphinxAudio(boost::wstring_ref audioDir, const std::vector<std::wstring>& audioRelPathesNoExt, boost::wstring_ref audioFileSuffix, std::vector<AudioData>& audioDataList);
 
 	bool loadWordList(boost::wstring_ref filePath, std::unordered_set<std::wstring>& words);
+
+	// Consistency rule for created speech model.
+	// Broken pronunciations are allowed in training (but not in test) dataset.
+	bool rulePhoneticDicHasNoBrokenPronCodes(const std::vector<PhoneticWord>& phoneticDictPronCodes, const std::map<boost::wstring_ref, PhoneticWord>& phoneticDictBroken, std::vector<boost::wstring_ref>* brokenPronCodes = nullptr);
 }
-
-struct SphinxConfig
-{
-	// the values are from etc/sphinx_train.cfg
-	// and are used in sphinxtrain/scripts/decode/psdecode.pl in RunTool('pocketsphinx_batch') call.
-	// these parameters are smaller, making search longer and speech recognition performance improves
-
-	static const char* DEC_CFG_LANGUAGEWEIGHT()
-	{
-		return "10"; // default=6.5
-	}
-
-	static const char* DEC_CFG_BEAMWIDTH()
-	{
-		return "1e-80"; // default=1e-48
-	}
-
-	static const char* DEC_CFG_WORDBEAM()
-	{
-		return "1e-40"; // default=7e-29
-	}
-};

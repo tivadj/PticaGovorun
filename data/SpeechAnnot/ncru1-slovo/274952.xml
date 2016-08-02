@@ -592,7 +592,7 @@
    <syncPoint id="613" sampleInd="23988222" levelOfDetail="phone" transcripText="click"/>
    <syncPoint id="894" sampleInd="24021594" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="673" sampleInd="24024738" levelOfDetail="word" transcripText="[clk]" lang="uk" speakerBriefId="zakharevycho"/>
-   <syncPoint id="105" sampleInd="24025168" levelOfDetail="word" transcripText="[inh] &lt;sil&gt; е козаче каже батько пугач ласкавим голосом [inh] у тебе(1) бачу нема лошки &lt;sil&gt; [inh] що то не нашого поля(1) ягода " lang="uk" speakerBriefId="zakharevycho"/>
+   <syncPoint id="105" sampleInd="24025168" levelOfDetail="word" transcripText="[inh] &lt;sil&gt; [eee] козаче каже батько пугач ласкавим голосом [inh] у тебе(1) бачу нема лошки &lt;sil&gt; [inh] що то не нашого поля(1) ягода " lang="uk" speakerBriefId="zakharevycho"/>
    <syncPoint id="197" sampleInd="24111806" levelOfDetail="phone" transcripText="у тебе(1) бачу нема лошки"/>
    <syncPoint id="844" sampleInd="24149232" levelOfDetail="phone"/>
    <syncPoint id="925" sampleInd="24155714" levelOfDetail="phone" transcripText="що то не нашого поля(1) ягода "/>

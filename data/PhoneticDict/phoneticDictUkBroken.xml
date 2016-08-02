@@ -102,7 +102,6 @@
    <word name="зразок">
       <pron code="зьразок" phones="Z1 R A Z O1 K"/>
    </word>
-   <word name="зінаїда" phones="Z1 I N A J I1 D A"/>
    <word name="и" phones="Y1"/>
    <word name="ишин" phones="Y1 SH Y N"/>
    <word name="кагебізаці" phones="K A H E B2 I Z A1 TS1 I"/>
@@ -340,7 +339,6 @@
       <pron code="єтність" phones="J E1 T N1 I S1 T1"/>
    </word>
    <word name="єсте" phones="J E S T E1"/>
-   <word name="єсть" phones="J E1 S1 T1"/>
    <word name="ів" phones="I1 V"/>
    <word name="ідеалам">
       <pron code="ідеала" phones="I D E A1 L A"/>
