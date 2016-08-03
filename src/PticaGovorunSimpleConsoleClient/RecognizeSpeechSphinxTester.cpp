@@ -64,11 +64,7 @@ namespace RecognizeSpeechSphinxTester
 		const char* hmmPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";
 		const char* langModelPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.lm.DMP)path";
 		const char* dictPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.dic)path";
-		cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
-			"-hmm", hmmPath,
-			"-lm", langModelPath,
-			"-dict", dictPath,
-			nullptr);
+		cmd_ln_t *config = SphinxConfig::pg_init_cmd_ln_t(hmmPath, langModelPath, dictPath, true, false, true, boost::string_ref());
 		if (config == nullptr)
 			return;
 
@@ -1053,28 +1049,10 @@ namespace RecognizeSpeechSphinxTester
 		dumpFileName.str(L"");
 		dumpFileName << L"wordErrorDump_" << speechModelVerStr << "_" << timeStampStr << L"_logfn.txt";
 
-		cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
-			"-hmm", hmmPath.toStdString().c_str(),
-			"-lm", langModelPath.toStdString().c_str(), // accepts both TXT and DMP formats
-			"-dict", dictPath.toStdString().c_str(),
-			"-verbose", "yes",
-			"-debug", "0",        // value>0 crashes pocketsphinx-5prelease on debug output
-			"-backtrace", "yes",
-			"-logfn", AppHelpers::mapPathStdString(toQString(dumpFileName.str())).c_str(),
-
-			"-lw", SphinxConfig::DEC_CFG_LANGUAGEWEIGHT(),
-			"-fwdflatlw", SphinxConfig::DEC_CFG_LANGUAGEWEIGHT(),
-			"-bestpathlw", SphinxConfig::DEC_CFG_LANGUAGEWEIGHT(),
-
-			"-beam", SphinxConfig::DEC_CFG_BEAMWIDTH(),
-			"-wbeam", SphinxConfig::DEC_CFG_WORDBEAM(),
-			"-fwdflatbeam", SphinxConfig::DEC_CFG_BEAMWIDTH(),
-			"-fwdflatwbeam", SphinxConfig::DEC_CFG_WORDBEAM(),
-			"-pbeam", SphinxConfig::DEC_CFG_BEAMWIDTH(),
-			"-lpbeam", SphinxConfig::DEC_CFG_BEAMWIDTH(),
-			"-lponlybeam", SphinxConfig::DEC_CFG_BEAMWIDTH(),
-			nullptr               // args list terminator
-		);
+		cmd_ln_t *config = SphinxConfig::pg_init_cmd_ln_t(hmmPath.toStdString(),
+			langModelPath.toStdString().c_str(), 
+			dictPath.toStdString().c_str(),
+			true, false, true, AppHelpers::mapPathStdString(toQString(dumpFileName.str())));
 		if (config == nullptr)
 			return;
 

@@ -1668,4 +1668,38 @@ namespace PticaGovorun
 		}
 		return noBrokenPron;
 	}
+
+	cmd_ln_t* SphinxConfig::pg_init_cmd_ln_t(boost::string_ref acousticModelDir, boost::string_ref langModelFile, boost::string_ref phoneticModelFile, bool verbose, bool debug, bool backTrace, boost::string_ref logFile)
+	{
+		// cmd_ln_init() redirects to parse_options() which do not use variable number of arguments
+		// but the later is internal
+		// now, using cmd_ln_init(), only one last argument may be optional
+		// note, number of variable arguments must be even (arg name, arg value)
+		cmd_ln_t* config = cmd_ln_init(nullptr, ps_args(), true,
+			"-hmm", acousticModelDir.data(),
+			"-lm", langModelFile.data(), // 
+			"-dict", phoneticModelFile.data(),
+			"-verbose", verbose ? "yes" : "no",
+			"-debug", debug ? "1" : "0", // value>0 crashes pocketsphinx-5prelease on debug output
+			"-backtrace", backTrace ? "yes" : "no",
+
+			"-lw", SphinxConfig::DEC_CFG_LANGUAGEWEIGHT(),
+			"-fwdflatlw", SphinxConfig::DEC_CFG_LANGUAGEWEIGHT(),
+			"-bestpathlw", SphinxConfig::DEC_CFG_LANGUAGEWEIGHT(),
+
+			"-beam", SphinxConfig::DEC_CFG_BEAMWIDTH(),
+			"-wbeam", SphinxConfig::DEC_CFG_WORDBEAM(),
+			"-fwdflatbeam", SphinxConfig::DEC_CFG_BEAMWIDTH(),
+			"-fwdflatwbeam", SphinxConfig::DEC_CFG_WORDBEAM(),
+			"-pbeam", SphinxConfig::DEC_CFG_BEAMWIDTH(),
+			"-lpbeam", SphinxConfig::DEC_CFG_BEAMWIDTH(),
+			"-lponlybeam", SphinxConfig::DEC_CFG_BEAMWIDTH(),
+
+			// note, logFile can be optional
+			// null is treated as arguments' terminator
+			logFile.data() != nullptr ? "-logfn" : nullptr, logFile.data(),
+			nullptr // args list terminator
+			);
+		return config;
+	}
 }

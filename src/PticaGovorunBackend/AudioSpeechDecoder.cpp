@@ -5,6 +5,7 @@
 #include "fe_internal.h" // fe_t(front end)
 #include "SpeechProcessing.h"
 #include "PhoneticService.h"
+#include "SphinxModel.h"
 
 namespace PticaGovorun
 {
@@ -45,11 +46,7 @@ namespace PticaGovorun
 		if (hasError_)
 			return;
 
-		cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
-			"-hmm", hmmPath,
-			"-lm", langModelPath,
-			"-dict", dictPath,
-			nullptr);
+		cmd_ln_t *config = SphinxConfig::pg_init_cmd_ln_t(hmmPath, langModelPath, dictPath, true, false, true, boost::string_ref());
 		if (config == nullptr)
 		{
 			setError("Error: Can't create Sphinx config");

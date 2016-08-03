@@ -39,6 +39,7 @@
 #include "PresentationHelpers.h"
 #include "SharedServiceProvider.h"
 #include "AppHelpers.h"
+#include "SphinxModel.h"
 
 namespace PticaGovorun
 {
@@ -1572,11 +1573,7 @@ void SpeechTranscriptionViewModel::recognizeCurrentSegmentSphinxRequest()
 	std::string hmmPath = AppHelpers::mapPathStdString(QString("data/Sphinx/%1/model_parameters/persian.cd_cont_200").arg(sphinxModelDirName));
 	std::string langModelPath = AppHelpers::mapPathStdString(QString("data/Sphinx/%1/etc/persian_test.lm.DMP").arg(sphinxModelDirName));
 	std::string dictPath = AppHelpers::mapPathStdString(QString("data/Sphinx/%1/etc/persian_test.dic").arg(sphinxModelDirName));
-	cmd_ln_t *config = cmd_ln_init(nullptr, ps_args(), true,
-		"-hmm", hmmPath.c_str(),
-		"-lm", langModelPath.c_str(),
-		"-dict", dictPath.c_str(),
-		nullptr);
+	cmd_ln_t *config = SphinxConfig::pg_init_cmd_ln_t(hmmPath, langModelPath, dictPath, true, false, true, boost::string_ref());
 	if (config == nullptr)
 		return;
 

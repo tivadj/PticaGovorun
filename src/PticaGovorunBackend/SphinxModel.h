@@ -6,6 +6,7 @@
 #include <QString>
 #include <QVariant>
 #include <QDir>
+#include <pocketsphinx.h> // cmd_ln_init
 #include "PhoneticService.h"
 #include "SpeechProcessing.h"
 
@@ -33,7 +34,7 @@ namespace PticaGovorun
 	// Returns the name of the directory where the sphinx model resides.
 	PG_EXPORTS std::wstring sphinxModelVersionStr(boost::wstring_ref modelDir);
 
-	struct SphinxConfig
+	struct PG_EXPORTS SphinxConfig
 	{
 		// the values are from etc/sphinx_train.cfg
 		// and are used in sphinxtrain/scripts/decode/psdecode.pl in RunTool('pocketsphinx_batch') call.
@@ -53,6 +54,13 @@ namespace PticaGovorun
 		{
 			return "1e-40"; // default=7e-29
 		}
+
+		/// @acousticModelDir hmm
+		/// @langModelFile accepts both TXT and DMP formats
+		/// @logFile or empty reference (null)
+		static cmd_ln_t* pg_init_cmd_ln_t(boost::string_ref acousticModelDir, boost::string_ref langModelFile,
+		                                 boost::string_ref phoneticModelFile, bool verbose, bool debug, bool backTrace,
+		                                 boost::string_ref logFile);
 	};
 
 	// Creates data required to train Sphinx engine.
