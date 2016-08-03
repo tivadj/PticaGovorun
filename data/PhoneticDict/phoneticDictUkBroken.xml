@@ -2,7 +2,7 @@
 <phoneticDict>
    <word name="або">
       <pron code="або(1)" phones="A1 B O"/>
-      <pron code="апо" phones="A P O1"/>
+      <pron code="апо(2)" phones="A P O1"/>
    </word>
    <word name="але">
       <pron code="але(1)" phones="A1 L E"/>

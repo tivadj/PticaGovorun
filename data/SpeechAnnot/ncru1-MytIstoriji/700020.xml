@@ -161,7 +161,7 @@
    <syncPoint id="146" sampleInd="3947369" levelOfDetail="phone" transcripText="smack"/>
    <syncPoint id="174" sampleInd="3951371" levelOfDetail="word" transcripText="#так що ющенко" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="362" sampleInd="3967842" levelOfDetail="phone" transcripText="click"/>
-   <syncPoint id="105" sampleInd="3975830" levelOfDetail="word" transcripText="[inh] висунув свою кандидатуру [inh] і на наступних виборах" lang="uk" speakerBriefId="shapovalji"/>
+   <syncPoint id="105" sampleInd="3975830" levelOfDetail="word" transcripText="[inh] висунув свою(2) кандидатуру [inh] і на наступних виборах" lang="uk" speakerBriefId="shapovalji"/>
    <syncPoint id="230" sampleInd="4022912" levelOfDetail="phone" transcripText="і на наступних виборах"/>
    <syncPoint id="231" sampleInd="4052762" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="234" sampleInd="4062585" levelOfDetail="word" transcripText="це повна втрата [inh] орієнтирів" lang="uk" speakerBriefId="shapovalji"/>

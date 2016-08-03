@@ -207,6 +207,7 @@
     <ClInclude Include="JuliusToolNativeWrapper.h" />
     <ClInclude Include="LangStat.h" />
     <ClInclude Include="MLUtils.h" />
+    <ClInclude Include="SpeechDataValidation.h" />
     <ClInclude Include="SphinxModel.h" />
     <ClInclude Include="TextProcessing.h" />
     <ClInclude Include="PhoneAlignment.h" />
@@ -248,6 +249,7 @@
     <ClCompile Include="MLUtils.cpp" />
     <ClCompile Include="PhoneticSerializationXml.cpp" />
     <ClCompile Include="PhoneticStress.cpp" />
+    <ClCompile Include="SpeechDataValidation.cpp" />
     <ClCompile Include="SphinxModel.cpp" />
     <ClCompile Include="TextProcessing.cpp" />
     <ClCompile Include="PhoneAlignment.cpp" />

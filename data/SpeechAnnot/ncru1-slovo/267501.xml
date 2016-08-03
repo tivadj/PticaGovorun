@@ -359,7 +359,7 @@
    <syncPoint id="578" sampleInd="11601718" levelOfDetail="word"/>
    <syncPoint id="567" sampleInd="11604397" levelOfDetail="word" transcripText="але робите крок до української мови" lang="uk" speakerBriefId="grytsenkopj"/>
    <syncPoint id="387" sampleInd="11664262" levelOfDetail="word"/>
-   <syncPoint id="215" sampleInd="11672085" levelOfDetail="word" transcripText="сберігаючи свою національну ідентичнісь" lang="uk" speakerBriefId="grytsenkopj" exclude="train"/>
+   <syncPoint id="215" sampleInd="11672085" levelOfDetail="word" transcripText="сберігаючи свою(2) національну ідентичнісь" lang="uk" speakerBriefId="grytsenkopj" exclude="train"/>
    <syncPoint id="551" sampleInd="11736035" levelOfDetail="word"/>
    <syncPoint id="549" sampleInd="11741625" levelOfDetail="word" transcripText="не забутьте взяти до рук кобзар шевченка" lang="uk" speakerBriefId="grytsenkopj"/>
    <syncPoint id="586" sampleInd="11807957" levelOfDetail="word"/>

@@ -109,7 +109,7 @@
    <syncPoint id="291" sampleInd="2035352" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
    <syncPoint id="210" sampleInd="2036560" levelOfDetail="word" transcripText="вітак спробуймо оцінити факти [inh]" lang="uk" speakerBriefId="korotajevskyjsh" exclude="train"/>
    <syncPoint id="251" sampleInd="2075208" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="153" sampleInd="2076183" levelOfDetail="word" transcripText="[eee] все що сказано &lt;sil&gt; полоненим про свою частину [inh] може бути перевірене [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="153" sampleInd="2076183" levelOfDetail="word" transcripText="[eee] все що сказано &lt;sil&gt; полоненим про свою(2) частину [inh] може бути перевірене [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="207" sampleInd="2135272" levelOfDetail="phone"/>
    <syncPoint id="100" sampleInd="2139340" levelOfDetail="phone" transcripText="може бути [sp] перевірене"/>
    <syncPoint id="172" sampleInd="2170315" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
@@ -167,7 +167,7 @@
    <syncPoint id="267" sampleInd="3211036" levelOfDetail="word"/>
    <syncPoint id="120" sampleInd="3211433" levelOfDetail="phone" transcripText="noise"/>
    <syncPoint id="308" sampleInd="3211764" levelOfDetail="word" transcripText="[sp]" lang="uk" speakerBriefId="korotajevskyjsh"/>
-   <syncPoint id="206" sampleInd="3213021" levelOfDetail="word" transcripText="уже виникла ідея [inh] обміняти [yyy] єрофєєва та олександрова [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="206" sampleInd="3213021" levelOfDetail="word" transcripText="уже виникла ідея [inh] обміняти [yyy] єрофєєва та олександрова(3) [inh]" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="260" sampleInd="3219156" levelOfDetail="phone" transcripText="elongated"/>
    <syncPoint id="147" sampleInd="3241581" levelOfDetail="phone"/>
    <syncPoint id="372" sampleInd="3247171" levelOfDetail="phone" transcripText="обміняти"/>

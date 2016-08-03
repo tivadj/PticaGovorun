@@ -5057,7 +5057,7 @@
    <word name="олександр" phones="O L E K S A1 N D R"/>
    <word name="олександра" phones="O L E K S A1 N D R A"/>
    <word name="олександрова">
-      <pron code="олександрова" phones="O L E K S A1 N D R O V A"/>
+      <pron code="олександрова(3)" phones="O L E K S A1 N D R O V A"/>
       <pron code="олександрова(4)" phones="O L E K S A N D R O1 V A"/>
    </word>
    <word name="олександром" phones="O L E K S A1 N D R O M"/>
@@ -7279,8 +7279,8 @@
    <word name="свисту" phones="S V Y1 S T U"/>
    <word name="свого" phones="S V O H O1"/>
    <word name="свою">
-      <pron code="свою" phones="S V O J U1"/>
       <pron code="свою(1)" phones="S V O1 J U"/>
+      <pron code="свою(2)" phones="S V O J U1"/>
    </word>
    <word name="своє" phones="S V O J E1"/>
    <word name="своєму">

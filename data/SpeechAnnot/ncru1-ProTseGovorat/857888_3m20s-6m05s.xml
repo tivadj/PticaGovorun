@@ -81,7 +81,7 @@
    <syncPoint id="53" sampleInd="1580422" levelOfDetail="phone"/>
    <syncPoint id="15" sampleInd="1586723" levelOfDetail="phone" transcripText="місцевих кадрів"/>
    <syncPoint id="38" sampleInd="1607345" levelOfDetail="word" transcripText="&lt;sil&gt;"/>
-   <syncPoint id="96" sampleInd="1608966" levelOfDetail="word" transcripText="а й певним чином [inh] [sp] окремішні &lt;sil&gt; у своїх [inh] [sp] діях" lang="uk" speakerBriefId="korotajevskyjsh"/>
+   <syncPoint id="96" sampleInd="1608966" levelOfDetail="word" transcripText="а й певним чином [inh] [sp] окремішні [sp] у своїх [sp] діях" lang="uk" speakerBriefId="korotajevskyjsh"/>
    <syncPoint id="52" sampleInd="1627124" levelOfDetail="phone"/>
    <syncPoint id="122" sampleInd="1633408" levelOfDetail="phone" transcripText="окремішні &lt;sil&gt; у своїх &lt;sil&gt; діях"/>
    <syncPoint id="56" sampleInd="1676836" levelOfDetail="word" transcripText="&lt;sil&gt;"/>

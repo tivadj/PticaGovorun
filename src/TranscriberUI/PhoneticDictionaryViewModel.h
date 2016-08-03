@@ -47,6 +47,9 @@ namespace PticaGovorun
 		bool findPronAsWordPhoneticExpansions(boost::wstring_ref pronAsWord, std::vector<PronunciationFlavour>& prons);
 
 		QString getWordAutoTranscription(const QString& word) const;
+
+		const std::map<boost::wstring_ref, PhoneticWord>& phoneticDictWellFormed() const { return phoneticDictWellFormed_; }
+		const std::map<boost::wstring_ref, PhoneticWord>& phoneticDictBroken() const { return phoneticDictBroken_; }
 	private:
 		bool findPronAsWordPhoneticExpansions(const std::map<boost::wstring_ref, PhoneticWord>& phoneticDict, boost::wstring_ref pronCode, std::vector<PronunciationFlavour>& prons);
 	private:

@@ -6,6 +6,7 @@
 #include "PresentationHelpers.h"
 #include "SpeechTranscriptionValidation.h"
 #include "assertImpl.h"
+#include "SpeechDataValidation.h"
 
 namespace PticaGovorun
 {
@@ -136,6 +137,36 @@ namespace PticaGovorun
 		boost::wstring_ref recentAnnotDirRef = toWStringRef(recentAnnotDir, pathBuff);
 
 		validateAllOnDiskSpeechAnnotations(recentAnnotDirRef, *phoneticDictModel_, checkMsgs);
+
+		//
+		const std::map<boost::wstring_ref, PhoneticWord>& phoneticDictWellFormed = phoneticDictModel_->phoneticDictWellFormed();
+		std::vector<PhoneticWord> wordsWellFormed(phoneticDictWellFormed.size());
+		std::transform(std::begin(phoneticDictWellFormed), std::end(phoneticDictWellFormed), std::begin(wordsWellFormed), [](const std::pair<boost::wstring_ref, PhoneticWord>& pair)
+		{
+			return pair.second;
+		});
+
+		const std::map<boost::wstring_ref, PhoneticWord>& phoneticDictBroken = phoneticDictModel_->phoneticDictBroken();
+		std::vector<PhoneticWord> wordsBroken(phoneticDictBroken.size());
+		std::transform(std::begin(phoneticDictBroken), std::end(phoneticDictBroken), std::begin(wordsBroken), [](const std::pair<boost::wstring_ref, PhoneticWord>& pair)
+		{
+			return pair.second;
+		});
+
+		auto checkAllPronCodesStress = [&checkMsgs](const std::vector<PhoneticWord>& words)
+		{
+			std::vector<const PhoneticWord*> invalidWords;
+			if (!rulePhoneticDictNoneOrAllPronCodesMustHaveStress(words, &invalidWords))
+			{
+				QString msg = "Not all pronCodes specify stress for words: ";
+				for (const PhoneticWord* pWord : invalidWords) msg += ", " + toQString(pWord->Word);
+				checkMsgs.append(msg);
+			}
+		};
+		checkAllPronCodesStress(wordsWellFormed);
+		checkAllPronCodesStress(wordsBroken);
+
+		//
 
 		QString msg;
 		if (checkMsgs.isEmpty())
