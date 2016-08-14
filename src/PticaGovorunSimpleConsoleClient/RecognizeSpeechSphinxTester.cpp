@@ -512,14 +512,17 @@ namespace RecognizeSpeechSphinxTester
 			std::vector<boost::wstring_ref> wordsExpected;
 			for (boost::wstring_ref pronId : pronCodesExpectedSrc)
 			{
-				auto wordIt = pronCodeToWordWellFormed.find(pronId);
-				if (wordIt != pronCodeToWordWellFormed.end())
-				{
-					boost::wstring_ref word = wordIt->second;
-					wordsExpected.push_back(word);
-					continue;
-				}
-				wordsExpected.push_back(pronId);
+				//auto wordIt = pronCodeToWordWellFormed.find(pronId);
+				//if (wordIt != pronCodeToWordWellFormed.end())
+				//{
+				//	boost::wstring_ref word = wordIt->second;
+				//	wordsExpected.push_back(word);
+				//	continue;
+				//}
+				//wordsExpected.push_back(pronId);
+				boost::wstring_ref baseWord;
+				parsePronId(pronId, baseWord);
+				wordsExpected.push_back(baseWord);
 			}
 
 			// actual words
@@ -530,13 +533,16 @@ namespace RecognizeSpeechSphinxTester
 			std::vector<boost::wstring_ref> wordsActual;
 			std::transform(pronCodesActualSrc.begin(), pronCodesActualSrc.end(), std::back_inserter(wordsActual), [&pronCodeToWordWellFormed](boost::wstring_ref pronCode)
 			{
-				auto wordIt = pronCodeToWordWellFormed.find(pronCode);
-				if (wordIt != pronCodeToWordWellFormed.end())
-				{
-					boost::wstring_ref word = wordIt->second;
-					return word;
-				}
-				return pronCode;
+//				auto wordIt = pronCodeToWordWellFormed.find(pronCode);
+//				if (wordIt != pronCodeToWordWellFormed.end())
+//				{
+//					boost::wstring_ref word = wordIt->second;
+//					return word;
+//				}
+//				return pronCode;
+				boost::wstring_ref baseWord;
+				parsePronId(pronCode, baseWord);
+				return baseWord;
 			});
 
 			// compute word error
@@ -963,7 +969,7 @@ namespace RecognizeSpeechSphinxTester
 		std::wcout << "speechModelVerStr=" << speechModelVerStr << std::endl;
 
 		//
-		int segsMax = -1;
+		int segsMax = AppHelpers::configParamInt("decode.maxSegsToProcess", -1);
 		std::vector<TranscribedAudioSegment> segments;
 		bool op = loadSpeechSegmentsToDecode(segsMax, fileIdPath.toStdWString(), transcrPath.toStdWString(), audioDir.toStdWString(), segments);
 		if (!op)

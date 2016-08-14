@@ -3,6 +3,7 @@
 #include <iostream>
 #include <QFile>
 #include "PhoneticService.h"
+#include "LangStat.h"
 #include "assertImpl.h"
 
 namespace PticaGovorun
@@ -10,6 +11,20 @@ namespace PticaGovorun
 	const double LogProbMinusInf = -99; // Interpreted as log(0)
 
 	auto assertLeftBackOffImpossible = []() {};
+
+	auto NGramRow::partsCount() const -> int
+	{
+		return WordParts.ActualSize;
+	}
+
+	auto NGramRow::part(int partInd) const -> const WordPart*
+	{
+		return WordParts.Array[partInd];
+	}
+
+	ArpaLanguageModel::ArpaLanguageModel(int gramMaxDimensions) : gramMaxDimensions_(gramMaxDimensions)
+	{
+	}
 
 	void ArpaLanguageModel::buildBigramsWordPartsAware(const UkrainianPhoneticSplitter& phoneticSplitter)
 	{
@@ -166,7 +181,7 @@ namespace PticaGovorun
 			if (pUni2 == nullptr)
 				continue;
 
-			pUni1->UsageCounter += seqUsage->UsedCount;
+			pUni1->UsageCounter += seqUsage->UsedCount; // TODO: ???
 
 			const WordPart* wordPart1 = wordUsage.wordPartById(wordPart1Id);
 			PG_Assert(wordPart1 != nullptr);
@@ -202,75 +217,77 @@ namespace PticaGovorun
 		});
 	}
 
-	ArpaLanguageModel::ArpaLanguageModel()
-	{
-	}
-
-	// Generates ARPA (or Doug Paul) format.
-	// LM must contain </s>, otherwise Sphinx emits error on LM loading
-	// ERROR: "ngram_search.c", line 221: Language model/set does not contain </s>, recognition will fail
-	// LM must contain <s>, otherwise Sphinx emits error on samples decoding
-	// ERROR: "ngram_search.c", line 1157 : Couldn't find <s> in first frame
-	void ArpaLanguageModel::generate(wv::slice<const WordPart*> seedUnigrams, const UkrainianPhoneticSplitter& phoneticSplitter)
+	void ArpaLanguageModel::generate(const std::vector<PhoneticWord>& seedWords, const std::map<int, ptrdiff_t>& wordPartIdUsage, 
+		const UkrainianPhoneticSplitter& phoneticSplitter)
 	{
 		const WordsUsageInfo& wordUsage = phoneticSplitter.wordUsage();
 
-		long unigramTotalUsageCounter = 0;
-		int unusedUnigramsCount = 0;
-		for (const WordPart* wordPart : seedUnigrams)
+		// calculate total usage of unigrams
+
+		ptrdiff_t unigramTotalUsageCounter = 0;
+		for (const PhoneticWord word : seedWords)
 		{
-			WordSeqKey seqKey({ wordPart->id() });
-			long seqUsage = wordUsage.getWordSequenceUsage(seqKey);
-			unigramTotalUsageCounter += seqUsage;
-			if (seqUsage == 0)
-				unusedUnigramsCount++;
+			for (const PronunciationFlavour& pron : word.Pronunciations)
+			{
+				const WordPart* wordPart = wordUsage.wordPartByValue(toStdWString(pron.PronCode), WordPartSide::WholeWord);
+				PG_Assert2(wordPart != nullptr, QString("word=%1").arg(toQString(pron.PronCode)).toStdWString().c_str());
+
+				auto seqUsage = wordUsageOneSource(wordPart->id(), wordUsage, wordPartIdUsage);
+				unigramTotalUsageCounter += seqUsage;
+			}
 		}
 
 		// assume that processed text covers P portion of the whole language (0..1)
 		static const float TextStatisticCover = 0.8;
 		//static const float TextStatisticCover = 1;
 		static const float NewWordProb = 0.1;
-		static const float FillerInhaleProb = 0.1;
 
 		// create unigrams
 
-		unigrams_.reserve(seedUnigrams.size());
+		unigrams_.reserve(seedWords.size());
 		int unigramOrder = 0;
-		for (const WordPart* wordPart : seedUnigrams)
+		std::map<int, const WordPart*> q;
+		for (const PhoneticWord word : seedWords)
 		{
-			auto wordPartProbFun = [&wordUsage, unigramTotalUsageCounter](const WordPart* wordPart) -> float
+			for (const PronunciationFlavour& pron : word.Pronunciations)
 			{
-				if (wordPart->partText().compare(fillerInhale().data()) == 0)
-					return FillerInhaleProb;
+				// .arpa must have <s> and </s> words; to know how a sentence starts and ends // TODO: make a check
 
-				WordSeqKey seqKey({ wordPart->id() });
-				long seqUsage = wordUsage.getWordSequenceUsage(seqKey);
-				if (seqUsage == 0)
+				//			bool sentStart = word.Word.compare(phoneticSplitter.sentStartWordPart()->partText()) == 0;
+				//			bool sentEnd = word.Word.compare(phoneticSplitter.sentEndWordPart()->partText()) == 0;
+				//			if (sentStart || sentEnd)
+				//				return false;
+
+				const WordPart* wordPart = wordUsage.wordPartByValue(toStdWString(pron.PronCode), WordPartSide::WholeWord);
+				PG_Assert2(wordPart != nullptr, QString("word=%1").arg(toQString(pron.PronCode)).toStdWString().c_str());
+
+				const WordPart* part = nullptr;
+				auto it = q.find(wordPart->id());
+				if (it != std::end(q))
 				{
-					// assign it some minimal usage
-					seqUsage = 1;
+					part = it->second;
 				}
-				PG_Assert(seqUsage > 0);
+				q[wordPart->id()] = wordPart;
+
+				auto seqUsage = wordUsageOneSource(wordPart->id(), wordUsage, wordPartIdUsage);
 
 				double prob = seqUsage / (double)unigramTotalUsageCounter;
-				return prob;
-			};
-			double prob = wordPartProbFun(wordPart);
-			PG_Assert(prob > 0 && prob <= 1);
-			double logProb = std::log10(prob);
+				PG_Assert2(prob > 0 && prob <= 1, QString("word=%1").arg(toQString(pron.PronCode)).toStdWString().c_str());
+				double logProb = std::log10(prob);
 
-			// attempt to block isolated right parts
-			// bad, sentences become shorter even more
-			//if (wordPart->partSide() == WordPartSide::RightPart)
-			//	logProb = LogProbMinusInf; 
+				// attempt to block isolated right parts
+				// bad, sentences become shorter even more
+				//if (wordPart->partSide() == WordPartSide::RightPart)
+				//	logProb = LogProbMinusInf; 
 
-			auto gram = std::make_unique<NGramRow>();
-			gram->Order = unigramOrder++;
-			gram->WordParts.ActualSize = 1;
-			gram->WordParts.Array[0] = wordPart;
-			gram->LogProb = logProb;
-			wordPartIdToUnigram_.insert({ wordPart->id(), gram.get() }); // assert gram != null
-			unigrams_.push_back(std::move(gram));
+				auto gram = std::make_unique<NGramRow>();
+				gram->Order = unigramOrder++;
+				gram->WordParts.ActualSize = 1;
+				gram->WordParts.Array[0] = wordPart;
+				gram->LogProb = logProb;
+				wordPartIdToUnigram_.insert({ wordPart->id(), gram.get() }); // assert gram != null
+				unigrams_.push_back(std::move(gram));
+			}
 		}
 
 		if (gramMaxDimensions_ == 1)
@@ -404,7 +421,7 @@ namespace PticaGovorun
 		return bigrams_;
 	}
 
-	void writeArpaLanguageModel(const ArpaLanguageModel& langModel, const wchar_t* lmFilePath)
+	void writeArpaLanguageModel(const ArpaLanguageModel& langModel, const wchar_t* lmFilePath, std::function<auto (boost::wstring_ref)->boost::wstring_ref> pronCodeDisplay)
 	{
 		QFile lmFile(QString::fromStdWString(lmFilePath));
 		if (!lmFile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -415,17 +432,28 @@ namespace PticaGovorun
 		dumpFileStream << "ngram 1=" << langModel.ngramCount(1) << "\n";
 		dumpFileStream << "ngram 2=" << langModel.ngramCount(2) << "\n"; // +2 for sentence start/end
 
-		auto printNGram = [&dumpFileStream](const NGramRow& gram)
+		std::wstring wstrBuf;
+
+		auto printNGram = [&dumpFileStream, &wstrBuf, &pronCodeDisplay](const NGramRow& gram)
 		{
 			dumpFileStream.setFieldWidth(6);
 			dumpFileStream << gram.LogProb.get();
 			dumpFileStream.setFieldWidth(0);
 			dumpFileStream << " ";
 
-			for (int partInd = 0; partInd < gram.WordParts.ActualSize; ++partInd)
+			for (int partInd = 0; partInd < gram.partsCount(); ++partInd)
 			{
-				const WordPart* oneWordPart = gram.WordParts.Array[partInd];
-				printWordPart(oneWordPart, dumpFileStream);
+				const WordPart* oneWordPart = gram.part(partInd);
+				
+				//wstrBuf.clear();
+				//toStringWithTilde(*oneWordPart, wstrBuf, true);
+				
+				boost::wstring_ref dispName = oneWordPart->partText();
+				auto mappedName = pronCodeDisplay(oneWordPart->partText());
+				if (mappedName != boost::wstring_ref())
+					dispName = mappedName;
+
+				dumpFileStream << toQString(dispName);
 				dumpFileStream << " ";
 			}
 

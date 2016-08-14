@@ -2,6 +2,7 @@
 #include <numeric>
 #include "LangStat.h"
 #include "assertImpl.h"
+#include "SphinxModel.h"
 
 namespace PticaGovorun
 {
@@ -79,14 +80,19 @@ namespace PticaGovorun
 		return false;
 	}
 
-	void toStringWithTilde(const WordPart& a, std::wstring& result)
+	void toStringWithTilde(const WordPart& a, std::wstring& result, bool doSphinxMangle)
 	{
 		const WordPart* wordPart = &a;
 		
 		result.clear();
 		if (wordPart->partSide() == WordPartSide::RightPart || wordPart->partSide() == WordPartSide::MiddlePart)
 			result += L"~";
-		result += wordPart->partText();
+		
+		if (doSphinxMangle)
+			manglePronCodeSphinx(wordPart->partText(), result);
+		else
+			result += wordPart->partText();
+		
 		if (wordPart->partSide() == WordPartSide::LeftPart || wordPart->partSide() == WordPartSide::MiddlePart)
 			result += L"~";
 	}
@@ -254,7 +260,7 @@ namespace PticaGovorun
 		return nullptr;
 	}
 
-	long WordsUsageInfo::getWordSequenceUsage(WordSeqKey wordIds) const
+	ptrdiff_t WordsUsageInfo::getWordSequenceUsage(WordSeqKey wordIds) const
 	{
 		auto it = wordSeqKeyToUsage_.find(wordIds);
 		if (it != wordSeqKeyToUsage_.end())
@@ -275,15 +281,17 @@ namespace PticaGovorun
 		return (int)wordSeqKeyToUsage_.size();
 	}
 
-	void WordsUsageInfo::wordSeqCountPerSeqSize(wv::slice<long> wordsSeqSizes) const
+	void WordsUsageInfo::wordSeqCountPerSeqSize(wv::slice<ptrdiff_t> wordsSeqSizes) const
 	{
+		std::fill_n(std::begin(wordsSeqSizes), wordsSeqSizes.size(), 0);
+
 		for (const auto& pair : wordSeqKeyToUsage_)
 		{
-			PG_Assert2(pair.first.PartCount >= 0, "Word seq must contain some parts");
+			PG_Assert2(pair.first.PartCount > 0, "Word seq must contain some parts");
 			int accumInd = pair.first.PartCount - 1;
 			if (accumInd < wordsSeqSizes.size())
 			{
-				wordsSeqSizes[accumInd]++;
+				wordsSeqSizes[accumInd] += 1; // count words, not usage
 			}
 		}
 	}
@@ -322,5 +330,21 @@ namespace PticaGovorun
 		{
 			wordSeqItems.push_back(&pair.second);
 		}
+	}
+
+	auto wordUsageOneSource(int wordPartId, const WordsUsageInfo& wordUsage, const std::map<int, ptrdiff_t>& wordPartIdToRecoveredUsage) -> ptrdiff_t
+	{
+		WordSeqKey seqKey({ wordPartId });
+		auto seqUsage1 = wordUsage.getWordSequenceUsage(seqKey);
+
+		ptrdiff_t seqUsage2 = 0;
+		auto usageIt = wordPartIdToRecoveredUsage.find(wordPartId);
+		if (usageIt != std::end(wordPartIdToRecoveredUsage))
+			seqUsage2 = usageIt->second;
+
+		bool onlyOne = (seqUsage1 > 0) ^ (seqUsage2 > 0);
+		PG_Assert2(onlyOne, QString("Must be only one source of word's usage statistics. word=%1").arg(toQString(wordUsage.wordPartById(wordPartId)->partText())).toStdWString().c_str());
+
+		return seqUsage1 > 0 ? seqUsage1 : seqUsage2;
 	}
 }

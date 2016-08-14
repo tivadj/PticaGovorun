@@ -4,7 +4,7 @@
 
   <PropertyGroup Label="UserMacros">
     <PticaGovorunDir>C:\devb\PticaGovorunProj\srcrep\</PticaGovorunDir>
-    <OutDir>$(PticaGovorunDir)build\$(PlatformTarget)\$(Configuration)\</OutDir>
+    <OutDir>$(PticaGovorunDir)..\build\$(PlatformTarget)\$(Configuration)\</OutDir>
     <IntDir>$(OutDir)$(ProjectName)_obj\</IntDir>
 
     <LibSuffix Condition="'$(Configuration)' == 'Debug'">d</LibSuffix>

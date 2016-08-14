@@ -165,6 +165,8 @@ namespace PticaGovorun
 		std::unordered_map<std::wstring, ShortArray<int,2>> wordStrToPartIds_; // some words, split by default
 		long seqOneWordCounter_ = 0;
 		long seqTwoWordsCounter_ = 0;
+
+		/// If phonetic split is enabled, the splitter tries to divide the word in parts. Otherwise the whole word is used.
 		bool allowPhoneticWordSplit_ = false;
 		const WordPart* sentStartWordPart_;
 		const WordPart* sentEndWordPart_;
@@ -172,7 +174,7 @@ namespace PticaGovorun
 	public:
 		UkrainianPhoneticSplitter();
 
-		void bootstrap(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWords, const std::wstring& targetWord,
+		void bootstrapFromDeclinedWords(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWords, const std::wstring& targetWord,
 			const std::unordered_set<std::wstring>& processedWords);
 
 		void gatherWordPartsSequenceUsage(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess = -1, bool outputCorpus = false);
@@ -187,6 +189,7 @@ namespace PticaGovorun
 		const WordPart* sentEndWordPart() const;
 
 		void setAllowPhoneticWordSplit(bool value);
+		bool allowPhoneticWordSplit() const;
 	private:
 		void doWordPhoneticSplit(const wv::slice<wchar_t>& wordSlice, std::vector<const WordPart*>& wordParts);
 
@@ -219,6 +222,13 @@ namespace PticaGovorun
 #endif
 	PG_EXPORTS void parsePronId(boost::wstring_ref pronId, boost::wstring_ref& pronName);
 	PG_EXPORTS bool isWordStressAssigned(const PhoneRegistry& phoneReg, const std::vector<PhoneId>& phoneIds);
+
+	/// Checks that pronCode in 'clothes(1)' format and not 'clothes' (without round parantheses).
+	bool isPronCodeDefinesStress(boost::wstring_ref pronCode);
+
+	/// Parses pronCode.
+	/// For 'clothes(2)' pronCodeName='clothes', pronCodeStressSuffix='2'
+	bool parsePronCodeNameAndStress(boost::wstring_ref pronCode, boost::wstring_ref* pronCodeName, boost::wstring_ref* pronCodeStressSuffix);
 
 	// 'brokenLines' has lines of the dictionary which can't be read.
 	PG_EXPORTS std::tuple<bool, const char*> loadPhoneticDictionaryPronIdPerLine(const std::basic_string<wchar_t>& vocabFilePathAbs, const PhoneRegistry& phoneReg,
@@ -368,4 +378,10 @@ namespace PticaGovorun
 
 	// [yyy] (latin 'y') pseudo word.
 	PG_EXPORTS boost::wstring_ref fillerYyy();
+
+	/// [clk] pseudo word.
+	PG_EXPORTS boost::wstring_ref fillerClick();
+
+	/// [glt] pseudo word.
+	PG_EXPORTS boost::wstring_ref fillerGlottal();
 }

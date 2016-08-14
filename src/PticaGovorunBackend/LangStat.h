@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <array>
+#include <map>
 #include <memory>
 #include <unordered_map>
 #include "PticaGovorunCore.h"
@@ -43,7 +44,7 @@ namespace PticaGovorun
 	};
 
 	bool operator==(const WordPart& a, const WordPart& b);
-	PG_EXPORTS void toStringWithTilde(const WordPart& a, std::wstring& result);
+	PG_EXPORTS void toStringWithTilde(const WordPart& a, std::wstring& result, bool doSphinxMangle = false);
 
 	// TODO: obsolete, use toString()
 	template <typename StreatT>
@@ -75,7 +76,7 @@ namespace PticaGovorun
 		WordSeqKey Key;
 
 		// Number of times this word was used in the text.
-		long UsedCount = 0;
+		ptrdiff_t UsedCount = 0;
 
 		WordSeqUsage(WordSeqKey wordIds);
 	};
@@ -118,14 +119,17 @@ namespace PticaGovorun
 	public:
 		WordSeqUsage* getOrAddWordSequence(WordSeqKey wordIds, bool* wasAdded = nullptr);
 		const WordSeqUsage* getWordSequence(WordSeqKey wordIds) const;
-		long getWordSequenceUsage(WordSeqKey wordIds) const;
+		ptrdiff_t getWordSequenceUsage(WordSeqKey wordIds) const;
 		int wordPartsCount() const;
 		int wordSeqCount() const;
-		void wordSeqCountPerSeqSize(wv::slice<long> wordsSeqSizes) const;
+		void wordSeqCountPerSeqSize(wv::slice<ptrdiff_t> wordsSeqSizes) const;
 		void copyWordParts(std::vector<const WordPart*>& wordParts) const;
 		void copyWordParts(std::vector<WordPart*>& wordParts);
 		void copyWordSeq(std::vector<WordSeqKey>& wordSeqItems);
 		void copyWordSeq(std::vector<const WordSeqUsage*>& wordSeqItems) const;
 	};
+
+	/// Queries word's usage statistics. Checks that usage number is either in usage object or usage map.
+	auto wordUsageOneSource(int wordPartId, const WordsUsageInfo& wordUsage, const std::map<int, ptrdiff_t>& wordPartIdToRecoveredUsage)-> ptrdiff_t;
 }
 

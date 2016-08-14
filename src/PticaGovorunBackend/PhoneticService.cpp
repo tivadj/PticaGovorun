@@ -694,6 +694,36 @@ namespace PticaGovorun
 		return numStressedVowels > 0 || numVowels == 0;
 	}
 
+	bool isPronCodeDefinesStress(boost::wstring_ref pronCode)
+	{
+		return pronCode.ends_with(L')');
+	}
+
+	bool parsePronCodeNameAndStress(boost::wstring_ref pronCode, boost::wstring_ref* pronCodeName, boost::wstring_ref* pronCodeStressSuffix)
+	{
+		size_t closeParInd = pronCode.find_last_of(L')');
+		if (closeParInd == boost::wstring_ref::npos)
+		{
+			*pronCodeName = pronCode;
+			*pronCodeStressSuffix = boost::wstring_ref();
+			return true;
+		}
+
+		size_t openParInd = pronCode.find_last_of(L'(');
+		if (openParInd == boost::wstring_ref::npos)
+			return false; // invalid pronCode format
+
+		const wchar_t* numStr = pronCode.data() + openParInd + 1;
+		int stress = -1;
+		int numRead = swscanf(numStr, L"%d)", &stress);
+		if (numRead != 1) // single digit in parenthesis
+			return false; // can't parse number
+		
+		*pronCodeName = boost::wstring_ref(pronCode.data(), openParInd);
+		*pronCodeStressSuffix = boost::wstring_ref(numStr, closeParInd - openParInd-1);
+		return true;
+	}
+
 	std::tuple<bool, const char*> loadPhoneticDictionaryPronIdPerLine(const std::basic_string<wchar_t>& vocabFilePathAbs, const PhoneRegistry& phoneReg,
 		const QTextCodec& textCodec, std::vector<PhoneticWord>& words, std::vector<std::string>& brokenLines,
 		GrowOnlyPinArena<wchar_t>& stringArena)
@@ -3034,6 +3064,16 @@ namespace PticaGovorun
 		return L"[yyy]";
 	}
 
+	boost::wstring_ref fillerClick()
+	{
+		return L"[clk]";
+	}
+
+	boost::wstring_ref fillerGlottal()
+	{
+		return L"[glt]";
+	}
+
 	// Returns number of made transformations or zero if the map was not changed.
 	int reuseCommonPrefixesOneIteration(std::map<std::wstring, int>& mapPrefixToSize)
 	{
@@ -3141,7 +3181,7 @@ namespace PticaGovorun
 		PG_Assert(wasAdded);
 	}
 
-	void UkrainianPhoneticSplitter::bootstrap(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& words, const std::wstring& targetWord, const std::unordered_set<std::wstring>& processedWords)
+	void UkrainianPhoneticSplitter::bootstrapFromDeclinedWords(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& words, const std::wstring& targetWord, const std::unordered_set<std::wstring>& processedWords)
 	{
 		for (const auto& pair : words)
 		{
@@ -3401,6 +3441,11 @@ namespace PticaGovorun
 	void UkrainianPhoneticSplitter::setAllowPhoneticWordSplit(bool value)
 	{
 		allowPhoneticWordSplit_ = value;
+	}
+
+	bool UkrainianPhoneticSplitter::allowPhoneticWordSplit() const
+	{
+		return allowPhoneticWordSplit_;
 	}
 
 	void UkrainianPhoneticSplitter::gatherWordPartsSequenceUsage(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess, bool outputCorpus)

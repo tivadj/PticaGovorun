@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "SpeechDataValidation.h"
+#include "PhoneticService.h"
 
 namespace PticaGovorun
 {
@@ -14,7 +15,7 @@ namespace PticaGovorun
 			int numPronWithExclam = 0;
 			for (const PronunciationFlavour& pron : word.Pronunciations)
 			{
-				if (pron.PronCode.ends_with(L')'))
+				if (isPronCodeDefinesStress(pron.PronCode))
 					numPronWithExclam++;
 			}
 			bool ok = numPronWithExclam == 0 || numPronWithExclam == word.Pronunciations.size();
