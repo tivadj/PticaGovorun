@@ -196,7 +196,7 @@ PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const SpeechAnnota
 			xmlWriter.writeAttribute(MarkerSpeakerBriefIdName, spkStr);
 		}
 
-		if (marker.ExcludePhase != nullptr)
+		if (marker.ExcludePhase != boost::none)
 		{
 			boost::string_ref excludeRef = toString(marker.ExcludePhase.get());
 			QString excludeStrQ = QString::fromLatin1(excludeRef.data(), excludeRef.size());

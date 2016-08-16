@@ -85,14 +85,14 @@ namespace PticaGovorun
 	{
 		struct StringRefHasher
 		{
-			size_t operator()(const std::wstring* pStr)
+			size_t operator()(const std::wstring* pStr) const
 			{
 				return std::hash_value(*pStr);
 			}
 		};
 		struct WordSeqKeyHasher
 		{
-			size_t operator()(const WordSeqKey& key)
+			size_t operator()(const WordSeqKey& key) const
 			{
 				return key.hashKey();
 			}

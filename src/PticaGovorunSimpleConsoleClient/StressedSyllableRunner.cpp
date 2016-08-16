@@ -52,7 +52,7 @@ namespace StressedSyllableRunnerNS
 		};
 		auto collectVowels = [phoneReg](const std::vector<PhoneId>& phoneIds, std::vector<PhoneAndBasic>& outBasicPhones)
 		{
-			for (size_t phoneInd = 0; phoneInd < phoneIds.size(); ++phoneInd)
+			for (int phoneInd = 0; phoneInd < (int)phoneIds.size(); ++phoneInd)
 			{
 				PhoneId phoneId = phoneIds[phoneInd];
 				const Phone* phone = phoneReg.phoneById(phoneId);

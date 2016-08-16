@@ -59,7 +59,7 @@ namespace PticaGovorun
 			return ResourceUsagePhase::Train;
 		if (phase.compare("test") == 0)
 			return ResourceUsagePhase::Test;
-		return nullptr;
+		return boost::none;
 	}
 
 	void splitUtteranceIntoWords(boost::wstring_ref text, std::vector<boost::wstring_ref>& words)

@@ -338,7 +338,7 @@ namespace PticaGovorun
 			else
 			{
 				PG_Assert(false);
-				if (uni.BackOffLogProb != nullptr)
+				if (uni.BackOffLogProb != boost::none)
 				{
 					// back off > 0 means eg. L~ ~R which do not match
 					//PG_Assert(gram.BackOffCounter == 0);
@@ -358,7 +358,7 @@ namespace PticaGovorun
 		for (NGramRow& gram : bigrams_)
 		{
 			PG_Assert(gram.WordParts.ActualSize == 2);
-			if (gram.LogProb == nullptr)
+			if (gram.LogProb == boost::none)
 			{
 				PG_Assert(gram.LowOrderNGram != nullptr);
 				double prob = gram.UsageCounter / (double)gram.LowOrderNGram->UsageCounter;
@@ -457,7 +457,7 @@ namespace PticaGovorun
 				dumpFileStream << " ";
 			}
 
-			if (gram.BackOffLogProb != nullptr)
+			if (gram.BackOffLogProb != boost::none)
 			{
 				dumpFileStream.setFieldWidth(6);
 				dumpFileStream << gram.BackOffLogProb.get();

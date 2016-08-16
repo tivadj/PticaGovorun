@@ -4,7 +4,7 @@
 
   <PropertyGroup Label="UserMacros">
     <PticaGovorunDir>C:\devb\PticaGovorunProj\srcrep\</PticaGovorunDir>
-    <OutDir>$(PticaGovorunDir)..\build\$(PlatformTarget)\$(Configuration)\</OutDir>
+    <OutDir>$(PticaGovorunDir)..\build_msvc140\$(PlatformTarget)\$(Configuration)\</OutDir>
     <IntDir>$(OutDir)$(ProjectName)_obj\</IntDir>
 
     <LibSuffix Condition="'$(Configuration)' == 'Debug'">d</LibSuffix>
@@ -31,6 +31,9 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>_USE_MATH_DEFINES;NOMINMAX;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions> <!--allow hash_set-->
+      <PreprocessorDefinitions>_HAS_AUTO_PTR_ETC;%(PreprocessorDefinitions)</PreprocessorDefinitions> <!--for now, enable old std::functional stuff-->
+      
 
       <!--Assigns extra intermediate variables in algorithms for debugging; validation logic. Code is not critical for runtime.-->
       <PreprocessorDefinitions>PG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -42,6 +45,7 @@
            MSBuild_PG_HAS_JULIUS also links Julius libs into PticaGovorunBackend project.
        -->
       <PreprocessorDefinitions Condition="'$(MSBuild_PG_HAS_JULIUS)' == 'True'">PG_HAS_JULIUS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
 </Project>

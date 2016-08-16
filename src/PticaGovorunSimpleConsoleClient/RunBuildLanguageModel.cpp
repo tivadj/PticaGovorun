@@ -201,7 +201,7 @@ namespace RunBuildLanguageModelNS
 			}
 			else
 			{
-				int sepInd = phoneticSplitOfWord(word, nullptr);
+				int sepInd = phoneticSplitOfWord(word, boost::none);
 				if (sepInd != -1)
 					sepInds.push_back(sepInd);
 				else

@@ -245,7 +245,7 @@ namespace PticaGovorun
 			uiMarkerStopsPlaybackEnabled = true;
 			uiMarkerSpeakerBriefId = QString::fromStdWString(marker.SpeakerBriefId);
 
-			bool useInTrain = marker.ExcludePhase == nullptr || marker.ExcludePhase == ResourceUsagePhase::Test;
+			bool useInTrain = marker.ExcludePhase == boost::none || marker.ExcludePhase == ResourceUsagePhase::Test;
 			ui->checkBoxCurMarkerUseInTrain->setEnabled(true);
 			ui->checkBoxCurMarkerUseInTrain->setChecked(useInTrain);
 		}

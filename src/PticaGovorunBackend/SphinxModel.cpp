@@ -680,6 +680,8 @@ namespace PticaGovorun
 		typedef std::chrono::system_clock Clock;
 		std::chrono::time_point<Clock> now1 = Clock::now();
 
+		// call checks
+
 		dbName_ = "persian";
 
 		QDateTime generationDate = QDateTime::currentDateTime();

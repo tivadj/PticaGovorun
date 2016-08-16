@@ -102,7 +102,7 @@ namespace PticaGovorun
 	WordSeqKey::WordSeqKey(std::initializer_list<int> wordIds)
 	{
 		PG_Assert2(wordIds.size() <= PartIds.size(), "Not enough space to store all word ids");
-		PartIds.assign(0);
+		PartIds.fill(0);
 		std::copy_n(wordIds.begin(), wordIds.size(), PartIds.begin());
 		PartCount = (int)wordIds.size();
 	}

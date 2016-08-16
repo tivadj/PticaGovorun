@@ -406,6 +406,6 @@ namespace PticaGovorun
 			return CharGroup::Vowel;
 		else if (!isVowel && isCons)
 			return CharGroup::Consonant;
-		return nullptr;
+		return boost::none;
 	}
 }

@@ -239,26 +239,27 @@ namespace PticaGovorun
 		bool suc = false;
 		auto basicPhId = basicPhoneId(basicPhoneStr, &suc);
 		if (!suc)
-			return nullptr;
+			return boost::none;
 		return phoneIdSingle(basicPhId, softHard, isStressed);
 	}
 
 	boost::optional<PhoneId> PhoneRegistry::phoneIdSingle(PhoneRegistry::BasicPhoneIdT basicPhoneStrId, boost::optional<SoftHardConsonant> softHardRequested, boost::optional<bool> isStressed) const
 	{
+		boost::optional<PhoneId> t = boost::none;
 		const BasicPhone* basicPh = basicPhone(basicPhoneStrId);
 		if (basicPh == nullptr)
-			return nullptr;
+			return boost::none;
 		static std::vector<PhoneId> candidates;
 		candidates.clear();
 		findPhonesByBasicPhoneStr(basicPh->Name, candidates);
 
 		if (candidates.empty())
-			return nullptr;
+			return boost::none;
 		if (candidates.size() == 1)
 			return candidates.front();
 
 		boost::optional<SoftHardConsonant> softHardFixed = softHardRequested;
-		if (softHardRequested != nullptr)
+		if (softHardRequested != boost::none)
 		{
 			if (allowSoftHardConsonant())
 			{
@@ -296,9 +297,9 @@ namespace PticaGovorun
 		std::remove_copy_if(candidates.begin(), candidates.end(), std::back_inserter(excactCandidates), [this, softHardFixed, isStressed](PhoneId phoneId)
 		{
 			const Phone* phone = phoneById(phoneId);
-			if (softHardFixed != nullptr && softHardFixed != phone->SoftHard)
+			if (softHardFixed != boost::none && softHardFixed != phone->SoftHard)
 				return true;
-			if (isStressed != nullptr && isStressed != phone->IsStressed)
+			if (isStressed != boost::none && isStressed != phone->IsStressed)
 				return true;
 			return false;
 		});
@@ -309,7 +310,7 @@ namespace PticaGovorun
 		// exact candidates size:
 		// = 0 then we may fallback to basic phone candidates; but there is no way to choose the best one
 		// > 1 then again the best one can't be chosen
-		return nullptr;
+		return boost::none;
 	}
 
 	bool PhoneRegistry::allowSoftHardConsonant() const
@@ -336,7 +337,7 @@ namespace PticaGovorun
 	{
 		if (allowSoftHardConsonant())
 			return SoftHardConsonant::Hard;
-		return nullptr;
+		return boost::none;
 	}
 
 	boost::optional<bool> PhoneRegistry::defaultIsVowelStressed() const
@@ -567,10 +568,10 @@ namespace PticaGovorun
 	boost::optional<Phone::BasicPhoneIdT> getVoicedUnvoicedConsonantPair(const PhoneRegistry& phoneReg, Phone::BasicPhoneIdT basicPhoneId)
 	{
 		bool suc = true;
-		boost::optional<Phone::BasicPhoneIdT> partnerBasicPhoneId = nullptr;
+		boost::optional<Phone::BasicPhoneIdT> partnerBasicPhoneId = boost::none;
 		auto match = [&suc, &partnerBasicPhoneId, &phoneReg](Phone::BasicPhoneIdT expectBasicPhoneId, const std::string& basicStr, const std::string& dualBasicStr) -> void
 		{
-			if (!suc || partnerBasicPhoneId != nullptr)
+			if (!suc || partnerBasicPhoneId != boost::none)
 				return;
 			Phone::BasicPhoneIdT basicId1 = phoneReg.basicPhoneId(basicStr, &suc);
 			if (!suc)
@@ -870,7 +871,7 @@ namespace PticaGovorun
 	boost::optional<PhoneId> parsePhoneStr(const PhoneRegistry& phoneReg, boost::string_ref phoneStrRef)
 	{
 		if (phoneStrRef.empty())
-			return nullptr;
+			return boost::none;
 
 		boost::string_ref basicPhoneStrRef = phoneStrRef;
 
@@ -884,15 +885,15 @@ namespace PticaGovorun
 		std::string basicPhoneStr = std::string(basicPhoneStrRef.data(), basicPhoneStrRef.size());
 		PhoneRegistry::BasicPhoneIdT basicPhoneId = phoneReg.basicPhoneId(basicPhoneStr, &basicOp);
 		if (!basicOp)
-			return nullptr;
+			return boost::none;
 		const BasicPhone* basicPhone = phoneReg.basicPhone(basicPhoneId);
 
 		// defaults for phone name without a number suffix
-		boost::optional<SoftHardConsonant> softHard = nullptr;
+		boost::optional<SoftHardConsonant> softHard = boost::none;
 		if (basicPhone->DerivedFromChar == CharGroup::Consonant)
 			softHard = phoneReg.defaultSoftHardConsonant();
 
-		boost::optional<bool> isStressed = nullptr;
+		boost::optional<bool> isStressed = boost::none;
 		if (basicPhone->DerivedFromChar == CharGroup::Vowel)
 			isStressed = phoneReg.defaultIsVowelStressed();
 
@@ -908,7 +909,7 @@ namespace PticaGovorun
 					softHard = SoftHardConsonant::Soft;
 				else if (lastDigit == 2)
 					softHard = SoftHardConsonant::Palatal;
-				else return nullptr; // unknown number modifier
+				else return boost::none; // unknown number modifier
 			}
 
 			// number on a vowel derived phone means stress
@@ -1218,7 +1219,7 @@ namespace PticaGovorun
 		wchar_t nextLetter = offsetLetter(1);
 		if (nextLetter == Letter_Z)
 		{
-			addPhone(newConsonantPhone("DZ", nullptr));
+			addPhone(newConsonantPhone("DZ", boost::none));
 			letterInd_ += 1; // skip next letter
 			return true;
 		}
@@ -1478,7 +1479,7 @@ namespace PticaGovorun
 		if (prevPh.DerivedFromChar == CharGroup::Consonant)
 		{
 			boost::optional<SoftHardConsonant> prevValue = prevPh.SoftHard;
-			if (prevValue != nullptr)
+			if (prevValue != boost::none)
 			{
 				
 				bool ok = prevValue == SoftHardConsonant::Hard || prevValue == SoftHardConsonant::Palatal;
@@ -1672,11 +1673,11 @@ namespace PticaGovorun
 			else if (letter == Letter_H)
 				ph = newConsonantPhone("KH", SoftHardConsonant::Hard);
 			else if (letter == Letter_D)
-				ph = newConsonantPhone("T", nullptr);
+				ph = newConsonantPhone("T", boost::none);
 			else if (letter == Letter_ZH)
 				ph = newConsonantPhone("SH", SoftHardConsonant::Hard);
 			else if (letter == Letter_Z)
-				ph = newConsonantPhone("S", nullptr);
+				ph = newConsonantPhone("S", boost::none);
 			else PG_Assert(false);
 
 			addPhone(ph);
@@ -1748,7 +1749,7 @@ namespace PticaGovorun
 			if (isNoisyUnvoicedConsonant(*phoneReg_, prevPh.BasicPhoneId) && isNoisyVoicedConsonant(*phoneReg_, ph.BasicPhoneId))
 			{
 				boost::optional<PhoneRegistry::BasicPhoneIdT> partnerBasicPhoneId = getVoicedUnvoicedConsonantPair(*phoneReg_, prevPh.BasicPhoneId);
-				PG_Assert2(partnerBasicPhoneId != nullptr, "Can't find paired consonant");
+				PG_Assert2(partnerBasicPhoneId != boost::none, "Can't find paired consonant");
 
 				const BasicPhone* partnerBasicPhone = phoneReg_->basicPhone(partnerBasicPhoneId.get());
 
@@ -1764,22 +1765,22 @@ namespace PticaGovorun
 		for (size_t billetInd = 0; billetInd < billetPhones_.size(); ++billetInd)
 		{
 			const PhoneBillet& ph = billetPhones_[billetInd];
-			boost::optional<PhoneId> phoneId = nullptr;
+			boost::optional<PhoneId> phoneId = boost::none;
 			if (ph.DerivedFromChar == CharGroup::Consonant)
 			{
 				boost::optional<SoftHardConsonant> softHard = ph.SoftHard;
-				if (softHard == nullptr)
+				if (softHard == boost::none)
 					softHard = phoneReg_->defaultSoftHardConsonant();
-				phoneId = phoneReg_->phoneIdSingle(ph.BasicPhoneId, softHard, nullptr);
+				phoneId = phoneReg_->phoneIdSingle(ph.BasicPhoneId, softHard, boost::none);
 			}
 			else if (ph.DerivedFromChar == CharGroup::Vowel)
 			{
 				boost::optional<bool> isStressed = ph.IsStressed;
-				if (isStressed == nullptr)
+				if (isStressed == boost::none)
 					isStressed = phoneReg_->defaultIsVowelStressed();
-				phoneId = phoneReg_->phoneIdSingle(ph.BasicPhoneId, nullptr, isStressed);
+				phoneId = phoneReg_->phoneIdSingle(ph.BasicPhoneId, boost::none, isStressed);
 			}
-			if (phoneId == nullptr)
+			if (phoneId == boost::none)
 			{
 				std::wstring phStr;
 				phoneBilletToStr(ph, phStr);
@@ -1829,13 +1830,13 @@ namespace PticaGovorun
 		const BasicPhone* basicPhone = phoneReg_->basicPhone(phone.BasicPhoneId);
 		if (basicPhone != nullptr)
 			buf << QString::fromStdString(basicPhone->Name).toStdWString();
-		if (phone.SoftHard != nullptr)
+		if (phone.SoftHard != boost::none)
 		{
 			std::string softHardStr;
 			toString(phone.SoftHard.get(), softHardStr);
 			buf << L" soft=" << QString::fromStdString(softHardStr).toStdWString();
 		}
-		if (phone.IsStressed != nullptr)
+		if (phone.IsStressed != boost::none)
 			buf << L" isStressed=" << phone.IsStressed.get();
 		result = buf.str();
 	}
@@ -1938,11 +1939,11 @@ namespace PticaGovorun
 		if (!success)
 			return false;
 
-		boost::optional<SoftHardConsonant> softHard = nullptr;
+		boost::optional<SoftHardConsonant> softHard = boost::none;
 		if (charGroup == CharGroup::Consonant)
 			softHard = SoftHardConsonant::Hard;
 
-		boost::optional<bool> isStressed = nullptr;
+		boost::optional<bool> isStressed = boost::none;
 		if (charGroup == CharGroup::Vowel)
 			isStressed = isCurVowelStressed();
 
@@ -1981,8 +1982,8 @@ namespace PticaGovorun
 			{
 				if (oldPhone->SoftHard == SoftHardConsonant::Soft)
 				{
-					boost::optional<PhoneId> newPhoneId = phoneReg.phoneIdSingle(oldPhone->BasicPhoneId, SoftHardConsonant::Hard, nullptr);
-					PG_DbgAssert(newPhoneId != nullptr);
+					boost::optional<PhoneId> newPhoneId = phoneReg.phoneIdSingle(oldPhone->BasicPhoneId, SoftHardConsonant::Hard, boost::none);
+					PG_DbgAssert(newPhoneId != boost::none);
 					phonesList[i] = newPhoneId.get();
 					continue;
 				}
@@ -1991,8 +1992,8 @@ namespace PticaGovorun
 			{
 				if (oldPhone->IsStressed == true)
 				{
-					boost::optional<PhoneId> newPhoneId = phoneReg.phoneIdSingle(oldPhone->BasicPhoneId, nullptr, false);
-					PG_DbgAssert(newPhoneId != nullptr);
+					boost::optional<PhoneId> newPhoneId = phoneReg.phoneIdSingle(oldPhone->BasicPhoneId, boost::none, false);
+					PG_DbgAssert(newPhoneId != boost::none);
 					phonesList[i] = newPhoneId.get();
 					continue;
 				}
@@ -2970,7 +2971,7 @@ namespace PticaGovorun
 			//if (wordClassTmp == WordClass::Participle || wordClassTmp == WordClass::VerbalAdverb)
 			//	wordClassTmp = WordClass::Verb;
 
-			if (wordClass != nullptr)
+			if (wordClass != boost::none)
 			{
 				// match word class and suffix (word) class
 				WordClass wordClassTmp = wordClass.get();
@@ -3244,7 +3245,7 @@ namespace PticaGovorun
 
 						int matchedSuffixInd = -1;
 						WordClass curWordClass = wordGroup.WordClass.get();
-						if (wordForm.WordClass != nullptr)
+						if (wordForm.WordClass != boost::none)
 							curWordClass = wordForm.WordClass.get();
 
 						int sepInd = phoneticSplitOfWord(subWord, curWordClass, &matchedSuffixInd);
@@ -3745,7 +3746,7 @@ namespace PticaGovorun
 	{
 		//const std::wstring& word
 		int matchedSuffixInd = -1;
-		int sepInd = phoneticSplitOfWord(wordSlice, nullptr, &matchedSuffixInd);
+		int sepInd = phoneticSplitOfWord(wordSlice, boost::none, &matchedSuffixInd);
 		if (sepInd != -1)
 			sureSuffixes[matchedSuffixInd].UsedCount++;
 

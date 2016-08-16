@@ -41,7 +41,7 @@ namespace PticaGovorun
 				if (text.compare(wordClassStr, Qt::CaseSensitive) == 0)
 					return pair.WordClass;
 			}
-			return nullptr;
+			return boost::none;
 		}
 
 		boost::optional<WordGender> parseWordGender(QStringRef text)
@@ -62,7 +62,7 @@ namespace PticaGovorun
 				if (text.compare(wordClassStr, Qt::CaseSensitive) == 0)
 					return pair.WordGender;
 			}
-			return nullptr;
+			return boost::none;
 		}
 		boost::optional<WordNumberCategory> parseWordNumber(QStringRef text)
 		{
@@ -81,7 +81,7 @@ namespace PticaGovorun
 				if (text.compare(wordClassStr, Qt::CaseSensitive) == 0)
 					return pair.WordNumber;
 			}
-			return nullptr;
+			return boost::none;
 		}
 		boost::optional<bool> parseBool(QStringRef text)
 		{
@@ -100,7 +100,7 @@ namespace PticaGovorun
 				if (text.compare(wordClassStr, Qt::CaseSensitive) == 0)
 					return pair.Bool;
 			}
-			return nullptr;
+			return boost::none;
 		}
 		boost::optional<WordPerson> parseWordPerson(QStringRef text)
 		{
@@ -126,7 +126,7 @@ namespace PticaGovorun
 				if (text.compare(wordClassStr, Qt::CaseSensitive) == 0)
 					return pair.Person;
 			}
-			return nullptr;
+			return boost::none;
 		}
 		boost::optional<WordPerfectiveAspect> parseWordPerfectiveAspect(QStringRef text)
 		{
@@ -145,7 +145,7 @@ namespace PticaGovorun
 				if (text.compare(wordClassStr, Qt::CaseSensitive) == 0)
 					return pair.Perf;
 			}
-			return nullptr;
+			return boost::none;
 		}
 		boost::optional<WordTransitive> parseWordTransitive(QStringRef text)
 		{
@@ -164,7 +164,7 @@ namespace PticaGovorun
 				if (text.compare(wordClassStr, Qt::CaseSensitive) == 0)
 					return pair.Transitive;
 			}
-			return nullptr;
+			return boost::none;
 		}
 		boost::optional<WordCase> parseWordCase(QStringRef text)
 		{
@@ -188,7 +188,7 @@ namespace PticaGovorun
 				if (text.compare(wordClassStr, Qt::CaseSensitive) == 0)
 					return pair.Case;
 			}
-			return nullptr;
+			return boost::none;
 		}
 		boost::optional<ActionTense> parseWordTense(QStringRef text)
 		{
@@ -208,7 +208,7 @@ namespace PticaGovorun
 				if (text.compare(wordClassStr, Qt::CaseSensitive) == 0)
 					return pair.Tense;
 			}
-			return nullptr;
+			return boost::none;
 		}
 		boost::optional<WordDegree> parseWordDegree(QStringRef text)
 		{
@@ -228,7 +228,7 @@ namespace PticaGovorun
 				if (text.compare(wordClassStr, Qt::CaseSensitive) == 0)
 					return pair.Degree;
 			}
-			return nullptr;
+			return boost::none;
 		}
 		boost::optional<WordActiveOrPassive> parseWordActiveOrPassive(QStringRef text)
 		{
@@ -247,7 +247,7 @@ namespace PticaGovorun
 				if (text.compare(wordClassStr, Qt::CaseSensitive) == 0)
 					return pair.Active;
 			}
-			return nullptr;
+			return boost::none;
 		}
 		
 		void parseDeclensionDictWordGroup(QXmlStreamReader& xml, WordDeclensionGroup* owningWordGroup)

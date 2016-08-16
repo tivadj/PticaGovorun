@@ -2,8 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <BoostDir Condition="'$(BoostDir)' == ''">E:\Programs\boost_1_53_0\</BoostDir>
-    <BoostBinDir>$(BoostDir)lib\msvc120-x64-hh\lib\</BoostBinDir>
+    <BoostDir Condition="'$(BoostDir)' == ''">E:\Programs\boost_1_61_0_prebuilt\</BoostDir>
+    <!--<BoostDir Condition="'$(BoostDir)' == ''">E:\Programs\boost_1_53_0\</BoostDir>-->
+    <BoostBinDir>$(BoostDir)lib64-msvc-14.0\</BoostBinDir>
   </PropertyGroup>
   <PropertyGroup>
     <IncludePath>$(BoostDir);$(IncludePath)</IncludePath>

@@ -45,7 +45,7 @@ namespace PticaGovorun
 	template <typename IdT, typename CharT, size_t BuffSize>
 	struct IdWithDebugStrHasher
 	{
-		size_t operator()(const IdWithDebugStr<IdT, CharT, BuffSize> idEx)
+		size_t operator()(const IdWithDebugStr<IdT, CharT, BuffSize> idEx) const
 		{
 			return std::hash_value(idEx.Id);
 		}

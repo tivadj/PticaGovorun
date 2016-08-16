@@ -386,7 +386,7 @@ namespace PticaGovorun
 				for (size_t i = 0; i < charBuff2.size(); ++i)
 					secondAlignedStr.push_back(charBuff2[i]);
 			}
-			if (sepChar != nullptr && editInd < editRecipe.size() - 1)
+			if (sepChar != boost::none && editInd < editRecipe.size() - 1)
 			{
 				firstAlignedStr.push_back(sepChar.get());
 				secondAlignedStr.push_back(sepChar.get());
@@ -410,7 +410,7 @@ namespace PticaGovorun
 	void alignWords(const wv::slice<Symbol> first, const wv::slice<Symbol> second, 
 		const std::vector<EditStep>& editRecipe, TextChar padChar, 
 		std::vector<TextChar>& firstAlignedStr, std::vector<TextChar>& secondAlignedStr,
-		boost::optional<TextChar> sepChar = nullptr)
+		boost::optional<TextChar> sepChar = boost::none)
 	{
 		// the default function just copies a symbol to an output
 		std::function<void(Symbol, std::vector<TextChar>&)> symb2str = [](Symbol value, std::vector<TextChar>& str)

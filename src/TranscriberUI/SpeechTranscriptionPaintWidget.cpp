@@ -266,7 +266,7 @@ void SpeechTranscriptionPaintWidget::drawMarkers(QPainter& painter, const QRect&
 			markerHalfHeight = markerHalfHeightMax * 0.6;
 		}
 
-		if (marker.ExcludePhase != nullptr)
+		if (marker.ExcludePhase != boost::none)
 			markerPen.setStyle(Qt::DashLine);
 
 		painter.setPen(markerPen);
