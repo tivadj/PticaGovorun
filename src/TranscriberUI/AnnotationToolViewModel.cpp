@@ -4,7 +4,6 @@
 #include <QDir>
 #include <QFileInfo>
 #include "PresentationHelpers.h"
-#include "SpeechTranscriptionValidation.h"
 #include "assertImpl.h"
 #include "SpeechDataValidation.h"
 
@@ -12,7 +11,7 @@ namespace PticaGovorun
 {
 	namespace
 	{
-		const char* RecentAnnotDir = "RecentAnnotDir"; // where xml annotation files reside
+		const char* RecentSpeechProjDir = "RecentSpeechProjDir"; // where xml annotation files reside
 		const char* RecentAnnotFileRelPath = "RecentAnnotFileRelPath"; // relative path to last opened xml annot file
 	}
 
@@ -34,7 +33,6 @@ namespace PticaGovorun
 		QObject::connect(fileWorkspaceViewModel_.get(), SIGNAL(openAnnotFile(const std::wstring&)), this, SLOT(fileWorkspaceViewModel_openAnnotFile(const std::wstring&)));
 
 		audioMarkupNavigator_ = std::make_shared<AudioMarkupNavigator>();
-		phoneticDictModel_ = std::make_shared<PhoneticDictionaryViewModel>();
 
 #ifdef PG_HAS_JULIUS
 		juliusRecognizerProvider_ = std::make_shared<JuliusRecognizerProvider>();
@@ -52,14 +50,15 @@ namespace PticaGovorun
 	{
 		curRecognizerName_ = "shrekky";
 
-		QString recentAnnotDir = AppHelpers::configParamQString(RecentAnnotDir, QString(""));
-		fileWorkspaceViewModel_->setAnnotDir(recentAnnotDir.toStdWString());
-
-		QString recentAnnotFileRelPath = AppHelpers::configParamQString(RecentAnnotFileRelPath, QString(""));
-		if (!recentAnnotFileRelPath.isEmpty())
+		QString speechProjDir = AppHelpers::configParamQString(RecentSpeechProjDir, QString(""));
+		if (tryChangeSpeechProjDir(speechProjDir))
 		{
-			QString recentAnnotFilePath = QFileInfo(recentAnnotDir, recentAnnotFileRelPath).canonicalFilePath();
-			fileWorkspaceViewModel_openAnnotFile(recentAnnotFilePath.toStdWString());
+			QString recentAnnotFileRelPath = AppHelpers::configParamQString(RecentAnnotFileRelPath, QString(""));
+			if (!recentAnnotFileRelPath.isEmpty())
+			{
+				QString recentAnnotFilePath = QFileInfo(speechProjDir, recentAnnotFileRelPath).canonicalFilePath();
+				fileWorkspaceViewModel_openAnnotFile(recentAnnotFilePath.toStdWString());
+			}
 		}
 	}
 
@@ -68,10 +67,10 @@ namespace PticaGovorun
 		QString iniAbsPath = AppHelpers::appIniFilePathAbs();
 		QSettings settings(iniAbsPath, QSettings::IniFormat);
 
-		auto annotDirQ = QString::fromStdWString(fileWorkspaceViewModel_->annotDir());
+		auto annotDirQ = QString::fromStdWString(speechData_->speechProjDir().wstring());
 		if (!annotDirQ.isEmpty())
 		{
-			settings.setValue(RecentAnnotDir, annotDirQ);
+			settings.setValue(RecentSpeechProjDir, annotDirQ);
 
 			// save relative path to the last opened audio file
 			auto transcrModel = activeTranscriptionModel();
@@ -92,8 +91,8 @@ namespace PticaGovorun
 	{
 		for (auto _ : audioTranscriptionModels_)
 			_->saveAudioMarkupToXml();
-		if (phoneticDictModel_ != nullptr)
-			phoneticDictModel_->saveDict();
+		if (speechData_ != nullptr)
+			speechData_->saveDict();
 	}
 
 	std::shared_ptr<SpeechTranscriptionViewModel> AnnotationToolViewModel::activeTranscriptionModel()
@@ -122,54 +121,21 @@ namespace PticaGovorun
 
 	void AnnotationToolViewModel::validateAllSpeechAnnotationRequest()
 	{
+		if (!isSpeechProjectOpened())
+			return;
+
 		QStringList checkMsgs;
 
 		// in-memory data validation
 		auto m = activeTranscriptionModel();
 		if (m != nullptr)
-			validateSpeechAnnotation(m->speechAnnotation(), *phoneticDictModel_, checkMsgs);
+			speechData_->validateOneSpeechAnnot(m->speechAnnotation(), &checkMsgs);
 
 		// validate on-disk data
-
-		QString recentAnnotDir = AppHelpers::configParamQString(RecentAnnotDir, QString(""));
-
-		std::vector<wchar_t> pathBuff;
-		boost::wstring_ref recentAnnotDirRef = toWStringRef(recentAnnotDir, pathBuff);
-
-		validateAllOnDiskSpeechAnnotations(recentAnnotDirRef, *phoneticDictModel_, checkMsgs);
-
-		//
-		const std::map<boost::wstring_ref, PhoneticWord>& phoneticDictWellFormed = phoneticDictModel_->phoneticDictWellFormed();
-		std::vector<PhoneticWord> wordsWellFormed(phoneticDictWellFormed.size());
-		std::transform(std::begin(phoneticDictWellFormed), std::end(phoneticDictWellFormed), std::begin(wordsWellFormed), [](const std::pair<boost::wstring_ref, PhoneticWord>& pair)
-		{
-			return pair.second;
-		});
-
-		const std::map<boost::wstring_ref, PhoneticWord>& phoneticDictBroken = phoneticDictModel_->phoneticDictBroken();
-		std::vector<PhoneticWord> wordsBroken(phoneticDictBroken.size());
-		std::transform(std::begin(phoneticDictBroken), std::end(phoneticDictBroken), std::begin(wordsBroken), [](const std::pair<boost::wstring_ref, PhoneticWord>& pair)
-		{
-			return pair.second;
-		});
-
-		auto checkAllPronCodesStress = [&checkMsgs](const std::vector<PhoneticWord>& words)
-		{
-			std::vector<const PhoneticWord*> invalidWords;
-			if (!rulePhoneticDictNoneOrAllPronCodesMustHaveStress(words, &invalidWords))
-			{
-				QString msg = "Not all pronCodes specify stress for words: ";
-				for (const PhoneticWord* pWord : invalidWords) msg += ", " + toQString(pWord->Word);
-				checkMsgs.append(msg);
-			}
-		};
-		checkAllPronCodesStress(wordsWellFormed);
-		checkAllPronCodesStress(wordsBroken);
-
-		//
+		bool valid = speechData_->validate(&checkMsgs);
 
 		QString msg;
-		if (checkMsgs.isEmpty())
+		if (valid)
 			msg = "Validation succeeded";
 		else
 		{
@@ -213,6 +179,7 @@ namespace PticaGovorun
 		transcriberModel->setAnnotFilePath(annotFilePathQ);
 		transcriberModel->setAudioMarkupNavigator(audioMarkupNavigator_);
 		transcriberModel->setPhoneticDictViewModel(phoneticDictModel_);
+		transcriberModel->setSpeechData(speechData_);
 		transcriberModel->init(serviceProvider_);
 		transcriberModel->loadAnnotAndAudioFileRequest();
 		audioTranscriptionModels_.push_back(transcriberModel);
@@ -222,22 +189,50 @@ namespace PticaGovorun
 		emit activeAudioTranscriptionChanged(activeAudioTranscriptionModelInd_);
 	}
 
-	void AnnotationToolViewModel::openAnnotDirRequest()
+	bool AnnotationToolViewModel::tryChangeSpeechProjDir(QString speechProjDir)
 	{
-		QString dirQ = newAnnotDirQuery();
-		if (dirQ.isEmpty())
-			return;
-		fileWorkspaceViewModel_->setAnnotDir(dirQ.toStdWString());
+		if (speechProjDir.isEmpty())
+			return false;
+
+		//
+		static const size_t WordsCount = 200000;
+		auto stringArena = std::make_shared<GrowOnlyPinArena<wchar_t>>(WordsCount * 6); // W*C, W words, C chars per word
+
+		//
+		phoneReg_ = std::make_shared<PhoneRegistry>();
+		bool allowSoftHardConsonant = true;
+		bool allowVowelStress = true;
+		phoneReg_->setPalatalSupport(PalatalSupport::AsPalatal);
+		initPhoneRegistryUk(*phoneReg_, allowSoftHardConsonant, allowVowelStress);
+
+		//
+		speechData_ = std::make_shared<SpeechData>(speechProjDir.toStdWString());
+		speechData_->setStringArena(stringArena);
+		speechData_->setPhoneReg(phoneReg_);
+
+
+		phoneticDictModel_ = std::make_shared<PhoneticDictionaryViewModel>(speechData_, phoneReg_);
+
+		auto annotDir = speechData_->speechAnnotDirPath();
+		fileWorkspaceViewModel_->setAnnotDir(annotDir.wstring());
 
 		//
 		activeAudioTranscriptionModelInd_ = -1;
 		audioTranscriptionModels_.clear();
 		emit activeAudioTranscriptionChanged(activeAudioTranscriptionModelInd_);
+		return true;
+	}
+
+	void AnnotationToolViewModel::openAnnotDirRequest()
+	{
+		QString dirQ = newAnnotDirQuery();
+		tryChangeSpeechProjDir(dirQ);
 	}
 
 	void AnnotationToolViewModel::closeAnnotDirRequest()
 	{
 		fileWorkspaceViewModel_->setAnnotDir(L"");
+		speechData_.reset();
 
 		//
 		activeAudioTranscriptionModelInd_ = -1;
@@ -255,6 +250,11 @@ namespace PticaGovorun
 	{
 		for (auto& m : audioTranscriptionModels_)
 			m->onPronIdPhoneticSpecChanged();
+	}
+
+	bool AnnotationToolViewModel::isSpeechProjectOpened() const
+	{
+		return speechData_ != nullptr;
 	}
 
 	void AnnotationToolViewModel::closeAudioTranscriptionTab(int tabIndex)

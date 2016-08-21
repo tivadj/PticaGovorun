@@ -5,7 +5,7 @@
   
   <PropertyGroup Label="UserMacros">
     <!--used QtDirMy name because QtDir is used for Qt Generator-->
-    <QtDirMy Condition="'$(QtDirMy)' == ''">E:\Programs\Qt5.3.1\5.3\msvc2013_64_opengl\</QtDirMy>
+    <QtDirMy Condition="'$(QtDirMy)' == ''">E:\Programs\Qt5.7.0\5.7\msvc2015_64\</QtDirMy>
     <QtLibSuffix Condition="'$(Configuration)' == 'Debug'">d</QtLibSuffix>
     <QtLibSuffix Condition="'$(Configuration)' != 'Debug'"></QtLibSuffix>
   </PropertyGroup>
@@ -42,11 +42,11 @@
     <Copy SourceFiles="$(QtDirMy)Bin\Qt5Gui$(QtLibSuffix).dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
     <Copy SourceFiles="$(QtDirMy)Bin\Qt5OpenGL$(QtLibSuffix).dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
     <Copy SourceFiles="$(QtDirMy)Bin\Qt5Xml$(QtLibSuffix).dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
-    <Copy SourceFiles="$(QtDirMy)Bin\icuin52.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
+    <!--<Copy SourceFiles="$(QtDirMy)Bin\icuin52.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
     <Copy SourceFiles="$(QtDirMy)Bin\icuuc52.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
     <Copy SourceFiles="$(QtDirMy)Bin\icudt52.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
     <MakeDir Directories="$(OutDir)platforms" />
-    <Copy SourceFiles="$(QtDirMy)plugins\platforms\QWindows.dll" DestinationFolder="$(OutDir)platforms" SkipUnchangedFiles="True"/>
+    <Copy SourceFiles="$(QtDirMy)plugins\platforms\QWindows.dll" DestinationFolder="$(OutDir)platforms" SkipUnchangedFiles="True"/>-->
   </Target>
 
 </Project>

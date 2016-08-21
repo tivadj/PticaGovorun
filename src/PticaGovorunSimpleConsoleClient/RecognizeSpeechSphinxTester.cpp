@@ -996,7 +996,7 @@ namespace RecognizeSpeechSphinxTester
 		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryXml(persianDictPathK, phoneReg, phoneticDictKnown, stringArena);
 		if (!loadPhoneDict)
 		{
-			std::cerr << "Can't load phonetic dictionary " << errMsg << std::endl;
+			std::wcerr << "Can't load phonetic dictionary " << errMsg << std::endl;
 			return;
 		}
 

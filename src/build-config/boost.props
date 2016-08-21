@@ -9,8 +9,8 @@
   <PropertyGroup>
     <IncludePath>$(BoostDir);$(IncludePath)</IncludePath>
     <LibraryPath>$(BoostBinDir);$(LibraryPath)</LibraryPath>
-    <!--<BoostDllSuffix Condition="'$(Configuration)' == 'Debug'">-gd</BoostDllSuffix>
-    <BoostDllSuffix Condition="'$(Configuration)' != 'Debug'"></BoostDllSuffix>-->
+    <BoostDllSuffix Condition="'$(Configuration)' == 'Debug'">-gd</BoostDllSuffix>
+    <BoostDllSuffix Condition="'$(Configuration)' != 'Debug'"></BoostDllSuffix>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -22,6 +22,8 @@
     <!--<Copy SourceFiles="$(BoostBinDir)boost_thread-vc120-mt$(BoostDllSuffix)-1_53.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
     <Copy SourceFiles="$(BoostBinDir)boost_system-vc120-mt$(BoostDllSuffix)-1_53.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
     <Copy SourceFiles="$(BoostBinDir)boost_filesystem-vc120-mt$(BoostDllSuffix)-1_53.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>-->
+    <Copy SourceFiles="$(BoostBinDir)boost_system-vc140-mt$(BoostDllSuffix)-1_61.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
+    <Copy SourceFiles="$(BoostBinDir)boost_filesystem-vc140-mt$(BoostDllSuffix)-1_61.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
   </Target>
   
   </Project>

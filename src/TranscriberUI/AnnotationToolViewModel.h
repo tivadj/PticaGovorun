@@ -6,6 +6,7 @@
 #include "SharedServiceProvider.h"
 #include "VisualNotificationService.h"
 #include "JuliusRecognizerProvider.h"
+#include "SpeechDataValidation.h"
 
 namespace PticaGovorun
 {
@@ -32,6 +33,8 @@ namespace PticaGovorun
 		void onClose();
 
 		void closeAudioTranscriptionTab(int tabIndex);
+
+		bool tryChangeSpeechProjDir(QString speechProjDir);
 
 		// Declares a user intent to open new speech annotation directory.
 		void openAnnotDirRequest();
@@ -72,6 +75,9 @@ namespace PticaGovorun
 		// Occurs when phonetic dialog closes and phonetic expansion of current marker's text must be updated.
 		void onPronIdPhoneticSpecChanged();
 
+		/// Checks whether speech working dir is opened.
+		bool isSpeechProjectOpened() const;
+
 	private slots:
 		// file workspace
 		void fileWorkspaceViewModel_openAnnotFile(const std::wstring& annotFilePath);
@@ -86,6 +92,9 @@ namespace PticaGovorun
 
 		std::vector<std::shared_ptr<SpeechTranscriptionViewModel>> audioTranscriptionModels_;
 		int activeAudioTranscriptionModelInd_ = -1;
+
+		std::shared_ptr<SpeechData> speechData_;
+		std::shared_ptr<PhoneRegistry> phoneReg_;
 
 		// recognition
 		QString curRecognizerName_;

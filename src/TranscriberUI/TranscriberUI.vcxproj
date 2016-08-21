@@ -334,7 +334,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="SpeechTranscriptionPaintWidget.cpp" />
-    <ClCompile Include="SpeechTranscriptionValidation.cpp" />
     <ClCompile Include="SpeechTranscriptionViewModel.cpp" />
     <ClCompile Include="SpeechTranscriptionWidget.cpp" />
     <ClCompile Include="FileWorkspaceViewModel.cpp" />
@@ -453,7 +452,6 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DBOOST_ALL_DYN_LINK -DHAS_POCKETSPHINX -DHAS_MATLAB888 -DPG_DEBUG -D_MBCS "-I.\GeneratedFiles"</Command>
     </CustomBuild>
-    <ClInclude Include="SpeechTranscriptionValidation.h" />
     <ClInclude Include="VisualNotificationService.h" />
     <CustomBuild Include="FileWorkspaceViewModel.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>

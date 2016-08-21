@@ -348,9 +348,11 @@ private:
 public:
 	// phonetic dictionary
 	void setPhoneticDictViewModel(std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> phoneticDictViewModel);
+	void setSpeechData(std::shared_ptr<SpeechData> speechData);
 	std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> phoneticDictViewModel();
 private:
 	std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> phoneticDictViewModel_;
+	std::shared_ptr<SpeechData> speechData_;
 	
 public:
 	void setNotificationService(std::shared_ptr<VisualNotificationService>);

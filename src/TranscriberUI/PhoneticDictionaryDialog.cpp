@@ -28,7 +28,6 @@ namespace PticaGovorun
 	void PhoneticDictionaryDialog::setPhoneticViewModel(std::shared_ptr<PhoneticDictionaryViewModel> phoneticDictViewModel)
 	{
 		phoneticDictViewModel_ = phoneticDictViewModel;
-		phoneticDictViewModel_->ensureDictionaryLoaded();
 		attachDetachPhoneticViewModel(true);
 	}
 
@@ -53,6 +52,7 @@ namespace PticaGovorun
 
 	void PhoneticDictionaryDialog::showEvent(QShowEvent*)
 	{
+		findMatchedWords();
 		ui->lineEditCurrentWord->setFocus();
 	}
 
@@ -120,7 +120,7 @@ namespace PticaGovorun
 	void PhoneticDictionaryDialog::lineEditNewWord_textChanged(const QString & text)
 	{
 		QString curWord = text;
-		QString pronStr = phoneticDictViewModel_->getWordAutoTranscription(curWord);
+		QString pronStr = phoneticDictViewModel_->getWordAutoPhoneticExpansion(curWord);
 		ui->lineEditWordTranscriptionAuto->setText(pronStr);
 	}
 

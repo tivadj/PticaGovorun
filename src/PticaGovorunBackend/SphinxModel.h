@@ -9,6 +9,7 @@
 #include <pocketsphinx.h> // cmd_ln_init
 #include "PhoneticService.h"
 #include "SpeechProcessing.h"
+#include "SpeechDataValidation.h"
 
 namespace PticaGovorun
 {
@@ -114,8 +115,6 @@ namespace PticaGovorun
 			WordPhoneticTranscriber& phoneticTranscriber,
 			int* dictWordsCount = nullptr, int* phonesCount = nullptr);
 
-		void findWordsWithoutPronunciation(const std::vector<AnnotatedSpeechSegment>& segments, bool useBroken, std::vector<boost::wstring_ref>& unkWords) const;
-
 		//
 		void loadDeclinationDictionary(std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWordDict);
 		void phoneticSplitterBootstrapOnDeclinedWords(UkrainianPhoneticSplitter& phoneticSplitter);
@@ -171,14 +170,15 @@ namespace PticaGovorun
 	private:
 		QString dbName_;
 		QDir outDir_;
-		QDir speechModelDir_;
-		std::unique_ptr<GrowOnlyPinArena<wchar_t>> stringArena_;
+		QDir speechProjDir_;
+		std::shared_ptr<GrowOnlyPinArena<wchar_t>> stringArena_;
 		PhoneRegistry phoneReg_;
+		std::shared_ptr<SpeechData> speechData_;
 
-		std::vector<PhoneticWord> phoneticDictWordsWellFormed_;
+		//std::vector<PhoneticWord> phoneticDictWordsWellFormed_;
+		//std::vector<PhoneticWord> phoneticDictWordsBroken_;
+		//std::vector<PhoneticWord> phoneticDictWordsFiller_;
 		std::vector<PhoneticWord> phoneticDictWordsBrownBear_;
-		std::vector<PhoneticWord> phoneticDictWordsBroken_;
-		std::vector<PhoneticWord> phoneticDictWordsFiller_;
 
 		std::map<boost::wstring_ref, PhoneticWord> phoneticDictWellFormed_;
 		std::map<boost::wstring_ref, PhoneticWord> phoneticDictBroken_;

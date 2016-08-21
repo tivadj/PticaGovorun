@@ -1,25 +1,24 @@
 #pragma once
-#include <map>
 #include <QObject>
 #include <QStringList>
 #include "PhoneticService.h"
 #include "ComponentsInfrastructure.h"
 #include "SpeechAnnotation.h"
+#include "SpeechDataValidation.h"
 
 namespace PticaGovorun
 {
 	class PhoneticDictionaryViewModel : public QObject
 	{
 		Q_OBJECT
+		std::shared_ptr<SpeechData> speechData_;
 	public:
 	signals :
 		void matchedWordsChanged();
 		void phoneticTrnascriptChanged();
 
 	public:
-		PhoneticDictionaryViewModel();
-
-		void ensureDictionaryLoaded();
+		PhoneticDictionaryViewModel(std::shared_ptr<SpeechData> speechData, std::shared_ptr<PhoneRegistry> phoneReg);
 
 		void updateSuggesedWordsList(const QString& browseDictStr, const QString& currentWord);
 
@@ -32,37 +31,12 @@ namespace PticaGovorun
 		void setEditedWordSourceDictionary(const QString& editedWordSourceDictionary);
 		void updateWordPronunciation(const QString& dictStr, const QString& newWord, const QString& newWordProns);
 
-		// Saves all phonetic dictionaries.
-		void saveDict();
+		QString getWordAutoPhoneticExpansion(const QString& word) const;
 
-		void validateWordsHavePhoneticTranscription(const QString& text, QStringList& checkMsgs);
-		void validateSpeechAnnotationsHavePhoneticTranscription(const SpeechAnnotation& speechAnnot, QStringList& checkMsgs);
-		void validateAllPronunciationsSpecifyStress(QStringList& checkMsgs);
-		
-		// Add each pronId usage from speech annotation to the dict.
-		// Used to calculate which pronIds in phonetic dict are not used.
-		void countPronIdUsage(const SpeechAnnotation& speechAnnot, std::map<boost::wstring_ref, int>& pronIdToUsedCount);
-
-		std::tuple<bool, const char*> convertTextToPhoneListString(boost::wstring_ref text, std::string& speechPhonesString);
-		bool findPronAsWordPhoneticExpansions(boost::wstring_ref pronAsWord, std::vector<PronunciationFlavour>& prons);
-
-		QString getWordAutoTranscription(const QString& word) const;
-
-		const std::map<boost::wstring_ref, PhoneticWord>& phoneticDictWellFormed() const { return phoneticDictWellFormed_; }
-		const std::map<boost::wstring_ref, PhoneticWord>& phoneticDictBroken() const { return phoneticDictBroken_; }
-	private:
-		bool findPronAsWordPhoneticExpansions(const std::map<boost::wstring_ref, PhoneticWord>& phoneticDict, boost::wstring_ref pronCode, std::vector<PronunciationFlavour>& prons);
-	private:
-		GrowOnlyPinArena<wchar_t> stringArena_;
-		std::map<boost::wstring_ref, PhoneticWord> phoneticDictWellFormed_;
-		std::map<boost::wstring_ref, PhoneticWord> phoneticDictBroken_;
-		std::map<boost::wstring_ref, PhoneticWord> phoneticDictFiller_;
-		std::map<boost::wstring_ref, PhoneticWord> phoneticDictShrekky_;
-		std::unique_ptr<PhoneRegistry> phoneReg_;
+		private:
+		std::shared_ptr<PhoneRegistry> phoneReg_;
 		QStringList matchedWords_;
 		QString wordPhoneticTrnascript_;
 		QString editedWordSourceDictionary_; // the dictId from where the current word is taken
 	};
-
-	void validate(PhoneticDictionaryViewModel& phoneticDictViewModel, const SpeechAnnotation& speechAnnot, QStringList& validResult);
 }

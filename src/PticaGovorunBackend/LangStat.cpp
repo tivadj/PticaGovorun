@@ -146,7 +146,7 @@ namespace PticaGovorun
 		allWordParts_.insert(std::make_pair(wordId, std::move(wordPart)));
 		WordPart* result = &allWordParts_.at(wordId);
 
-		partTextToWordPart_.insert(std::make_pair(wordPart.partText(), result));
+		partTextToWordPart_.insert(std::make_pair(result->partText(), result));
 
 		return result;
 	}

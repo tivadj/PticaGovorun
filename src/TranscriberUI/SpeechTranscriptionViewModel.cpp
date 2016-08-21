@@ -1219,7 +1219,7 @@ void SpeechTranscriptionViewModel::setCurrentMarkerTranscriptText(const QString&
 		if (marker.Language == SpeechLanguage::Ukrainian)
 		{
 			QStringList validResult;
-			phoneticDictViewModel_->validateWordsHavePhoneticTranscription(text, validResult);
+			speechData_->validateUtteranceHasPhoneticExpansion(text, validResult);
 			if (!validResult.isEmpty())
 			{
 				QString msg = validResult.join('\n');
@@ -1302,7 +1302,7 @@ void SpeechTranscriptionViewModel::setCurrentMarkerStopOnPlayback(bool stopsPlay
 		std::string phoneListString;
 		bool convOp;
 		const char* errMsg;
-		std::tie(convOp, errMsg) = phoneticDictViewModel_->convertTextToPhoneListString(textRef, phoneListString);
+		std::tie(convOp, errMsg) = speechData_->convertTextToPhoneListString(textRef, phoneListString);
 		if (!convOp)
 		{
 			nextNotification(QString::fromLatin1(errMsg));
@@ -1947,7 +1947,14 @@ void SpeechTranscriptionViewModel::navigateToMarkerRequest()
 
 void SpeechTranscriptionViewModel::setPhoneticDictViewModel(std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> phoneticDictViewModel)
 {
+	PG_Assert2(phoneticDictViewModel != nullptr, "")
 	phoneticDictViewModel_ = phoneticDictViewModel;
+}
+
+void SpeechTranscriptionViewModel::setSpeechData(std::shared_ptr<SpeechData> speechData)
+{
+	PG_Assert2(speechData != nullptr, "");
+	speechData_ = speechData;
 }
 
 std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> SpeechTranscriptionViewModel::phoneticDictViewModel()

@@ -167,12 +167,15 @@ namespace PticaGovorun
 
 		else if (ke->key() == Qt::Key_P && ke->modifiers().testFlag(Qt::ControlModifier))
 		{
-			PhoneticDictionaryDialog phoneticDictDlg;
-			phoneticDictDlg.setPhoneticViewModel(annotationToolModel_->phoneticDictModel());
-			if (phoneticDictDlg.exec() == QDialog::Accepted) { }
-			
-			// update text line of each transcription view
-			annotationToolModel_->onPronIdPhoneticSpecChanged();
+			if (annotationToolModel_->isSpeechProjectOpened())
+			{
+				PhoneticDictionaryDialog phoneticDictDlg;
+				phoneticDictDlg.setPhoneticViewModel(annotationToolModel_->phoneticDictModel());
+				if (phoneticDictDlg.exec() == QDialog::Accepted) {}
+
+				// update text line of each transcription view
+				annotationToolModel_->onPronIdPhoneticSpecChanged();
+			}
 		}
 		else if (ke->key() == Qt::Key_B && ke->modifiers().testFlag(Qt::ControlModifier))
 		{
