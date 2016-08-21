@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<phoneticDict>
-   <word name="&lt;s>" phones="SIL"/>
-   <word name="&lt;/s>" phones="SIL"/>
-   <word name="&lt;sil>" phones="SIL"/>
-   <word name="[sp]" phones="SIL"/>
-</phoneticDict>
