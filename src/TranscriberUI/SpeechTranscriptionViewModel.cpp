@@ -1570,9 +1570,9 @@ void SpeechTranscriptionViewModel::recognizeCurrentSegmentSphinxRequest()
 	// The name of the directory with sphinx speech model data.
 	QString sphinxModelDirName = AppHelpers::configParamQString("SphinxModelDirName", "persian");
 
-	std::string hmmPath = AppHelpers::mapPathStdString(QString("data/Sphinx/%1/model_parameters/persian.cd_cont_200").arg(sphinxModelDirName));
-	std::string langModelPath = AppHelpers::mapPathStdString(QString("data/Sphinx/%1/etc/persian_test.lm.DMP").arg(sphinxModelDirName));
-	std::string dictPath = AppHelpers::mapPathStdString(QString("data/Sphinx/%1/etc/persian_test.dic").arg(sphinxModelDirName));
+	std::string hmmPath = AppHelpers::mapPathStdString(QString("data/TrainSphinx/%1/model_parameters/persian.cd_cont_200").arg(sphinxModelDirName));
+	std::string langModelPath = AppHelpers::mapPathStdString(QString("data/TrainSphinx/%1/etc/persian_test.lm.DMP").arg(sphinxModelDirName));
+	std::string dictPath = AppHelpers::mapPathStdString(QString("data/TrainSphinx/%1/etc/persian_test.dic").arg(sphinxModelDirName));
 	cmd_ln_t *config = SphinxConfig::pg_init_cmd_ln_t(hmmPath, langModelPath, dictPath, true, false, true, boost::string_ref());
 	if (config == nullptr)
 		return;

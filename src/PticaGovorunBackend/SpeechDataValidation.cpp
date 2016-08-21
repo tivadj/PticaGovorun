@@ -145,7 +145,7 @@ namespace PticaGovorun
 
 	boost::filesystem::path SpeechData::shrekkyDictPath()
 	{
-		return speechProjDir_ / "Julius/shrekky/shrekkyDic.voca";
+		return AppHelpers::mapPath("pgdata/Julius/shrekky/shrekkyDic.voca").toStdWString();
 	}
 
 	std::tuple<bool, const char*> SpeechData::convertTextToPhoneListString(boost::wstring_ref text, std::string& speechPhonesString)

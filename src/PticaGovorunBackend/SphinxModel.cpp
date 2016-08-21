@@ -1910,7 +1910,7 @@ namespace PticaGovorun
 	{
 		std::vector<short> silenceFrames;
 		float silenceFrameRate = -1;
-		std::string silenceWavPath = AppHelpers::mapPathStdString("data/Sphinx2/SpeechModels/pynzenyk-background-200ms.wav");
+		std::string silenceWavPath = AppHelpers::mapPathStdString("pgdata/Sphinx2/SpeechModels/pynzenyk-background-200ms.wav");
 		auto readOp = readAllSamples(silenceWavPath.c_str(), silenceFrames, &silenceFrameRate);
 		if (!std::get<0>(readOp))
 			return std::make_tuple(false, "Can't read silence wav file");

@@ -18,6 +18,8 @@ array_view.props
 *.user
 *.psess
 *.ipch
+*.VC.db
+*.VC.opendb
 
 # Qt specific
 GeneratedFiles/
