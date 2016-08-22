@@ -3449,18 +3449,13 @@ namespace PticaGovorun
 		return allowPhoneticWordSplit_;
 	}
 
-	void UkrainianPhoneticSplitter::gatherWordPartsSequenceUsage(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess, bool outputCorpus)
+	void UkrainianPhoneticSplitter::gatherWordPartsSequenceUsage(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess, bool outputCorpus, boost::filesystem::path corpusFilePath)
 	{
 		QFile corpusFile;
 		QTextStream corpusStream;
 		if (outputCorpus)
 		{
-			std::wstringstream corpusFileName;
-			corpusFileName << "persianCorpus.";
-			appendTimeStampNow(corpusFileName);
-			corpusFileName << ".txt";
-
-			corpusFile.setFileName(QString::fromStdWString(corpusFileName.str()));
+			corpusFile.setFileName(toQString(corpusFilePath.wstring()));
 			if (!corpusFile.open(QIODevice::WriteOnly | QIODevice::Text))
 				return;
 			corpusStream.setDevice(&corpusFile);

@@ -978,6 +978,14 @@ namespace RecognizeSpeechSphinxTester
 			return;
 		}
 
+		QString speechProjDirQStr = AppHelpers::configParamQString("speechProjDir", "speechProjDir_ERROR");
+		QDir speechProjDir = QDir(speechProjDirQStr);
+		if (!speechProjDir.exists())
+		{
+			std::wcerr << L"can't find default speech lang project directory " << speechProjDirQStr.toStdWString() << std::endl;
+			return;
+		}
+
 		//
 
 		bool excludeSilFromDecOutput = true; // true to match Sphinx behaviour of excluding silence from decoder's output
@@ -992,7 +1000,7 @@ namespace RecognizeSpeechSphinxTester
 		std::vector<PhoneticWord> phoneticDictKnown;
 		bool loadPhoneDict;
 		const char* errMsg = nullptr;
-		std::wstring persianDictPathK = AppHelpers::mapPath("data/PhoneticDict/phoneticDictUkKnown.xml").toStdWString();
+		std::wstring persianDictPathK = speechProjDir.filePath("PhoneticDict/phoneticDictUkKnown.xml").toStdWString();
 		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryXml(persianDictPathK, phoneReg, phoneticDictKnown, stringArena);
 		if (!loadPhoneDict)
 		{

@@ -8,6 +8,7 @@
 #include <QTextStream>
 #include <boost/optional.hpp>
 #include <boost/utility/string_ref.hpp>
+#include <boost/filesystem/path.hpp>
 #include "ComponentsInfrastructure.h"
 #include "PticaGovorunCore.h"
 #include "LangStat.h"
@@ -177,7 +178,7 @@ namespace PticaGovorun
 		void bootstrapFromDeclinedWords(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWords, const std::wstring& targetWord,
 			const std::unordered_set<std::wstring>& processedWords);
 
-		void gatherWordPartsSequenceUsage(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess = -1, bool outputCorpus = false);
+		void gatherWordPartsSequenceUsage(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess, bool outputCorpus, boost::filesystem::path corpusFilePath);
 
 		const WordsUsageInfo& wordUsage() const;
 		WordsUsageInfo& wordUsage();

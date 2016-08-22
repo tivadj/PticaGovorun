@@ -118,9 +118,9 @@ namespace PticaGovorun
 		//
 		void loadDeclinationDictionary(std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWordDict);
 		void phoneticSplitterBootstrapOnDeclinedWords(UkrainianPhoneticSplitter& phoneticSplitter);
-		void phoneticSplitterCollectWordUsageInText(int maxFilesToProcess, UkrainianPhoneticSplitter& phoneticSplitter);
+		void phoneticSplitterCollectWordUsageInText(UkrainianPhoneticSplitter& phoneticSplitter, int maxFilesToProcess, bool outputCorpus, boost::filesystem::path corpusFilePath);
 		void phoneticSplitterRegisterWordsFromPhoneticDictionary(UkrainianPhoneticSplitter& phoneticSplitter);
-		void phoneticSplitterLoad(int maxFilesToProcess, UkrainianPhoneticSplitter& phoneticSplitter);
+		void phoneticSplitterLoad(UkrainianPhoneticSplitter& phoneticSplitter, int maxFilesToProcess, bool outputCorpus, boost::filesystem::path corpusFilePath);
 
 		// phonetic dict
 		std::tuple<bool, const char*> buildPhoneticDictionary(const std::vector<const WordPart*>& seedUnigrams, 
@@ -236,6 +236,7 @@ namespace PticaGovorun
 	PG_EXPORTS bool loadSphinxAudio(boost::wstring_ref audioDir, const std::vector<std::wstring>& audioRelPathesNoExt, boost::wstring_ref audioFileSuffix, std::vector<AudioData>& audioDataList);
 
 	bool loadWordList(boost::wstring_ref filePath, std::unordered_set<std::wstring>& words);
+	bool writeWordList(const std::vector<boost::wstring_ref>& words, boost::filesystem::path filePath, QString* errMsg);
 
 	// Consistency rule for created speech model.
 	// Broken pronunciations are allowed in training (but not in test) dataset.

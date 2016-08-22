@@ -697,6 +697,7 @@ namespace PticaGovorun
 		const char* ConfigIncludeBrownBear = "includeBrownBear";
 		const char* ConfigOutputWav = "outputWav";
 		const char* ConfigGramDim = "gramDim";
+		const char* ConfigOutputCorpus = "textWorld.outputCorpus";
 		const char* ConfigPadSilence = "padSilence";
 		const char* ConfigTrainCasesRatio = "trainCasesRatio";
 		const char* ConfigUseBrokenPronsInTrainOnly = "useBrokenPronsInTrainOnly";
@@ -720,6 +721,7 @@ namespace PticaGovorun
 		bool outputWav = AppHelpers::configParamBool(ConfigOutputWav, true);
 		bool outputPhoneticDictAndLangModelAndTranscript = true;
 		int gramDim = AppHelpers::configParamInt(ConfigGramDim, 2); // 1=unigram, 2=bigram
+		bool outputCorpus = AppHelpers::configParamBool(ConfigOutputCorpus, false);
 		bool padSilence = AppHelpers::configParamBool(ConfigPadSilence, true); // pad the audio segment with the silence segment
 		bool allowSoftHardConsonant = true;
 		bool allowVowelStress = true;
@@ -767,7 +769,7 @@ namespace PticaGovorun
 		std::wcout << "Found annotated segments: " << segments_.size() << std::endl; // debug
 
 		//
-		QString denyWordsFilePath = AppHelpers::mapPath("data/LM/denyWords.txt");
+		QString denyWordsFilePath = speechProjDir_.filePath("LM/denyWords.txt");
 		std::unordered_set<std::wstring> denyWords;
 		if (!loadWordList(denyWordsFilePath.toStdWString(), denyWords))
 		{
@@ -830,13 +832,15 @@ namespace PticaGovorun
 			phoneticSplitter_.setAllowPhoneticWordSplit(allowPhoneticWordSplit);
 
 			int maxFilesToProcess = AppHelpers::configParamInt("textWorld.maxFilesToProcess", -1);
-			phoneticSplitterLoad(maxFilesToProcess, phoneticSplitter_);
+
+			QString corpusFilePath = outDir_.filePath("corpusUtters.txt");
+			phoneticSplitterLoad(phoneticSplitter_, maxFilesToProcess, outputCorpus, corpusFilePath.toStdWString());
 
 			// we call it before propogating pronCodes to words
 			rejectDeniedWords(denyWords, phoneticSplitter_.wordUsage());
 
 			//
-			std::wstring stressDict = AppHelpers::mapPath("data/LM/stressDictUk.xml").toStdWString();
+			std::wstring stressDict = speechProjDir_.filePath("LM/stressDictUk.xml").toStdWString();
 			std::unordered_map<std::wstring, int> wordToStressedSyllable;
 			std::tie(op, errMsg) = loadStressedSyllableDictionaryXml(stressDict, wordToStressedSyllable);
 			if (!op)
@@ -1150,8 +1154,6 @@ namespace PticaGovorun
 		std::wcout << "phase=" << (phase == ResourceUsagePhase::Train ? "train" : "test")
 			<< " seed unigrams count=" << seedPhoneticWords.size() << std::endl;
 
-		//
-
 		std::vector<PhoneticWord> seedWordsLangModel;
 		seedWordsLangModel.reserve(seedPhoneticWords.size());
 		std::copy_if(std::begin(seedPhoneticWords), std::end(seedPhoneticWords), std::back_inserter(seedWordsLangModel), [](const PhoneticWord& word) -> bool {
@@ -1163,6 +1165,13 @@ namespace PticaGovorun
 			return true;
 		});
 
+		//
+		QString fileSuffix = phase == ResourceUsagePhase::Train ? "_train" : "_test";
+		std::vector<boost::wstring_ref> wordsVoca(seedWordsLangModel.size());
+		std::transform(std::begin(seedWordsLangModel), std::end(seedWordsLangModel), std::begin(wordsVoca), [](auto& w) { return w.Word; });
+		if (!writeWordList(wordsVoca, filePath("corpusVocab" + fileSuffix + ".vocab").toStdWString(), &errMsg_))
+			return;
+
 		std::map<int, ptrdiff_t> wordPartIdToRecoveredUsage;
 		langModelRecoverUsageOfUnusedWords(seedWordsLangModel, phoneticSplitter_, includeBrokenWords, wordPartIdToRecoveredUsage);
 
@@ -1171,7 +1180,6 @@ namespace PticaGovorun
 		langModel.generate(seedWordsLangModel, wordPartIdToRecoveredUsage, phoneticSplitter_);
 
 		//
-		QString fileSuffix = phase == ResourceUsagePhase::Train ? "_train" : "_test";
 		writeArpaLanguageModel(langModel, filePath(dbName_ + fileSuffix + ".arpa").toStdWString().c_str(), pronCodeDisplay);
 
 		// phonetic dictionary
@@ -1359,6 +1367,25 @@ namespace PticaGovorun
 		return true;
 	}
 
+	bool writeWordList(const std::vector<boost::wstring_ref>& words, boost::filesystem::path filePath, QString* errMsg)
+	{
+		QFile file(QString::fromStdWString(filePath.wstring()));
+		if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+		{
+			*errMsg = QString("Can't open file %1").arg(QString::fromStdWString(filePath.wstring()));
+			return false;
+		}
+
+		QTextStream txt(&file);
+		txt.setCodec("UTF-8");
+		txt.setGenerateByteOrderMark(false);
+		for (const boost::wstring_ref word : words)
+		{
+			txt << toQString(word) << "\n";
+		}
+		return true;
+	}
+
 	void SphinxTrainDataBuilder::loadDeclinationDictionary(std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWordDict)
 	{
 		auto dictPathArray = {
@@ -1463,14 +1490,14 @@ namespace PticaGovorun
 				registerWord(pron.PronCode);
 	}
 
-	void SphinxTrainDataBuilder::phoneticSplitterCollectWordUsageInText(int maxFilesToProcess, UkrainianPhoneticSplitter& phoneticSplitter)
+	void SphinxTrainDataBuilder::phoneticSplitterCollectWordUsageInText(UkrainianPhoneticSplitter& phoneticSplitter, int maxFilesToProcess, bool outputCorpus, boost::filesystem::path corpusFilePath)
 	{
 		std::wstring txtDir = speechProjDir_.filePath("textWorld").toStdWString();
 		std::wcout << "txtDir=" << txtDir << std::endl;
 		long totalPreSplitWords = 0;
 
 		std::chrono::time_point<Clock> now1 = Clock::now();
-		phoneticSplitter.gatherWordPartsSequenceUsage(txtDir.c_str(), totalPreSplitWords, maxFilesToProcess, false);
+		phoneticSplitter.gatherWordPartsSequenceUsage(txtDir.c_str(), totalPreSplitWords, maxFilesToProcess, outputCorpus, corpusFilePath);
 		std::chrono::time_point<Clock> now2 = Clock::now();
 		auto elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
 		std::wcout << L"gatherWordPartsSequenceUsage took=" << elapsedSec << L"s" << std::endl;
@@ -1486,23 +1513,21 @@ namespace PticaGovorun
 			std::wcout << L"text corpus has #" << seqDim + 1 << " words: " << wordsPerNGram << std::endl;
 		}
 
-		ptrdiff_t we1 = wordUsage.getWordSequenceUsage(WordSeqKey{ phoneticSplitter.sentEndWordPart()->id() });
-
 		phoneticSplitter.printSuffixUsageStatistics();
 	}
 
-	void SphinxTrainDataBuilder::phoneticSplitterLoad(int maxFilesToProcess, UkrainianPhoneticSplitter& phoneticSplitter)
+	void SphinxTrainDataBuilder::phoneticSplitterLoad(UkrainianPhoneticSplitter& phoneticSplitter, int maxFilesToProcess, bool outputCorpus, boost::filesystem::path corpusFilePath)
 	{
 		phoneticSplitterBootstrapOnDeclinedWords(phoneticSplitter);
 		phoneticSplitterRegisterWordsFromPhoneticDictionary(phoneticSplitter);
-		phoneticSplitterCollectWordUsageInText(maxFilesToProcess, phoneticSplitter);
+		phoneticSplitterCollectWordUsageInText(phoneticSplitter, maxFilesToProcess, outputCorpus, corpusFilePath);
 	}
 
 	std::tuple<bool, const char*> SphinxTrainDataBuilder::buildPhoneticDictionary(const std::vector<const WordPart*>& seedUnigrams, 
 		std::function<auto (boost::wstring_ref pronCode) -> const PronunciationFlavour*> expandWellKnownPronCode,
 		std::vector<PhoneticWord>& phoneticDictWords)
 	{
-		std::wstring stressDict = AppHelpers::mapPath("data/LM/stressDictUk.xml").toStdWString();
+		std::wstring stressDict = speechProjDir_.filePath("LM/stressDictUk.xml").toStdWString();
 		std::unordered_map<std::wstring, int> wordToStressedSyllable;
 		bool op;
 		const char* errMsg;
