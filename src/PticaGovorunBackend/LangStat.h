@@ -130,6 +130,6 @@ namespace PticaGovorun
 	};
 
 	/// Queries word's usage statistics. Checks that usage number is either in usage object or usage map.
-	auto wordUsageOneSource(int wordPartId, const WordsUsageInfo& wordUsage, const std::map<int, ptrdiff_t>& wordPartIdToRecoveredUsage)-> ptrdiff_t;
+	auto wordUsageOneSource(int wordPartId, const WordsUsageInfo& wordUsage, const std::map<int, ptrdiff_t>* wordPartIdToRecoveredUsage)-> ptrdiff_t;
 }
 

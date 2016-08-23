@@ -332,14 +332,17 @@ namespace PticaGovorun
 		}
 	}
 
-	auto wordUsageOneSource(int wordPartId, const WordsUsageInfo& wordUsage, const std::map<int, ptrdiff_t>& wordPartIdToRecoveredUsage) -> ptrdiff_t
+	auto wordUsageOneSource(int wordPartId, const WordsUsageInfo& wordUsage, const std::map<int, ptrdiff_t>* wordPartIdToRecoveredUsage) -> ptrdiff_t
 	{
 		WordSeqKey seqKey({ wordPartId });
 		auto seqUsage1 = wordUsage.getWordSequenceUsage(seqKey);
+		
+		if (wordPartIdToRecoveredUsage == nullptr)
+			return seqUsage1;
 
 		ptrdiff_t seqUsage2 = 0;
-		auto usageIt = wordPartIdToRecoveredUsage.find(wordPartId);
-		if (usageIt != std::end(wordPartIdToRecoveredUsage))
+		auto usageIt = wordPartIdToRecoveredUsage->find(wordPartId);
+		if (usageIt != std::end(*wordPartIdToRecoveredUsage))
 			seqUsage2 = usageIt->second;
 
 		bool onlyOne = (seqUsage1 > 0) ^ (seqUsage2 > 0);

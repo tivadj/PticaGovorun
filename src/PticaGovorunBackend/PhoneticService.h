@@ -164,8 +164,8 @@ namespace PticaGovorun
 		};
 		WordsUsageInfo wordUsage_;
 		std::unordered_map<std::wstring, ShortArray<int,2>> wordStrToPartIds_; // some words, split by default
-		long seqOneWordCounter_ = 0;
-		long seqTwoWordsCounter_ = 0;
+		ptrdiff_t seqOneWordCounter_ = 0;
+		ptrdiff_t seqTwoWordsCounter_ = 0;
 
 		/// If phonetic split is enabled, the splitter tries to divide the word in parts. Otherwise the whole word is used.
 		bool allowPhoneticWordSplit_ = false;

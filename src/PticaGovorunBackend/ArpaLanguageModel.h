@@ -64,7 +64,13 @@ namespace PticaGovorun
 	private:
 		void buildBigramsWholeWordsOnly(const UkrainianPhoneticSplitter& phoneticSplitter);
 		void buildBigramsWordPartsAware(const UkrainianPhoneticSplitter& phoneticSplitter);
+		
+		/// Check total probability of all unigrams = 1
+		void checkUnigramTotalProbOne() const;
 	};
 
-	PG_EXPORTS void writeArpaLanguageModel(const ArpaLanguageModel& langModel, const wchar_t* lmFilePath, std::function<auto (boost::wstring_ref)->boost::wstring_ref> pronCodeDisplay);
+	PG_EXPORTS void writeArpaLanguageModel(const ArpaLanguageModel& langModel, const wchar_t* lmFilePath);
+
+	/// Calculates the total usage of a list of words.
+	ptrdiff_t wordsTotalUsage(const WordsUsageInfo& wordUsage, const std::vector<PhoneticWord>& words, const std::map<int, ptrdiff_t>* wordPartIdToUsage);
 }

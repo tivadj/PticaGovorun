@@ -137,7 +137,7 @@ namespace PticaGovorun
 		bool writePhoneList(const std::vector<std::string>& phoneList, const QString& phoneListFile) const;
 
 		// language model
-		void langModelRecoverUsageOfUnusedWords(const std::vector<PhoneticWord> seedWords, UkrainianPhoneticSplitter& phoneticSplitter, bool includeBrokenWords, std::map<int, ptrdiff_t>& wordPartIdToRecoveredUsage);
+		void langModelRecoverUsageOfUnusedWords(const std::vector<PhoneticWord> vocabWords, UkrainianPhoneticSplitter& phoneticSplitter, bool includeBrokenWords, std::map<int, ptrdiff_t>& wordPartIdToRecoveredUsage);
 
 		//
 		void loadAudioAnnotation(const wchar_t* wavRootDir, const wchar_t* annotRootDir, const wchar_t* wavDirToAnalyze, bool includeBrownBear);
