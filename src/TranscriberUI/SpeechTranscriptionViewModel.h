@@ -388,7 +388,7 @@ private:
 		std::atomic<bool> allowPlaying;
 	};
 	SoundPlayerData soundPlayerData_;
-	std::atomic<bool> isPlaying_;
+	std::atomic<bool> isPlaying_ = false;
 	long playingSampleInd_ = PticaGovorun::NullSampleInd; // the plyaing sample or -1 if audio is not playing
 
 	// recognition

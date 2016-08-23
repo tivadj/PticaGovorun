@@ -4,7 +4,7 @@
 
   <PropertyGroup Label="UserMacros">
     <PortAudioDir>C:\devb\PticaGovorunProj\srcrep\ThirdParty\portaudio\</PortAudioDir>
-    <PortAudioBinDir>$(PortAudioDir)build-msvc120-x64\$(Configuration)\</PortAudioBinDir>
+    <PortAudioBinDir>$(PortAudioDir)build_msvc140_x64\$(Configuration)\</PortAudioBinDir>
   </PropertyGroup>
   
   <PropertyGroup>
