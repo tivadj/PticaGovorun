@@ -351,7 +351,6 @@ namespace RecognizeSpeechSphinxTester
 		int& phoneErrorTotalCount, int& phoneTotalCount,
 		EditDistance<PhoneId, PhoneProximityCosts>& phonesEditDist,
 		const PhoneProximityCosts& editCost,
-		const std::map<boost::wstring_ref, boost::wstring_ref>& pronCodeToWordWellFormed,
 		const std::map<boost::wstring_ref, PronunciationFlavour>& pronCodeToPronTest,
 		const std::map<boost::wstring_ref, PronunciationFlavour>& pronCodeToPronFiller,
 		const PhoneRegistry& phoneReg, bool excludeSilFromDecOutput)
@@ -504,46 +503,29 @@ namespace RecognizeSpeechSphinxTester
 				return pronCodeToPronFiller.find(pronCode) != pronCodeToPronFiller.end();
 			});
 
+			auto trimNumberInParenthesisFun = [](const std::vector<boost::wstring_ref>& words, std::vector<boost::wstring_ref>& outWords)
+			{
+				for (boost::wstring_ref pronId : words)
+				{
+					boost::wstring_ref baseWord;
+					parsePronId(pronId, baseWord);
+					outWords.push_back(baseWord);
+				}
+			};
+
 			// expected words
 
 			const auto& pronCodesExpectedSrc = excludeSilFromDecOutput ? pronCodesExpectedNoSil : pronCodesExpected;
 
-			// map pronId -> word (eg. слова(2) -> слова)
+			// map pronId -> word (eg. слова(2) -> слова) so that only baseWords are compared
 			std::vector<boost::wstring_ref> wordsExpected;
-			for (boost::wstring_ref pronId : pronCodesExpectedSrc)
-			{
-				//auto wordIt = pronCodeToWordWellFormed.find(pronId);
-				//if (wordIt != pronCodeToWordWellFormed.end())
-				//{
-				//	boost::wstring_ref word = wordIt->second;
-				//	wordsExpected.push_back(word);
-				//	continue;
-				//}
-				//wordsExpected.push_back(pronId);
-				boost::wstring_ref baseWord;
-				parsePronId(pronId, baseWord);
-				wordsExpected.push_back(baseWord);
-			}
+			trimNumberInParenthesisFun(pronCodesExpectedSrc, wordsExpected);
 
 			// actual words
-
-			const auto& pronCodesActualSrc = excludeSilFromDecOutput ? pronCodesActualNoSil : pronCodesActualMerged;
-
-			// map pronId -> word (eg. слова(2) -> слова)
+			// decoder will never return 'slova(2)' and will always return the base word 'slova'
+			std::vector<boost::wstring_ref>& pronCodesActualSrc = excludeSilFromDecOutput ? pronCodesActualNoSil : pronCodesActualMerged;
 			std::vector<boost::wstring_ref> wordsActual;
-			std::transform(pronCodesActualSrc.begin(), pronCodesActualSrc.end(), std::back_inserter(wordsActual), [&pronCodeToWordWellFormed](boost::wstring_ref pronCode)
-			{
-//				auto wordIt = pronCodeToWordWellFormed.find(pronCode);
-//				if (wordIt != pronCodeToWordWellFormed.end())
-//				{
-//					boost::wstring_ref word = wordIt->second;
-//					return word;
-//				}
-//				return pronCode;
-				boost::wstring_ref baseWord;
-				parsePronId(pronCode, baseWord);
-				return baseWord;
-			});
+			trimNumberInParenthesisFun(pronCodesActualSrc, wordsActual);
 
 			// compute word error
 
@@ -978,14 +960,6 @@ namespace RecognizeSpeechSphinxTester
 			return;
 		}
 
-		QString speechProjDirQStr = AppHelpers::configParamQString("speechProjDir", "speechProjDir_ERROR");
-		QDir speechProjDir = QDir(speechProjDirQStr);
-		if (!speechProjDir.exists())
-		{
-			std::wcerr << L"can't find default speech lang project directory " << speechProjDirQStr.toStdWString() << std::endl;
-			return;
-		}
-
 		//
 
 		bool excludeSilFromDecOutput = true; // true to match Sphinx behaviour of excluding silence from decoder's output
@@ -997,16 +971,8 @@ namespace RecognizeSpeechSphinxTester
 
 		// map pronunciation as word (pronId) to corresponding word
 		GrowOnlyPinArena<wchar_t> stringArena(10000);
-		std::vector<PhoneticWord> phoneticDictKnown;
 		bool loadPhoneDict;
 		const char* errMsg = nullptr;
-		std::wstring persianDictPathK = speechProjDir.filePath("PhoneticDict/phoneticDictUkKnown.xml").toStdWString();
-		std::tie(loadPhoneDict, errMsg) = loadPhoneticDictionaryXml(persianDictPathK, phoneReg, phoneticDictKnown, stringArena);
-		if (!loadPhoneDict)
-		{
-			std::wcerr << "Can't load phonetic dictionary " << errMsg << std::endl;
-			return;
-		}
 
 		QTextCodec* pTextCodec = QTextCodec::codecForName("utf8");
 		std::vector<std::string> brokenLines;
@@ -1040,9 +1006,6 @@ namespace RecognizeSpeechSphinxTester
 				}
 			}
 		};
-		std::map<boost::wstring_ref, boost::wstring_ref> pronCodeToWordWellFormed; // used to map pronCode->word (eg slova(1)->slova)
-		std::map<boost::wstring_ref, PronunciationFlavour> pronCodeToObjWellFormed;
-		populatePhoneDict(phoneticDictKnown, pronCodeToWordWellFormed, pronCodeToObjWellFormed);
 
 		//
 		std::vector<boost::wstring_ref> duplicatePronCodes;
@@ -1093,7 +1056,6 @@ namespace RecognizeSpeechSphinxTester
 			phoneConfusionMat, regPhonesCount, 
 			sentErrorTotalCount, wordErrorTotalCount, wordTotalCount, phoneErrorTotalCount, phoneTotalCount,
 			phonesEditDist, phoneCosts,
-			pronCodeToWordWellFormed,
 			pronCodeToObjTest, pronCodeToPronObjFiller,
 			phoneReg, excludeSilFromDecOutput);
 
