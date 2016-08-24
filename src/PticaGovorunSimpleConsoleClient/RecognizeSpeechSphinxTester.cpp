@@ -326,8 +326,9 @@ namespace RecognizeSpeechSphinxTester
 	struct TwoUtterances
 	{
 		std::wstring RelFilePathNoExt; // relative path to speech file
-		float ErrorWord; // edit distance between utterances as a sequence of words
-		float ErrorChars; // edit distance between utterances as a sequence of chars
+		float DistWords; // edit distance between utterances as a sequence of words
+		float DistChars; // edit distance between utterances as a sequence of chars
+		float DistPhones; // edit distance between utterances as a sequence of phones
 		TranscribedAudioSegment Segment;
 		std::wstring TextActual;
 		std::vector<boost::wstring_ref> PronIdsExpected; // слова(2)
@@ -340,7 +341,37 @@ namespace RecognizeSpeechSphinxTester
 		std::vector<PhoneId> PhonesActual;
 		std::string PhonesExpectedAlignedStr;
 		std::string PhonesActualAlignedStr;
+		std::wstring PhonesExpectedExpansionErrorMsg; // specify which expected pronCode can't be expanded
 	};
+
+	void updateConfusionMatrix(std::vector<int>& phoneConfusionMat, int phonesCount, std::vector<PhoneId> expectedPhones, std::vector<PhoneId> actualPhones, std::vector<EditStep> phoneEditRecipe)
+	{
+		for (const EditStep& step : phoneEditRecipe)
+		{
+			int phoneIdExpect = -1;
+			int phoneIdActual = -1;
+			if (step.Change == StringEditOp::RemoveOp)
+			{
+				phoneIdExpect = expectedPhones[step.Remove.FirstRemoveInd].Id;
+				phoneIdActual = 0;
+			}
+			else if (step.Change == StringEditOp::InsertOp)
+			{
+				phoneIdExpect = 0;
+				phoneIdActual = actualPhones[step.Insert.SecondSourceInd].Id;
+			}
+			else if (step.Change == StringEditOp::SubstituteOp)
+			{
+				phoneIdExpect = expectedPhones[step.Substitute.FirstInd].Id;
+				phoneIdActual = actualPhones[step.Substitute.SecondInd].Id;
+			}
+			PG_DbgAssert(phoneIdExpect != -1);
+			PG_DbgAssert(phoneIdActual != -1);
+			int row = phoneIdExpect;
+			int col = phoneIdActual;
+			phoneConfusionMat[col + phonesCount*row]++;
+		}
+	}
 
 	void decodeSpeechSegments(const std::vector<TranscribedAudioSegment>& segs,
 		
@@ -558,75 +589,68 @@ namespace RecognizeSpeechSphinxTester
 				return nullptr;
 			};
 
-			auto expandPronCodesFun = [&](const std::vector<boost::wstring_ref>& pronCodes, std::vector<PhoneId>& phones)
+			auto expandPronCodesFun = [&](const std::vector<boost::wstring_ref>& pronCodes, std::vector<PhoneId>& phones, std::wstring* errMsg) -> bool
 			{
 				for (boost::wstring_ref pronCode : pronCodes)
 				{
 					const PronunciationFlavour* pron = expandPronCodeFun(pronCode);
-					PG_Assert2(pron != nullptr, "The pronCode used in transcription must exist in primary/filler phonetic dictionary");
+					if (pron == nullptr)
+					{
+						*errMsg = QString("Phonetic dictionary has no pronCode=%1").arg(toQString(pronCode)).toStdWString();
+						return false;
+					}
 
 					std::copy(pron->Phones.begin(), pron->Phones.end(), std::back_inserter(phones));
 				}
+				return true;
 			};
 
+			// Transcript may contain words outside arpa and phonetic dictionary.
+			// In this case the phonetic expansion is not performed.
+			std::wstring phoneExpansionErrMsg;
 			std::vector<PhoneId> expectedPhones;
-			expandPronCodesFun(pronCodesExpectedSrc, expectedPhones);
-
 			std::vector<PhoneId> actualPhones;
-			expandPronCodesFun(pronCodesActualSrc, actualPhones);
+			std::string expectedPhonesStr;
+			std::string actualPhonesStr;
+			float distPhones = -1;
 
-			phonesEditDist.estimateAllDistances(expectedPhones, actualPhones, editCost);
-
-			std::vector<EditStep> phoneEditRecipe;
-			phonesEditDist.minCostRecipe(phoneEditRecipe);
-
-			// update confusion matrix
-			for (const EditStep& step : phoneEditRecipe)
+			bool expectedPhoneExpansion = expandPronCodesFun(pronCodesExpectedSrc, expectedPhones, &phoneExpansionErrMsg);
+			if (expectedPhoneExpansion)
 			{
-				int phoneIdExpect = -1;
-				int phoneIdActual = -1;
-				if (step.Change == StringEditOp::RemoveOp)
+				bool actualPhoneExpansion = expandPronCodesFun(pronCodesActualSrc, actualPhones, &phoneExpansionErrMsg);
+				PG_Assert2(actualPhoneExpansion, QString("Actual words must be in phonetic dictionary. %1")
+					.arg(QString::fromStdWString(phoneExpansionErrMsg)).toStdWString().c_str());
+
+				phonesEditDist.estimateAllDistances(expectedPhones, actualPhones, editCost);
+				distPhones = phonesEditDist.distance();
+
+				std::vector<EditStep> phoneEditRecipe;
+				phonesEditDist.minCostRecipe(phoneEditRecipe);
+
+				updateConfusionMatrix(phoneConfusionMat, phonesCount, expectedPhones, actualPhones, phoneEditRecipe);
+
+				std::function<void(PhoneId, std::vector<char>&)> ph2StrFun = [&phoneReg](PhoneId ph, std::vector<char>& phVec)
 				{
-					phoneIdExpect = expectedPhones[step.Remove.FirstRemoveInd].Id;
-					phoneIdActual = 0;
-				}
-				else if (step.Change == StringEditOp::InsertOp)
-				{
-					phoneIdExpect = 0;
-					phoneIdActual = actualPhones[step.Insert.SecondSourceInd].Id;
-				}
-				else if (step.Change == StringEditOp::SubstituteOp)
-				{
-					phoneIdExpect = expectedPhones[step.Substitute.FirstInd].Id;
-					phoneIdActual = actualPhones[step.Substitute.SecondInd].Id;
-				}
-				PG_DbgAssert(phoneIdExpect != -1);
-				PG_DbgAssert(phoneIdActual != -1);
-				int row = phoneIdExpect;
-				int col = phoneIdActual;
-				phoneConfusionMat[col + phonesCount*row]++;
+					std::string phStr;
+					bool toStrOp = phoneToStr(phoneReg, ph, phStr);
+					PG_Assert(toStrOp);
+					std::copy(phStr.begin(), phStr.end(), std::back_inserter(phVec));
+				};
+
+				std::vector<char> align1;
+				std::vector<char> align2;
+				char padChar = '_';
+				alignWords(wv::make_view(expectedPhones), wv::make_view(actualPhones), ph2StrFun, phoneEditRecipe, padChar, align1, align2, boost::make_optional(padChar));
+				expectedPhonesStr = std::string(align1.begin(), align1.end());
+				actualPhonesStr = std::string(align2.begin(), align2.end());
 			}
-
-			std::function<void(PhoneId, std::vector<char>&)> ph2StrFun = [&phoneReg](PhoneId ph, std::vector<char>& phVec)
-			{
-				std::string phStr;
-				bool toStrOp = phoneToStr(phoneReg, ph, phStr);
-				PG_Assert(toStrOp);
-				std::copy(phStr.begin(), phStr.end(), std::back_inserter(phVec));
-			};
-
-			std::vector<char> align1;
-			std::vector<char> align2;
-			char padChar = '_';
-			alignWords(wv::make_view(expectedPhones), wv::make_view(actualPhones), ph2StrFun, phoneEditRecipe, padChar, align1, align2, boost::make_optional(padChar));
-			std::string expectedPhonesStr(align1.begin(), align1.end());
-			std::string actualPhonesStr(align2.begin(), align2.end());
 
 			//
 			TwoUtterances utter;
 			utter.RelFilePathNoExt = seg.RelFilePathNoExt;
-			utter.ErrorWord = distWord;
-			utter.ErrorChars = distChar;
+			utter.DistWords = distWord;
+			utter.DistChars = distChar;
+			utter.DistPhones = distPhones;
 			utter.Segment = seg;
 			utter.TextActual = hypWStr;
 			utter.PronIdsExpected = pronCodesExpected;
@@ -639,12 +663,17 @@ namespace RecognizeSpeechSphinxTester
 			utter.PhonesActual = actualPhones;
 			utter.PhonesExpectedAlignedStr = expectedPhonesStr;
 			utter.PhonesActualAlignedStr = actualPhonesStr;
+			utter.PhonesExpectedExpansionErrorMsg = phoneExpansionErrMsg;
 			recogUtterances.push_back(utter);
 
-			wordErrorTotalCount += (int)distWord;
+			wordErrorTotalCount += std::trunc<int>(distWord);
 			wordTotalCount += (int)wordsExpected.size();
-			phoneErrorTotalCount += (int)distChar;
-			phoneTotalCount += (int)expectedPhones.size();
+			if (expectedPhoneExpansion)
+			{
+				PG_DbgAssert(distPhones >= 0);
+				phoneErrorTotalCount += std::trunc<int>(distPhones);
+				phoneTotalCount += (int)expectedPhones.size();
+			}
 			if (distWord > 0) sentErrorTotalCount += 1;
 		}
 	}
@@ -801,9 +830,12 @@ namespace RecognizeSpeechSphinxTester
 		for (int i = 0; i < recogUtterances.size(); ++i)
 		{
 			const TwoUtterances& utter = recogUtterances[i];
-			if (utter.ErrorWord == 0) // skip correct utterances
+			if (utter.DistWords == 0) // skip correct utterances
 				continue;
-			dumpFileStream << "WordError=" << utter.ErrorWord << "/" << utter.WordsExpected.size() << " " << "CharError=" << utter.ErrorChars << " RelWavPath=" << QString::fromStdWString(utter.Segment.RelFilePathNoExt) << "\n";
+			dumpFileStream << "WordError=" << utter.DistWords << "/" << utter.WordsExpected.size() 
+				<< " CharError=" << utter.DistChars
+				<< " PhoneError=" << utter.DistPhones
+				<< " RelWavPath=" << QString::fromStdWString(utter.Segment.RelFilePathNoExt) << "\n";
 
 			dumpFileStream << "ExpectProns=" << QString::fromStdWString(utter.Segment.Transcription) << "\n";
 
@@ -839,10 +871,15 @@ namespace RecognizeSpeechSphinxTester
 			dumpFileStream << "ExpectWords=" << QString::fromStdWString(std::wstring(alignWord1.begin(), alignWord1.end())) << "\n";
 			dumpFileStream << "ActualWords=" << QString::fromStdWString(std::wstring(alignWord2.begin(), alignWord2.end())) << "\n";
 
-
 			// expected-actual phones
-			dumpFileStream << "ExpectPhones=" << QString::fromStdString(utter.PhonesExpectedAlignedStr) << "\n";
-			dumpFileStream << "ActualPhones=" << QString::fromStdString(utter.PhonesActualAlignedStr) << "\n";
+			bool hasPhoneticExpansion = utter.PhonesExpectedExpansionErrorMsg.empty();
+			if (hasPhoneticExpansion)
+			{
+				dumpFileStream << "ExpectPhones=" << QString::fromStdString(utter.PhonesExpectedAlignedStr) << "\n";
+				dumpFileStream << "ActualPhones=" << QString::fromStdString(utter.PhonesActualAlignedStr) << "\n";
+			}
+			else
+				dumpFileStream << "ExpectPronsPhExpansionErr=" << QString::fromStdWString(utter.PhonesExpectedExpansionErrorMsg) << "\n";
 
 			dumpFileStream << "\n"; // line between utterances
 		}
@@ -878,8 +915,8 @@ namespace RecognizeSpeechSphinxTester
 			xmlWriter.writeAttribute("relWavPath", QString::fromStdWString(utter.Segment.RelFilePathNoExt));
 
 			xmlWriter.writeAttribute("speechVer", QString::fromStdWString(speechModelVerStr));
-			xmlWriter.writeAttribute("wordDist", QString::number(utter.ErrorWord));
-			xmlWriter.writeAttribute("charDist", QString::number(utter.ErrorChars));
+			xmlWriter.writeAttribute("wordDist", QString::number(utter.DistWords));
+			xmlWriter.writeAttribute("charDist", QString::number(utter.DistChars));
 			xmlWriter.writeAttribute("expWordsNum", QString::number(utter.WordsExpected.size()));
 
 			xmlWriter.writeTextElement("pronsExpect", QString::fromStdWString(utter.Segment.Transcription));
@@ -1094,7 +1131,7 @@ namespace RecognizeSpeechSphinxTester
 		
 		std::sort(std::begin(recogUtterances), std::end(recogUtterances), [](TwoUtterances& a, TwoUtterances& b)
 		{
-			return a.ErrorWord > b.ErrorWord;
+			return a.DistWords > b.DistWords;
 		});
 
 		dumpFileName.str(L"");

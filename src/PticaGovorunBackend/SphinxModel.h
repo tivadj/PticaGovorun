@@ -106,7 +106,7 @@ namespace PticaGovorun
 			std::function<auto (boost::wstring_ref word) -> const PhoneticWord*> findWellFormedWord,
 			const std::set<PhoneId>& trainPhoneIds,
 			WordPhoneticTranscriber& phoneticTranscriber,
-			bool includeBrokenWords,
+			ResourceUsagePhase phase,
 			std::vector<PhoneticWord>& result);
 
 		void buildPhaseSpecificParts(ResourceUsagePhase phase, int maxWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, 

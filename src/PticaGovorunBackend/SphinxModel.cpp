@@ -425,7 +425,7 @@ namespace PticaGovorun
 		std::function<auto (boost::wstring_ref word) -> const PhoneticWord*> expandWellFormedWord,
 		const std::set<PhoneId>& trainPhoneIds, 
 		WordPhoneticTranscriber& phoneticTranscriber,
-		bool includeBrokenWords,
+		ResourceUsagePhase phase,
 		std::vector<PhoneticWord>& result)
 	{
 		const WordsUsageInfo& wordUsage = phoneticSplitter.wordUsage();
@@ -448,22 +448,33 @@ namespace PticaGovorun
 		wordPartSureInclude.push_back(*sentEndIt);
 
 		//
-		std::map<boost::wstring_ref, PhoneticWord> phonDict;
-		mergePhoneticDictOnlyNew(phonDict, speechData_->phoneticDictWellFormedWords_);
-		if (includeBrokenWords)
-			mergePhoneticDictOnlyNew(phonDict, speechData_->phoneticDictBrokenWords_);
-
-		for (const std::pair<boost::wstring_ref, PhoneticWord> pair : phonDict)
+		// We may or may not use the annotated words for Test phase.
+		// If annotated words are used then we need to somehow recover the statistics of their usage.
+		// In this case we may theoretically expect from a decoder a 100% recognition rate.
+		// If we avoid the annotated words in Test then the text statistics from text corpus may be used as is,
+		// but decoder will not recognize words not covered by text corpus (100% recognition rate is not possible even in theory).
+		static const bool useAnnotWords = true;
+		if (phase == ResourceUsagePhase::Train || 
+			phase == ResourceUsagePhase::Test && useAnnotWords)
 		{
-			const PhoneticWord& word = pair.second;
+			std::map<boost::wstring_ref, PhoneticWord> phonDict;
+			mergePhoneticDictOnlyNew(phonDict, speechData_->phoneticDictWellFormedWords_);
+			bool includeBrokenWords = phase == ResourceUsagePhase::Train;
+			if (includeBrokenWords)
+				mergePhoneticDictOnlyNew(phonDict, speechData_->phoneticDictBrokenWords_);
 
-			// if well-formed pronunc=(word=безпеки, pron=беспеки) then text word=безпеки must not be included
-			// if well-formed pronunc=(word=в, pron=в, pron=ф) then text word=ф must not be included
-			chosenPronCodes.insert(word.Word);
-			for (const PronunciationFlavour& pron : word.Pronunciations)
-				chosenPronCodes.insert(pron.PronCode);
+			for (const std::pair<boost::wstring_ref, PhoneticWord> pair : phonDict)
+			{
+				const PhoneticWord& word = pair.second;
 
-			wordPartSureInclude.push_back(word);
+				// if well-formed pronunc=(word=безпеки, pron=беспеки) then text word=безпеки must not be included
+				// if well-formed pronunc=(word=в, pron=в, pron=ф) then text word=ф must not be included
+				chosenPronCodes.insert(word.Word);
+				for (const PronunciationFlavour& pron : word.Pronunciations)
+					chosenPronCodes.insert(pron.PronCode);
+
+				wordPartSureInclude.push_back(word);
+			}
 		}
 
 		//
@@ -1136,7 +1147,7 @@ namespace PticaGovorun
 
 		std::vector<PhoneticWord> seedPhoneticWords;
 		bool includeBrokenWords = phase == ResourceUsagePhase::Train;
-		chooseSeedUnigramsNew(phoneticSplitter_, minWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, phoneReg_, expandWellKnownWordFun, trainPhoneIds, phoneticTranscriber, includeBrokenWords, seedPhoneticWords);
+		chooseSeedUnigramsNew(phoneticSplitter_, minWordPartUsage, maxUnigramsCount, allowPhoneticWordSplit, phoneReg_, expandWellKnownWordFun, trainPhoneIds, phoneticTranscriber, phase, seedPhoneticWords);
 
 		std::wcout << "phase=" << (phase == ResourceUsagePhase::Train ? "train" : "test")
 			<< " seed unigrams count=" << seedPhoneticWords.size() << std::endl;
