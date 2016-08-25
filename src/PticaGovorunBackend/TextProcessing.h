@@ -53,6 +53,8 @@ namespace PticaGovorun
 	PG_EXPORTS std::wstring toString(wv::slice<wchar_t> wordSlice);
 
 	PG_EXPORTS inline bool isDigitChar(wchar_t ch);
+	/// Whether the letter is one of Roman Numerals (I,V,X,L,C,D,M).
+	PG_EXPORTS inline bool isRomanNumeral(wchar_t ch);
 
 	PG_EXPORTS inline bool isEnglishChar(wchar_t ch);
 	PG_EXPORTS inline bool isEnglishVowel(wchar_t ch, bool includeY);
@@ -101,7 +103,7 @@ namespace PticaGovorun
 	{
 		Noun,         // іменник
 		Pronoun,      // займенник
-		Preposition,  // прийменник
+		Preposition,  // прийменник(в), предлог, eng(after,for)
 		Verb,         // глагол
 		Adverb,       // прислівник
 		VerbalAdverb, // дієприслівник
@@ -223,5 +225,70 @@ namespace PticaGovorun
 	// Calculates the number of unique word forms in the declination dictionary.
 	PG_EXPORTS int uniqueDeclinedWordsCount(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWords);
 
+	enum class NumeralLexicalView
+	{
+		Arabic, // 10, 11, 12
+		Roman   // X, XI, XII
+	};
+
+	/// The text language.
+	enum class TextLanguage
+	{
+		Ukrainian, // 'uk'
+		Russian,   // 'ru'
+		English    // 'en', 'eng'
+	};
+
+//	constexpr boost::wstring_ref toString(TextLanguage x)
+//	{
+//		switch (x)
+//		{
+//		case TextLanguage::Ukrainian: return L"Ukrainian";
+//		case TextLanguage::Russian: return L"Russian";
+//		case TextLanguage::English: return L"English";
+//		default: throw std::invalid_argument("Undefined value of TextLanguage enum");
+//		}
+//	}
+
+	//constexpr
+	inline const boost::wstring_ref toString(TextLanguage x)
+	{
+		switch (x)
+		{
+		case TextLanguage::Ukrainian: return L"Ukrainian";
+		case TextLanguage::Russian: return L"Russian";
+		case TextLanguage::English: return L"English";
+		default: throw std::invalid_argument("Undefined value of TextLanguage enum");
+		}
+	}
+
+	/// The part of text.
+	struct RawTextLexeme
+	{
+		boost::wstring_ref ValueStr;
+		boost::optional<TextLanguage> Lang;
+		boost::optional<WordClass> Class;
+		boost::optional<NumeralLexicalView> NumeralLexView; // valid for Numerals
+		bool NonLiterate = false; // true for 'pa4ent'
+
+		boost::wstring_ref StrLowerCase() { return ValueStr; };
+	};
+
 	void split();
+
+	/// Expands abbreviations into full textual form.
+	class PG_EXPORTS AbbreviationExpanderUkr
+	{
+		std::vector<RawTextLexeme>* lexemes_ = nullptr;
+		int curLexInd_ = -1;
+	public:
+		void expandInplace(std::vector<RawTextLexeme>& lexemes);
+	private:
+		inline RawTextLexeme& curLex();
+		inline RawTextLexeme& nextLex(int stepsCount = 1);
+
+		/// Returns true if there is a lexeme some steps ahead.
+		inline bool hasNextLex(int stepsCount = 1) const;
+		bool ruleVRomanSt();
+	};
 }

@@ -6,23 +6,21 @@
 #include <QString>
 #include <QTextStream>
 #include <QXmlStreamReader>
-
-#include "ClnUtils.h"
-
+#include <QApplication>
 #include "TextProcessing.h"
 #include "CoreUtils.h"
+#include "PhoneticService.h"
 
 namespace RunTextParserNS
 {
 	using namespace PticaGovorun;
 
-	void parseFile(const wchar_t* filePath)
+	void parseFile(const QString& filePath)
 	{
-		QString filePathQ = QString::fromStdWString(filePath);
-		QFile file(filePathQ);
+		QFile file(filePath);
 		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 		{
-			qDebug() << "Can't open file " << filePathQ;
+			std::wcerr << "Can't open file " << filePath.toStdWString();
 			return;
 		}
 
@@ -42,7 +40,7 @@ namespace RunTextParserNS
 		QFile dumpFile(dumpFileName.str().c_str());
 		if (!dumpFile.open(QIODevice::WriteOnly | QIODevice::Text))
 		{
-			std::cerr << "Can't create ouput file '" << dumpFileName.str() << "'" << std::endl;
+			std::wcerr << "Can't create ouput file '" << dumpFileName.str().c_str() << "'" << std::endl;
 			return;
 		}
 
@@ -95,12 +93,12 @@ namespace RunTextParserNS
 		std::wcout << "File parsed successfully" << std::endl;
 	}
 
-
-	void runMain(int argc, wchar_t* argv[])
+	void run()
 	{
-		const wchar_t* filePath = LR"path(C:\devb\PticaGovorunProj\data\textWorld\fiction\„орний ¬орон. Ўкл€р ¬асиль.fb2)path";
-		if (argc > 1)
-			filePath = argv[1];
+		QString filePath = QString::fromWCharArray(LR"path(C:\devb\PticaGovorunProj\data\textWorld\fiction\„орний ¬орон. Ўкл€р ¬асиль.fb2)path");
+		QStringList args = QApplication::arguments();
+		if (args.size() > 1)
+			filePath = args[1];
 
 		parseFile(filePath);
 	}

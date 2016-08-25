@@ -172,6 +172,8 @@ namespace PticaGovorun
 		const WordPart* sentStartWordPart_;
 		const WordPart* sentEndWordPart_;
 		const WordPart* wordPartSeparator_ = nullptr;
+
+		QTextStream* log_ = nullptr;
 	public:
 		UkrainianPhoneticSplitter();
 
@@ -194,8 +196,12 @@ namespace PticaGovorun
 	private:
 		void doWordPhoneticSplit(const wv::slice<wchar_t>& wordSlice, std::vector<const WordPart*>& wordParts);
 
+		void analyzeSentence(const std::vector<wv::slice<wchar_t>>& words, std::vector<RawTextLexeme>& lexemes) const;
+
+		bool checkGoodSentenceUkr(const std::vector<RawTextLexeme>& lexemes) const;
+
 		// split words into slices
-		void selectWordParts(const std::vector<wv::slice<wchar_t>>& words, std::vector<const WordPart*>& wordParts, long& preSplitWords);
+		void selectWordParts(const std::vector<RawTextLexeme>& lexemes, std::vector<const WordPart*>& wordParts, long& preSplitWords);
 
 		void calcNGramStatisticsOnWordPartsBatch(std::vector<const WordPart*>& wordParts, bool outputCorpus, QTextStream& corpusStream);
 

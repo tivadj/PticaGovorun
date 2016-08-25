@@ -25,7 +25,8 @@ namespace StressedSyllableRunnerNS { void run(); }
 namespace PronunciationChecksRunnerNS { void run(); }
 namespace RunPrepareTrainModelSphinxNS { void run(); }
 namespace PdfReaderRunnerNS { void run(); }
-namespace RunTextParserNS { void runMain(int argc, wchar_t* argv[]); }
+namespace RunTextParserNS { void run(); }
+namespace UkrainianPhoneticSplitterNS { void run(); }
 namespace RunBuildLanguageModelNS { void runMain(int argc, wchar_t* argv[]); }
 namespace PrepareSphinxTrainDataNS { void run(); }
 namespace DslDictionaryConvertRunnerNS { void run(); }
@@ -56,7 +57,8 @@ int mainCore(int argc, char* argv[])
 	//PronunciationChecksRunnerNS::run();
 	//RunPrepareTrainModelSphinxNS::run();
 	//PdfReaderRunnerNS::run();
-	//RunTextParserNS::runMain(argc, argv);
+	//RunTextParserNS::run();
+	UkrainianPhoneticSplitterNS::run();
 	//RunBuildLanguageModelNS::runMain(argc, argv);
 	//RecognizeSpeechInBatchTester::runMain(argc, argv);
 	//DslDictionaryConvertRunnerNS::run();

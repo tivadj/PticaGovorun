@@ -3460,6 +3460,7 @@ namespace PticaGovorun
 				return;
 			corpusStream.setDevice(&corpusFile);
 			corpusStream.setCodec("UTF-8");
+			log_ = &corpusStream;
 		}
 
 		QXmlStreamReader xml;
@@ -3499,10 +3500,19 @@ namespace PticaGovorun
 
 			// parse file
 			xml.setDevice(&file);
+
+			bool reachedBody = false;
 			while (!xml.atEnd())
 			{
 				xml.readNext();
-				if (xml.isCharacters())
+
+				if (xml.isStartElement() && xml.name() == "body")
+				{
+					reachedBody = true;
+					continue;
+				}
+
+				if (reachedBody && xml.isCharacters())
 				{
 					// BUG: if the lines inside the text are separated using LF only on windows machines
 					//      the function below will concatenate the lines. For now, fix LF->CRLF for such files externally
@@ -3520,11 +3530,51 @@ namespace PticaGovorun
 						if (words.empty())
 							continue;
 
+						std::vector<RawTextLexeme> lexemes;
+						lexemes.reserve(words.size());
+						analyzeSentence(words, lexemes);
+
+						AbbreviationExpanderUkr abbrExp;
+						abbrExp.expandInplace(lexemes);
+
+						bool isUkr = checkGoodSentenceUkr(lexemes);
+						if (!isUkr)
+						{
+							if (outputCorpus) // output sentence with bad words
+							{
+								corpusStream << "BAD: ";
+								for (wv::slice<wchar_t> word : words)
+								{
+									corpusStream << toQString(boost::wstring_ref(word.data(), word.size()));
+									corpusStream << " ";
+								}
+								//for (const WordPart* wp : wordPartsStraight)
+								//{
+								//	printWordPart(wp, corpusStream);
+								//	corpusStream << " ";
+								//}
+								corpusStream << "\n";
+							}
+							continue;
+						}
+						else
+						{
+							if (outputCorpus)
+							{
+								for (const RawTextLexeme& lex : lexemes)
+								{
+									corpusStream << toQString(lex.ValueStr);
+									corpusStream << " ";
+								}
+								corpusStream << "\n";
+							}
+						}
+
 						{
 							// augment the sentence with start/end terminators
 							wordParts.push_back(sentStartWordPart_);
 
-							selectWordParts(words, wordParts, totalPreSplitWords);
+							selectWordParts(lexemes, wordParts, totalPreSplitWords);
 
 							// augment the sentence with start/end terminators
 							wordParts.push_back(sentEndWordPart_);
@@ -3547,90 +3597,106 @@ namespace PticaGovorun
 		}
 	}
 
-	void UkrainianPhoneticSplitter::selectWordParts(const std::vector<wv::slice<wchar_t>>& words, std::vector<const WordPart*>& wordParts, long& preSplitWords)
+	void UkrainianPhoneticSplitter::analyzeSentence(const std::vector<wv::slice<wchar_t>>& words, std::vector<RawTextLexeme>& lexemes) const
 	{
 		for (int i = 0; i < words.size(); ++i)
 		{
 			const wv::slice<wchar_t>& wordSlice = words[i];
 			PG_Assert(!wordSlice.empty());
 
-			// keep ukrainian words only
-			//auto filterOutWord = [](wv::slice<wchar_t> word)
-			//{
-			//	for (size_t charInd = 0; charInd < word.size(); ++charInd)
-			//	{
-			//		wchar_t ch = word[charInd];
-			//		bool isDigit = isDigitChar(ch);
-			//		//bool isLatin = isEnglishChar(ch);
-			//		bool isSureLatin = isExclusiveEnglishChar(ch);
-			//		bool isSureRus = isExclusiveRussianChar(ch);
-			//		//if (isDigit || isLatin || isSureRus)
-			//		if (isDigit || isSureLatin || isSureRus)
-			//			return true;
-			//	}
-			//	return false;
-			//};
-			//if (filterOutWord(wordSlice))
-			//{
-			//	::OutputDebugStringW(toString(wordSlice).c_str());
-			//	::OutputDebugStringW(L"\n");
-			//	continue;
-			//}
+			int digitsCount = 0;
+			int romanChCount = 0;
+			int engCount = 0;
+			int exclEngCount = 0;
+			int rusCount = 0;
+			int exclRusCount = 0;
+			int hyphenCount = 0;
 
-			auto wordCharUsage = [](wv::slice<wchar_t> word, int& digitsCount,
-				int& engCount, int& exclEngCount,
-				int& rusCount, int& exclRusCount,
-				int& hyphenCount)
+			auto wordCharUsage = [&](wv::slice<wchar_t> word)
 			{
 				for (size_t charInd = 0; charInd < word.size(); ++charInd)
 				{
 					wchar_t ch = word[charInd];
 					bool isDigit = isDigitChar(ch);
-					bool isEng = isEnglishChar(ch);
-					bool isExclEng = isExclusiveEnglishChar(ch);
-					bool isRus = isRussianChar(ch);
-					bool isExclRus = isExclusiveRussianChar(ch);
 					if (isDigit)
-						digitsCount++;
+						digitsCount += 1;
+					bool isRomanCh = isRomanNumeral(ch);
+					if (isRomanCh)
+						romanChCount += 1;
+					bool isEng = isEnglishChar(ch);
 					if (isEng)
 						engCount++;
+					bool isExclEng = isExclusiveEnglishChar(ch);
 					if (isExclEng)
 						exclEngCount++;
+					bool isRus = isRussianChar(ch);
 					if (isRus)
 						rusCount++;
+					bool isExclRus = isExclusiveRussianChar(ch);
 					if (isExclRus)
 						exclRusCount++;
 					if (ch == L'-' || ch == L'\'')
 						hyphenCount++;
 				}
 			};
-			int digitsCount = 0;
-			int engCount = 0;
-			int exclEngCount = 0;
-			int rusCount = 0;
-			int exclRusCount = 0;
-			int hyphenCount = 0;
-			wordCharUsage(wordSlice, digitsCount, engCount, exclEngCount, rusCount, exclRusCount, hyphenCount);
-			if (digitsCount > 0 || exclEngCount > 0 || exclRusCount > 0)
+			wordCharUsage(wordSlice);
+
+			RawTextLexeme lex;
+			lex.ValueStr = boost::wstring_ref(wordSlice.data(), wordSlice.size());
+
+			// output non-leterate words with digits, cryptic symbols, etc.
+			if (digitsCount == wordSlice.size()) // Arabic number
 			{
-				if (digitsCount == wordSlice.size() ||  // number
-					(exclEngCount > 0 && (engCount + hyphenCount) == wordSlice.size()) || // english word
-					(exclRusCount > 0 && (rusCount + hyphenCount) == wordSlice.size())    // russian word
-					)
-				{
-					// do not even print the skipped word
-					continue;
-				}
-				else
-				{
-					::OutputDebugStringW(toString(wordSlice).c_str());
-					::OutputDebugStringW(L"\n");
-				}
-				wordParts.push_back(wordPartSeparator_); // word parts separator
+				lex.Class = WordClass::Numeral;
+				lex.NumeralLexView = NumeralLexicalView::Arabic;
+			}
+			else if (romanChCount == wordSlice.size()) // Roman number
+			{
+				lex.Class = WordClass::Numeral;
+				lex.NumeralLexView = NumeralLexicalView::Roman;
+			}
+			else if (exclEngCount > 0 && (engCount + hyphenCount) == wordSlice.size()) // english word
+			{
+				lex.Lang = TextLanguage::English;
+			}
+			else if (exclRusCount > 0 && (rusCount + hyphenCount) == wordSlice.size()) // russian word
+			{
+				lex.Lang = TextLanguage::Russian;
+			}
+			else if (digitsCount > 0 || romanChCount > 0 || exclEngCount > 0 || exclRusCount > 0)
+				lex.NonLiterate = true;
+
+			lexemes.push_back(lex);
+		}
+	}
+
+	bool UkrainianPhoneticSplitter::checkGoodSentenceUkr(const std::vector<RawTextLexeme>& lexemes) const
+	{
+		int validWords = 0;
+		for (const auto& lex : lexemes)
+		{
+			if (lex.NonLiterate)
+			{
+				if (log_ != nullptr) *log_ << QString("SKIPPED: %1, because: non-literate\n").arg(toQString(lex.ValueStr));
 				continue;
 			}
+			if (lex.Lang == TextLanguage::Russian || lex.Lang == TextLanguage::English)
+			{
+				if (log_ != nullptr) *log_ << QString("SKIPPED: %1, because: lang is %2\n")
+					.arg(toQString(lex.ValueStr)
+					.arg(toQString(toString(lex.Lang.value()))));
+				continue;
+			}
+			validWords += 1;
+		}
+		return validWords == static_cast<int>(lexemes.size());
+	}
 
-			std::wstring str = toString(wordSlice);
+	void UkrainianPhoneticSplitter::selectWordParts(const std::vector<RawTextLexeme>& lexemes, std::vector<const WordPart*>& wordParts, long& preSplitWords)
+	{
+		for (const RawTextLexeme& lexeme : lexemes)
+		{
+			std::wstring str = toStdWString(lexeme.ValueStr);
 
 			if (allowPhoneticWordSplit_)
 			{
@@ -3693,16 +3759,6 @@ namespace PticaGovorun
 				break;
 
 			calcLangStatistics(wordPartsStraight);
-
-			if (outputCorpus)
-			{
-				for (const WordPart* wp : wordPartsStraight)
-				{
-					printWordPart(wp, corpusStream);
-					corpusStream << " ";
-				}
-				corpusStream << "\n";
-			}
 		}
 		// purge word parts buffer
 		wordParts.clear();

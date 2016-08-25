@@ -241,6 +241,16 @@ namespace PticaGovorun
 		return result;
 	}
 
+	bool isRomanNumeral(wchar_t ch)
+	{
+		// http://mathworld.wolfram.com/RomanNumerals.html
+		if (ch == L'i' || ch == L'I' || // 1
+			ch == L'v' || ch == L'V' || // 5
+			ch == L'x' || ch == L'X')   // 10
+			return true;
+		return false;
+	}
+
 	bool isEnglishChar(wchar_t ch)
 	{
 		int chCode = (int)ch;
@@ -407,5 +417,91 @@ namespace PticaGovorun
 		else if (!isVowel && isCons)
 			return CharGroup::Consonant;
 		return boost::none;
+	}
+
+	//
+
+	void AbbreviationExpanderUkr::expandInplace(std::vector<RawTextLexeme>& lexemes)
+	{
+		lexemes_ = &lexemes;
+		curLexInd_ = 0;
+		while (curLexInd_ < (int)lexemes_->size())
+		{
+			if (ruleVRomanSt())
+				continue;
+
+			curLexInd_ += 1;
+		}
+		lexemes_ = nullptr;
+		curLexInd_ = -1;
+	}
+
+	RawTextLexeme& AbbreviationExpanderUkr::curLex()
+	{
+		return nextLex(0);
+	}
+
+	RawTextLexeme& AbbreviationExpanderUkr::nextLex(int stepsCount)
+	{
+		RawTextLexeme* lex = (curLexInd_ >= 0 && curLexInd_ + stepsCount < (int)lexemes_->size()) ? &(*lexemes_)[curLexInd_ + stepsCount] : nullptr;
+		PG_Assert(lex != nullptr);
+		return *lex;
+	}
+
+	bool AbbreviationExpanderUkr::hasNextLex(int stepsCount) const
+	{
+		return curLexInd_ >= 0 && curLexInd_ + stepsCount < (int)lexemes_->size();
+	}
+
+	bool expandRomanNumeral(boost::wstring_ref romanNum, boost::wstring_ref* wordNum)
+	{
+		if (romanNum == L"xii")
+		{
+			*wordNum = L"дванадцятому";
+			return true;
+		}
+		if (romanNum == L"xv")
+		{
+			*wordNum = L"п'ятнадцятому";
+			return true;
+		}
+		return false;
+	}
+
+	// В 20-х рр. ХХ ст.
+	// В ХХ ст. Кий заснував місто. ## one sentences
+	// Місто заснували в ХХ ст. на березі річки. ## one sentence
+	// Місто заснували в ХХ ст. Його заснував Кий. ## two sentences
+	// Місто заснували в ХХ ст. Кий був його засновником. ## two sentences
+	// TODO: в 15 р.
+	// Він почав читати в 15 р.
+	// В 15 р. він пішов до школи.
+	bool AbbreviationExpanderUkr::ruleVRomanSt()
+	{
+		// в XX ст.
+		if (!hasNextLex(2)) return false;
+		if (nextLex(0).StrLowerCase() == L"в" &&
+			nextLex(1).Class == WordClass::Numeral &&
+			nextLex(2).StrLowerCase() == L"ст") // TODO: check next lex=dot
+		{
+			boost::wstring_ref wordNum;
+			if (!expandRomanNumeral(nextLex(1).ValueStr, &wordNum))
+				return false;
+
+			RawTextLexeme numLex = nextLex(1);
+			numLex.ValueStr = wordNum;
+
+			RawTextLexeme timeLex = nextLex(2);
+			timeLex.ValueStr = L"сторіччі"; // місцевий
+			timeLex.Class = WordClass::Noun;
+
+			// modify
+			nextLex(0).Class = WordClass::Preposition;
+			nextLex(1) = numLex;
+			nextLex(2) = timeLex;
+			curLexInd_ += 3;
+			return true;
+		}
+		return false;
 	}
 }

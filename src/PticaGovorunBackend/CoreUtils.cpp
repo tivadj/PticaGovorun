@@ -58,6 +58,20 @@ boost::wstring_ref toWStringRef(const QStringRef& str, std::vector<wchar_t>& buf
 	return toWStringRef(strQ, buff);
 }
 
+void toWStringRef(const QString& str, std::wstring& buff)
+{
+	buff.resize(str.size());
+	if (str.isEmpty())
+		return;
+	str.toWCharArray(&buff[0]);
+}
+
+void toWStringRef(const QStringRef& str, std::wstring& buff)
+{
+	QString strQ = QString::fromRawData(str.constData(), str.size()); // no allocation
+	toWStringRef(strQ, buff);
+}
+
 QString toQString(boost::wstring_ref text)
 {
 	return QString::fromWCharArray(text.data(), (int)text.size());
