@@ -46,7 +46,7 @@ namespace PticaGovorun
 		if (hasError_)
 			return;
 
-		cmd_ln_t *config = SphinxConfig::pg_init_cmd_ln_t(hmmPath, langModelPath, dictPath, true, false, true, boost::string_ref());
+		cmd_ln_t *config = SphinxConfig::pg_init_cmd_ln_t(hmmPath, langModelPath, dictPath, true, false, true, boost::string_view());
 		if (config == nullptr)
 		{
 			setError("Error: Can't create Sphinx config");

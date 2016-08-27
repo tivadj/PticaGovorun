@@ -6,7 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include "StringUtils.h"
-#include <boost/utility/string_ref.hpp>
+#include <boost/utility/string_view.hpp>
 #include <QFile>
 #include <QtEndian>
 #include <PhoneticService.h>
@@ -39,7 +39,7 @@ namespace DslDictionaryConvertRunnerNS
 		std::set<QString> wordsWithoutSoundFile;
 	public:
 		bool removeWordAdornments(const QString& adornedWord, QString& plainWord);
-		bool processDslFile(boost::wstring_ref filePath);
+		bool processDslFile(boost::wstring_view filePath);
 		void finishWordCard(const QString& word, const QStringList& wordDataLines);
 
 
@@ -70,7 +70,7 @@ namespace DslDictionaryConvertRunnerNS
 		}
 	}
 
-	bool DslDictionaryParser::processDslFile(boost::wstring_ref filePath)
+	bool DslDictionaryParser::processDslFile(boost::wstring_view filePath)
 	{
 		QFile wordCardsFile(toQString(filePath));
 		if (!wordCardsFile.open(QIODevice::ReadOnly))
@@ -271,7 +271,7 @@ namespace DslDictionaryConvertRunnerNS
 	The entries are sorted by the strcmp() function with the filename field.
 	It is possible that different filenames have the same offset and size.
 	*/
-	void readStarDictRidxFile32(boost::wstring_ref resIndexfilePath, std::vector<AudioFileSegmentRef>& segmentRefs)
+	void readStarDictRidxFile32(boost::wstring_view resIndexfilePath, std::vector<AudioFileSegmentRef>& segmentRefs)
 	{
 		std::ifstream input(resIndexfilePath.data(), std::ios::binary);
 		std::vector<uchar> buffer((
@@ -375,7 +375,7 @@ namespace DslDictionaryConvertRunnerNS
 			return;
 		}
 
-		auto getStressedSyllableIndFun = [&wordToStressedSyllable](boost::wstring_ref word, std::vector<int>& stressedSyllableInds) -> bool
+		auto getStressedSyllableIndFun = [&wordToStressedSyllable](boost::wstring_view word, std::vector<int>& stressedSyllableInds) -> bool
 		{
 			auto it = wordToStressedSyllable.find(std::wstring(word.data(), word.size()));
 			if (it == wordToStressedSyllable.end())
@@ -399,7 +399,7 @@ namespace DslDictionaryConvertRunnerNS
 				return;
 			}
 
-			boost::wstring_ref wordArena;
+			boost::wstring_view wordArena;
 			if (!registerWord(word, *stringArena, wordArena))
 			{
 				errMsg_ = L"Can't register word in the arena";

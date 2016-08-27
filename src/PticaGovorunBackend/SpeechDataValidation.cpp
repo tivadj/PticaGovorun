@@ -98,7 +98,7 @@ namespace PticaGovorun
 
 	void SpeechData::saveDict()
 	{
-		auto selectSecondFun = [](const std::pair<boost::wstring_ref, PhoneticWord>& pair)
+		auto selectSecondFun = [](const std::pair<boost::wstring_view, PhoneticWord>& pair)
 		{
 			return pair.second;
 		};
@@ -148,7 +148,7 @@ namespace PticaGovorun
 		return AppHelpers::mapPath("pgdata/Julius/shrekky/shrekkyDic.voca").toStdWString();
 	}
 
-	std::tuple<bool, const char*> SpeechData::convertTextToPhoneListString(boost::wstring_ref text, std::string& speechPhonesString)
+	std::tuple<bool, const char*> SpeechData::convertTextToPhoneListString(boost::wstring_view text, std::string& speechPhonesString)
 	{
 		ensurePhoneticDictionaryLoaded();
 
@@ -156,13 +156,13 @@ namespace PticaGovorun
 		std::vector<PronunciationFlavour> prons;
 
 		std::wstring textW = toStdWString(text);
-		std::vector<boost::wstring_ref> pronCodes;
+		std::vector<boost::wstring_view> pronCodes;
 		splitUtteranceIntoWords(textW, pronCodes);
 
 		// iterate through words
 		for (size_t i = 0; i < pronCodes.size(); ++i)
 		{
-			boost::wstring_ref pronIdRef = pronCodes[i];
+			boost::wstring_view pronIdRef = pronCodes[i];
 
 			// convert word to phones
 			prons.clear();
@@ -192,7 +192,7 @@ namespace PticaGovorun
 		return std::make_tuple(true, nullptr);
 	}
 
-	bool SpeechData::findPronAsWordPhoneticExpansions(boost::wstring_ref pronAsWord, std::vector<PronunciationFlavour>& prons)
+	bool SpeechData::findPronAsWordPhoneticExpansions(boost::wstring_view pronAsWord, std::vector<PronunciationFlavour>& prons)
 	{
 		bool found1 = findPronAsWordPhoneticExpansions(phoneticDictWellFormed_, pronAsWord, prons);
 		bool found2 = findPronAsWordPhoneticExpansions(phoneticDictBroken_, pronAsWord, prons);
@@ -200,7 +200,7 @@ namespace PticaGovorun
 		return found1 || found2 || found3;
 	}
 
-	bool SpeechData::findPronAsWordPhoneticExpansions(const std::map<boost::wstring_ref, PhoneticWord>& phoneticDict, boost::wstring_ref pronCode, std::vector<PronunciationFlavour>& prons)
+	bool SpeechData::findPronAsWordPhoneticExpansions(const std::map<boost::wstring_view, PhoneticWord>& phoneticDict, boost::wstring_view pronCode, std::vector<PronunciationFlavour>& prons)
 	{
 		bool found = false;
 		for (const auto& pair : phoneticDict)
@@ -230,7 +230,7 @@ namespace PticaGovorun
 
 	const PhoneticWord* SpeechData::findPhoneticWord(const QString& browseDictStr, const std::wstring& word) const
 	{
-		const std::map<boost::wstring_ref, PhoneticWord>* dict = nullptr;
+		const std::map<boost::wstring_view, PhoneticWord>* dict = nullptr;
 		if (browseDictStr.compare("shrekky", Qt::CaseInsensitive) == 0)
 			dict = &phoneticDictShrekky_;
 		else if (browseDictStr.compare("broken", Qt::CaseInsensitive) == 0)
@@ -251,7 +251,7 @@ namespace PticaGovorun
 
 	bool SpeechData::createUpdateDeletePhoneticWord(const QString& dictId, const QString& word, const QString& pronLinesAsStr, QString* errMsg)
 	{
-		std::map<boost::wstring_ref, PhoneticWord>* targetDict = nullptr;
+		std::map<boost::wstring_view, PhoneticWord>* targetDict = nullptr;
 		if (dictId.compare("persian", Qt::CaseInsensitive) == 0)
 			targetDict = &phoneticDictWellFormed_;
 		else if (dictId.compare("broken", Qt::CaseInsensitive) == 0)
@@ -262,8 +262,8 @@ namespace PticaGovorun
 		PhoneticWord wordItem;
 
 		std::vector<wchar_t> wordBuff;
-		boost::wstring_ref wordRef = toWStringRef(word, wordBuff);
-		boost::wstring_ref arenaWordRef;
+		boost::wstring_view wordRef = toWStringRef(word, wordBuff);
+		boost::wstring_view arenaWordRef;
 
 		auto itWord = targetDict->find(wordRef);
 		if (itWord != std::end(*targetDict))
@@ -301,7 +301,7 @@ namespace PticaGovorun
 		{
 			// create or update
 			wordItem.Pronunciations = std::move(prons);
-			PG_DbgAssert(arenaWordRef != boost::wstring_ref());
+			PG_DbgAssert(arenaWordRef != boost::wstring_view());
 			(*targetDict)[arenaWordRef] = wordItem;
 		}
 		return true;
@@ -312,7 +312,7 @@ namespace PticaGovorun
 		ensurePhoneticDictionaryLoaded();
 		ensureShrekkyDictLoaded();
 
-		std::map<boost::wstring_ref, PhoneticWord>* dict = nullptr;
+		std::map<boost::wstring_view, PhoneticWord>* dict = nullptr;
 		if (browseDictStr.compare("shrekky", Qt::CaseInsensitive) == 0)
 			dict = &phoneticDictShrekky_;
 		else if (browseDictStr.compare("broken", Qt::CaseInsensitive) == 0)
@@ -379,7 +379,7 @@ namespace PticaGovorun
 		return valid;
 	}
 
-	void SpeechData::iterateAllSpeechAnnotations(boost::wstring_ref annotDir, bool includeBadMarkup,
+	void SpeechData::iterateAllSpeechAnnotations(boost::wstring_view annotDir, bool includeBadMarkup,
 		std::function<void(const AnnotSpeechFileNode&)> onAnnotFile,
 		std::function<void(const SpeechAnnotation&)> onAnnot,
 		std::function<void(const char*)> onAnnotError)
@@ -392,7 +392,7 @@ namespace PticaGovorun
 		std::vector<AnnotSpeechFileNode> annotInfos;
 		flat(annotStructure, annotInfos);
 
-		std::map<boost::wstring_ref, int> pronIdToUsedCount;
+		std::map<boost::wstring_view, int> pronIdToUsedCount;
 		for (const AnnotSpeechFileNode& fileItem : annotInfos)
 		{
 			if (onAnnotFile != nullptr) onAnnotFile(fileItem);
@@ -465,7 +465,7 @@ namespace PticaGovorun
 
 	bool SpeechData::validatePhoneticDictAllPronsAreUsed(QStringList* errMsgs)
 	{
-		std::map<boost::wstring_ref, int> pronIdToUsedCount;
+		std::map<boost::wstring_view, int> pronIdToUsedCount;
 
 		// set up all words in phonetic dictionary for counting
 		auto pushPronIds = [&pronIdToUsedCount](const decltype(phoneticDictWellFormed_)& dict) -> void
@@ -505,7 +505,7 @@ namespace PticaGovorun
 		return numErrs == 0;
 	}
 
-	void SpeechData::phoneticDictCountPronUsage(const SpeechAnnotation& speechAnnot, std::map<boost::wstring_ref, int>& pronIdToUsedCount)
+	void SpeechData::phoneticDictCountPronUsage(const SpeechAnnotation& speechAnnot, std::map<boost::wstring_view, int>& pronIdToUsedCount)
 	{
 		std::vector<std::pair<const TimePointMarker*, const TimePointMarker*>> segments;
 		collectAnnotatedSegments(speechAnnot.markers(), segments);
@@ -516,12 +516,12 @@ namespace PticaGovorun
 			if (seg.first->Language == SpeechLanguage::Ukrainian)
 			{
 				const QString& text = seg.first->TranscripText;
-				boost::wstring_ref textRef = toWStringRef(text, textBuff);
+				boost::wstring_view textRef = toWStringRef(text, textBuff);
 
-				std::vector<boost::wstring_ref> wordsAsSlices;
+				std::vector<boost::wstring_view> wordsAsSlices;
 				splitUtteranceIntoWords(textRef, wordsAsSlices);
 
-				for (boost::wstring_ref pronAsWordRef : wordsAsSlices)
+				for (boost::wstring_view pronAsWordRef : wordsAsSlices)
 				{
 					// do not implicitly add the word to counting dict!
 					auto it = pronIdToUsedCount.find(pronAsWordRef);
@@ -608,14 +608,14 @@ namespace PticaGovorun
 
 		std::wstring textW = text.toStdWString();
 
-		std::vector<boost::wstring_ref> pronCodes;
+		std::vector<boost::wstring_view> pronCodes;
 		splitUtteranceIntoWords(textW, pronCodes);
 
 		// check if the word is in the phonetic dictionary
 		// considers similar occurences of phoneAsWord and the word itself
 		// returns true if exact word match was found
-		auto isPronAsWordInDict = [](const std::map<boost::wstring_ref, PhoneticWord>& phoneticDict, boost::wstring_ref pronAsWordPattern,
-			boost::wstring_ref& outExactWord, boost::wstring_ref& outSimilarPronAsWord) -> bool
+		auto isPronAsWordInDict = [](const std::map<boost::wstring_view, PhoneticWord>& phoneticDict, boost::wstring_view pronAsWordPattern,
+			boost::wstring_view& outExactWord, boost::wstring_view& outSimilarPronAsWord) -> bool
 		{
 			// pattern for similar pronAsWord
 			std::wstring patternWithOpenBracketQ = toStdWString(pronAsWordPattern);
@@ -623,7 +623,7 @@ namespace PticaGovorun
 
 			for (const auto& pair : phoneticDict)
 			{
-				boost::wstring_ref word = pair.first;
+				boost::wstring_view word = pair.first;
 				if (outExactWord.empty() && word == pronAsWordPattern)
 					outExactWord = word;
 
@@ -646,11 +646,11 @@ namespace PticaGovorun
 
 		// iterate through words
 		std::wstringstream msgBuf;
-		boost::wstring_ref outSimilarPronAsWordDictKnown;
-		boost::wstring_ref outExactWordDictKnown;
-		boost::wstring_ref outSimilarPronAsWordDictBroken;
-		boost::wstring_ref outExactWordDictBroken;
-		for (boost::wstring_ref pronCode : pronCodes)
+		boost::wstring_view outSimilarPronAsWordDictKnown;
+		boost::wstring_view outExactWordDictKnown;
+		boost::wstring_view outSimilarPronAsWordDictBroken;
+		boost::wstring_view outExactWordDictBroken;
+		for (boost::wstring_view pronCode : pronCodes)
 		{
 			outSimilarPronAsWordDictKnown.clear();
 			outExactWordDictKnown.clear();

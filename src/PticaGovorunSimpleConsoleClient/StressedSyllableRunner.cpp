@@ -102,11 +102,11 @@ namespace StressedSyllableRunnerNS
 	public:
 		void extractStressedSyllables();
 	private:
-		bool inferSpelling(const PhoneticWord& phWord, std::vector<int>& firstStressedVowelInds, boost::wstring_ref& firstWord);
-		void printPron(const std::vector<PhoneId>& phonesDict, boost::wstring_ref pronAsWord, boost::wstring_ref word, const std::vector<PhoneId>* phonesAuto);
+		bool inferSpelling(const PhoneticWord& phWord, std::vector<int>& firstStressedVowelInds, boost::wstring_view& firstWord);
+		void printPron(const std::vector<PhoneId>& phonesDict, boost::wstring_view pronAsWord, boost::wstring_view word, const std::vector<PhoneId>* phonesAuto);
 	};
 
-	bool PronuncStressedSyllableExtractor::inferSpelling(const PhoneticWord& phWord, std::vector<int>& firstStressedVowelInds, boost::wstring_ref& firstWord)
+	bool PronuncStressedSyllableExtractor::inferSpelling(const PhoneticWord& phWord, std::vector<int>& firstStressedVowelInds, boost::wstring_view& firstWord)
 	{
 		// the result is a success if at least one word pronunciation can be processed
 
@@ -149,7 +149,7 @@ namespace StressedSyllableRunnerNS
 		return !firstStressedVowelInds.empty();
 	}
 	
-	void PronuncStressedSyllableExtractor::printPron(const std::vector<PhoneId>& phonesDict, boost::wstring_ref pronAsWord, boost::wstring_ref word,
+	void PronuncStressedSyllableExtractor::printPron(const std::vector<PhoneId>& phonesDict, boost::wstring_view pronAsWord, boost::wstring_view word,
 		const std::vector<PhoneId>* phonesAuto)
 	{
 		std::string pronDictStr;
@@ -224,7 +224,7 @@ namespace StressedSyllableRunnerNS
 		xmlWriter.writeStartElement("stressDict");
 
 		std::vector<int> firstStressedVowelInds;
-		boost::wstring_ref firstWord;
+		boost::wstring_view firstWord;
 		int extractError = 0;
 		for (const PhoneticWord& phWord : wordTranscrip)
 		{
@@ -258,7 +258,7 @@ namespace StressedSyllableRunnerNS
 				});
 				
 				std::ostringstream stressIndsBuf;
-				PticaGovorun::join(vowelOrder.begin(), vowelOrder.end(), boost::string_ref(" "), stressIndsBuf);
+				PticaGovorun::join(vowelOrder.begin(), vowelOrder.end(), boost::string_view(" "), stressIndsBuf);
 
 				xmlWriter.writeStartElement("word");
 				xmlWriter.writeAttribute("name", toQString(phWord.Word));

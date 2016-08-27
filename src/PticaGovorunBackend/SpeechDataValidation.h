@@ -22,10 +22,10 @@ namespace PticaGovorun
 		std::vector<PhoneticWord> phoneticDictWellFormedWords_;
 		std::vector<PhoneticWord> phoneticDictBrokenWords_;
 		std::vector<PhoneticWord> phoneticDictFillerWords_;
-		std::map<boost::wstring_ref, PhoneticWord> phoneticDictWellFormed_;
-		std::map<boost::wstring_ref, PhoneticWord> phoneticDictBroken_;
-		std::map<boost::wstring_ref, PhoneticWord> phoneticDictFiller_;
-		std::map<boost::wstring_ref, PhoneticWord> phoneticDictShrekky_;
+		std::map<boost::wstring_view, PhoneticWord> phoneticDictWellFormed_;
+		std::map<boost::wstring_view, PhoneticWord> phoneticDictBroken_;
+		std::map<boost::wstring_view, PhoneticWord> phoneticDictFiller_;
+		std::map<boost::wstring_view, PhoneticWord> phoneticDictShrekky_;
 	public:
 		explicit SpeechData(const boost::filesystem::path& speechProjDir);
 		void setPhoneReg(std::shared_ptr<PhoneRegistry> phoneReg);
@@ -54,10 +54,10 @@ namespace PticaGovorun
 		boost::filesystem::path fillerDictPath();
 		boost::filesystem::path shrekkyDictPath();
 
-		std::tuple<bool, const char*> convertTextToPhoneListString(boost::wstring_ref text, std::string& speechPhonesString);
-		bool findPronAsWordPhoneticExpansions(boost::wstring_ref pronAsWord, std::vector<PronunciationFlavour>& prons);
+		std::tuple<bool, const char*> convertTextToPhoneListString(boost::wstring_view text, std::string& speechPhonesString);
+		bool findPronAsWordPhoneticExpansions(boost::wstring_view pronAsWord, std::vector<PronunciationFlavour>& prons);
 	private:
-		bool findPronAsWordPhoneticExpansions(const std::map<boost::wstring_ref, PhoneticWord>& phoneticDict, boost::wstring_ref pronCode, std::vector<PronunciationFlavour>& prons);
+		bool findPronAsWordPhoneticExpansions(const std::map<boost::wstring_view, PhoneticWord>& phoneticDict, boost::wstring_view pronCode, std::vector<PronunciationFlavour>& prons);
 	public:
 		const PhoneticWord* findPhoneticWord(const QString& browseDictStr, const std::wstring& word) const;
 		bool SpeechData::createUpdateDeletePhoneticWord(const QString& dictId, const QString& word, const QString& pronLinesAsStr, QString* errMsg);
@@ -82,7 +82,7 @@ namespace PticaGovorun
 
 		// Add each pronId usage from speech annotation to the dict.
 		// Used to calculate which pronIds in phonetic dict are not used.
-		void phoneticDictCountPronUsage(const SpeechAnnotation& speechAnnot, std::map<boost::wstring_ref, int>& pronIdToUsedCount);
+		void phoneticDictCountPronUsage(const SpeechAnnotation& speechAnnot, std::map<boost::wstring_view, int>& pronIdToUsedCount);
 
 		// speech annotation
 
@@ -90,7 +90,7 @@ namespace PticaGovorun
 
 		bool validateAllSpeechAnnotations(QStringList* errMsgs);
 
-		static void iterateAllSpeechAnnotations(boost::wstring_ref annotDir, bool includeBadMarkup,
+		static void iterateAllSpeechAnnotations(boost::wstring_view annotDir, bool includeBadMarkup,
 			std::function<void(const AnnotSpeechFileNode&)> onAnnotFile,
 			std::function<void(const SpeechAnnotation&)> onAnnot,
 			std::function<void(const char*)> onAnnotError);

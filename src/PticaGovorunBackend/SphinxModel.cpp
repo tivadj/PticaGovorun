@@ -19,7 +19,7 @@
 
 namespace PticaGovorun
 {
-	std::wstring sphinxModelVersionStr(boost::wstring_ref modelDir)
+	std::wstring sphinxModelVersionStr(boost::wstring_view modelDir)
 	{
 		QDir modelDirQ(toQString(modelDir));
 		if (!modelDirQ.cd("etc"))
@@ -99,7 +99,7 @@ namespace PticaGovorun
 	};
 
 	// Finds the usage of pronCode using statistics of the corresponding word.
-	void promoteWordsToPronCodes(UkrainianPhoneticSplitter& phoneticSplitter, const std::map<boost::wstring_ref, PhoneticWord>& phoneticDict)
+	void promoteWordsToPronCodes(UkrainianPhoneticSplitter& phoneticSplitter, const std::map<boost::wstring_view, PhoneticWord>& phoneticDict)
 	{
 		WordsUsageInfo& wordUsage = phoneticSplitter.wordUsage();
 
@@ -241,14 +241,14 @@ namespace PticaGovorun
 			return;
 
 		std::wstring displayNameBuf;
-		std::vector<std::pair<boost::wstring_ref, boost::wstring_ref>> pronCodeToSphinxNameMap;
+		std::vector<std::pair<boost::wstring_view, boost::wstring_view>> pronCodeToSphinxNameMap;
 
 		// (word=abup, p1=abup, p2=abub, p3=apup) maps to (abup, abup(2), abup3(3))
 		int dispName = 0;
 		for (const PronunciationFlavour& p : word.Pronunciations)
 		{
 			dispName += 1;
-			boost::wstring_ref pronCode = p.PronCode;
+			boost::wstring_view pronCode = p.PronCode;
 
 			displayNameBuf.clear();
 			displayNameBuf.append(word.Word.data(), word.Word.size()); // Sphinx base name is the word itself
@@ -264,7 +264,7 @@ namespace PticaGovorun
 				displayNameBuf.append(1, L')');
 			}
 
-			boost::wstring_ref sphinxName;
+			boost::wstring_view sphinxName;
 			bool op = registerWord<wchar_t>(displayNameBuf, *wordToPronCodeSphinxMapping.stringArena_, sphinxName);
 			PG_Assert2(op, "Can't allocate word in arena");
 
@@ -275,19 +275,19 @@ namespace PticaGovorun
 	}
 
 	/// Build pronCode to display name.
-	bool buildPronCodeToDisplayName(const PronCodeToDisplayNameMap& pronCodeToSphinxMappingTrain, std::map<boost::wstring_ref, boost::wstring_ref>& result, QString* errMsg = nullptr)
+	bool buildPronCodeToDisplayName(const PronCodeToDisplayNameMap& pronCodeToSphinxMappingTrain, std::map<boost::wstring_view, boost::wstring_view>& result, QString* errMsg = nullptr)
 	{
 		// TODO: this code assumes many-one for pronCode-word relation, but really pronCode may be associated with many words
 		int errsNum = 0;
-		for (const std::pair<boost::wstring_ref, std::vector<std::pair<boost::wstring_ref, boost::wstring_ref>>>& wordToPronsMap : pronCodeToSphinxMappingTrain.map)
+		for (const std::pair<boost::wstring_view, std::vector<std::pair<boost::wstring_view, boost::wstring_view>>>& wordToPronsMap : pronCodeToSphinxMappingTrain.map)
 		{
-			boost::wstring_ref word = wordToPronsMap.first;
-			const std::vector<std::pair<boost::wstring_ref, boost::wstring_ref>>& wordMap = wordToPronsMap.second;
+			boost::wstring_view word = wordToPronsMap.first;
+			const std::vector<std::pair<boost::wstring_view, boost::wstring_view>>& wordMap = wordToPronsMap.second;
 
-			for (const std::pair<boost::wstring_ref, boost::wstring_ref>& pronMap : wordMap)
+			for (const std::pair<boost::wstring_view, boost::wstring_view>& pronMap : wordMap)
 			{
-				boost::wstring_ref pronName = pronMap.first;
-				boost::wstring_ref dispName = pronMap.second;
+				boost::wstring_view pronName = pronMap.first;
+				boost::wstring_view dispName = pronMap.second;
 
 				auto pronNameIt = result.find(pronName);
 				if (pronNameIt != std::end(result))
@@ -307,7 +307,7 @@ namespace PticaGovorun
 	}
 
 	void chooseSeedUnigrams(const UkrainianPhoneticSplitter& phoneticSplitter, int minWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, const PhoneRegistry& phoneReg,
-		std::function<auto (boost::wstring_ref pronCode) -> const PronunciationFlavour*> expandWellKnownPronCode,
+		std::function<auto (boost::wstring_view pronCode) -> const PronunciationFlavour*> expandWellKnownPronCode,
 		const std::set<PhoneId>& trainPhoneIds,
 		std::vector<const WordPart*>& result)
 	{
@@ -422,7 +422,7 @@ namespace PticaGovorun
 	
 	void SphinxTrainDataBuilder::chooseSeedUnigramsNew(const UkrainianPhoneticSplitter& phoneticSplitter, int minWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit,
 		const PhoneRegistry& phoneReg,
-		std::function<auto (boost::wstring_ref word) -> const PhoneticWord*> expandWellFormedWord,
+		std::function<auto (boost::wstring_view word) -> const PhoneticWord*> expandWellFormedWord,
 		const std::set<PhoneId>& trainPhoneIds, 
 		WordPhoneticTranscriber& phoneticTranscriber,
 		ResourceUsagePhase phase,
@@ -435,7 +435,7 @@ namespace PticaGovorun
 
 		// push sure words from manual phonetic dictionaries
 		std::vector<PhoneticWord> wordPartSureInclude;
-		std::set<boost::wstring_ref> chosenPronCodes;
+		std::set<boost::wstring_view> chosenPronCodes;
 		
 		// here we do not include fillers (<sil>,[sp]) because they are not used in phonetic dictionary
 		// and only <s> and </s> are used in arpa LM (which were syntatically added when processing raw text)
@@ -457,13 +457,13 @@ namespace PticaGovorun
 		if (phase == ResourceUsagePhase::Train || 
 			phase == ResourceUsagePhase::Test && useAnnotWords)
 		{
-			std::map<boost::wstring_ref, PhoneticWord> phonDict;
+			std::map<boost::wstring_view, PhoneticWord> phonDict;
 			mergePhoneticDictOnlyNew(phonDict, speechData_->phoneticDictWellFormedWords_);
 			bool includeBrokenWords = phase == ResourceUsagePhase::Train;
 			if (includeBrokenWords)
 				mergePhoneticDictOnlyNew(phonDict, speechData_->phoneticDictBrokenWords_);
 
-			for (const std::pair<boost::wstring_ref, PhoneticWord> pair : phonDict)
+			for (const std::pair<boost::wstring_view, PhoneticWord> pair : phonDict)
 			{
 				const PhoneticWord& word = pair.second;
 
@@ -601,18 +601,18 @@ namespace PticaGovorun
 	// This method makes map for the word=також in the form of a list of pairs: (такош(1)-також(11), такош(2)-також(12)).
 	// Sphinx library will output the base word=також if any of two pronCodes with parenthesis is recognized.
 	void buildPronCodeToSphinxNameMap(
-		const std::map<boost::wstring_ref, PhoneticWord>& phoneticDictWellFormed, 
-		const std::map<boost::wstring_ref, PhoneticWord>& phoneticDictBroken,
+		const std::map<boost::wstring_view, PhoneticWord>& phoneticDictWellFormed, 
+		const std::map<boost::wstring_view, PhoneticWord>& phoneticDictBroken,
 		bool includeBrokenWords,
 		PronCodeToDisplayNameMap& wordToPronCodeSphinxMapping)
 	{
 		// merge the set of words from wellFormed and broken words
-		std::set<boost::wstring_ref> wordList;
-		for (const std::pair<boost::wstring_ref, PhoneticWord>& pair : phoneticDictWellFormed)
+		std::set<boost::wstring_view> wordList;
+		for (const std::pair<boost::wstring_view, PhoneticWord>& pair : phoneticDictWellFormed)
 			wordList.insert(pair.first);
 		if (includeBrokenWords)
 		{
-			for (const std::pair<boost::wstring_ref, PhoneticWord>& pair : phoneticDictBroken)
+			for (const std::pair<boost::wstring_view, PhoneticWord>& pair : phoneticDictBroken)
 				wordList.insert(pair.first);
 		}
 
@@ -620,7 +620,7 @@ namespace PticaGovorun
 		std::vector<const PronunciationFlavour*> pronCodesPerWord;
 		std::wstring displayNameBuf;
 
-		for (boost::wstring_ref word : wordList)
+		for (boost::wstring_view word : wordList)
 		{
 			// lookup the broken dictionary
 			const PhoneticWord* wellFormedWord = nullptr;
@@ -654,14 +654,14 @@ namespace PticaGovorun
 
 			// here we do not sort pronCodes, otherwise some pronCodes' display names in phonetic dictionary may become out of lexicographical order
 
-			std::vector<std::pair<boost::wstring_ref, boost::wstring_ref>> pronCodeToSphinxNameMap;
+			std::vector<std::pair<boost::wstring_view, boost::wstring_view>> pronCodeToSphinxNameMap;
 
 			// (word=abup, p1=abup, p2=abub, p3=apup) maps to (abup, abup(2), abup3(3))
 			int dispName = 0;
 			for (const PronunciationFlavour* p : pronCodesPerWord)
 			{
 				dispName += 1;
-				boost::wstring_ref pronCode = p->PronCode;
+				boost::wstring_view pronCode = p->PronCode;
 
 				displayNameBuf.clear();
 				displayNameBuf.append(word.data(), word.size());
@@ -677,7 +677,7 @@ namespace PticaGovorun
 					displayNameBuf.append(1, L')');
 				}
 
-				boost::wstring_ref sphinxName;
+				boost::wstring_view sphinxName;
 				bool op = registerWord<wchar_t>(displayNameBuf, *wordToPronCodeSphinxMapping.stringArena_, sphinxName);
 				PG_Assert2(op, "Can't allocate word in arena");
 
@@ -815,7 +815,7 @@ namespace PticaGovorun
 		if (includeBrownBear)
 			std::copy(std::begin(phoneticDictWordsBrownBear_), std::end(phoneticDictWordsBrownBear_), std::back_inserter(usedWords));
 
-		std::vector<boost::wstring_ref> usedDeniedWords;
+		std::vector<boost::wstring_view> usedDeniedWords;
 		for (const PhoneticWord& word : usedWords)
 		{
 			if (denyWords.find(toStdWString(word.Word)) != std::end(denyWords))
@@ -828,7 +828,7 @@ namespace PticaGovorun
 		{
 			std::wostringstream buf;
 			buf << "Found used words which are denied: ";
-			PticaGovorun::join(std::begin(usedDeniedWords), std::end(usedDeniedWords), boost::wstring_ref(L", "), buf);
+			PticaGovorun::join(std::begin(usedDeniedWords), std::end(usedDeniedWords), boost::wstring_view(L", "), buf);
 			errMsg_ = QString::fromStdWString(buf.str());
 			return;
 		}
@@ -876,7 +876,7 @@ namespace PticaGovorun
 				return;
 			}
 
-			auto getStressedSyllableIndFun = [&wordToStressedSyllable](boost::wstring_ref word, std::vector<int>& stressedSyllableInds) -> bool
+			auto getStressedSyllableIndFun = [&wordToStressedSyllable](boost::wstring_view word, std::vector<int>& stressedSyllableInds) -> bool
 			{
 				auto it = wordToStressedSyllable.find(std::wstring(word.data(), word.size()));
 				if (it == wordToStressedSyllable.end())
@@ -898,18 +898,18 @@ namespace PticaGovorun
 			buildPronCodeToSphinxNameMap(phoneticDictWellFormed_, phoneticDictBroken_, /*includeBrokenWords*/ false, pronCodeToSphinxMappingTest);
 			std::wcout << "pronCode to Sphinx map Test: " << pronCodeToSphinxMappingTest.map.size() << std::endl;
 
-			std::map<boost::wstring_ref, boost::wstring_ref> pronCodeToDisplayNameTest;
+			std::map<boost::wstring_view, boost::wstring_view> pronCodeToDisplayNameTest;
 			if (!buildPronCodeToDisplayName(pronCodeToSphinxMappingTest, pronCodeToDisplayNameTest, &errMsg_))
 				return;
 
-			static auto pronCodeDisplayHelper = [](const std::map<boost::wstring_ref, boost::wstring_ref>& pronCodeToDisplayName, boost::wstring_ref pronCode)->boost::wstring_ref
+			static auto pronCodeDisplayHelper = [](const std::map<boost::wstring_view, boost::wstring_view>& pronCodeToDisplayName, boost::wstring_view pronCode)->boost::wstring_view
 			{
 				auto it = pronCodeToDisplayName.find(pronCode);
 				if (it != std::end(pronCodeToDisplayName))
 					return it->second;
-				return boost::wstring_ref();
+				return boost::wstring_view();
 			};
-			auto pronCodeDisplayTest = [&pronCodeToDisplayNameTest](boost::wstring_ref pronCode)->boost::wstring_ref
+			auto pronCodeDisplayTest = [&pronCodeToDisplayNameTest](boost::wstring_view pronCode)->boost::wstring_view
 			{
 				return pronCodeDisplayHelper(pronCodeToDisplayNameTest, pronCode);
 			};
@@ -929,11 +929,11 @@ namespace PticaGovorun
 			buildPronCodeToSphinxNameMap(phoneticDictWellFormed_, phoneticDictBroken_, /*includeBrokenWords*/ true, pronCodeToSphinxMappingTrain);
 			std::wcout << "pronCode to Sphinx map Train: " << pronCodeToSphinxMappingTrain.map.size() << std::endl;
 
-			std::map<boost::wstring_ref, boost::wstring_ref> pronCodeToDisplayNameTrain;
+			std::map<boost::wstring_view, boost::wstring_view> pronCodeToDisplayNameTrain;
 			if (!buildPronCodeToDisplayName(pronCodeToSphinxMappingTrain, pronCodeToDisplayNameTrain, &errMsg_))
 				return;
 
-			auto pronCodeDisplayTrain = [&pronCodeToDisplayNameTrain](boost::wstring_ref pronCode)->boost::wstring_ref
+			auto pronCodeDisplayTrain = [&pronCodeToDisplayNameTrain](boost::wstring_view pronCode)->boost::wstring_view
 			{
 				return pronCodeDisplayHelper(pronCodeToDisplayNameTrain, pronCode);
 			};
@@ -1042,7 +1042,7 @@ namespace PticaGovorun
 		reshapeAsDict(speechData_->phoneticDictFillerWords_, phoneticDictFiller_);
 
 		// make composite pronCode->pronObj map
-		std::vector<boost::wstring_ref> duplicatePronCodes;
+		std::vector<boost::wstring_view> duplicatePronCodes;
 		populatePronCodes(speechData_->phoneticDictWellFormedWords_, pronCodeToObjWellFormed_, duplicatePronCodes);
 		
 		populatePronCodes(speechData_->phoneticDictBrokenWords_, pronCodeToObjBroken_, duplicatePronCodes);
@@ -1052,7 +1052,7 @@ namespace PticaGovorun
 		if (!duplicatePronCodes.empty())
 		{
 			errMsg_ = "Phonetic dict contains duplicate pronCodes";
-			for (boost::wstring_ref pronCode : duplicatePronCodes)
+			for (boost::wstring_view pronCode : duplicatePronCodes)
 				errMsg_ += ", " + toQString(pronCode);
 			return;
 		}
@@ -1081,7 +1081,7 @@ namespace PticaGovorun
 		auto newTotalUsage = std::trunc<ptrdiff_t>(unigramTotalUsageCounter / (1 - ReservedSpace));
 		auto oneFillerUsage = std::trunc<ptrdiff_t>(newTotalUsage * FillerInhaleProb);
 
-		for (boost::wstring_ref word : syntaticProns)
+		for (boost::wstring_view word : syntaticProns)
 		{
 			WordPart* wordPart = wordUsage.wordPartByValue(toStdWString(word), WordPartSide::WholeWord);
 			PG_Assert(wordPart != nullptr);
@@ -1093,7 +1093,7 @@ namespace PticaGovorun
 
 		// recover usage of wordParts with unknown usage (those which where not covered in text corpus)
 
-		auto recoverUsage = [&wordUsage, &wordPartIdToRecoveredUsage](boost::wstring_ref word)
+		auto recoverUsage = [&wordUsage, &wordPartIdToRecoveredUsage](boost::wstring_view word)
 		{
 			WordPart* wordPart = wordUsage.wordPartByValue(toStdWString(word), WordPartSide::WholeWord);
 			PG_Assert(wordPart != nullptr);
@@ -1122,19 +1122,19 @@ namespace PticaGovorun
 	}
 
 	void SphinxTrainDataBuilder::buildPhaseSpecificParts(ResourceUsagePhase phase, int minWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, const std::set<PhoneId>& trainPhoneIds, int gramDim,
-		std::function<auto (boost::wstring_ref)->boost::wstring_ref> pronCodeDisplay,
+		std::function<auto (boost::wstring_view)->boost::wstring_view> pronCodeDisplay,
 		WordPhoneticTranscriber& phoneticTranscriber,
 		int* dictWordsCount, int* phonesCount)
 	{
 		// well known dictionaries are WellFormed, Broken and Filler
-		auto expandWellKnownPronCodeFun = [phase, this](boost::wstring_ref pronCode) -> const PronunciationFlavour*
+		auto expandWellKnownPronCodeFun = [phase, this](boost::wstring_view pronCode) -> const PronunciationFlavour*
 		{
 			// include broken words in train phase only
 			// ignore broken words in test phase
 			bool useBrokenDict = phase == ResourceUsagePhase::Train;
 			return expandWellKnownPronCode(pronCode, useBrokenDict);
 		};
-		auto expandWellKnownWordFun = [phase, this](boost::wstring_ref word) -> const PhoneticWord*
+		auto expandWellKnownWordFun = [phase, this](boost::wstring_view word) -> const PhoneticWord*
 		{
 			// include broken words in train phase only
 			// ignore broken words in test phase
@@ -1166,7 +1166,7 @@ namespace PticaGovorun
 
 		//
 		QString fileSuffix = phase == ResourceUsagePhase::Train ? "_train" : "_test";
-		std::vector<boost::wstring_ref> wordsVoca(seedWordsLangModel.size());
+		std::vector<boost::wstring_view> wordsVoca(seedWordsLangModel.size());
 		std::transform(std::begin(seedWordsLangModel), std::end(seedWordsLangModel), std::begin(wordsVoca), [](auto& w) { return w.Word; });
 		if (!writeWordList(wordsVoca, filePath("corpusVocab" + fileSuffix + ".vocab").toStdWString(), &errMsg_))
 			return;
@@ -1196,12 +1196,12 @@ namespace PticaGovorun
 		// test phonetic dictionary should not have broken pronunciations
 		if (phase == ResourceUsagePhase::Test)
 		{
-			std::vector<boost::wstring_ref> brokenPronCodes;
+			std::vector<boost::wstring_view> brokenPronCodes;
 			if (!rulePhoneticDicHasNoBrokenPronCodes(seedPhoneticWords, phoneticDictBroken_, &brokenPronCodes))
 			{
 				std::wostringstream buf;
 				buf << "Found broken pronunciations in phonetic dictionary: ";
-				PticaGovorun::join(std::begin(brokenPronCodes), std::end(brokenPronCodes), boost::wstring_ref(L", "), buf);
+				PticaGovorun::join(std::begin(brokenPronCodes), std::end(brokenPronCodes), boost::wstring_view(L", "), buf);
 				
 				errMsg_ = QString::fromStdWString(buf.str());
 				return;
@@ -1242,7 +1242,7 @@ namespace PticaGovorun
 		return QString("%1/%2").arg(outDir_.absolutePath()).arg(relFilePath);
 	}
 
-	bool SphinxTrainDataBuilder::hasPhoneticExpansion(boost::wstring_ref word, bool useBroken) const
+	bool SphinxTrainDataBuilder::hasPhoneticExpansion(boost::wstring_view word, bool useBroken) const
 	{
 		auto it = pronCodeToObjWellFormed_.find(word);
 		if (it != pronCodeToObjWellFormed_.end())
@@ -1262,12 +1262,12 @@ namespace PticaGovorun
 		return false;
 	}
 
-	bool SphinxTrainDataBuilder::isBrokenUtterance(boost::wstring_ref text) const
+	bool SphinxTrainDataBuilder::isBrokenUtterance(boost::wstring_view text) const
 	{
-		std::vector<boost::wstring_ref> textWords;
+		std::vector<boost::wstring_view> textWords;
 		splitUtteranceIntoWords(text, textWords);
 
-		bool hasBrokenWord = std::any_of(textWords.begin(), textWords.end(), [this](boost::wstring_ref word)
+		bool hasBrokenWord = std::any_of(textWords.begin(), textWords.end(), [this](boost::wstring_view word)
 		{
 			auto it = pronCodeToObjBroken_.find(word);
 			return it != pronCodeToObjBroken_.end();
@@ -1275,7 +1275,7 @@ namespace PticaGovorun
 		return hasBrokenWord;
 	}
 
-	const PronunciationFlavour* SphinxTrainDataBuilder::expandWellKnownPronCode(boost::wstring_ref pronCode, bool useBrokenDict) const
+	const PronunciationFlavour* SphinxTrainDataBuilder::expandWellKnownPronCode(boost::wstring_view pronCode, bool useBrokenDict) const
 	{
 		auto it = pronCodeToObjWellFormed_.find(pronCode);
 		if (it != pronCodeToObjWellFormed_.end())
@@ -1295,7 +1295,7 @@ namespace PticaGovorun
 		return nullptr;
 	}
 
-	const PhoneticWord* SphinxTrainDataBuilder::findWellKnownWord(boost::wstring_ref word, bool useBrokenDict) const
+	const PhoneticWord* SphinxTrainDataBuilder::findWellKnownWord(boost::wstring_view word, bool useBrokenDict) const
 	{
 		auto it = phoneticDictWellFormed_.find(word);
 		if (it != phoneticDictWellFormed_.end())
@@ -1335,7 +1335,7 @@ namespace PticaGovorun
 	// Lines with double-pound ## (anywhere in the line) are comments.
 	// Text from single pound to the end of line is a comment.
 	// Empty lines are ignored.
-	bool loadWordList(boost::wstring_ref filePath, std::unordered_set<std::wstring>& words)
+	bool loadWordList(boost::wstring_view filePath, std::unordered_set<std::wstring>& words)
 	{
 		QFile file(toQString(filePath));
 		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -1367,7 +1367,7 @@ namespace PticaGovorun
 		return true;
 	}
 
-	bool writeWordList(const std::vector<boost::wstring_ref>& words, boost::filesystem::path filePath, QString* errMsg)
+	bool writeWordList(const std::vector<boost::wstring_view>& words, boost::filesystem::path filePath, QString* errMsg)
 	{
 		QFile file(QString::fromStdWString(filePath.wstring()));
 		if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -1379,7 +1379,7 @@ namespace PticaGovorun
 		QTextStream txt(&file);
 		txt.setCodec("UTF-8");
 		txt.setGenerateByteOrderMark(false);
-		for (const boost::wstring_ref word : words)
+		for (const boost::wstring_view word : words)
 		{
 			txt << toQString(word) << "\n";
 		}
@@ -1443,7 +1443,7 @@ namespace PticaGovorun
 		std::wcout << "processedWordsFile=" << processedWordsFile << std::endl;
 
 		std::unordered_set<std::wstring> processedWords;
-		if (!loadWordList(boost::wstring_ref(processedWordsFile), processedWords))
+		if (!loadWordList(boost::wstring_view(processedWordsFile), processedWords))
 		{
 			errMsg_ = "Can't load 'uk-done.txt' dictionary";
 			return;
@@ -1473,7 +1473,7 @@ namespace PticaGovorun
 
 		WordsUsageInfo& wordUsage = phoneticSplitter.wordUsage();
 
-		auto registerWord = [&wordUsage](boost::wstring_ref word)
+		auto registerWord = [&wordUsage](boost::wstring_view word)
 		{
 			bool wasAdded = false;
 			WordPart* wordPart = wordUsage.getOrAddWordPart(toStdWString(word), WordPartSide::WholeWord, &wasAdded);
@@ -1522,7 +1522,7 @@ namespace PticaGovorun
 	}
 
 	std::tuple<bool, const char*> SphinxTrainDataBuilder::buildPhoneticDictionary(const std::vector<const WordPart*>& seedUnigrams, 
-		std::function<auto (boost::wstring_ref pronCode) -> const PronunciationFlavour*> expandWellKnownPronCode,
+		std::function<auto (boost::wstring_view pronCode) -> const PronunciationFlavour*> expandWellKnownPronCode,
 		std::vector<PhoneticWord>& phoneticDictWords)
 	{
 		std::wstring stressDict = speechProjDir_.filePath("LM/stressDictUk.xml").toStdWString();
@@ -1533,7 +1533,7 @@ namespace PticaGovorun
 		if (!op)
 			return std::make_tuple(false, errMsg);
 
-		auto getStressedSyllableIndFun = [&wordToStressedSyllable](boost::wstring_ref word, std::vector<int>& stressedSyllableInds) -> bool
+		auto getStressedSyllableIndFun = [&wordToStressedSyllable](boost::wstring_view word, std::vector<int>& stressedSyllableInds) -> bool
 		{
 			auto it = wordToStressedSyllable.find(std::wstring(word.data(), word.size()));
 			if (it == wordToStressedSyllable.end())
@@ -1545,7 +1545,7 @@ namespace PticaGovorun
 		WordPhoneticTranscriber phoneticTranscriber;
 		phoneticTranscriber.setStressedSyllableIndFun(getStressedSyllableIndFun);
 
-		auto expandPronFun = [this, &phoneticTranscriber, expandWellKnownPronCode](boost::wstring_ref pronCode, PronunciationFlavour& result) -> bool
+		auto expandPronFun = [this, &phoneticTranscriber, expandWellKnownPronCode](boost::wstring_view pronCode, PronunciationFlavour& result) -> bool
 		{
 			const PronunciationFlavour* pron = expandWellKnownPronCode(pronCode);
 			if (pron != nullptr)
@@ -1612,7 +1612,7 @@ namespace PticaGovorun
 	}
 	
 	std::tuple<bool, const char*> SphinxTrainDataBuilder::createPhoneticDictionaryFromUsedWords(wv::slice<const WordPart*> seedWordParts, const UkrainianPhoneticSplitter& phoneticSplitter,
-		std::function<auto (boost::wstring_ref, PronunciationFlavour&) -> bool> expandPronCodeFun,
+		std::function<auto (boost::wstring_view, PronunciationFlavour&) -> bool> expandPronCodeFun,
 		std::vector<PhoneticWord>& phoneticDictWords)
 	{
 		std::wstring wordStr;
@@ -1623,8 +1623,8 @@ namespace PticaGovorun
 
 			toStringWithTilde(*wordPart, wordStr, false);
 
-			boost::wstring_ref wordRef;
-			if (!registerWord(boost::wstring_ref(wordStr), *stringArena_, wordRef))
+			boost::wstring_view wordRef;
+			if (!registerWord(boost::wstring_view(wordStr), *stringArena_, wordRef))
 				return std::make_tuple(false, "Can't register word in arena");
 			
 			PronunciationFlavour pron;
@@ -1749,7 +1749,7 @@ namespace PticaGovorun
 	{
 		PhoneAccumulator trainAcc;
 		PhoneAccumulator testAcc;
-		std::vector<boost::wstring_ref> pronCodes;
+		std::vector<boost::wstring_view> pronCodes;
 		for (const auto& segRef : segments)
 		{
 			PhoneAccumulator& acc = segRef.Phase == ResourceUsagePhase::Train ? trainAcc : testAcc;
@@ -1781,12 +1781,12 @@ namespace PticaGovorun
 		std::set_difference(testPhones.begin(), testPhones.end(), trainPhoneIds.begin(), trainPhoneIds.end(), std::back_inserter(testOnlyPhoneIds));
 
 		//
-		auto sentHasRarePhone = [&pronCodes, this](boost::wstring_ref text, const std::vector<PhoneId>& rarePhoneIds) -> bool
+		auto sentHasRarePhone = [&pronCodes, this](boost::wstring_view text, const std::vector<PhoneId>& rarePhoneIds) -> bool
 		{
 			pronCodes.clear();
 			splitUtteranceIntoWords(text, pronCodes);
 
-			return std::any_of(pronCodes.begin(), pronCodes.end(), [this, &rarePhoneIds](boost::wstring_ref pronCode) -> bool
+			return std::any_of(pronCodes.begin(), pronCodes.end(), [this, &rarePhoneIds](boost::wstring_view pronCode) -> bool
 			{
 				const PronunciationFlavour* pron = expandWellKnownPronCode(pronCode, true);
 				PG_Assert2(pron != nullptr, "PronCode can't be expanded into phones, but has been successfully expanded before");
@@ -1881,7 +1881,7 @@ namespace PticaGovorun
 
 	bool SphinxTrainDataBuilder::writeFileIdAndTranscription(const std::vector<details::AssignedPhaseAudioSegment>& segsRefs, ResourceUsagePhase targetPhase,
 		const QString& fileIdsFilePath,
-		std::function<auto (boost::wstring_ref)->boost::wstring_ref> pronCodeDisplay,
+		std::function<auto (boost::wstring_view)->boost::wstring_view> pronCodeDisplay,
 		const QString& transcriptionFilePath)
 	{
 		QFile fileFileIds(fileIdsFilePath);
@@ -1903,7 +1903,7 @@ namespace PticaGovorun
 		QString startSilQ = toQString(fillerStartSilence());
 		QString endSilQ = toQString(fillerEndSilence());
 
-		std::vector<boost::wstring_ref> pronCodes;
+		std::vector<boost::wstring_view> pronCodes;
 		for (const details::AssignedPhaseAudioSegment& segRef : segsRefs)
 		{
 			if (segRef.Phase != targetPhase)
@@ -1925,14 +1925,14 @@ namespace PticaGovorun
 			splitUtteranceIntoWords(segRef.Seg->TranscriptText, pronCodes);
 			for (size_t i = 0; i < pronCodes.size(); ++i)
 			{
-				boost::wstring_ref pronCode = pronCodes[i];
+				boost::wstring_view pronCode = pronCodes[i];
 				//sphinxPronCode.clear();
 				//manglePronCodeSphinx(pronCode, sphinxPronCode);
 
-				boost::wstring_ref sphinxPronCode = pronCode;
+				boost::wstring_view sphinxPronCode = pronCode;
 				
 				auto dispName = pronCodeDisplay(pronCode);
-				if (dispName != boost::wstring_ref())
+				if (dispName != boost::wstring_view())
 					sphinxPronCode = dispName;
 
 				txtTranscription << toQString(sphinxPronCode) << " ";
@@ -2005,7 +2005,7 @@ namespace PticaGovorun
 				return;
 			}
 
-			std::vector<boost::wstring_ref> segPronCodes;
+			std::vector<boost::wstring_view> segPronCodes;
 			std::vector<wchar_t> pronCodeBuff;
 
 			// generate each audio segments
@@ -2085,7 +2085,7 @@ namespace PticaGovorun
 	void SphinxTrainDataBuilder::generateDataStat(const std::vector<details::AssignedPhaseAudioSegment>& phaseAssignedSegs)
 	{
 		if (!errMsg_.isEmpty()) return;
-		std::vector<boost::wstring_ref> words;
+		std::vector<boost::wstring_view> words;
 		for (const auto& segRef : phaseAssignedSegs)
 		{
 			int& utterCounter = segRef.Phase == ResourceUsagePhase::Train ? utterCountTrain_ : utterCountTest_;
@@ -2148,7 +2148,7 @@ namespace PticaGovorun
 		}
 	}
 
-	bool loadSphinxAudio(boost::wstring_ref audioDir, const std::vector<std::wstring>& audioRelPathesNoExt, boost::wstring_ref audioFileSuffix, std::vector<AudioData>& audioDataList)
+	bool loadSphinxAudio(boost::wstring_view audioDir, const std::vector<std::wstring>& audioRelPathesNoExt, boost::wstring_view audioFileSuffix, std::vector<AudioData>& audioDataList)
 	{
 		QString ext = toQString(audioFileSuffix);
 		auto audioDirQ = QDir(toQString(audioDir));
@@ -2169,10 +2169,10 @@ namespace PticaGovorun
 		return true;
 	}
 
-	void manglePronCodeSphinx(boost::wstring_ref pronCode, std::wstring& result)
+	void manglePronCodeSphinx(boost::wstring_view pronCode, std::wstring& result)
 	{
-		boost::wstring_ref pronCodeName = pronCode;
-		boost::wstring_ref pronCodeStressSuffix;
+		boost::wstring_view pronCodeName = pronCode;
+		boost::wstring_view pronCodeStressSuffix;
 		
 		// if it fails, then copy to output as-is
 		parsePronCodeNameAndStress(pronCode, &pronCodeName, &pronCodeStressSuffix);
@@ -2183,7 +2183,7 @@ namespace PticaGovorun
 		result.append(pronCodeStressSuffix.data(), pronCodeStressSuffix.size());
 	}
 
-	bool writePhoneticDictSphinx(const std::vector<PhoneticWord>& phoneticDictWords, const PhoneRegistry& phoneReg, const QString& filePath, std::function<auto (boost::wstring_ref)->boost::wstring_ref> pronCodeDisplay, QString* errMsg)
+	bool writePhoneticDictSphinx(const std::vector<PhoneticWord>& phoneticDictWords, const PhoneRegistry& phoneReg, const QString& filePath, std::function<auto (boost::wstring_view)->boost::wstring_view> pronCodeDisplay, QString* errMsg)
 	{
 		QFile file(filePath);
 		if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -2211,12 +2211,12 @@ namespace PticaGovorun
 					return false;
 				}
 
-				boost::wstring_ref dispName = pron.PronCode;
+				boost::wstring_view dispName = pron.PronCode;
 
 				if (pronCodeDisplay != nullptr)
 				{
-					boost::wstring_ref mappedName = pronCodeDisplay(pron.PronCode);
-					if (mappedName != boost::wstring_ref())
+					boost::wstring_view mappedName = pronCodeDisplay(pron.PronCode);
+					if (mappedName != boost::wstring_view())
 						dispName = mappedName;
 				}
 
@@ -2228,7 +2228,7 @@ namespace PticaGovorun
 		return true;
 	}
 
-	bool readSphinxFileFileId(boost::wstring_ref fileIdPath, std::vector<std::wstring>& fileIds)
+	bool readSphinxFileFileId(boost::wstring_view fileIdPath, std::vector<std::wstring>& fileIds)
 	{
 		QFile file(toQString(fileIdPath));
 		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -2243,7 +2243,7 @@ namespace PticaGovorun
 		return true;
 	}
 
-	bool readSphinxFileTranscription(boost::wstring_ref transcriptionFilePath, std::vector<SphinxTranscriptionLine>& transcriptions)
+	bool readSphinxFileTranscription(boost::wstring_view transcriptionFilePath, std::vector<SphinxTranscriptionLine>& transcriptions)
 	{
 		QFile file(toQString(transcriptionFilePath));
 		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -2295,7 +2295,7 @@ namespace PticaGovorun
 	};
 
 	// TODO: move to SphinxDataValidation module
-	bool rulePhoneticDicHasNoBrokenPronCodes(const std::vector<PhoneticWord>& phoneticDictPronCodes, const std::map<boost::wstring_ref, PhoneticWord>& phoneticDictBroken, std::vector<boost::wstring_ref>* brokenPronCodes)
+	bool rulePhoneticDicHasNoBrokenPronCodes(const std::vector<PhoneticWord>& phoneticDictPronCodes, const std::map<boost::wstring_view, PhoneticWord>& phoneticDictBroken, std::vector<boost::wstring_view>* brokenPronCodes)
 	{
 		bool noBrokenPron = true;
 		for (const PhoneticWord& word : phoneticDictPronCodes)
@@ -2324,7 +2324,7 @@ namespace PticaGovorun
 		return noBrokenPron;
 	}
 
-	cmd_ln_t* SphinxConfig::pg_init_cmd_ln_t(boost::string_ref acousticModelDir, boost::string_ref langModelFile, boost::string_ref phoneticModelFile, bool verbose, bool debug, bool backTrace, boost::string_ref logFile)
+	cmd_ln_t* SphinxConfig::pg_init_cmd_ln_t(boost::string_view acousticModelDir, boost::string_view langModelFile, boost::string_view phoneticModelFile, bool verbose, bool debug, bool backTrace, boost::string_view logFile)
 	{
 		// cmd_ln_init() redirects to parse_options() which do not use variable number of arguments
 		// but the later is internal

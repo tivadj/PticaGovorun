@@ -3,7 +3,7 @@
 #include <array>
 #include <memory>
 #include <unordered_map>
-#include <boost/utility/string_ref.hpp>
+#include <boost/utility/string_view.hpp>
 #include "assertImpl.h"
 #include "CoreUtils.h"
 #include "assertImpl.h"
@@ -68,7 +68,7 @@ namespace PticaGovorun
 
 	struct BoostStringRefHasher
 	{
-		size_t operator()(const boost::wstring_ref strRef)
+		size_t operator()(const boost::wstring_view strRef)
 		{
 			return std::hash_value(strRef.data());
 		}
@@ -132,21 +132,21 @@ namespace PticaGovorun
 	};
 
 	template <typename CharT>
-	bool registerWord(boost::basic_string_ref<CharT, std::char_traits<CharT>> word, 
+	bool registerWord(boost::basic_string_view<CharT, std::char_traits<CharT>> word, 
 		GrowOnlyPinArena<CharT>& stringArena, 
-		boost::basic_string_ref<CharT, std::char_traits<CharT>>& arenaWord)
+		boost::basic_string_view<CharT, std::char_traits<CharT>>& arenaWord)
 	{
 		CharT* arenaWordPtr = stringArena.put(word.begin(), word.end());
 		if (arenaWordPtr == nullptr)
 			return false;
-		arenaWord = boost::basic_string_ref<CharT, std::char_traits<CharT>>(arenaWordPtr, word.size());
+		arenaWord = boost::basic_string_view<CharT, std::char_traits<CharT>>(arenaWordPtr, word.size());
 		return true;
 	};
 
-	inline bool registerWord(QString word, GrowOnlyPinArena<wchar_t>& stringArena, boost::wstring_ref& arenaWord)
+	inline bool registerWord(QString word, GrowOnlyPinArena<wchar_t>& stringArena, boost::wstring_view& arenaWord)
 	{
 		std::vector<wchar_t> wordBuff;
-		boost::wstring_ref wordRef = toWStringRef(word, wordBuff);
+		boost::wstring_view wordRef = toWStringRef(word, wordBuff);
 		return registerWord(wordRef, stringArena, arenaWord);
 	};
 

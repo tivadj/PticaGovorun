@@ -8,7 +8,7 @@
 
 #include <QObject>
 #include <QFileInfo>
-#include <boost/utility/string_ref.hpp>
+#include <boost/utility/string_view.hpp>
 #include <boost/optional/optional.hpp>
 
 #if PG_HAS_OPENCV
@@ -139,8 +139,8 @@ enum class ResourceUsagePhase
 	Test,
 };
 
-boost::string_ref toString(ResourceUsagePhase phase);
-boost::optional<ResourceUsagePhase> resourceUsagePhaseFromString(boost::string_ref phase);
+boost::string_view toString(ResourceUsagePhase phase);
+boost::optional<ResourceUsagePhase> resourceUsagePhaseFromString(boost::string_view phase);
 
 struct TimePointMarker
 {
@@ -216,7 +216,7 @@ PG_EXPORTS bool getDefaultMarkerStopsPlayback(MarkerLevelOfDetail levelOfDetail)
 // Converts language to string.
 PG_EXPORTS std::string speechLanguageToStr(SpeechLanguage lang);
 
-PG_EXPORTS void splitUtteranceIntoWords(boost::wstring_ref text, std::vector<boost::wstring_ref>& words);
+PG_EXPORTS void splitUtteranceIntoWords(boost::wstring_view text, std::vector<boost::wstring_view>& words);
 
 // insertShortPause=true to insert sp phone between words.
 PG_EXPORTS std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> bool> wordToPhoneListFun, bool insertShortPause, std::vector<std::string>& speechPhones);

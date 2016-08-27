@@ -51,7 +51,7 @@ namespace PronunciationChecksRunnerNS
 
 		//
 
-		std::vector<boost::wstring_ref> words;
+		std::vector<boost::wstring_view> words;
 		std::wstring word;
 		word.reserve(32);
 		for (const AnnotatedSpeechSegment& seg : segments)
@@ -60,7 +60,7 @@ namespace PronunciationChecksRunnerNS
 			splitUtteranceIntoWords(seg.TranscriptText, words);
 
 			// iterate through words
-			for (boost::wstring_ref wordRef : words)
+			for (boost::wstring_view wordRef : words)
 			{
 				toStdWString(wordRef, word);
 

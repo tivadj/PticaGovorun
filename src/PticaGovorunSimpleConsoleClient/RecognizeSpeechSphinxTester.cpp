@@ -64,7 +64,7 @@ namespace RecognizeSpeechSphinxTester
 		const char* hmmPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/model_parameters/persian.cd_cont_200/)path";
 		const char* langModelPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.lm.DMP)path";
 		const char* dictPath = R"path(C:/devb/PticaGovorunProj/data/TrainSphinx/persian/etc/persian.dic)path";
-		cmd_ln_t *config = SphinxConfig::pg_init_cmd_ln_t(hmmPath, langModelPath, dictPath, true, false, true, boost::string_ref());
+		cmd_ln_t *config = SphinxConfig::pg_init_cmd_ln_t(hmmPath, langModelPath, dictPath, true, false, true, boost::string_view());
 		if (config == nullptr)
 			return;
 
@@ -304,10 +304,10 @@ namespace RecognizeSpeechSphinxTester
 		}
 	};
 
-	std::vector<std::wstring> toStdWStringVec(const std::vector<boost::wstring_ref>& refs)
+	std::vector<std::wstring> toStdWStringVec(const std::vector<boost::wstring_view>& refs)
 	{
 		std::vector<std::wstring> result(refs.size());
-		std::transform(refs.begin(), refs.end(), result.begin(), [](boost::wstring_ref r) -> std::wstring 
+		std::transform(refs.begin(), refs.end(), result.begin(), [](boost::wstring_view r) -> std::wstring 
 		{
 			return toStdWString(r);
 		});
@@ -331,8 +331,8 @@ namespace RecognizeSpeechSphinxTester
 		float DistPhones; // edit distance between utterances as a sequence of phones
 		TranscribedAudioSegment Segment;
 		std::wstring TextActual;
-		std::vector<boost::wstring_ref> PronIdsExpected; // слова(2)
-		std::vector<boost::wstring_ref> WordsExpected; // слова without any braces
+		std::vector<boost::wstring_view> PronIdsExpected; // слова(2)
+		std::vector<boost::wstring_view> WordsExpected; // слова without any braces
 		std::vector<std::wstring> PronIdsActualRaw;
 		std::vector<std::wstring> WordsActual;
 		std::vector<float> WordProbs; // confidence of each recognized word
@@ -382,8 +382,8 @@ namespace RecognizeSpeechSphinxTester
 		int& phoneErrorTotalCount, int& phoneTotalCount,
 		EditDistance<PhoneId, PhoneProximityCosts>& phonesEditDist,
 		const PhoneProximityCosts& editCost,
-		const std::map<boost::wstring_ref, PronunciationFlavour>& pronCodeToPronTest,
-		const std::map<boost::wstring_ref, PronunciationFlavour>& pronCodeToPronFiller,
+		const std::map<boost::wstring_view, PronunciationFlavour>& pronCodeToPronTest,
+		const std::map<boost::wstring_view, PronunciationFlavour>& pronCodeToPronFiller,
 		const PhoneRegistry& phoneReg, bool excludeSilFromDecOutput)
 	{
 		QTextCodec* textCodec = QTextCodec::codecForName("utf8");
@@ -478,7 +478,7 @@ namespace RecognizeSpeechSphinxTester
 
 			// split expected text into words
 
-			std::vector<boost::wstring_ref> pronCodesExpected;
+			std::vector<boost::wstring_view> pronCodesExpected;
 			splitUtteranceIntoWords(seg.Transcription, pronCodesExpected);
 
 			// merge actual pronCodes (word parts)
@@ -512,33 +512,33 @@ namespace RecognizeSpeechSphinxTester
 				}
 			}
 
-			std::vector<boost::wstring_ref> pronCodesActualMerged;
+			std::vector<boost::wstring_view> pronCodesActualMerged;
 			std::transform(pronCodesActualMergedStr.begin(), pronCodesActualMergedStr.end(), std::back_inserter(pronCodesActualMerged), [](std::wstring& w)
 			{
-				return boost::wstring_ref(w);
+				return boost::wstring_view(w);
 			});
 
 			// expected no sil
 
-			std::vector<boost::wstring_ref> pronCodesExpectedNoSil;
-			std::remove_copy_if(std::begin(pronCodesExpected), std::end(pronCodesExpected), std::back_inserter(pronCodesExpectedNoSil), [&](boost::wstring_ref pronCode)
+			std::vector<boost::wstring_view> pronCodesExpectedNoSil;
+			std::remove_copy_if(std::begin(pronCodesExpected), std::end(pronCodesExpected), std::back_inserter(pronCodesExpectedNoSil), [&](boost::wstring_view pronCode)
 			{
 				return pronCodeToPronFiller.find(pronCode) != pronCodeToPronFiller.end();
 			});
 
 			// actual no sil
 
-			std::vector<boost::wstring_ref> pronCodesActualNoSil;
-			std::remove_copy_if(std::begin(pronCodesActualMerged), std::end(pronCodesActualMerged), std::back_inserter(pronCodesActualNoSil), [&](boost::wstring_ref pronCode)
+			std::vector<boost::wstring_view> pronCodesActualNoSil;
+			std::remove_copy_if(std::begin(pronCodesActualMerged), std::end(pronCodesActualMerged), std::back_inserter(pronCodesActualNoSil), [&](boost::wstring_view pronCode)
 			{
 				return pronCodeToPronFiller.find(pronCode) != pronCodeToPronFiller.end();
 			});
 
-			auto trimNumberInParenthesisFun = [](const std::vector<boost::wstring_ref>& words, std::vector<boost::wstring_ref>& outWords)
+			auto trimNumberInParenthesisFun = [](const std::vector<boost::wstring_view>& words, std::vector<boost::wstring_view>& outWords)
 			{
-				for (boost::wstring_ref pronId : words)
+				for (boost::wstring_view pronId : words)
 				{
-					boost::wstring_ref baseWord;
+					boost::wstring_view baseWord;
 					parsePronId(pronId, baseWord);
 					outWords.push_back(baseWord);
 				}
@@ -549,26 +549,26 @@ namespace RecognizeSpeechSphinxTester
 			const auto& pronCodesExpectedSrc = excludeSilFromDecOutput ? pronCodesExpectedNoSil : pronCodesExpected;
 
 			// map pronId -> word (eg. слова(2) -> слова) so that only baseWords are compared
-			std::vector<boost::wstring_ref> wordsExpected;
+			std::vector<boost::wstring_view> wordsExpected;
 			trimNumberInParenthesisFun(pronCodesExpectedSrc, wordsExpected);
 
 			// actual words
 			// decoder will never return 'slova(2)' and will always return the base word 'slova'
-			std::vector<boost::wstring_ref>& pronCodesActualSrc = excludeSilFromDecOutput ? pronCodesActualNoSil : pronCodesActualMerged;
-			std::vector<boost::wstring_ref> wordsActual;
+			std::vector<boost::wstring_view>& pronCodesActualSrc = excludeSilFromDecOutput ? pronCodesActualNoSil : pronCodesActualMerged;
+			std::vector<boost::wstring_view> wordsActual;
 			trimNumberInParenthesisFun(pronCodesActualSrc, wordsActual);
 
 			// compute word error
 
-			WordErrorCosts<boost::wstring_ref> c;
+			WordErrorCosts<boost::wstring_view> c;
 			float distWord = findEditDistance(wordsExpected.begin(), wordsExpected.end(), wordsActual.begin(), wordsActual.end(), c);
 
 			// compute edit distances between whole utterances (char distance)
 			std::wostringstream strBuff;
-			PticaGovorun::join(wordsExpected.begin(), wordsExpected.end(), boost::wstring_ref(L" "), strBuff);
+			PticaGovorun::join(wordsExpected.begin(), wordsExpected.end(), boost::wstring_view(L" "), strBuff);
 			std::wstring wordsExpectedStr = strBuff.str();
 			strBuff.str(L"");
-			PticaGovorun::join(wordsActual.begin(), wordsActual.end(), boost::wstring_ref(L" "), strBuff);
+			PticaGovorun::join(wordsActual.begin(), wordsActual.end(), boost::wstring_view(L" "), strBuff);
 			std::wstring wordsActualStr = strBuff.str();
 
 			WordErrorCosts<wchar_t> charCost;
@@ -576,7 +576,7 @@ namespace RecognizeSpeechSphinxTester
 
 			// do phonetic expansion
 
-			auto expandPronCodeFun = [&](boost::wstring_ref pronCode) -> const PronunciationFlavour*
+			auto expandPronCodeFun = [&](boost::wstring_view pronCode) -> const PronunciationFlavour*
 			{
 				auto fillerIt = pronCodeToPronFiller.find(pronCode);
 				if (fillerIt != pronCodeToPronFiller.end())
@@ -589,9 +589,9 @@ namespace RecognizeSpeechSphinxTester
 				return nullptr;
 			};
 
-			auto expandPronCodesFun = [&](const std::vector<boost::wstring_ref>& pronCodes, std::vector<PhoneId>& phones, std::wstring* errMsg) -> bool
+			auto expandPronCodesFun = [&](const std::vector<boost::wstring_view>& pronCodes, std::vector<PhoneId>& phones, std::wstring* errMsg) -> bool
 			{
-				for (boost::wstring_ref pronCode : pronCodes)
+				for (boost::wstring_view pronCode : pronCodes)
 				{
 					const PronunciationFlavour* pron = expandPronCodeFun(pronCode);
 					if (pron == nullptr)
@@ -678,7 +678,7 @@ namespace RecognizeSpeechSphinxTester
 		}
 	}
 
-	void dumpConfusionMatrix(const std::vector<int>& phoneConfusionMat, int phonesCount, boost::wstring_ref outFilePath, const PhoneRegistry& phoneReg)
+	void dumpConfusionMatrix(const std::vector<int>& phoneConfusionMat, int phonesCount, boost::wstring_view outFilePath, const PhoneRegistry& phoneReg)
 	{
 		// find pivotal phone of high confusion
 		std::vector<int> confData;
@@ -760,7 +760,7 @@ namespace RecognizeSpeechSphinxTester
 	}
 
 	// Loads transcription and audio data in Sphinx format.
-	bool loadSpeechSegmentsToDecode(int trunc, boost::wstring_ref fileIdPath, boost::wstring_ref transcrPath, boost::wstring_ref audioDir,
+	bool loadSpeechSegmentsToDecode(int trunc, boost::wstring_view fileIdPath, boost::wstring_view transcrPath, boost::wstring_view audioDir,
 		std::vector<TranscribedAudioSegment>& segments)
 	{
 		std::vector<std::wstring> audioRelFilePathesNoExt;
@@ -814,7 +814,7 @@ namespace RecognizeSpeechSphinxTester
 		return true;
 	}
 
-	std::tuple<bool, const char*> dumpDecoderExpectActualResults(boost::wstring_ref filePath, const std::vector<TwoUtterances>& recogUtterances)
+	std::tuple<bool, const char*> dumpDecoderExpectActualResults(boost::wstring_view filePath, const std::vector<TwoUtterances>& recogUtterances)
 	{
 		QFile dumpFile(toQString(filePath));
 		if (!dumpFile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -823,7 +823,7 @@ namespace RecognizeSpeechSphinxTester
 		QTextStream dumpFileStream(&dumpFile);
 		dumpFileStream.setCodec("UTF-8");
 
-		boost::wstring_ref separ(L" ");
+		boost::wstring_view separ(L" ");
 		std::wostringstream buff;
 		CharPhonationGroupCosts c;
 		EditDistance<wchar_t, CharPhonationGroupCosts> editDist;
@@ -886,7 +886,7 @@ namespace RecognizeSpeechSphinxTester
 		return std::make_tuple(true, nullptr);
 	}
 
-	std::tuple<bool, const char*> dumpDecoderExpectActualResultsXml(boost::wstring_ref filePath, const std::vector<TwoUtterances>& recogUtterances, const std::wstring& speechModelVerStr)
+	std::tuple<bool, const char*> dumpDecoderExpectActualResultsXml(boost::wstring_view filePath, const std::vector<TwoUtterances>& recogUtterances, const std::wstring& speechModelVerStr)
 	{
 		QFile file(toQString(filePath));
 		if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -900,7 +900,7 @@ namespace RecognizeSpeechSphinxTester
 		xmlWriter.writeStartDocument("1.0");
 		xmlWriter.writeStartElement("decRecogResult");
 
-		boost::wstring_ref separ(L" ");
+		boost::wstring_view separ(L" ");
 		std::wostringstream buff;
 		CharPhonationGroupCosts c;
 		EditDistance<wchar_t, CharPhonationGroupCosts> editDist;
@@ -1029,7 +1029,7 @@ namespace RecognizeSpeechSphinxTester
 			return;
 		}
 
-		auto populatePhoneDict = [](const std::vector<PhoneticWord>& phoneticDict, std::map<boost::wstring_ref, boost::wstring_ref>& pronIdToWord, std::map<boost::wstring_ref, PronunciationFlavour>& pronIdToPronObj)
+		auto populatePhoneDict = [](const std::vector<PhoneticWord>& phoneticDict, std::map<boost::wstring_view, boost::wstring_view>& pronIdToWord, std::map<boost::wstring_view, PronunciationFlavour>& pronIdToPronObj)
 		{
 			for (const PhoneticWord& phWord : phoneticDict)
 			{
@@ -1045,12 +1045,12 @@ namespace RecognizeSpeechSphinxTester
 		};
 
 		//
-		std::vector<boost::wstring_ref> duplicatePronCodes;
+		std::vector<boost::wstring_view> duplicatePronCodes;
 
-		std::map<boost::wstring_ref, PronunciationFlavour> pronCodeToObjTest;
+		std::map<boost::wstring_view, PronunciationFlavour> pronCodeToObjTest;
 		populatePronCodes(phoneticDictTest, pronCodeToObjTest, duplicatePronCodes);
 		
-		std::map<boost::wstring_ref, PronunciationFlavour> pronCodeToPronObjFiller;
+		std::map<boost::wstring_view, PronunciationFlavour> pronCodeToPronObjFiller;
 		populatePronCodes(phoneticDictFiller, pronCodeToPronObjFiller, duplicatePronCodes);
 
 		//

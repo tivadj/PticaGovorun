@@ -18,7 +18,7 @@ namespace
 
 namespace PticaGovorun
 {
-	std::tuple<bool, const char*> savePhoneticDictionaryXml(const std::vector<PhoneticWord>& phoneticDict, boost::wstring_ref filePath, const PhoneRegistry& phoneReg)
+	std::tuple<bool, const char*> savePhoneticDictionaryXml(const std::vector<PhoneticWord>& phoneticDict, boost::wstring_view filePath, const PhoneRegistry& phoneReg)
 	{
 		QFile file(toQString(filePath));
 		if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -75,7 +75,7 @@ namespace PticaGovorun
 		return std::make_tuple(true, nullptr);
 	}
 
-	std::tuple<bool, const char*> loadPhoneticDictionaryXml(boost::wstring_ref filePath, const PhoneRegistry& phoneReg, std::vector<PhoneticWord>& phoneticDict, GrowOnlyPinArena<wchar_t>& stringArena)
+	std::tuple<bool, const char*> loadPhoneticDictionaryXml(boost::wstring_view filePath, const PhoneRegistry& phoneReg, std::vector<PhoneticWord>& phoneticDict, GrowOnlyPinArena<wchar_t>& stringArena)
 	{
 		QFile file(toQString(filePath));
 		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -109,7 +109,7 @@ namespace PticaGovorun
 			{
 				maybeFinishPreviousWord();
 
-				boost::wstring_ref arenaWordRef;
+				boost::wstring_view arenaWordRef;
 
 				const QXmlStreamAttributes& attrs = xml.attributes();
 				if (attrs.hasAttribute(WordName))
@@ -151,9 +151,9 @@ namespace PticaGovorun
 				if (attrs.hasAttribute(PronunciationCode))
 				{
 					QStringRef pronCodeStr = attrs.value(PronunciationCode);
-					boost::wstring_ref pronCodeRef = toWStringRef(pronCodeStr, transientStringBuff);
+					boost::wstring_view pronCodeRef = toWStringRef(pronCodeStr, transientStringBuff);
 					
-					boost::wstring_ref arenaPronCodeRef;
+					boost::wstring_view arenaPronCodeRef;
 					if (!registerWord(pronCodeRef, stringArena, arenaPronCodeRef))
 						return std::make_tuple(true, "Can't allocate word string");
 

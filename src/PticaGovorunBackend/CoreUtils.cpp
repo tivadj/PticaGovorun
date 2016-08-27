@@ -45,14 +45,14 @@ void appendTimeStampNow(std::wstring& str)
 	str.assign(buf.data(), buf.data() + len);
 }
 
-boost::wstring_ref toWStringRef(const QString& str, std::vector<wchar_t>& buff)
+boost::wstring_view toWStringRef(const QString& str, std::vector<wchar_t>& buff)
 {
 	buff.resize(str.size());
 	str.toWCharArray(buff.data());
-	return boost::wstring_ref(buff.data(), str.size());
+	return boost::wstring_view(buff.data(), str.size());
 }
 
-boost::wstring_ref toWStringRef(const QStringRef& str, std::vector<wchar_t>& buff)
+boost::wstring_view toWStringRef(const QStringRef& str, std::vector<wchar_t>& buff)
 {
 	QString strQ = QString::fromRawData(str.constData(), str.size()); // no allocation
 	return toWStringRef(strQ, buff);
@@ -72,17 +72,17 @@ void toWStringRef(const QStringRef& str, std::wstring& buff)
 	toWStringRef(strQ, buff);
 }
 
-QString toQString(boost::wstring_ref text)
+QString toQString(boost::wstring_view text)
 {
 	return QString::fromWCharArray(text.data(), (int)text.size());
 }
 
-std::wstring toStdWString(boost::wstring_ref text)
+std::wstring toStdWString(boost::wstring_view text)
 {
 	return std::wstring(text.data(), text.size());
 }
 
-void toStdWString(boost::wstring_ref text, std::wstring& result)
+void toStdWString(boost::wstring_view text, std::wstring& result)
 {
 	result.assign(text.data(), text.size());
 }

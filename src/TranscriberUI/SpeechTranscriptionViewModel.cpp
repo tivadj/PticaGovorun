@@ -1297,7 +1297,7 @@ void SpeechTranscriptionViewModel::setCurrentMarkerStopOnPlayback(bool stopsPlay
 		QString text = marker.TranscripText;
 
 		std::vector<wchar_t> textBuff;
-		boost::wstring_ref textRef = toWStringRef(text, textBuff);
+		boost::wstring_view textRef = toWStringRef(text, textBuff);
 
 		std::string phoneListString;
 		bool convOp;
@@ -1573,7 +1573,7 @@ void SpeechTranscriptionViewModel::recognizeCurrentSegmentSphinxRequest()
 	std::string hmmPath = AppHelpers::mapPathStdString(QString("data/TrainSphinx/%1/model_parameters/persian.cd_cont_200").arg(sphinxModelDirName));
 	std::string langModelPath = AppHelpers::mapPathStdString(QString("data/TrainSphinx/%1/etc/persian_test.lm.DMP").arg(sphinxModelDirName));
 	std::string dictPath = AppHelpers::mapPathStdString(QString("data/TrainSphinx/%1/etc/persian_test.dic").arg(sphinxModelDirName));
-	cmd_ln_t *config = SphinxConfig::pg_init_cmd_ln_t(hmmPath, langModelPath, dictPath, true, false, true, boost::string_ref());
+	cmd_ln_t *config = SphinxConfig::pg_init_cmd_ln_t(hmmPath, langModelPath, dictPath, true, false, true, boost::string_view());
 	if (config == nullptr)
 		return;
 

@@ -668,10 +668,10 @@ namespace PticaGovorun
 	}
 #endif
 
-	void parsePronId(boost::wstring_ref pronId, boost::wstring_ref& pronName)
+	void parsePronId(boost::wstring_view pronId, boost::wstring_view& pronName)
 	{
 		size_t openBraceInd = pronId.find(L'(');
-		if (openBraceInd == boost::wstring_ref::npos)
+		if (openBraceInd == boost::wstring_view::npos)
 		{
 			pronName = pronId;
 			return;
@@ -695,23 +695,23 @@ namespace PticaGovorun
 		return numStressedVowels > 0 || numVowels == 0;
 	}
 
-	bool isPronCodeDefinesStress(boost::wstring_ref pronCode)
+	bool isPronCodeDefinesStress(boost::wstring_view pronCode)
 	{
 		return pronCode.ends_with(L')');
 	}
 
-	bool parsePronCodeNameAndStress(boost::wstring_ref pronCode, boost::wstring_ref* pronCodeName, boost::wstring_ref* pronCodeStressSuffix)
+	bool parsePronCodeNameAndStress(boost::wstring_view pronCode, boost::wstring_view* pronCodeName, boost::wstring_view* pronCodeStressSuffix)
 	{
 		size_t closeParInd = pronCode.find_last_of(L')');
-		if (closeParInd == boost::wstring_ref::npos)
+		if (closeParInd == boost::wstring_view::npos)
 		{
 			*pronCodeName = pronCode;
-			*pronCodeStressSuffix = boost::wstring_ref();
+			*pronCodeStressSuffix = boost::wstring_view();
 			return true;
 		}
 
 		size_t openParInd = pronCode.find_last_of(L'(');
-		if (openParInd == boost::wstring_ref::npos)
+		if (openParInd == boost::wstring_view::npos)
 			return false; // invalid pronCode format
 
 		const wchar_t* numStr = pronCode.data() + openParInd + 1;
@@ -720,8 +720,8 @@ namespace PticaGovorun
 		if (numRead != 1) // single digit in parenthesis
 			return false; // can't parse number
 		
-		*pronCodeName = boost::wstring_ref(pronCode.data(), openParInd);
-		*pronCodeStressSuffix = boost::wstring_ref(numStr, closeParInd - openParInd-1);
+		*pronCodeName = boost::wstring_view(pronCode.data(), openParInd);
+		*pronCodeStressSuffix = boost::wstring_view(numStr, closeParInd - openParInd-1);
 		return true;
 	}
 
@@ -750,20 +750,20 @@ namespace PticaGovorun
 			if (readBytes < 3) // 3=min length of Word->PhoneList
 				continue;
 
-			boost::string_ref line(lineBuff.data(), readBytes);
+			boost::string_view line(lineBuff.data(), readBytes);
 			if (line.back() == '\n')
 				line.remove_suffix(1);
 
 			const char* DictDelim = " \t\n";
 			size_t phoneListInd = line.find_first_of(DictDelim);
-			if (phoneListInd == boost::string_ref::npos)
+			if (phoneListInd == boost::string_view::npos)
 				return std::make_tuple(false, "The word is too long (>1024 bytes)");
 
 			int wordSize = phoneListInd;
 			if (wordSize == 0) // empty line
 				continue;
 
-			boost::string_ref phoneListRef;
+			boost::string_view phoneListRef;
 			auto isBrokenLine = [&]() -> bool
 			{
 				if (wordSize > wordBuff.size()) // word buff can't fit the word
@@ -793,8 +793,8 @@ namespace PticaGovorun
 			int copiedSize = word.toWCharArray(wordBuff.data());
 			PG_DbgAssert(copiedSize == word.size());
 
-			boost::wstring_ref wordRef = boost::wstring_ref(wordBuff.data(), word.size());
-			boost::wstring_ref arenaWordRef;
+			boost::wstring_view wordRef = boost::wstring_view(wordBuff.data(), word.size());
+			boost::wstring_view arenaWordRef;
 			if (!registerWord(wordRef, stringArena, arenaWordRef))
 			{
 				brokenLines.push_back(lineBuff.data());
@@ -868,12 +868,12 @@ namespace PticaGovorun
 		}
 	}
 
-	boost::optional<PhoneId> parsePhoneStr(const PhoneRegistry& phoneReg, boost::string_ref phoneStrRef)
+	boost::optional<PhoneId> parsePhoneStr(const PhoneRegistry& phoneReg, boost::string_view phoneStrRef)
 	{
 		if (phoneStrRef.empty())
 			return boost::none;
 
-		boost::string_ref basicPhoneStrRef = phoneStrRef;
+		boost::string_view basicPhoneStrRef = phoneStrRef;
 
 		// truncate last digit
 		char ch = phoneStrRef.back();
@@ -921,16 +921,16 @@ namespace PticaGovorun
 		return result;
 	}
 
-	bool parsePhoneList(const PhoneRegistry& phoneReg, boost::string_ref phoneListStr, std::vector<PhoneId>& result)
+	bool parsePhoneList(const PhoneRegistry& phoneReg, boost::string_view phoneListStr, std::vector<PhoneId>& result)
 	{
-		boost::string_ref curPhonesStr = phoneListStr;
+		boost::string_view curPhonesStr = phoneListStr;
 		while (!curPhonesStr.empty())
 		{
 			size_t sepPos = curPhonesStr.find(' ');
-			if (sepPos == boost::string_ref::npos)
+			if (sepPos == boost::string_view::npos)
 				sepPos = curPhonesStr.size();
 
-			boost::string_ref phoneRef = curPhonesStr.substr(0, sepPos);
+			boost::string_view phoneRef = curPhonesStr.substr(0, sepPos);
 			if (phoneRef.empty()) // a phone can't be an empty string
 				continue;
 
@@ -957,7 +957,7 @@ namespace PticaGovorun
 				return std::make_tuple(false, "First part of line doesn't contain pronunciation id");
 
 			QString pronAsWord = pronLine.left(pronAsWordEndInd);
-			boost::wstring_ref arenaPronAsWord;
+			boost::wstring_view arenaPronAsWord;
 			if (!registerWord(pronAsWord, stringArena, arenaPronAsWord))
 				return std::make_tuple(false, "Can't allocate word");
 
@@ -1849,7 +1849,7 @@ namespace PticaGovorun
 		return -1;
 	}
 
-	bool mapLetterToBasicPhoneInfo(wchar_t letter, boost::string_ref& basicPhoneStr, CharGroup& charGroup)
+	bool mapLetterToBasicPhoneInfo(wchar_t letter, boost::string_view& basicPhoneStr, CharGroup& charGroup)
 	{
 		auto init = [&basicPhoneStr, &charGroup](const char* basicPhoneCStr, CharGroup group)
 		{
@@ -1929,7 +1929,7 @@ namespace PticaGovorun
 	{
 		wchar_t letter = curLetter();
 
-		boost::string_ref basicPhoneStr;
+		boost::string_view basicPhoneStr;
 		CharGroup charGroup;
 		if (!mapLetterToBasicPhoneInfo(letter, basicPhoneStr, charGroup))
 			return false;
@@ -2907,7 +2907,7 @@ namespace PticaGovorun
 		return true;
 	}
 
-	void populatePronCodes(const std::vector<PhoneticWord>& phoneticDict, std::map<boost::wstring_ref, PronunciationFlavour>& pronCodeToObj, std::vector<boost::wstring_ref>& duplicatePronCodes)
+	void populatePronCodes(const std::vector<PhoneticWord>& phoneticDict, std::map<boost::wstring_view, PronunciationFlavour>& pronCodeToObj, std::vector<boost::wstring_view>& duplicatePronCodes)
 	{
 		for (const PhoneticWord& word : phoneticDict)
 		{
@@ -2923,11 +2923,11 @@ namespace PticaGovorun
 		}
 	}
 
-	void mergePhoneticDictOnlyNew(std::map<boost::wstring_ref, PhoneticWord>& basePhoneticDict, const std::vector<PhoneticWord>& extraPhoneticDict)
+	void mergePhoneticDictOnlyNew(std::map<boost::wstring_view, PhoneticWord>& basePhoneticDict, const std::vector<PhoneticWord>& extraPhoneticDict)
 	{
 		for (const PhoneticWord& extraWord : extraPhoneticDict)
 		{
-			boost::wstring_ref wordRef = extraWord.Word;
+			boost::wstring_view wordRef = extraWord.Word;
 			auto wordIt = basePhoneticDict.find(wordRef);
 			if (wordIt == basePhoneticDict.end())
 			{
@@ -3030,47 +3030,47 @@ namespace PticaGovorun
 		return -1;
 	}
 
-	boost::wstring_ref fillerSilence()
+	boost::wstring_view fillerSilence()
 	{
 		return L"<sil>";
 	}
 
-	boost::wstring_ref fillerStartSilence()
+	boost::wstring_view fillerStartSilence()
 	{
 		return L"<s>";
 	}
 
-	boost::wstring_ref fillerEndSilence()
+	boost::wstring_view fillerEndSilence()
 	{
 		return L"</s>";
 	}
 
-	boost::wstring_ref fillerShortPause()
+	boost::wstring_view fillerShortPause()
 	{
 		return L"[sp]";
 	}
 
-	boost::wstring_ref fillerInhale()
+	boost::wstring_view fillerInhale()
 	{
 		return L"[inh]";
 	}
 
-	boost::wstring_ref fillerEee()
+	boost::wstring_view fillerEee()
 	{
 		return L"[eee]";
 	}
 
-	boost::wstring_ref fillerYyy()
+	boost::wstring_view fillerYyy()
 	{
 		return L"[yyy]";
 	}
 
-	boost::wstring_ref fillerClick()
+	boost::wstring_view fillerClick()
 	{
 		return L"[clk]";
 	}
 
-	boost::wstring_ref fillerGlottal()
+	boost::wstring_view fillerGlottal()
 	{
 		return L"[glt]";
 	}
@@ -3545,7 +3545,7 @@ namespace PticaGovorun
 								corpusStream << "BAD: ";
 								for (wv::slice<wchar_t> word : words)
 								{
-									corpusStream << toQString(boost::wstring_ref(word.data(), word.size()));
+									corpusStream << toQString(boost::wstring_view(word.data(), word.size()));
 									corpusStream << " ";
 								}
 								//for (const WordPart* wp : wordPartsStraight)
@@ -3642,7 +3642,7 @@ namespace PticaGovorun
 			wordCharUsage(wordSlice);
 
 			RawTextLexeme lex;
-			lex.ValueStr = boost::wstring_ref(wordSlice.data(), wordSlice.size());
+			lex.ValueStr = boost::wstring_view(wordSlice.data(), wordSlice.size());
 
 			// output non-leterate words with digits, cryptic symbols, etc.
 			if (digitsCount == wordSlice.size()) // Arabic number
@@ -3696,7 +3696,7 @@ namespace PticaGovorun
 	{
 		for (const RawTextLexeme& lexeme : lexemes)
 		{
-			std::wstring str = toStdWString(lexeme.ValueStr);
+			std::wstring str = lexeme.ValueStr.to_string();
 
 			if (allowPhoneticWordSplit_)
 			{

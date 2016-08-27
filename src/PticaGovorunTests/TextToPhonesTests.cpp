@@ -1,6 +1,6 @@
 #include "catch.hpp"
 #include <vector>
-#include <boost/utility/string_ref.hpp>
+#include <boost/utility/string_view.hpp>
 
 #include "SpeechProcessing.h"
 
@@ -8,7 +8,7 @@ namespace PticaGovorun
 {
 	TEST_CASE("split utterance into words")
 	{
-		std::vector<boost::wstring_ref> pronCodes;
+		std::vector<boost::wstring_view> pronCodes;
 		
 		SECTION("simple") {
 			splitUtteranceIntoWords(L"пір'я із-за", pronCodes);

@@ -11,7 +11,7 @@ namespace PticaGovorun
 	// Gets the index of unique stressed vowel.
 	// If there are more than one vowel, the function return false.
 	// If there is no vowels, the result index is initialized to -1 and function returns true.
-	bool getStressedVowelCharIndAtMostOne(boost::wstring_ref word, int& stressedCharInd)
+	bool getStressedVowelCharIndAtMostOne(boost::wstring_view word, int& stressedCharInd)
 	{
 		stressedCharInd = -1;
 
@@ -42,7 +42,7 @@ namespace PticaGovorun
 
 	// Find the char index of the vowel corresonding to provided syllable.
 	// returns -1 if there are not enough vowels in the word.
-	int syllableIndToVowelCharIndUk(boost::wstring_ref word, int syllableInd)
+	int syllableIndToVowelCharIndUk(boost::wstring_view word, int syllableInd)
 	{
 		int numVowels = 0;
 		for (int i = 0; i < (int)word.size(); ++i)
@@ -61,7 +61,7 @@ namespace PticaGovorun
 	// Returns the index of refered by char index vowel in the array of all vowels of the word.
 	// eg. for word 'auntie' char indices [0 1 4 5] would map to [0 1 2 3].
 	// returns -1 if input char is not a vowel.
-	int vowelCharIndToSyllableIndUk(boost::wstring_ref word, int vowelCharInd)
+	int vowelCharIndToSyllableIndUk(boost::wstring_view word, int vowelCharInd)
 	{
 		wchar_t letter = word[vowelCharInd];
 		bool isVowel = isUkrainianVowel(letter);
@@ -84,7 +84,7 @@ namespace PticaGovorun
 		const char* SressDictWordSyllable = "stressedSyllable";
 	}
 
-	std::tuple<bool, const char*> loadStressedSyllableDictionaryXml(boost::wstring_ref dictFilePath, std::unordered_map<std::wstring, int>& wordToStressedSyllableInd)
+	std::tuple<bool, const char*> loadStressedSyllableDictionaryXml(boost::wstring_view dictFilePath, std::unordered_map<std::wstring, int>& wordToStressedSyllableInd)
 	{
 		QFile file(QString::fromWCharArray(dictFilePath.begin(), dictFilePath.size()));
 		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))

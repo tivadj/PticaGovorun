@@ -445,7 +445,7 @@ namespace PticaGovorun
 			for (int partInd = 0; partInd < gram.partsCount(); ++partInd)
 			{
 				const WordPart* oneWordPart = gram.part(partInd);
-				boost::wstring_ref dispName = oneWordPart->partText();
+				boost::wstring_view dispName = oneWordPart->partText();
 
 				dumpFileStream << toQString(dispName);
 				dumpFileStream << " ";

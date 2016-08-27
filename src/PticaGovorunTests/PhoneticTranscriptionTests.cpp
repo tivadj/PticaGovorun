@@ -315,7 +315,7 @@ namespace PticaGovorun
 	}
 	TEST_CASE("external provider of stressed syllable")
 	{
-		auto getStressedSyllableIndFun = [](boost::wstring_ref word, std::vector<int>& stressedSyllableInds) -> bool
+		auto getStressedSyllableIndFun = [](boost::wstring_view word, std::vector<int>& stressedSyllableInds) -> bool
 		{
 			if (word.compare(L"тулуб") == 0)
 				stressedSyllableInds.assign({ 1 });

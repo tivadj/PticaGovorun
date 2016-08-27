@@ -40,7 +40,7 @@ namespace PticaGovorun
 		}
 	}
 
-	boost::string_ref toString(ResourceUsagePhase phase)
+	boost::string_view toString(ResourceUsagePhase phase)
 	{
 		switch (phase)
 		{
@@ -53,7 +53,7 @@ namespace PticaGovorun
 		}
 	}
 
-	boost::optional<ResourceUsagePhase> resourceUsagePhaseFromString(boost::string_ref phase)
+	boost::optional<ResourceUsagePhase> resourceUsagePhaseFromString(boost::string_view phase)
 	{
 		if (phase.compare("train") == 0)
 			return ResourceUsagePhase::Train;
@@ -62,7 +62,7 @@ namespace PticaGovorun
 		return boost::none;
 	}
 
-	void splitUtteranceIntoWords(boost::wstring_ref text, std::vector<boost::wstring_ref>& words)
+	void splitUtteranceIntoWords(boost::wstring_view text, std::vector<boost::wstring_view>& words)
 	{
 		std::wcmatch matchRes;
 		// clothes clothes(1)
@@ -76,7 +76,7 @@ namespace PticaGovorun
 		while (std::regex_search(wordBeg, std::cend(text), matchRes, r))
 		{
 			auto& wordSlice = matchRes[0];
-			boost::wstring_ref word = boost::wstring_ref(&*wordSlice.first, wordSlice.second - wordSlice.first);
+			boost::wstring_view word = boost::wstring_view(&*wordSlice.first, wordSlice.second - wordSlice.first);
 			words.push_back(word);
 
 			wordBeg = wordSlice.second;
@@ -95,11 +95,11 @@ namespace PticaGovorun
 		// insert the starting silence phone
 		speechPhones.push_back(PGPhoneSilence);
 
-		std::vector<boost::wstring_ref> words;
+		std::vector<boost::wstring_view> words;
 		splitUtteranceIntoWords(text, words);
 
 		// iterate through words
-		for (boost::wstring_ref wordRef : words)
+		for (boost::wstring_view wordRef : words)
 		{
 			toStdWString(wordRef, word);
 
@@ -397,8 +397,8 @@ namespace PticaGovorun
 		std::vector<short> speechFrames;
 
 		// remove [sp]
-		std::vector<boost::wstring_ref> words;
-		std::vector<boost::wstring_ref> wordsNoSp;
+		std::vector<boost::wstring_view> words;
+		std::vector<boost::wstring_view> wordsNoSp;
 
 		// collect annotated frames
 		// two consequent markers form a segment of intereset
@@ -443,7 +443,7 @@ namespace PticaGovorun
 				}
 
 				std::wostringstream buf;
-				join(wordsNoSp.begin(), wordsNoSp.end(), boost::wstring_ref(L" "), buf);
+				join(wordsNoSp.begin(), wordsNoSp.end(), boost::wstring_view(L" "), buf);
 
 				txt = QString::fromStdWString(buf.str());
 			}

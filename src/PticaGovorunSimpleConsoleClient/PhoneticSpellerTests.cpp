@@ -28,7 +28,7 @@ namespace PhoneticSpellerTestsNS
 			return;
 		}
 
-		auto getStressedSyllableIndFun = [&wordToStressedSyllable](boost::wstring_ref word, std::vector<int>& stressedSyllableInds) -> bool
+		auto getStressedSyllableIndFun = [&wordToStressedSyllable](boost::wstring_view word, std::vector<int>& stressedSyllableInds) -> bool
 		{
 			auto it = wordToStressedSyllable.find(std::wstring(word.data(), word.size()));
 			if (it == wordToStressedSyllable.end())
@@ -82,9 +82,9 @@ namespace PhoneticSpellerTestsNS
 					dumpFileStream << "No stress for pronAsWord=" << toQString(pron.PronCode) <<"\n";
 				}
 				
-				boost::wstring_ref pronAsWord = pron.PronCode;
+				boost::wstring_view pronAsWord = pron.PronCode;
 
-				boost::wstring_ref pronName;
+				boost::wstring_view pronName;
 				parsePronId(pronAsWord, pronName);
 				std::wstring pronNameStr(pronName.data(), pronName.size());
 

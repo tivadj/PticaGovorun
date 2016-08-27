@@ -7,7 +7,7 @@
 #include <QTextCodec>
 #include <QTextStream>
 #include <boost/optional.hpp>
-#include <boost/utility/string_ref.hpp>
+#include <boost/utility/string_view.hpp>
 #include <boost/filesystem/path.hpp>
 #include "ComponentsInfrastructure.h"
 #include "PticaGovorunCore.h"
@@ -140,7 +140,7 @@ namespace PticaGovorun
 		// Sphinx uses 'clothes(1)' or 'clothes(2)' as unique pronunciation names for the word 'clothes'.
 		// Seems like it is not unique. If some word is pronounced differently then temporary we can assign
 		// different pronAsWord for it even though the same sequence of phones is already assigned to some pronAsWord.
-		boost::wstring_ref PronCode;
+		boost::wstring_view PronCode;
 
 		// The actual phones of this pronunciation.
 		std::vector<PhoneId> Phones;
@@ -150,7 +150,7 @@ namespace PticaGovorun
 	// The word 'clothes' may be pronounced as clothes(1)='K L OW1 DH Z' or clothes(2)='K L OW1 Z'
 	struct PhoneticWord
 	{
-		boost::wstring_ref Word;
+		boost::wstring_view Word;
 		std::vector<PronunciationFlavour> Pronunciations;
 	};
 
@@ -213,12 +213,12 @@ namespace PticaGovorun
 	PG_EXPORTS bool operator == (const Pronunc& a, const Pronunc& b);
 	PG_EXPORTS bool operator < (const Pronunc& a, const Pronunc& b);
 
-	PG_EXPORTS bool getStressedVowelCharIndAtMostOne(boost::wstring_ref word, int& stressedCharInd);
-	PG_EXPORTS int syllableIndToVowelCharIndUk(boost::wstring_ref word, int syllableInd);
-	PG_EXPORTS int vowelCharIndToSyllableIndUk(boost::wstring_ref word, int vowelCharInd);
+	PG_EXPORTS bool getStressedVowelCharIndAtMostOne(boost::wstring_view word, int& stressedCharInd);
+	PG_EXPORTS int syllableIndToVowelCharIndUk(boost::wstring_view word, int syllableInd);
+	PG_EXPORTS int vowelCharIndToSyllableIndUk(boost::wstring_view word, int vowelCharInd);
 
 	// Loads stressed vowel definitions from file.
-	PG_EXPORTS std::tuple<bool, const char*> loadStressedSyllableDictionaryXml(boost::wstring_ref dictFilePath, std::unordered_map<std::wstring, int>& wordToStressedSyllableInd);
+	PG_EXPORTS std::tuple<bool, const char*> loadStressedSyllableDictionaryXml(boost::wstring_view dictFilePath, std::unordered_map<std::wstring, int>& wordToStressedSyllableInd);
 
 #ifdef PG_HAS_JULIUS
 	// Loads dictionary of word -> (phone list) from text file.
@@ -227,23 +227,23 @@ namespace PticaGovorun
 	// Each word may have multiple pronunciations (1-* relation); for now we neglect it and store data into map (1-1 relation).
 	PG_EXPORTS std::tuple<bool, const char*> loadPronunciationVocabulary(const std::wstring& vocabFilePathAbs, std::map<std::wstring, std::vector<std::string>>& wordToPhoneList, const QTextCodec& textCodec); // TODO: remove
 #endif
-	PG_EXPORTS void parsePronId(boost::wstring_ref pronId, boost::wstring_ref& pronName);
+	PG_EXPORTS void parsePronId(boost::wstring_view pronId, boost::wstring_view& pronName);
 	PG_EXPORTS bool isWordStressAssigned(const PhoneRegistry& phoneReg, const std::vector<PhoneId>& phoneIds);
 
 	/// Checks that pronCode in 'clothes(1)' format and not 'clothes' (without round parantheses).
-	bool isPronCodeDefinesStress(boost::wstring_ref pronCode);
+	bool isPronCodeDefinesStress(boost::wstring_view pronCode);
 
 	/// Parses pronCode.
 	/// For 'clothes(2)' pronCodeName='clothes', pronCodeStressSuffix='2'
-	bool parsePronCodeNameAndStress(boost::wstring_ref pronCode, boost::wstring_ref* pronCodeName, boost::wstring_ref* pronCodeStressSuffix);
+	bool parsePronCodeNameAndStress(boost::wstring_view pronCode, boost::wstring_view* pronCodeName, boost::wstring_view* pronCodeStressSuffix);
 
 	// 'brokenLines' has lines of the dictionary which can't be read.
 	PG_EXPORTS std::tuple<bool, const char*> loadPhoneticDictionaryPronIdPerLine(const std::basic_string<wchar_t>& vocabFilePathAbs, const PhoneRegistry& phoneReg,
 		const QTextCodec& textCodec, std::vector<PhoneticWord>& words, std::vector<std::string>& brokenLines,
 		GrowOnlyPinArena<wchar_t>& stringArena);
 
-	PG_EXPORTS std::tuple<bool, const char*> loadPhoneticDictionaryXml(boost::wstring_ref filePath, const PhoneRegistry& phoneReg, std::vector<PhoneticWord>& phoneticDict, GrowOnlyPinArena<wchar_t>& stringArena);
-	PG_EXPORTS std::tuple<bool, const char*> savePhoneticDictionaryXml(const std::vector<PhoneticWord>& phoneticDict, boost::wstring_ref filePath, const PhoneRegistry& phoneReg);
+	PG_EXPORTS std::tuple<bool, const char*> loadPhoneticDictionaryXml(boost::wstring_view filePath, const PhoneRegistry& phoneReg, std::vector<PhoneticWord>& phoneticDict, GrowOnlyPinArena<wchar_t>& stringArena);
+	PG_EXPORTS std::tuple<bool, const char*> savePhoneticDictionaryXml(const std::vector<PhoneticWord>& phoneticDict, boost::wstring_view filePath, const PhoneRegistry& phoneReg);
 
 
 	PG_EXPORTS void normalizePronunciationVocabulary(std::map<std::wstring, std::vector<Pronunc>>& wordToPhoneList, bool toUpper = true, bool trimNumbers = true);
@@ -254,8 +254,8 @@ namespace PticaGovorun
 	PG_EXPORTS bool phoneListToStr(const PhoneRegistry& phoneReg, wv::slice<PhoneId> pron, std::string& result);
 
 	// Parses space-separated list of phones.
-	PG_EXPORTS boost::optional<PhoneId> parsePhoneStr(const PhoneRegistry& phoneReg, boost::string_ref phoneStr);
-	PG_EXPORTS bool parsePhoneList(const PhoneRegistry& phoneReg, boost::string_ref phoneListStr, std::vector<PhoneId>& result);
+	PG_EXPORTS boost::optional<PhoneId> parsePhoneStr(const PhoneRegistry& phoneReg, boost::string_view phoneStr);
+	PG_EXPORTS bool parsePhoneList(const PhoneRegistry& phoneReg, boost::string_view phoneListStr, std::vector<PhoneId>& result);
 	PG_EXPORTS std::tuple<bool, const char*> parsePronuncLinesNew(const PhoneRegistry& phoneReg, const std::wstring& prons, std::vector<PronunciationFlavour>& result, GrowOnlyPinArena<wchar_t>& stringArena);
 
 	// Removes phone modifiers.
@@ -276,7 +276,7 @@ namespace PticaGovorun
 	class PG_EXPORTS WordPhoneticTranscriber
 	{
 	public:
-		typedef std::function<auto (boost::wstring_ref, std::vector<int>&) -> bool> StressedSyllableIndFunT;
+		typedef std::function<auto (boost::wstring_view, std::vector<int>&) -> bool> StressedSyllableIndFunT;
 	private:
 		const PhoneRegistry* phoneReg_;
 		const std::wstring* word_;
@@ -352,43 +352,43 @@ namespace PticaGovorun
 	{
 		for (const PhoneticWord& item : phoneticDictWordsList)
 		{
-			boost::wstring_ref w = item.Word; // IMPORTANT: the word must not move in memory
+			boost::wstring_view w = item.Word; // IMPORTANT: the word must not move in memory
 			phoneticDict[w] = item;
 		}
 	}
 
-	PG_EXPORTS void populatePronCodes(const std::vector<PhoneticWord>& phoneticDict, std::map<boost::wstring_ref, PronunciationFlavour>& pronCodeToObj, std::vector<boost::wstring_ref>& duplicatePronCodes);
+	PG_EXPORTS void populatePronCodes(const std::vector<PhoneticWord>& phoneticDict, std::map<boost::wstring_view, PronunciationFlavour>& pronCodeToObj, std::vector<boost::wstring_view>& duplicatePronCodes);
 
 	// Integrate new pronunciations from extra dictionary into base dictionary. Pronunciations with existent code are ignored.
-	PG_EXPORTS void mergePhoneticDictOnlyNew(std::map<boost::wstring_ref, PhoneticWord>& basePhoneticDict, const std::vector<PhoneticWord>& extraPhoneticDict);
+	PG_EXPORTS void mergePhoneticDictOnlyNew(std::map<boost::wstring_view, PhoneticWord>& basePhoneticDict, const std::vector<PhoneticWord>& extraPhoneticDict);
 
 	//
 	PG_EXPORTS int phoneticSplitOfWord(wv::slice<wchar_t> word, boost::optional<WordClass> wordClass, int* pMatchedSuffixInd = nullptr);
 
 	// <sil> pseudo word.
-	PG_EXPORTS boost::wstring_ref fillerSilence();
+	PG_EXPORTS boost::wstring_view fillerSilence();
 
 	// <s> pseudo word.
-	PG_EXPORTS boost::wstring_ref fillerStartSilence();
+	PG_EXPORTS boost::wstring_view fillerStartSilence();
 
 	// </s> pseudo word.
-	PG_EXPORTS boost::wstring_ref fillerEndSilence();
+	PG_EXPORTS boost::wstring_view fillerEndSilence();
 
 	// [sp] pseudo word.
-	PG_EXPORTS boost::wstring_ref fillerShortPause();
+	PG_EXPORTS boost::wstring_view fillerShortPause();
 
 	// [inh] pseudo word.
-	PG_EXPORTS boost::wstring_ref fillerInhale();
+	PG_EXPORTS boost::wstring_view fillerInhale();
 
 	// [eee] (latin 'e') pseudo word.
-	PG_EXPORTS boost::wstring_ref fillerEee();
+	PG_EXPORTS boost::wstring_view fillerEee();
 
 	// [yyy] (latin 'y') pseudo word.
-	PG_EXPORTS boost::wstring_ref fillerYyy();
+	PG_EXPORTS boost::wstring_view fillerYyy();
 
 	/// [clk] pseudo word.
-	PG_EXPORTS boost::wstring_ref fillerClick();
+	PG_EXPORTS boost::wstring_view fillerClick();
 
 	/// [glt] pseudo word.
-	PG_EXPORTS boost::wstring_ref fillerGlottal();
+	PG_EXPORTS boost::wstring_view fillerGlottal();
 }

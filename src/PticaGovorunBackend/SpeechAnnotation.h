@@ -3,7 +3,7 @@
 #include <vector>
 #include <tuple>
 #include <hash_set>
-#include <boost/utility/string_ref.hpp>
+#include <boost/utility/string_view.hpp>
 #include "SpeechProcessing.h"
 #include "assertImpl.h"
 
@@ -140,7 +140,7 @@ namespace PticaGovorun
 	template <typename Markers, typename FrameIndSelector>
 	int getClosestMarkerInd(const Markers& markers, FrameIndSelector markerFrameIndSelector, long frameInd, long* dist);
 
-	PG_EXPORTS void validateSpeechTranscription(boost::wstring_ref speechDataDir);
+	PG_EXPORTS void validateSpeechTranscription(boost::wstring_view speechDataDir);
 
 	struct PG_EXPORTS AnnotSpeechFileNode
 	{
