@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TranscriberUI", "..\TranscriberUI\TranscriberUI.vcxproj", "{1C0ED85A-2477-37DB-81CB-12C0072425C0}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build-config", "build-confi
 		boost.props = boost.props
 		Catch.props = Catch.props
 		FLAC.props = FLAC.props
+		GSL.props = GSL.props
+		gtest.props = gtest.props
 		LibSampleRate.props = LibSampleRate.props
 		LibSndFile.props = LibSndFile.props
 		MatlabBuild.props = MatlabBuild.props
@@ -59,6 +61,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PticaGovorunInteropMatlab", "..\PticaGovorunInteropMatlab\PticaGovorunInteropMatlab.vcxproj", "{C8C6FCA2-D8A8-4EC3-A4DE-81473C514AF8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PticaGovorunTests", "..\PticaGovorunTests\PticaGovorunTests.vcxproj", "{9AFE669C-E9FC-461F-98C6-E7DBF5D1C6AD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C982AA15-B1EB-431F-978D-84E5BEAB37E2} = {C982AA15-B1EB-431F-978D-84E5BEAB37E2}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PticaGovorunTestsGTest", "..\PticaGovorunTestsGTest\PticaGovorunTestsGTest.vcxproj", "{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C982AA15-B1EB-431F-978D-84E5BEAB37E2} = {C982AA15-B1EB-431F-978D-84E5BEAB37E2}
 	EndProjectSection
@@ -218,6 +225,24 @@ Global
 		{9AFE669C-E9FC-461F-98C6-E7DBF5D1C6AD}.ReleaseWithoutAsm|Win32.ActiveCfg = Release|Win32
 		{9AFE669C-E9FC-461F-98C6-E7DBF5D1C6AD}.ReleaseWithoutAsm|Win32.Build.0 = Release|Win32
 		{9AFE669C-E9FC-461F-98C6-E7DBF5D1C6AD}.ReleaseWithoutAsm|x64.ActiveCfg = Release|Win32
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.Debug|Win32.Build.0 = Debug|Win32
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.Debug|x64.ActiveCfg = Debug|x64
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.Debug|x64.Build.0 = Debug|x64
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.Release|Win32.ActiveCfg = Release|Win32
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.Release|Win32.Build.0 = Release|Win32
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.Release|x64.ActiveCfg = Release|x64
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.Release|x64.Build.0 = Release|x64
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.ReleaseWithoutAsm|Mixed Platforms.ActiveCfg = Release|Win32
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.ReleaseWithoutAsm|Mixed Platforms.Build.0 = Release|Win32
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.ReleaseWithoutAsm|Win32.ActiveCfg = Release|Win32
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.ReleaseWithoutAsm|Win32.Build.0 = Release|Win32
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.ReleaseWithoutAsm|x64.ActiveCfg = Release|x64
+		{F610BC6D-007B-4DA8-BC1F-1F1E0488A65A}.ReleaseWithoutAsm|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

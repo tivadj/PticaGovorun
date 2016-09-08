@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testSuite>
+
+<t input="(654, card, G)"    expect="шестисот п'ятдесяти чотирьох" />
+
+<t input="(651, card, G, m)"    expect="шестисот п'ятдесяти одного" />
+<t input="(651, card, G, f)"    expect="шестисот п'ятдесяти одної" />
+<t input="(651, card, G, neut)" expect="шестисот п'ятдесяти одного" />
+<!-- <t input="(651, card, G, pl)"   expect="invalid: шестисот п'ятдесяти одних " /> -->
+<t input="(651, ord, G, m)"     expect="шістсот п'ятдесят першого" />
+<t input="(651, ord, G, f)"     expect="шістсот п'ятдесят першої" />
+<t input="(651, ord, G, neut)"  expect="шістсот п'ятдесят першого" />
+<t input="(651, ord, G, pl)"    expect="шістсот п'ятдесят перших" />
+
+<t input="(1651, card, G, m)"    expect="одної тисячі шестисот п'ятдесяти одного" />
+<t input="(2651, card, G, m)"    expect="двох тисяч шестисот п'ятдесяти одного" />
+<t input="(3651, card, G, m)"    expect="трьох тисяч шестисот п'ятдесяти одного" />
+<t input="(961651, card, G, m)"    expect="дев'ятисот шістдесяти одної тисячі шестисот п'ятдесяти одного" />
+
+<!-- zeros in the second triple -->
+<t input="(960651, card, G, m)"    expect="дев'ятисот шістдесяти тисяч шестисот п'ятдесяти одного" />
+<t input="(901651, card, G, m)"    expect="дев'ятисот одної тисячі шестисот п'ятдесяти одного" />
+<t input="( 61651, card, G, m)"    expect="шістдесяти одної тисячі шестисот п'ятдесяти одного" />
+<t input="( 60651, card, G, m)"    expect="шістдесяти тисяч шестисот п'ятдесяти одного" />
+<t input="(600651, card, G, m)"    expect="шестисот тисяч шестисот п'ятдесяти одного" />
+
+<!-- numbers less than 20 -->
+<t input="(11, card, G)"       expect="одинадцяти" />
+<t input="(11, card, G, f)"    expect="одинадцяти" />
+<!-- <t input="(11, card, G, pl)"    expect="invalid: одинадцяти" /> -->
+<t input="(11, ord, G, pl)"    expect="одинадцятих" />
+
+<!-- ens with zeros -->
+<t input="(80, card, G)"    expect="вісімдесяти" />
+<t input="(80, card, G, m)"    expect="вісімдесяти" />
+<t input="(80, card, G, f)"    expect="вісімдесяти" />
+<t input="(80, card, G, neut)" expect="вісімдесяти" />
+<!-- <t input="(80, card, G, pl)"   expect="invalid: вісімдесяти" /> -->
+ <t input="(80, ord, G, f)"     expect="вісімдесятої" />
+<t input="(80, ord, G, m)"     expect="вісімдесятого" />
+<t input="(80, ord, G, neut)"  expect="вісімдесятого" />
+<t input="(80, ord, G, pl)"    expect="вісімдесятих" />
+
+<t input="(800, card, G)"       expect="восьмисот" />
+<t input="(800, card, G, m)"    expect="восьмисот" />
+<t input="(800, card, G, f)"    expect="восьмисот" />
+<t input="(800, card, G, neut)" expect="восьмисот" />
+<!--<t input="(800, card, G, pl)"   expect="invalid: восьмисот" /> -->
+<t input="(800, ord, G, m)"     expect="восьмисотого" />
+<t input="(800, ord, G, f)"     expect="восьмисотої" />
+<t input="(800, ord, G, neut)"  expect="восьмисотого" />
+<t input="(800, ord, G, pl)"    expect="восьмисотих" />
+
+<!--  
+
+-->
+<t input="(8000, card, G, m)"    expect="восьми тисяч" />
+<t input="(8000, card, G, f)"    expect="восьми тисяч" />
+<t input="(8000, card, G, neut)" expect="восьми тисяч" />
+<!-- <t input="(8000, card, G, pl)"   expect="invalid: восьми тисяч" /> -->
+<t input="(8000, ord, G, m)"     expect="восьмитисячного" />
+<t input="(8000, ord, G, f)"     expect="восьмитисячної" />
+<t input="(8000, ord, G, neut)"  expect="восьмитисячного" />
+<t input="(8000, ord, G, pl)"    expect="восьмитисячних" />
+
+<!-- Порядкові числівники на -сотий, -тисячний, -мільйонний пишуться одним словом, перша частина в родовому відмінку.
+http://l-ponomar.com/napysannya-chyslivnykiv-yak-pravylno/
+-->
+<t input="(300, ord, N, m)"    expect="трьохсотий" />
+<t input="(7000, ord, N, m)"    expect="семитисячний" />
+<t input="(1000, ord, N, m)"    expect="однотисячний" /> 
+<t input="(321000, ord, N, m)"    expect="трьохсотдвадцятиоднотисячний" /> 
+<t input="(322000, ord, N, m)"    expect="трьохсотдвадцятидвохтисячний" /> 
+<t input="(825000, ord, N, m)"    expect="восьмисотдвадцятип'ятитисячний" /><!--  why genitive -->
+<t input="(270000000, ord, N, m)"    expect="двохсотсімдесятимільйонний" />
+<t input="(825300, ord, N, m)"    expect="вісімсот двадцять п'ять тисяч трьохсотий" />
+<t input="(825300000, ord, N, m)"    expect="вісімсот двадцять п'ять мільйонів трьохсоттисячний" />
+
+<!-- zero -->
+<t input="(0, card, N, sing)" expect="нуль" />
+<t input="(0, card, G, sing)" expect="нуля" />
+<t input="(0, card, N, pl)"   expect="нулі" />
+<t input="(0, card, G, pl)"   expect="нулів" />
+<t input="(0, ord, N, m)"     expect="нульовий" />
+<t input="(0, ord, N, f)"     expect="нульова" />
+<t input="(0, ord, N, neut)"  expect="нульове" />
+<t input="(0, ord, N, pl)"    expect="нульові" />
+
+<!-- acceptance tests -->
+<t input="(1987, ord, D, m)"    expect="одна тисяча дев'ятсот вісімдесят сьомому" /> <!-- слово одна часто скорочують -->
+<t input="(2000, ord, D, m)"    expect="двохтисячному" />
+<t input="(2001, ord, D, m)"    expect="дві тисячі першому" />
+
+<!-- big numbers -->
+<t input="(123456789, card, N)"    expect="сто двадцять три мільйони чотириста п'ятдесят шість тисяч сімсот вісімдесят дев'ять" />
+<t input="(123456789, card, N, m)" expect="сто двадцять три мільйони чотириста п'ятдесят шість тисяч сімсот вісімдесят дев'ять" />
+<t input="(987654321987, card, N)"    expect="дев'ятсот вісімдесят сім мільярдів шістсот п'ятдесят чотири мільйони триста двадцять одна тисяча дев'ятсот вісімдесят сім" />
+<t input="(987654321987, card, N, m)" expect="дев'ятсот вісімдесят сім мільярдів шістсот п'ятдесят чотири мільйони триста двадцять одна тисяча дев'ятсот вісімдесят сім" />
+
+</testSuite>
+
+<!-- 
+TODO: milyonnyj, refactor to use arrays
+ -->

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+
+  <PropertyGroup>
+    <GTestDir>C:\devb\PticaGovorunProj\srcrep\ThirdParty\googletest\</GTestDir>
+    <IncludePath>$(GTestDir)googletest\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(GTestDir)build_msvc140_x64\googletest\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(GTestDir)googlemock\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(GTestDir)build_msvc140_x64\googlemock\$(Configuration)\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>GTEST_LANG_CXX11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <Target Name="GTestDeploy" AfterTargets="Build">
+    <Copy SourceFiles="$(GTestDir)build_msvc140_x64\googletest\$(Configuration)\gtest.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="True"/>
+  </Target>
+</Project>

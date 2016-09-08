@@ -45,6 +45,22 @@ void appendTimeStampNow(std::wstring& str)
 	str.assign(buf.data(), buf.data() + len);
 }
 
+boost::wstring_view trim(boost::wstring_view text)
+{
+	auto isSpace = [](const wchar_t ch) { return ch == L' ' || ch == L'\t'; };
+	int left = 0;
+	while (left < (int)text.size() && isSpace(text[left]))
+		left += 1;
+
+	int right = -1 + (int)text.size();
+	while (right > left && isSpace(text[right]))
+		right -= 1;
+
+	int len = right + 1 - left;
+	if (len == 0) return boost::wstring_view();
+	return text.substr(left, len);
+}
+
 boost::wstring_view toWStringRef(const QString& str, std::vector<wchar_t>& buff)
 {
 	buff.resize(str.size());

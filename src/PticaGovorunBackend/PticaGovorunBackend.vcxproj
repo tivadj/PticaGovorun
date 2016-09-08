@@ -67,6 +67,7 @@
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
     <Import Project="..\build-config\FLAC.props" />
+    <Import Project="..\build-config\GSL.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -82,6 +83,7 @@
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
     <Import Project="..\build-config\FLAC.props" />
+    <Import Project="..\build-config\GSL.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -97,6 +99,7 @@
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
     <Import Project="..\build-config\FLAC.props" />
+    <Import Project="..\build-config\GSL.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -112,6 +115,7 @@
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\PocketSphinx.props" />
     <Import Project="..\build-config\FLAC.props" />
+    <Import Project="..\build-config\GSL.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

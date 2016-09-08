@@ -64,16 +64,16 @@ namespace PticaGovorun
 			}
 			return boost::none;
 		}
-		boost::optional<WordNumberCategory> parseWordNumber(QStringRef text)
+		boost::optional<EntityMultiplicity> parseWordNumber(QStringRef text)
 		{
 			struct WordNumberToStr
 			{
-				WordNumberCategory WordNumber;
+				EntityMultiplicity WordNumber;
 				const wchar_t* CStr;
 			};
 			static std::array<WordNumberToStr, 2> classes = {
-				WordNumberToStr{ WordNumberCategory::Singular, L"singular" },
-				WordNumberToStr{ WordNumberCategory::Plural, L"plural" },
+				WordNumberToStr{ EntityMultiplicity::Singular, L"singular" },
+				WordNumberToStr{ EntityMultiplicity::Plural, L"plural" },
 			};
 			for(const auto& pair : classes)
 			{
@@ -313,7 +313,7 @@ namespace PticaGovorun
 					if (attrs.hasAttribute("number"))
 					{
 						QStringRef attrStr = attrs.value("number");
-						wordForm.NumberCategory = details::parseWordNumber(attrStr);
+						wordForm.Multiplicity = details::parseWordNumber(attrStr);
 					}
 					if (attrs.hasAttribute("active"))
 					{
@@ -327,11 +327,15 @@ namespace PticaGovorun
 		}
 	}
 
-	std::tuple<bool, const char*> loadUkrainianWordDeclensionXml(const std::wstring& declensionDictPath, std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWords)
+	bool loadUkrainianWordDeclensionXml(const std::wstring& declensionDictPath, 
+		std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWords, std::wstring* errMsg)
 	{
 		QFile file(QString::fromStdWString(declensionDictPath));
 		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-			return std::make_tuple(false, "Can't open file for reading");
+		{
+			*errMsg = L"Can't open file for reading";
+			return false;
+		}
 
 		QXmlStreamReader xml(&file);
 
@@ -409,16 +413,20 @@ namespace PticaGovorun
 						// ignore if old and new groups are not empty and are the same
 
 						if (!oldGroup->Forms.empty() && !newGroup->Forms.empty() &&
-							 oldGroup->Forms.size()  != newGroup->Forms.size())
-							 return std::make_tuple(false, "Duplicate word groups with different word forms");
+							oldGroup->Forms.size() != newGroup->Forms.size())
+						{
+							*errMsg = L"Duplicate word groups with different word forms";
+							return false;
+						}
 					}
 				}
 			}
 		}
 		if (xml.hasError()) {
-			return std::make_tuple(true, "Error in XML stucture");
+			*errMsg = L"Error in XML stucture";
+			return true;
 		}
-		return std::make_tuple(true, nullptr);
+		return true;
 	}
 
 	int uniqueDeclinedWordsCount(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWords)

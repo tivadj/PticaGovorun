@@ -1414,10 +1414,11 @@ namespace PticaGovorun
 		int declinationFileCount = 0;
 		for (auto& dictPath : dictPathArray)
 		{
-			std::tuple<bool, const char*> loadOp = loadUkrainianWordDeclensionXml(dictPath, declinedWordDict);
-			if (!std::get<0>(loadOp))
+			std::wstring errMsg;
+			bool loadOp = loadUkrainianWordDeclensionXml(dictPath, declinedWordDict, &errMsg);
+			if (!loadOp)
 			{
-				std::cerr << std::get<1>(loadOp) << std::endl;
+				std::wcerr << errMsg << std::endl;
 				return;
 			}
 			OutputDebugStringW(dictPath);

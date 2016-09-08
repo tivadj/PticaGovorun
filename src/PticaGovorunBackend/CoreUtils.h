@@ -32,6 +32,8 @@ namespace PticaGovorun
 		str << buf;
 	}
 
+	PG_EXPORTS boost::wstring_view trim(boost::wstring_view text);
+
 	// Copyies string into buffer and returns reference to it.
 	PG_EXPORTS boost::wstring_view toWStringRef(const QString& str, std::vector<wchar_t>& buff);
 	PG_EXPORTS boost::wstring_view toWStringRef(const QStringRef& str, std::vector<wchar_t>& buff);
