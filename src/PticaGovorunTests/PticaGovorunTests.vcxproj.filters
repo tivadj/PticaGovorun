@@ -36,8 +36,5 @@
     <ClCompile Include="TextToPhonesTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TextParsingTestsNew.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

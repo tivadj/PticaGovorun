@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testSuite>
+<t input="One two. Three four!" expect="One two . | Three four !" name="MultiSent: extract multiple sentences"/>
+<t input="O`Brien O’Brien" expect="O'Brien O'Brien" name="normalization Apostrophes inside word are normalized"/>
+<t input="'yin yang'" expect="' yin yang '" name="Apostrophe on the word boundary is treated as word separator"/>
+<t input="ding-dong" expect="ding - dong"/>
+<t input="-suffix prefix-" expect="- suffix prefix -" name="hyphen on a word boundary is treated as separator"/>
+
+<!-- repair words split by optional hyphen -->
+<t input="tw¬in" expect="twin" name="Repair: optional hyphen - one word"/>
+<t input="sia¬mese tw¬in" expect="siamese twin" name="Repair: optional hyphen - multiple words"/>
+<t input="¬tail" expect="¬ tail" name="Repair: optional hyphen - ignore when prefix"/>
+<t input="head¬" expect="head ¬" name="Repair: optional hyphen - ignores when suffix"/>
+
+<!-- Roman numbers -->
+<t input="на XVI ст. припадає" expect="на шістнадцяте століття припадає"/>
+<t input="В XX ст. було" expect="В двадцятому столітті було"/>
+<t input="В тридцятих роках XX століття" expect="В тридцятих роках двадцятого століття"/>
+<t input="XX століття ознаменувалось" expect="двадцяте століття ознаменувалось"/>
+<t input="з 15-16 ст." expect="з п'ятнадцятого шістнадцятого століття"/>
+
+<!-- N- ті-->
+<t input="90-ті" expect="дев'яності"/>
+<t input="1980-ті" expect="одна тисяча дев'ятсот вісімдесяті"/>
+<t input="У 90-ті" expect="У дев'яності"/>
+<t input="90-ті рр." expect="дев'яності роки"/>
+<t input="У 90-ті рр." expect="У дев'яності роки"/>
+<t input="80—90-ті" expect="вісімдесяті дев'яності"/>
+
+<!-- N-х -->
+<t input="В 30-х рр. було" expect="В тридцятих роках було"/>
+<t input="до 3-х місяців" expect="до трьох місяців"/>
+<t input="халіф у 775—785-х роках" expect="халіф у сімсот сімдесят п'ятих сімсот вісімдесят п'ятих роках"/>
+<t input="упродовж 1870-1880-х років" expect="упродовж одна тисяча вісімсот сімдесятих одна тисяча вісімсот вісімдесятих років"/>
+<t input="У 5—11-х класах" expect="У п'ятих одинадцятих класах"/>
+<t input="О, цi горiлчанi черги 80-х!" expect="О , цi горiлчанi черги вісімдесятих !"/>
+
+<!-- dates -->
+<t input="25 травня 1998" expect="двадцять п'ятого травня одна тисяча дев'ятсот дев'яносто восьмого"/>
+<t input="19 жовтня 1987 р." expect="дев'ятнадцятого жовтня одна тисяча дев'ятсот вісімдесят сьомого року"/>
+<t input="У понеділок 19 жовтня 1987 р. фондовий ринок зазнав краху." expect="У понеділок дев'ятнадцятого жовтня одна тисяча дев'ятсот вісімдесят сьомого року фондовий ринок зазнав краху ."/>
+
+<!-- № sign -->
+<t input="№ 146" expect="номер сто сорок шість"/>
+<t input="№146" expect="номер сто сорок шість"/>
+<t input="№1" expect="номер один"/>
+<t input="№ 2" expect="номер два"/>
+
+<!-- abbreviations -->
+<!--
+Some abbreviations are pronounced as is and should not be expanded into multiple words.
+<t input="( затвердженою постановою Правління НБУ від" expect="( затвердженою постановою Правління Національного Банку України від" name="abbrev: DISABLE"/>
+-->
+
+<!-- acceptance -->
+<t input="В 30-х рр. XX ст. в Україні." expect="В тридцятих роках двадцятого століття в Україні ."/>
+</testSuite>

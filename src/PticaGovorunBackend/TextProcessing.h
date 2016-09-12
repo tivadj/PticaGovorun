@@ -476,10 +476,12 @@ namespace PticaGovorun
 	{
 		std::vector<RawTextLexeme>* lexemes_ = nullptr;
 		int curLexInd_ = -1;
+		IntegerToUaWordConverter int2WordCnv_;
 	public:
-		GrowOnlyPinArena<wchar_t> *stringArena_ = nullptr;
+		std::shared_ptr<GrowOnlyPinArena<wchar_t>> stringArena_;
 	public:
-		void expandInplace(std::vector<RawTextLexeme>& lexemes);
+		bool load(const boost::filesystem::path& declensionDictPath, std::wstring* errMsg);
+		void expandInplace(int startLexInd, std::vector<RawTextLexeme>& lexemes);
 	private:
 		inline RawTextLexeme& curLex();
 		inline RawTextLexeme& nextLex(int stepsCount = 1);
@@ -487,13 +489,28 @@ namespace PticaGovorun
 		/// Returns true if there is a lexeme some steps ahead.
 		inline bool hasNextLex(int stepsCount = 1) const;
 		static bool isWord(const RawTextLexeme& x);
+
 		bool ruleTemplate() { return true; }
-		bool ruleApostropheInsideWord();
+		// eg. "пір^'я"
+		bool ruleComposeWordWithApostropheInside();
+		// eg. "в ^XX столітті"
 		bool ruleExpandRomanNumber();
-		bool ruleNumberTi();
-		bool ruleNumberRoky();
+		// eg. "У ^90-ті роки"
+		bool ruleNumberDiapasonAndEnding();
+		/// eg. "У дев'яності ^рр."
+		bool ruleNumberRokyRoku();
+		/// "на XVI ^ст. припадає"
+		bool ruleNumberStolittya();
+		/// "^№146" or "^№ 146"
+		bool ruleSignNAndNumber();
 		/// eg. ty¬coon -> tycoon
 		bool ruleRepairWordSplitByOptionalHyphen();
+		/// "80—ті"->"80-ті"
+		bool ruleUnifyHyphen();
+		/// Converts number to words if context information is ready.
+		bool ruleUpgradeNumberToWords();
+		/// eg "від ^11 грудня 2003 ^р."
+		bool ruleDayMonthYear();
 	};
 
 	/// Provides text stream in the form of blocks of different size.
@@ -510,6 +527,7 @@ namespace PticaGovorun
 		typedef std::function < auto (gsl::span<const RawTextLexeme>&) -> void> OnNextSentence;
 	private:
 		TextBlockReader* textReader_ = nullptr;
+		std::shared_ptr<AbbreviationExpanderUkr> abbrevExpand_;
 		std::unique_ptr<GrowOnlyPinArena<wchar_t>> stringArena_;
 		OnNextSentence onNextSent_;
 		//std::function < auto (gsl::span<RawTextLexeme>&) -> void> onNextSent_;
@@ -518,6 +536,7 @@ namespace PticaGovorun
 		explicit SentenceParser(size_t stringArenaLineSize);
 
 		void setTextBlockReader(TextBlockReader* textReader);
+		void setAbbrevExpander(std::shared_ptr<AbbreviationExpanderUkr> abbrevExpand);
 
 		void setOnNextSentence(OnNextSentence onNextSent);
 

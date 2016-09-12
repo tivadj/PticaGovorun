@@ -3535,7 +3535,7 @@ namespace PticaGovorun
 						analyzeSentence(words, lexemes);
 
 						AbbreviationExpanderUkr abbrExp;
-						abbrExp.expandInplace(lexemes);
+						abbrExp.expandInplace(0, lexemes);
 
 						bool isUkr = checkGoodSentenceUkr(lexemes);
 						if (!isUkr)

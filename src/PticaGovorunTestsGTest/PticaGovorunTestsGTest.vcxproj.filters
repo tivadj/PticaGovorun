@@ -28,9 +28,4 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="parseSentence.tt">
-      <Filter>Source Files</Filter>
-    </CustomBuild>
-  </ItemGroup>
 </Project>

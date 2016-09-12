@@ -5,6 +5,7 @@
 #include <cwchar>
 #include <gsl/span>
 #include <boost/lexical_cast.hpp>
+#include "TranscriberUI/AnnotationToolViewModel.h"
 
 namespace PticaGovorun
 {
@@ -865,10 +866,16 @@ namespace PticaGovorun
 
 	//
 
-	void AbbreviationExpanderUkr::expandInplace(std::vector<RawTextLexeme>& lexemes)
+	bool AbbreviationExpanderUkr::load(const boost::filesystem::path& declensionDictPath, std::wstring* errMsg)
 	{
+		return int2WordCnv_.load(declensionDictPath, errMsg);
+	}
+
+	void AbbreviationExpanderUkr::expandInplace(int startLexInd, std::vector<RawTextLexeme>& lexemes)
+	{
+		curLexInd_ = startLexInd;
 		lexemes_ = &lexemes;
-		for (curLexInd_ = 0; curLexInd_ < (int)lexemes_->size();)
+		for (; curLexInd_ < (int)lexemes_->size();)
 		{
 			bool anyRuleWasApplied = false;
 			auto tryRule = [this, &anyRuleWasApplied](decltype(&AbbreviationExpanderUkr::ruleTemplate) ruleFun) -> void
@@ -878,11 +885,21 @@ namespace PticaGovorun
 					anyRuleWasApplied = (this ->* ruleFun)();
 				};
 
+			// do not require context
+			tryRule(&AbbreviationExpanderUkr::ruleUnifyHyphen);
+			tryRule(&AbbreviationExpanderUkr::ruleUpgradeNumberToWords);
+
+			// require close context (left, right lexeme)
 			tryRule(&AbbreviationExpanderUkr::ruleRepairWordSplitByOptionalHyphen);
-			tryRule(&AbbreviationExpanderUkr::ruleApostropheInsideWord);
+			tryRule(&AbbreviationExpanderUkr::ruleComposeWordWithApostropheInside);
+
+			// require wide context (slower)
 			tryRule(&AbbreviationExpanderUkr::ruleExpandRomanNumber);
-			tryRule(&AbbreviationExpanderUkr::ruleNumberTi);
-			tryRule(&AbbreviationExpanderUkr::ruleNumberRoky);
+			tryRule(&AbbreviationExpanderUkr::ruleNumberDiapasonAndEnding);
+			tryRule(&AbbreviationExpanderUkr::ruleNumberRokyRoku);
+			tryRule(&AbbreviationExpanderUkr::ruleNumberStolittya);
+			tryRule(&AbbreviationExpanderUkr::ruleSignNAndNumber);
+			tryRule(&AbbreviationExpanderUkr::ruleDayMonthYear);
 
 			if (!anyRuleWasApplied)
 				curLexInd_ += 1;
@@ -924,6 +941,7 @@ namespace PticaGovorun
 
 	int romanToArabicNumeral(boost::wstring_view romanNum)
 	{
+		// TODO: ukr='Х' code=1061 instead of lat='X' code=88
 		auto romans = {
 			L"I", L"II", L"III", L"IV", L"V", L"VI", L"VII", L"VIII", L"IX", L"X",
 			L"XI", L"XII", L"XIII", L"XIV", L"XV", L"XVI", L"XVII", L"XVIII", L"XIX", L"XX", L"XXI"};
@@ -935,9 +953,21 @@ namespace PticaGovorun
 		return ind + 1;
 	}
 
+	bool convertTextToNum(boost::wstring_view s, ptrdiff_t& num)
+	{
+		if (boost::conversion::try_lexical_convert(s, num))
+			return true;
+		int result = romanToArabicNumeral(s);
+		if (result != -1)
+		{
+			num = result;
+			return true;
+		}
+		return false;
+	}
+
 	bool expandRomanNumeral(boost::wstring_view romanNum, WordCase wordCase, WordGender gender, boost::wstring_view& wordNum)
 	{
-		// TODO: ukr='Х' code=1061 instead of lat='X' code=88
 		int num = romanToArabicNumeral(romanNum);
 		if (num == -1)
 			return false;
@@ -1065,7 +1095,7 @@ namespace PticaGovorun
 				return false;
 			if (form.Gender != boost::none && form.Gender != gender)
 				return false;
-			if (form.NumberCategory != boost::none && form.NumberCategory != mult)
+			if (form.Multiplicity != boost::none && form.Multiplicity != mult)
 				return false;
 			return true;
 		};
@@ -1111,8 +1141,10 @@ namespace PticaGovorun
 		lex.RunType = TextRunType::Alpha;
 		lex.Lang = TextLanguage::Ukrainian;
 		lex.Class = WordClass::Numeral;
+		lex.NumeralCardOrd = cardOrd;
 		lex.Case = form.Case;
 		lex.Gender = form.Gender;
+		lex.Mulitplicity = form.Multiplicity;
 		lex.NumeralLexView = NumeralLexicalView::Word;
 		lexemes.push_back(lex);
 	}
@@ -1360,8 +1392,15 @@ namespace PticaGovorun
 		return true;
 	}
 
-	bool AbbreviationExpanderUkr::ruleApostropheInsideWord()
+	void initWhitespaceLexeme(RawTextLexeme& x)
 	{
+		x.ValueStr = L" ";
+		x.RunType = TextRunType::Whitespace;
+	}
+
+	bool AbbreviationExpanderUkr::ruleComposeWordWithApostropheInside()
+	{
+		// "пір^'я"
 		if (!hasNextLex(-1) || !hasNextLex(1)) return false;
 		auto& lhs = nextLex(-1);
 		auto& rhs = nextLex(1);
@@ -1387,20 +1426,77 @@ namespace PticaGovorun
 		return false;
 	}
 
+	bool AbbreviationExpanderUkr::ruleUpgradeNumberToWords()
+	{
+		// 12 -> дванадцять
+		auto& numLex = nextLex(0);
+
+		bool hasContext =
+			numLex.NumeralCardOrd != boost::none &&
+			numLex.Case != boost::none;
+		if (!hasContext)
+			return false;
+		
+		ptrdiff_t num;
+		if (!convertTextToNum(numLex.ValueStr, num))
+			return false;
+
+		std::wstring errMsg;
+		std::vector<RawTextLexeme> lexemes;
+		if (!int2WordCnv_.convert(num, numLex.NumeralCardOrd.value(), numLex.Case.value(), numLex.Mulitplicity, numLex.Gender, lexemes, &errMsg))
+			return false;
+
+		// modify
+		lexemes_->erase(lexemes_->begin() + curLexInd_); // num itself
+		lexemes_->insert(lexemes_->begin() + curLexInd_, std::begin(lexemes), std::end(lexemes));
+		curLexInd_ += static_cast<int>(lexemes.size());
+		return true;
+	}
+
 	bool AbbreviationExpanderUkr::ruleExpandRomanNumber()
 	{
 		// "в ^XX ст." where ^ marks cur lex
 		if (nextLex(0).Class != WordClass::Numeral)
 			return false;
 
-		if (!hasNextLex(-2) || !hasNextLex(3)) return false;
+		ptrdiff_t num = -1;
+		if (!convertTextToNum(nextLex(0).ValueStr, num))
+			return false;
+
+		// optional numerical diapason
+		ptrdiff_t numTo = -1;
+		bool numDiapason = false;
+		if (hasNextLex(2) &&
+			nextLex(1).RunType == TextRunType::Punctuation &&
+			nextLex(2).Class == WordClass::Numeral)
+		{
+			if (convertTextToNum(nextLex(2).ValueStr, numTo))
+				numDiapason = true;
+		}
+
+		// the offset of the number before an ending
+		int numLexOffset = numDiapason ? 2 : 0;
+
+		// optional preposition "XX століття ознаменувалось"
+		bool hasPrepos = false;
+		if (hasNextLex(-2) &&
+			nextLex(-1).RunType == TextRunType::Whitespace)
+			hasPrepos = true;
+
+		std::wstring prepos;
+		if (hasPrepos)
+			pgToLower(nextLex(-2).ValueStr, &prepos);
 
 		boost::optional<WordCase> numCaseLeft = boost::none;
-		std::wstring prepos;
-		pgToLower(nextLex(-2).ValueStr, &prepos);
+		boost::optional<NumeralCardinality> numCardin = boost::none;
+
 		if (prepos == L"на")
+		{
 			numCaseLeft = WordCase::Nominative;
+			numCardin = NumeralCardinality::Ordinal;
+		}
 		else if (
+			prepos == L"з" ||
 			prepos == L"початку" ||
 			prepos == L"початком" ||
 			prepos == L"середині" ||
@@ -1409,134 +1505,466 @@ namespace PticaGovorun
 			prepos == L"кінця" ||
 			prepos == L"до" ||
 			prepos == L"рубежі" ||
-			prepos == L"років")
+			prepos == L"років" || 
+			prepos == L"роках")
+		{
 			numCaseLeft = WordCase::Genitive;
+			numCardin = NumeralCardinality::Ordinal;
+		}
 		else if (prepos == L"в" || prepos == L"у")
+		{
 			numCaseLeft = WordCase::Dative;
-		if (numCaseLeft == boost::none)
+			numCardin = NumeralCardinality::Ordinal;
+		}
+		else if (prepos.empty())
+		{
+			// eg. "XX століття ознаменувалось"
+			numCaseLeft = WordCase::Nominative;
+			numCardin = NumeralCardinality::Ordinal;
+		}
+		if (numCaseLeft == boost::none || numCardin == boost::none)
 			return false;
+
+		auto isCenturyStr = [&](int ind)
+		{
+			if (hasNextLex(2) &&
+				nextLex(ind).StrLowerCase() == L"століття")
+				return true;
+			if (hasNextLex(3) &&
+				nextLex(ind).StrLowerCase() == L"ст" && nextLex(ind + 1).ValueStr[0] == L'.')
+				return true;
+			return false;
+		};
 
 		bool rightContext = false;
-		bool collapseDot = false;
-		if (nextLex(2).StrLowerCase() == L"ст" &&
-			nextLex(3).ValueStr[0] == L'.')
+		if (isCenturyStr(numLexOffset+2))
 		{
 			rightContext = true;
-			collapseDot = true;
 		}
 
-		if (nextLex(-1).RunType == TextRunType::Whitespace &&
-			nextLex(1).RunType == TextRunType::Whitespace && rightContext)
+		if (nextLex(numLexOffset+1).RunType == TextRunType::Whitespace && 
+			rightContext)
 		{
-			boost::wstring_view wordNum;
-			if (!expandRomanNumeral(nextLex(0).ValueStr, numCaseLeft.value(), WordGender::Neuter, wordNum))
+			std::wstring errMsg;
+			std::vector<RawTextLexeme> numLexemes;
+			bool convOp = int2WordCnv_.convert(num, numCardin.value(), numCaseLeft.value(), EntityMultiplicity::Singular, WordGender::Neuter, numLexemes, &errMsg);
+			if (!convOp)
 			{
-				PG_Assert2(false, QString("Unknown roman %1").arg(toQString(wordNum)).toStdWString().c_str());
+				PG_Assert2(false, QString("%1. num=%2")
+					.arg(QString::fromStdWString(errMsg))
+					.arg(num).toStdWString().c_str());;
 				return false;
 			}
 
-			RawTextLexeme numLex = nextLex(0);
-			numLex.ValueStr = wordNum;
-			numLex.Case = numCaseLeft;
-
-			// TODO: сторіччі або столітті?
-			std::array<const wchar_t*, 3> nounStrs = {L"століття", L"століття", L"столітті"};
-			const wchar_t* nounStr = nullptr;
-			if (numCaseLeft == WordCase::Nominative)
-				nounStr = nounStrs[0];
-			else if (numCaseLeft == WordCase::Genitive)
-				nounStr = nounStrs[0];
-			else if (numCaseLeft == WordCase::Dative)
-				nounStr = nounStrs[2];
-			PG_DbgAssert(nounStr != nullptr);
-
-			RawTextLexeme nounLex = nextLex(2);
-			nounLex.ValueStr = nounStr;
-			nounLex.Class = WordClass::Noun;
-			nounLex.Case = numCaseLeft;
-			nounLex.Gender = WordGender::Neuter;
+			std::vector<RawTextLexeme> numToLexemes;
+			if (numDiapason)
+			{
+				convOp = int2WordCnv_.convert(numTo, numCardin.value(), numCaseLeft.value(), EntityMultiplicity::Singular, WordGender::Neuter, numToLexemes, &errMsg);
+				if (!convOp)
+				{
+					PG_Assert2(false, QString("%1. num=%2")
+						.arg(QString::fromStdWString(errMsg))
+						.arg(numTo).toStdWString().c_str());;
+					return false;
+				}
+			}
 
 			// modify
-			nextLex(-2).Class = WordClass::Preposition;
-			nextLex(0) = numLex;
-			nextLex(2) = nounLex;
-			auto newEndIt = lexemes_->erase(lexemes_->begin() + curLexInd_ + 3);
-			curLexInd_ += 3;
+			if (hasPrepos)
+				nextLex(-2).Class = WordClass::Preposition;
+
+			if (numDiapason)
+			{
+				lexemes_->erase(lexemes_->begin() + curLexInd_ + numLexOffset); // numTo
+				lexemes_->erase(lexemes_->begin() + curLexInd_ + numLexOffset - 1); // hyphen
+				PG_DbgAssert(numLexOffset == 2);
+			}
+			lexemes_->erase(lexemes_->begin() + curLexInd_ + 0); // num
+
+			int insInd = curLexInd_ + 0;
+			lexemes_->insert(lexemes_->begin() + insInd, std::begin(numLexemes), std::end(numLexemes));
+			insInd += numLexemes.size();
+
+			if (numDiapason)
+			{
+				RawTextLexeme space;
+				initWhitespaceLexeme(space);
+				lexemes_->insert(lexemes_->begin() + insInd, space);
+				insInd += 1;
+
+				lexemes_->insert(lexemes_->begin() + insInd, std::begin(numToLexemes), std::end(numToLexemes));
+				insInd += numToLexemes.size();
+			}
+			curLexInd_ = insInd;
 			return true;
 		}
 		return false;
 	}
 
-	bool AbbreviationExpanderUkr::ruleNumberTi()
+	bool AbbreviationExpanderUkr::ruleNumberDiapasonAndEnding()
 	{
 		// "У ^90-ті роки" where ^ marks cur lex
-		if (nextLex(0).Class != WordClass::Numeral)
+		if (nextLex(0).RunType != TextRunType::Digit)
 			return false;
 
-		if (!hasNextLex(2)) return false;
-		auto& lex = nextLex(0);
-		int num = -1;
-		if (!boost::conversion::try_lexical_convert(lex.ValueStr, num))
+		auto& numLex = nextLex(0);
+		ptrdiff_t num = -1;
+		if (!boost::conversion::try_lexical_convert(numLex.ValueStr, num))
 			return false;
 
-		if (nextLex(1).RunType == TextRunType::Punctuation &&
-			nextLex(2).ValueStr == L"ті")
+		// optional numerical diapason
+		// eg: "^775-785-х рр."
+		bool numDiapason = false;
+		ptrdiff_t numTo = -1;
+		if (hasNextLex(2) &&
+			nextLex(1).RunType == TextRunType::Punctuation &&
+			nextLex(2).RunType == TextRunType::Digit)
 		{
-			const wchar_t* numStr = nullptr;
-			switch (num)
-			{
-			case 10: numStr = L"десяті";
-				break;
-			case 20: numStr = L"тридцяті";
-				break;
-			case 30: numStr = L"двадцяті";
-				break;
-			case 50: numStr = L"п'ятдесяті";
-				break;
-			case 60: numStr = L"шістдесяті";
-				break;
-			case 70: numStr = L"сімдесяті";
-				break;
-			case 80: numStr = L"вісімдесяті";
-				break;
-			case 90: numStr = L"дев'яності";
-				break;
-			default: numStr = nullptr;
-			}
-			if (numStr == nullptr)
-			{
-				PG_Assert2(false, QString("Unknown roman %1").arg(toQString(lex.ValueStr)).toStdWString().c_str());;
-				return false;
-			}
-
-			// modify
-			nextLex(0).ValueStr = numStr;
-			lexemes_->erase(lexemes_->begin() + curLexInd_ + 2); // ti
-			lexemes_->erase(lexemes_->begin() + curLexInd_ + 1); // hyphen
-			curLexInd_ += 1;
-			return true;
+			if (boost::conversion::try_lexical_convert(nextLex(2).ValueStr, numTo))
+				numDiapason = true;
 		}
 
-		return false;
+		// optional preposition
+		bool hasPrepos = hasNextLex(-2);
+		RawTextLexeme* preposLex = hasPrepos ? &nextLex(-2) : nullptr;
+
+		// the offset of the number before an ending
+		int numLexOffset = numDiapason ? 2 : 0;
+
+		bool leftOk = !hasPrepos ||
+			nextLex(-2).RunType == TextRunType::Alpha &&
+			nextLex(-1).RunType == TextRunType::Whitespace;
+
+		bool rightOk = 
+			hasNextLex(numLexOffset+2) &&
+			nextLex(numLexOffset+1).RunType == TextRunType::Punctuation;
+
+		bool ok = leftOk && rightOk;
+		if (!ok)
+			return false;
+
+		std::wstring preposStr;
+		if (preposLex != nullptr)
+			pgToLower(preposLex->ValueStr, &preposStr);
+
+		boost::optional<WordCase> numCase;
+		boost::optional<NumeralCardinality> numCardin;
+		auto acceptEndingFun = [&](int numLexOffset) -> bool
+		{
+			if (nextLex(numLexOffset+2).ValueStr == L"ті")
+			{
+				numCardin = NumeralCardinality::Ordinal;
+				numCase = WordCase::Nominative;
+				return true;
+			}
+			// до 3-х місяців
+			bool isDozen = num % 10 == 0;
+			if (!isDozen && !numDiapason && nextLex(numLexOffset + 2).ValueStr == L"х")
+			{
+				numCardin = NumeralCardinality::Cardinal;
+				numCase = WordCase::Genitive;
+				return true;
+			}
+			if ((preposStr == L"в" ||
+				preposStr == L"у" ||
+				preposStr == L"на") &&
+				nextLex(numLexOffset + 2).ValueStr == L"х")
+			{
+				numCardin = NumeralCardinality::Ordinal;
+				numCase = WordCase::Locative;
+				return true;
+			}
+			if ((preposLex != nullptr || // any word before numeral means the genitive case
+				preposStr == L"кінці" ||
+				preposStr == L"наприкінці" ||
+				preposStr == L"кінця") &&
+				nextLex(numLexOffset + 2).ValueStr == L"х")
+			{
+				numCardin = NumeralCardinality::Ordinal;
+				numCase = WordCase::Genitive;
+				return true;
+			}
+			return false;
+		};
+
+		bool acceptEnding = acceptEndingFun(numLexOffset);
+		if (!acceptEnding)
+			return false;
+		PG_DbgAssert(numCase != boost::none);
+		PG_DbgAssert(numCardin != boost::none);
+			
+		std::wstring errMsg;
+		std::vector<RawTextLexeme> numLexemes;
+		bool convOp = int2WordCnv_.convert(num, numCardin.value(), numCase.value(), EntityMultiplicity::Plural, boost::none, numLexemes, &errMsg);
+		if (!convOp)
+		{
+			PG_Assert2(false, QString("%1. num=%2")
+				.arg(QString::fromStdWString(errMsg))
+				.arg(toQString(numLex.ValueStr)).toStdWString().c_str());;
+			return false;
+		}
+
+		std::vector<RawTextLexeme> numToLexemes;
+		if (numDiapason)
+		{
+			convOp = int2WordCnv_.convert(numTo, numCardin.value(), numCase.value(), EntityMultiplicity::Plural, boost::none, numToLexemes, &errMsg);
+			if (!convOp)
+			{
+				PG_Assert2(false, QString("%1. num=%2")
+					.arg(QString::fromStdWString(errMsg))
+					.arg(numTo).toStdWString().c_str());;
+				return false;
+			}
+		}
+
+		// modify
+		lexemes_->erase(lexemes_->begin() + curLexInd_ + numLexOffset + 2); // ti
+		lexemes_->erase(lexemes_->begin() + curLexInd_ + numLexOffset + 1); // hyphen
+		if (numDiapason)
+		{
+			lexemes_->erase(lexemes_->begin() + curLexInd_ + numLexOffset + 0); // numTo
+			lexemes_->erase(lexemes_->begin() + curLexInd_ + numLexOffset - 1); // hyphen
+			PG_DbgAssert(numLexOffset == 2);
+		}
+		lexemes_->erase(lexemes_->begin() + curLexInd_ + 0); // num
+
+		int insInd = curLexInd_ + 0;
+		lexemes_->insert(lexemes_->begin() + insInd, std::begin(numLexemes), std::end(numLexemes));
+		insInd += numLexemes.size();
+
+		if (numDiapason)
+		{
+			RawTextLexeme space;
+			initWhitespaceLexeme(space);
+			lexemes_->insert(lexemes_->begin() + insInd, space);
+			insInd += 1;
+
+			lexemes_->insert(lexemes_->begin() + insInd, std::begin(numToLexemes), std::end(numToLexemes));
+			insInd += numToLexemes.size();
+		}
+		curLexInd_ = insInd;
+		return true;
 	}
 
-	bool AbbreviationExpanderUkr::ruleNumberRoky()
+	bool AbbreviationExpanderUkr::ruleNumberRokyRoku()
 	{
 		// "У дев'яності ^рр." where ^ marks cur lex
 		if (!hasNextLex(-2) || !hasNextLex(1)) return false;
-		if (nextLex(-2).Class == WordClass::Numeral &&
+
+		RawTextLexeme yearLex;
+		yearLex.RunType = TextRunType::Alpha;
+		yearLex.Class = WordClass::Noun;
+		bool yearLexValid = false;
+
+		auto& numLex = nextLex(-2);
+		if (numLex.Class == WordClass::Numeral &&
+			numLex.Mulitplicity == EntityMultiplicity::Plural &&
 			nextLex(-1).RunType == TextRunType::Whitespace &&
 			nextLex(0).ValueStr == L"рр" &&
 			nextLex(1).ValueStr == L".")
 		{
+
+			boost::wstring_view wordYear;
+			if (numLex.Case == WordCase::Nominative)
+				wordYear = L"роки";
+			else if (numLex.Case == WordCase::Genitive)
+				wordYear = L"років";
+			else if (numLex.Case == WordCase::Locative)
+				wordYear = L"роках";
+			if (wordYear.empty())
+				return false;
+
+			yearLex.ValueStr = wordYear;
+			yearLex.Case = numLex.Case;
+			yearLex.Mulitplicity = EntityMultiplicity::Plural;
+			yearLexValid = true;
+		}
+
+		// "від 11 грудня 2003 ^р."
+		if (numLex.Class == WordClass::Numeral &&
+			numLex.NumeralCardOrd == NumeralCardinality::Ordinal &&
+			nextLex(-1).RunType == TextRunType::Whitespace &&
+			nextLex(0).ValueStr == L"р" &&
+			nextLex(1).ValueStr == L".")
+		{
+
+			boost::wstring_view wordYear;
+			if (numLex.Case == WordCase::Genitive)
+				wordYear = L"року";
+			if (wordYear.empty())
+				return false;
+
+			yearLex.ValueStr = wordYear;
+			yearLex.Case = numLex.Case;
+			yearLex.Mulitplicity = EntityMultiplicity::Singular;
+			yearLexValid = true;
+		}
+
+		if (yearLexValid)
+		{
 			// modify
-			nextLex(0).ValueStr = L"роки";
+			nextLex(0) = yearLex;
 			lexemes_->erase(lexemes_->begin() + curLexInd_ + 1); // dot
 			curLexInd_ += 1;
 			return true;
 		}
 
 		return false;
+	}
+
+	bool AbbreviationExpanderUkr::ruleDayMonthYear()
+	{
+		// "від ^11 грудня 2003 ^р."
+		if (!hasNextLex(4)) return false;
+
+		std::array<boost::wstring_view,12> monthesGenitive = {
+			L"січня",
+			L"лютого",
+			L"березня",
+			L"травня",
+			L"червня",
+			L"липня",
+			L"серпня",
+			L"вересня",
+			L"жовтня",
+			L"листопада",
+			L"грудня"
+		};
+		auto isMonthGenitive = [&](boost::wstring_view s)
+		{
+			auto it = std::find(std::begin(monthesGenitive), std::end(monthesGenitive), s);
+			return it != std::end(monthesGenitive);
+		};
+		
+		if (nextLex(0).Class == WordClass::Numeral &&
+			nextLex(1).RunType == TextRunType::Whitespace &&
+			isMonthGenitive(nextLex(2).ValueStr) &&
+			nextLex(3).RunType == TextRunType::Whitespace &&
+			nextLex(4).Class == WordClass::Numeral)
+		{
+			auto& dayLex = nextLex(0);
+			auto& yearLex = nextLex(4);
+
+			int numDay = -1;
+			if (!boost::conversion::try_lexical_convert(dayLex.ValueStr, numDay))
+				return false;
+
+			int numYear = -1;
+			if (!boost::conversion::try_lexical_convert(yearLex.ValueStr, numYear))
+				return false;
+
+			std::wstring errMsg;
+			std::vector<RawTextLexeme> lexemesDay;
+			if (!int2WordCnv_.convert(numDay, NumeralCardinality::Ordinal, WordCase::Genitive, EntityMultiplicity::Singular, WordGender::Masculine, lexemesDay, &errMsg))
+				return false;
+
+			std::vector<RawTextLexeme> lexemesYear;
+			if (!int2WordCnv_.convert(numYear, NumeralCardinality::Ordinal, WordCase::Genitive, EntityMultiplicity::Singular, WordGender::Masculine, lexemesYear, &errMsg))
+				return false;
+
+			// modify
+			lexemes_->erase(lexemes_->begin() + curLexInd_ + 4); // year
+			lexemes_->insert(lexemes_->begin() + curLexInd_ + 4, std::begin(lexemesYear), std::end(lexemesYear));
+			
+			lexemes_->erase(lexemes_->begin() + curLexInd_ + 0); // day
+			lexemes_->insert(lexemes_->begin() + curLexInd_ + 0, std::begin(lexemesDay), std::end(lexemesDay));
+			// 5 lexemes - first space after year
+			// 2 lexemes are removed
+			// new day and year lexemes are inserted
+			curLexInd_ += 5 - 2 + static_cast<int>(lexemesDay.size()) + static_cast<int>(lexemesYear.size());
+			return true;
+		}
+
+		return false;
+	}
+
+	bool AbbreviationExpanderUkr::ruleNumberStolittya()
+	{
+		// "на XVI ^ст. припадає" where ^ marks cur lex
+		if (!hasNextLex(-2) || !hasNextLex(1)) return false;
+
+		auto& numLex = nextLex(-2);
+		if (numLex.Class == WordClass::Numeral &&
+			numLex.Case != boost::none &&
+			nextLex(-1).RunType == TextRunType::Whitespace &&
+			nextLex(0).ValueStr == L"ст" &&
+			nextLex(1).ValueStr == L".")
+		{
+			// TODO: сторіччі або столітті?
+			boost::wstring_view nounStr;
+			if (numLex.Case == WordCase::Nominative)
+				nounStr = L"століття";
+			else if (numLex.Case == WordCase::Genitive)
+				nounStr = L"століття";
+			else if (numLex.Case == WordCase::Dative)
+				nounStr = L"столітті";
+			if (nounStr.empty())
+				return false; // can't determine the case for the noun
+
+			RawTextLexeme yearLex;
+			yearLex.ValueStr = nounStr;
+			yearLex.RunType = TextRunType::Alpha;
+			yearLex.Case = numLex.Case;
+			yearLex.Class = WordClass::Noun;
+			yearLex.Gender = WordGender::Neuter;
+
+			// modify
+			nextLex(0) = yearLex;
+			lexemes_->erase(lexemes_->begin() + curLexInd_ + 1); // dot
+
+			curLexInd_ += 1;
+			return true;
+		}
+
+		return false;
+	}
+
+	bool AbbreviationExpanderUkr::ruleSignNAndNumber()
+	{
+		// "^№146" or "^№ 146" where ^ marks cur lex
+		auto& numbSignLex = nextLex(0);
+		if (numbSignLex.ValueStr != L"№")
+			return false;
+
+		RawTextLexeme* numLex = nullptr;
+		bool hasSpace = false; // optional space
+		if (hasNextLex(1) &&
+			nextLex(1).Class == WordClass::Numeral)
+		{
+			numLex = &nextLex(1);
+			hasSpace = false;
+		}
+		else if (hasNextLex(2) &&
+			nextLex(1).RunType == TextRunType::Whitespace &&
+			nextLex(2).Class == WordClass::Numeral)
+		{
+			numLex = &nextLex(2);
+			hasSpace = true;
+		}
+		if (numLex == nullptr)
+			return false;
+
+		// modify
+		numbSignLex.ValueStr = L"номер";
+		numbSignLex.RunType = TextRunType::Alpha;
+		numbSignLex.Class = WordClass::Noun;
+		numbSignLex.Gender = WordGender::Masculine;
+		numbSignLex.Mulitplicity = EntityMultiplicity::Singular;
+
+		numLex->NumeralCardOrd = NumeralCardinality::Cardinal;
+		numLex->Case = WordCase::Nominative;
+		numLex->Gender = WordGender::Masculine;;
+		numLex->Mulitplicity = EntityMultiplicity::Singular;
+
+		if (!hasSpace)
+		{
+			// insert space separator
+			RawTextLexeme space;
+			initWhitespaceLexeme(space);
+			lexemes_->insert(lexemes_->begin() + curLexInd_ + 1, space);
+		}
+		curLexInd_ += 2; // skip space, set on the next number
+		return true;
 	}
 
 	bool AbbreviationExpanderUkr::ruleRepairWordSplitByOptionalHyphen()
@@ -1572,6 +2000,18 @@ namespace PticaGovorun
 		return false;
 	}
 
+	bool AbbreviationExpanderUkr::ruleUnifyHyphen()
+	{
+		// "80—ті"->"80-ті"
+		if (nextLex(0).ValueStr.front() == L'—')
+		{
+			nextLex(0).ValueStr = L"-";
+			// cur pos is not changed
+			return true;
+		}
+		return false;
+	}
+	
 	void analyzeSentenceHelper(gsl::span<const RawTextRun> words, std::vector<RawTextLexeme>& lexemes)
 	{
 		for (int i = 0; i < words.size(); ++i)
@@ -1668,6 +2108,11 @@ namespace PticaGovorun
 		textReader_ = textReader;
 	}
 
+	void SentenceParser::setAbbrevExpander(std::shared_ptr<AbbreviationExpanderUkr> abbrevExpand)
+	{
+		abbrevExpand_ = abbrevExpand;
+	}
+
 	void SentenceParser::setOnNextSentence(OnNextSentence onNextSent)
 	{
 		onNextSent_ = onNextSent;
@@ -1685,6 +2130,7 @@ namespace PticaGovorun
 			{
 				gsl::span<const RawTextLexeme> sent = sentTmp;
 				if (onNextSent_ != nullptr) onNextSent_(sent);
+
 				sentTmp.clear();
 				stringArena_->clear();
 			};
@@ -1697,6 +2143,7 @@ namespace PticaGovorun
 
 			TextParserNew wordsReader;
 			wordsReader.setInputText(boost::wstring_view(textBuff.data(), textBuff.size()));
+			tillStopLexemes.clear();
 			while (true) // read entire text block
 			{
 				tillStopWords.clear();
@@ -1704,14 +2151,15 @@ namespace PticaGovorun
 				if (!tillDot && tillStopWords.empty())
 					break;
 
-				tillStopLexemes.clear();
+				int startLexInd = static_cast<int>(tillStopLexemes.size());
 				analyzeSentenceHelper(tillStopWords, tillStopLexemes);
 
-				AbbreviationExpanderUkr abbrExp;
-				abbrExp.stringArena_ = stringArena_.get();
-				abbrExp.expandInplace(tillStopLexemes);
+				abbrevExpand_->expandInplace(startLexInd, tillStopLexemes);
 
-				registerInArena(*stringArena_, tillStopLexemes, sentTmp);
+				//gsl::span<RawTextLexeme> span1(tillStopLexemes.begin() + startLexInd, tillStopLexemes.end());
+				gsl::span<RawTextLexeme> span1 = tillStopLexemes;
+				span1 = span1.subspan(startLexInd);
+				registerInArena(*stringArena_, span1, sentTmp);
 
 				if (!sentTmp.empty() &&
 					(sentTmp.back().ValueStr == L"." || sentTmp.back().ValueStr == L"!" || sentTmp.back().ValueStr == L"?"))

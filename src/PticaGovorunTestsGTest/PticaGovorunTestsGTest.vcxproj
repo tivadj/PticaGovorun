@@ -175,19 +175,6 @@
     <ClCompile Include="TextParseRunsTests.cpp" />
     <ClCompile Include="TextParseSentenceTests.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="parseSentence.tt">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(CommonProgramFiles)\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\TextTransform.exe" -out $(IntDir)%(Filename).inc -a !!xmlDataPath!$(SolutionDir)..\..\testdata\text\parseSentence.xml %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(CommonProgramFiles)\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\TextTransform.exe" -out $(IntDir)%(Filename).inc -a !!xmlDataPath!$(SolutionDir)..\..\testdata\text\parseSentence.xml %(FullPath)</Command>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).inc;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).inc;%(Outputs)</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\..\testdata\text\parseSentence.xml;%(AdditionalInputs)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\..\testdata\text\parseSentence.xml;%(AdditionalInputs)</AdditionalInputs>
-    </CustomBuild>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
