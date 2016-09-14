@@ -173,14 +173,22 @@ namespace PticaGovorun
 		const WordPart* sentEndWordPart_;
 		const WordPart* wordPartSeparator_ = nullptr;
 
+		std::shared_ptr<SentenceParser> sentParser_;
+
 		QTextStream* log_ = nullptr;
+	public:
+		bool outputCorpus_ = false;
+		boost::filesystem::path corpusFilePath_;
+		bool outputCorpusNormaliz_ = false; // prints each initial and normalized sentences
+		boost::filesystem::path corpusNormalizFilePath_;
 	public:
 		UkrainianPhoneticSplitter();
 
 		void bootstrapFromDeclinedWords(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWords, const std::wstring& targetWord,
 			const std::unordered_set<std::wstring>& processedWords);
 
-		void gatherWordPartsSequenceUsage(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess, bool outputCorpus, boost::filesystem::path corpusFilePath);
+		void gatherWordPartsSequenceUsage(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess);
+		void gatherWordPartsSequenceUsageFullSent(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess);
 
 		const WordsUsageInfo& wordUsage() const;
 		WordsUsageInfo& wordUsage();
@@ -193,6 +201,8 @@ namespace PticaGovorun
 
 		void setAllowPhoneticWordSplit(bool value);
 		bool allowPhoneticWordSplit() const;
+
+		void setSentParser(std::shared_ptr<SentenceParser> sentParser);
 	private:
 		void doWordPhoneticSplit(const wv::slice<wchar_t>& wordSlice, std::vector<const WordPart*>& wordParts);
 
@@ -203,7 +213,7 @@ namespace PticaGovorun
 		// split words into slices
 		void selectWordParts(const std::vector<RawTextLexeme>& lexemes, std::vector<const WordPart*>& wordParts, long& preSplitWords);
 
-		void calcNGramStatisticsOnWordPartsBatch(std::vector<const WordPart*>& wordParts, bool outputCorpus, QTextStream& corpusStream);
+		void calcNGramStatisticsOnWordPartsBatch(std::vector<const WordPart*>& wordParts);
 
 		// calculate statistics on word parts list
 		void calcLangStatistics(const std::vector<const WordPart*>& wordParts);

@@ -857,11 +857,29 @@ namespace PticaGovorun
 		{
 			bool allowPhoneticWordSplit = false;
 			phoneticSplitter_.setAllowPhoneticWordSplit(allowPhoneticWordSplit);
-
-			int maxFilesToProcess = AppHelpers::configParamInt("textWorld.maxFilesToProcess", -1);
+			phoneticSplitter_.outputCorpus_ = outputCorpus;
 
 			QString corpusFilePath = outDir_.filePath("corpusUtters.txt");
-			phoneticSplitterLoad(phoneticSplitter_, maxFilesToProcess, outputCorpus, corpusFilePath.toStdWString());
+			phoneticSplitter_.corpusFilePath_ = corpusFilePath.toStdWString();
+
+			// init sentence parser
+			auto sentParser = std::make_shared<SentenceParser>(1024);
+			auto abbrExp = std::make_shared<AbbreviationExpanderUkr>();
+			abbrExp->stringArena_ = stringArena_;
+
+			auto numDictPath = AppHelpers::mapPath("pgdata/LM_ua/numsCardOrd.xml").toStdWString();
+			std::wstring errMsgW;
+			if (!abbrExp->load(numDictPath, &errMsgW))
+			{
+				errMsg_ = QString("Can't load numbers dictionary. %1").arg(toQString(errMsgW));
+				return;
+			}
+			sentParser->setAbbrevExpander(abbrExp);
+			phoneticSplitter_.setSentParser(sentParser);
+
+			//
+			int maxFilesToProcess = AppHelpers::configParamInt("textWorld.maxFilesToProcess", -1);
+			phoneticSplitterLoad(phoneticSplitter_, maxFilesToProcess);
 
 			// we call it before propogating pronCodes to words
 			rejectDeniedWords(denyWords, phoneticSplitter_.wordUsage());
@@ -1489,14 +1507,16 @@ namespace PticaGovorun
 			registerWord(word.Word);
 	}
 
-	void SphinxTrainDataBuilder::phoneticSplitterCollectWordUsageInText(UkrainianPhoneticSplitter& phoneticSplitter, int maxFilesToProcess, bool outputCorpus, boost::filesystem::path corpusFilePath)
+	void SphinxTrainDataBuilder::phoneticSplitterCollectWordUsageInText(UkrainianPhoneticSplitter& phoneticSplitter, int maxFilesToProcess)
 	{
 		std::wstring txtDir = speechProjDir_.filePath("textWorld").toStdWString();
 		std::wcout << "txtDir=" << txtDir << std::endl;
 		long totalPreSplitWords = 0;
 
 		std::chrono::time_point<Clock> now1 = Clock::now();
-		phoneticSplitter.gatherWordPartsSequenceUsage(txtDir.c_str(), totalPreSplitWords, maxFilesToProcess, outputCorpus, corpusFilePath);
+		// old=gatherWordPartsSequenceUsage
+		// new=gatherWordPartsSequenceUsageFullSent
+		phoneticSplitter.gatherWordPartsSequenceUsageFullSent(txtDir.c_str(), totalPreSplitWords, maxFilesToProcess);
 		std::chrono::time_point<Clock> now2 = Clock::now();
 		auto elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
 		std::wcout << L"gatherWordPartsSequenceUsage took=" << elapsedSec << L"s" << std::endl;
@@ -1515,11 +1535,11 @@ namespace PticaGovorun
 		phoneticSplitter.printSuffixUsageStatistics();
 	}
 
-	void SphinxTrainDataBuilder::phoneticSplitterLoad(UkrainianPhoneticSplitter& phoneticSplitter, int maxFilesToProcess, bool outputCorpus, boost::filesystem::path corpusFilePath)
+	void SphinxTrainDataBuilder::phoneticSplitterLoad(UkrainianPhoneticSplitter& phoneticSplitter, int maxFilesToProcess)
 	{
 		phoneticSplitterBootstrapOnDeclinedWords(phoneticSplitter);
 		phoneticSplitterRegisterWordsFromPhoneticDictionary(phoneticSplitter);
-		phoneticSplitterCollectWordUsageInText(phoneticSplitter, maxFilesToProcess, outputCorpus, corpusFilePath);
+		phoneticSplitterCollectWordUsageInText(phoneticSplitter, maxFilesToProcess);
 	}
 
 	std::tuple<bool, const char*> SphinxTrainDataBuilder::buildPhoneticDictionary(const std::vector<const WordPart*>& seedUnigrams, 

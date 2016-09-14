@@ -67,6 +67,11 @@ namespace PticaGovorun
 		Whitespace   // space, tag, CR=\r, LF=\n
 	};
 
+	inline bool isAlphaOrDigit(TextRunType x)
+	{
+		return x == TextRunType::Alpha || x == TextRunType::Digit;
+	}
+
 	/// A sequene of chars with similar style. Usually words (a sequence of chars), numbers (a sequence of digits)
 	/// or puntuations signs.
 	struct RawTextRun
@@ -532,6 +537,7 @@ namespace PticaGovorun
 		OnNextSentence onNextSent_;
 		//std::function < auto (gsl::span<RawTextLexeme>&) -> void> onNextSent_;
 		//std::function < void (gsl::span<RawTextLexeme>&)> onNextSent_;
+		std::vector<RawTextRun> curSentRuns_; // the initial sentence before the transformations are done
 	public:
 		explicit SentenceParser(size_t stringArenaLineSize);
 
@@ -543,6 +549,8 @@ namespace PticaGovorun
 		/// Forms the sentence which possibly spans multiple text blocks.
 		/// @return True if a sentence was constructed, or False if there is no text block to process.
 		void run();
+
+		gsl::span<const RawTextRun> curSentRuns() const;
 	};
 
 	PG_EXPORTS void registerInArena(GrowOnlyPinArena<wchar_t>& stringArena, gsl::span<const RawTextLexeme> inWords, std::vector<RawTextLexeme>& outWords);

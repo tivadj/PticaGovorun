@@ -840,6 +840,45 @@ namespace PticaGovorun
 			ch == L'я' || ch == L'Я';
 	}
 
+	bool isUkrainianCapitalLetter(wchar_t ch)
+	{
+		// БВГҐДЖЗЙКЛМНПРСТФХЦЧШЩ
+		// АЕЄИІЇОУЮЯ
+		return
+			ch == L'Є' ||
+			ch == L'І' ||
+			ch == L'Ї' ||
+			ch == L'А' ||
+			ch == L'Б' ||
+			ch == L'В' ||
+			ch == L'Г' ||
+			ch == L'Д' ||
+			ch == L'Е' ||
+			ch == L'Ж' ||
+			ch == L'З' ||
+			ch == L'И' ||
+			ch == L'Й' ||
+			ch == L'К' ||
+			ch == L'Л' ||
+			ch == L'М' ||
+			ch == L'Н' ||
+			ch == L'О' ||
+			ch == L'П' ||
+			ch == L'Р' ||
+			ch == L'С' ||
+			ch == L'Т' ||
+			ch == L'У' ||
+			ch == L'Ф' ||
+			ch == L'Х' ||
+			ch == L'Ц' ||
+			ch == L'Ч' ||
+			ch == L'Ш' ||
+			ch == L'Щ' ||
+			ch == L'Ю' ||
+			ch == L'Я' ||
+			ch == L'Ґ';
+	}
+
 	int vowelsCountUk(boost::wstring_view word)
 	{
 		int numVowels = 0;
@@ -1251,7 +1290,10 @@ namespace PticaGovorun
 	bool IntegerToUaWordConverter::convert(ptrdiff_t num, NumeralCardinality cardOrd, WordCase numCase, boost::optional<EntityMultiplicity> multiplicity, boost::optional<WordGender> gender, std::vector<RawTextLexeme>& lexemes, std::wstring* errMsg)
 	{
 		if (num < 0)
+		{
+			*errMsg = L"Not implemented";
 			return false; // not implemented
+		}
 		if (multiplicity != boost::none)
 		{
 			bool ok = cardOrd == NumeralCardinality::Ordinal ||
@@ -1477,6 +1519,25 @@ namespace PticaGovorun
 		// the offset of the number before an ending
 		int numLexOffset = numDiapason ? 2 : 0;
 
+		// mandatory century word
+		auto isCenturyStr = [&](int ind)
+		{
+			if (hasNextLex(ind) &&
+				nextLex(ind).StrLowerCase() == L"століття")
+				return true;
+			if (hasNextLex(ind+1) &&
+				nextLex(ind).StrLowerCase() == L"ст" && nextLex(ind + 1).ValueStr[0] == L'.')
+				return true;
+			return false;
+		};
+		bool rightContext = false;
+		if (isCenturyStr(numLexOffset + 2))
+		{
+			rightContext = true;
+		}
+		if (!rightContext)
+			return false;
+
 		// optional preposition "XX століття ознаменувалось"
 		bool hasPrepos = false;
 		if (hasNextLex(-2) &&
@@ -1516,7 +1577,7 @@ namespace PticaGovorun
 			numCaseLeft = WordCase::Dative;
 			numCardin = NumeralCardinality::Ordinal;
 		}
-		else if (prepos.empty())
+		else if (prepos.empty() && rightContext)
 		{
 			// eg. "XX століття ознаменувалось"
 			numCaseLeft = WordCase::Nominative;
@@ -1525,25 +1586,7 @@ namespace PticaGovorun
 		if (numCaseLeft == boost::none || numCardin == boost::none)
 			return false;
 
-		auto isCenturyStr = [&](int ind)
-		{
-			if (hasNextLex(2) &&
-				nextLex(ind).StrLowerCase() == L"століття")
-				return true;
-			if (hasNextLex(3) &&
-				nextLex(ind).StrLowerCase() == L"ст" && nextLex(ind + 1).ValueStr[0] == L'.')
-				return true;
-			return false;
-		};
-
-		bool rightContext = false;
-		if (isCenturyStr(numLexOffset+2))
-		{
-			rightContext = true;
-		}
-
-		if (nextLex(numLexOffset+1).RunType == TextRunType::Whitespace && 
-			rightContext)
+		if (nextLex(numLexOffset+1).RunType == TextRunType::Whitespace)
 		{
 			std::wstring errMsg;
 			std::vector<RawTextLexeme> numLexemes;
@@ -1972,16 +2015,13 @@ namespace PticaGovorun
 		// "^ty¬coon"->"tycoon^" where ^ marks cur lex
 		if (!hasNextLex(-1) || !hasNextLex(1)) return false;
 
+		// ¬ may split word or number
 		auto& lhs = nextLex(-1);
 		auto& rhs = nextLex(1);
 		if (nextLex(0).ValueStr.front() == L'¬' &&
-			isWord(lhs) &&
-			isWord(rhs))
+			lhs.RunType == rhs.RunType &&
+			isAlphaOrDigit(lhs.RunType))
 		{
-			PG_DbgAssert2(
-				areContinous(lhs.ValueStr, nextLex(0).ValueStr) &&
-				areContinous(nextLex(0).ValueStr, rhs.ValueStr), "Hyphen must split words without spaces from any side");
-
 			// cut the optional hyphen
 			std::wstring buf;
 			buf.append(lhs.ValueStr.data(), lhs.ValueStr.size());
@@ -2092,10 +2132,81 @@ namespace PticaGovorun
 		for (const RawTextLexeme& lex : inWords)
 		{
 			RawTextLexeme newLex = lex;
-			auto newStr = lex.ValueStr;
 			registerWordThrow(stringArena, lex.ValueStr, &newLex.ValueStr);
 			outWords.push_back(newLex);
 		}
+	}
+	void registerInArena(GrowOnlyPinArena<wchar_t>& stringArena, gsl::span<const RawTextRun> inWords, std::vector<RawTextRun>& outWords)
+	{
+		for (const RawTextRun& lex : inWords)
+		{
+			auto newLex = lex;
+			registerWordThrow(stringArena, lex.Str, &newLex.Str);
+			outWords.push_back(newLex);
+		}
+	}
+
+	bool isWellKnownAbbreviationLowercase(boost::wstring_view abbr)
+	{
+		static boost::wstring_view abbrs[] = {
+			L"англ", // англійське
+			L"г", // грам
+			L"га", // гектарів
+			L"гр", // грам
+			L"год", // годин
+			L"год", // годин
+			L"грец", // грецьке
+			L"грн", // гривня
+			L"д", // т.д.=так далі
+			L"див", // дивись
+			L"дж", // джуніор=молодший
+			L"дол", // долар
+			L"е", // н.е.=нашої ери
+			L"зв", // т.зв.=так званий
+			L"км", // кілометр
+			L"коп", // копійок
+			L"крб", // карбованець
+			L"л", // л=літр
+			L"лат", // латинське
+			L"мал", // малюнок
+			L"мед", // медичний
+			L"мл", // мілілітр
+			L"млн", // мільйон
+			L"н", // н.е.=нашої ери
+			L"напр", // наприклад
+			L"нім", // німецьке
+			L"оп", // одиниць примірників
+			L"п", // пункт
+			//L"п", // т.п.=тому подібне
+			L"пер", // переклад
+			L"перен", // переносне
+			L"р", // рік
+			L"ред", // редакційне
+			L"рос", // російське
+			L"розд", // розділ
+			L"розм", // розмовне
+			L"рис", // рисунок
+			L"рр", // роки
+			L"руб", // рублів
+			L"с", // сторінка
+			L"св", // святий
+			L"см", // сантиметр
+			L"ст", // столові ложки
+			//L"ст", // століття
+			L"т", // т.зв.=так званий
+			L"тис", // тисяч
+			L"укр", // українське
+			L"фр", // французьке
+			L"хв", // хвилин
+			L"ч", // частина
+			L"шт", // штук
+			L"ім", // імені
+			L"ін", // інше
+			L"іст" // історичне
+		};
+		auto it = std::find(std::begin(abbrs), std::end(abbrs), abbr);
+		bool isAbbr = it != std::end(abbrs);
+		return isAbbr;
 	}
 
 	SentenceParser::SentenceParser(size_t stringArenaLineSize)
@@ -2118,19 +2229,62 @@ namespace PticaGovorun
 		onNextSent_ = onNextSent;
 	}
 
+	/// Reads a sentence. A sentence ends with a dot.
+	/// An abbreviation may also contain a dot. This routine tries to compose a sentence without trailing abbreviation.
+	void parseSentenceCandidate(TextParserNew& wordsReader, std::vector<RawTextRun>& tillStopRuns)
+	{
+		// Try to form a sentence by parts of text ending with dot.
+		// Skip parts ending with abbreviation plus dot, because such dot doesn't indicate the end of sentence
+		while (true)
+		{
+			bool moreData = wordsReader.parseTokensTillDot(tillStopRuns);
+			if (!moreData)
+				return;
+
+			bool hasEnd = !tillStopRuns.empty() && tillStopRuns.back().Type == TextRunType::PunctuationStopSentence;
+			if (!hasEnd)
+				continue; // read next text block
+
+			bool isAbbr = false;
+			bool isNameLetter = false;
+			bool isSingleLetter = false;
+			if (tillStopRuns.size() > 1)
+			{
+				const auto& beforeLast = tillStopRuns[tillStopRuns.size() - 2];
+
+				std::wstring beforeLastStr;
+				pgToLower(beforeLast.Str, &beforeLastStr);
+				isAbbr = isWellKnownAbbreviationLowercase(beforeLastStr);
+
+				if (beforeLast.Str.size() == 1 && isUkrainianCapitalLetter(beforeLast.Str.front()))
+					isNameLetter = true;
+				if (beforeLast.Str.size() == 1)
+					isSingleLetter = true;
+			}
+
+			bool sentEnd =
+				!isAbbr &&
+				!isSingleLetter &&
+				!isNameLetter;
+			if (sentEnd)
+				return;
+		}
+	}
+
 	void SentenceParser::run()
 	{
 		// static const bool allowPartialSent = true;
 		std::vector<wchar_t> textBuff;
-		std::vector<RawTextLexeme> sentTmp;
-		std::vector<RawTextRun> tillStopWords;
+		std::vector<RawTextRun> tillStopRuns;
 		std::vector<RawTextLexeme> tillStopLexemes;
+		std::vector<RawTextLexeme> sentTmp;
 
 		auto notifySent = [&]()
 			{
 				gsl::span<const RawTextLexeme> sent = sentTmp;
 				if (onNextSent_ != nullptr) onNextSent_(sent);
 
+				curSentRuns_.clear();
 				sentTmp.clear();
 				stringArena_->clear();
 			};
@@ -2146,23 +2300,26 @@ namespace PticaGovorun
 			tillStopLexemes.clear();
 			while (true) // read entire text block
 			{
-				tillStopWords.clear();
-				bool tillDot = wordsReader.parseTokensTillDot(tillStopWords);
-				if (!tillDot && tillStopWords.empty())
+				tillStopRuns.clear();
+				parseSentenceCandidate(wordsReader, tillStopRuns);
+				if (tillStopRuns.empty())
 					break;
 
+				// remember initial sentence for client's queries
+				auto spanRuns = gsl::span<RawTextRun>(tillStopRuns);
+				registerInArena(*stringArena_, spanRuns, curSentRuns_);
+
+				//
 				int startLexInd = static_cast<int>(tillStopLexemes.size());
-				analyzeSentenceHelper(tillStopWords, tillStopLexemes);
+				analyzeSentenceHelper(tillStopRuns, tillStopLexemes);
 
 				abbrevExpand_->expandInplace(startLexInd, tillStopLexemes);
 
-				//gsl::span<RawTextLexeme> span1(tillStopLexemes.begin() + startLexInd, tillStopLexemes.end());
-				gsl::span<RawTextLexeme> span1 = tillStopLexemes;
-				span1 = span1.subspan(startLexInd);
-				registerInArena(*stringArena_, span1, sentTmp);
+				auto spanLexs = gsl::span<RawTextLexeme>(tillStopLexemes).subspan(startLexInd);
+				registerInArena(*stringArena_, spanLexs, sentTmp);
 
-				if (!sentTmp.empty() &&
-					(sentTmp.back().ValueStr == L"." || sentTmp.back().ValueStr == L"!" || sentTmp.back().ValueStr == L"?"))
+				// the last dot may vanish if an abbreviation is successfully expanded
+				if (!sentTmp.empty() && sentTmp.back().RunType == TextRunType::PunctuationStopSentence)
 				{
 					notifySent();
 				}
@@ -2174,5 +2331,10 @@ namespace PticaGovorun
 		{
 			notifySent();
 		}
+	}
+
+	gsl::span<const RawTextRun> SentenceParser::curSentRuns() const
+	{
+		return curSentRuns_;
 	}
 }

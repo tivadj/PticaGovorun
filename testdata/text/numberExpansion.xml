@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <testSuite>
 
-<t input="(654, card, G)"    expect="шестисот п'ятдесяти чотирьох" />
+<t input="(654, card, G)"    expect="шестисот п'ятдесяти чотирьох" descr="gender is redundant"/>
 
 <t input="(651, card, G, m)"    expect="шестисот п'ятдесяти одного" />
 <t input="(651, card, G, f)"    expect="шестисот п'ятдесяти одної" />
 <t input="(651, card, G, neut)" expect="шестисот п'ятдесяти одного" />
-<!-- <t input="(651, card, G, pl)"   expect="invalid: шестисот п'ятдесяти одних " /> -->
+<t input="(651, card, G, pl)"   expect="шестисот п'ятдесяти одних" />
 <t input="(651, ord, G, m)"     expect="шістсот п'ятдесят першого" />
 <t input="(651, ord, G, f)"     expect="шістсот п'ятдесят першої" />
 <t input="(651, ord, G, neut)"  expect="шістсот п'ятдесят першого" />
 <t input="(651, ord, G, pl)"    expect="шістсот п'ятдесят перших" />
 
+<!-- <t input="(652, card, N)" error="gender must be specified" /> -->
+<t input="(652, card, N, m)"    expect="шістсот п'ятдесят два" />
+<t input="(652, card, N, f)"    expect="шістсот п'ятдесят дві" />
+<t input="(652, card, N, neut)" expect="шістсот п'ятдесят два" />
+<!-- <t input="(652, card, N, pl)" error="example? gender must be specified" /> -->
+<t input="(652, card, G)"       expect="шестисот п'ятдесяти двох" descr="gender is not a descriminator" />
+<t input="(652, card, G, m)"    expect="шестисот п'ятдесяти двох" descr="gender is redundant" />
+
 <t input="(1651, card, G, m)"    expect="одної тисячі шестисот п'ятдесяти одного" />
 <t input="(2651, card, G, m)"    expect="двох тисяч шестисот п'ятдесяти одного" />
 <t input="(3651, card, G, m)"    expect="трьох тисяч шестисот п'ятдесяти одного" />
-<t input="(961651, card, G, m)"    expect="дев'ятисот шістдесяти одної тисячі шестисот п'ятдесяти одного" />
+<t input="(961651, card, G, m)"  expect="дев'ятисот шістдесяти одної тисячі шестисот п'ятдесяти одного" />
 
 <!-- zeros in the second triple -->
 <t input="(960651, card, G, m)"    expect="дев'ятисот шістдесяти тисяч шестисот п'ятдесяти одного" />
@@ -85,6 +93,14 @@ http://l-ponomar.com/napysannya-chyslivnykiv-yak-pravylno/
 <t input="(0, ord, N, f)"     expect="нульова" />
 <t input="(0, ord, N, neut)"  expect="нульове" />
 <t input="(0, ord, N, pl)"    expect="нульові" />
+
+<!-- special processing of 1 and 2 -->
+<t input="(1, card, G, m)"       expect="одного" />
+<t input="(1, card, G, pl)"       expect="одних" />
+<t input="(1001, card, G, m)"       expect="одної тисячі одного" />
+<t input="(1001, card, G, m)"       expect="одної тисячі одного" />
+<t input="(2, card, G, pl)"       expect="двох" />
+<t input="(2002, card, G, pl)"       expect="двох тисяч двох" />
 
 <!-- acceptance tests -->
 <t input="(1987, ord, D, m)"    expect="одна тисяча дев'ятсот вісімдесят сьомому" /> <!-- слово одна часто скорочують -->

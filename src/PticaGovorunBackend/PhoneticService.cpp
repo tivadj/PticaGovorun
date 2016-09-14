@@ -3449,13 +3449,18 @@ namespace PticaGovorun
 		return allowPhoneticWordSplit_;
 	}
 
-	void UkrainianPhoneticSplitter::gatherWordPartsSequenceUsage(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess, bool outputCorpus, boost::filesystem::path corpusFilePath)
+	void UkrainianPhoneticSplitter::setSentParser(std::shared_ptr<SentenceParser> sentParser)
+	{
+		sentParser_ = sentParser;
+	}
+
+	void UkrainianPhoneticSplitter::gatherWordPartsSequenceUsage(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess)
 	{
 		QFile corpusFile;
 		QTextStream corpusStream;
-		if (outputCorpus)
+		if (outputCorpus_)
 		{
-			corpusFile.setFileName(toQString(corpusFilePath.wstring()));
+			corpusFile.setFileName(toQString(corpusFilePath_.wstring()));
 			if (!corpusFile.open(QIODevice::WriteOnly | QIODevice::Text))
 				return;
 			corpusStream.setDevice(&corpusFile);
@@ -3504,7 +3509,9 @@ namespace PticaGovorun
 			bool reachedBody = false;
 			while (!xml.atEnd())
 			{
-				xml.readNext();
+				QXmlStreamReader::TokenType token = xml.readNext();
+
+				auto nodeName = xml.name();
 
 				if (xml.isStartElement() && xml.name() == "body")
 				{
@@ -3512,7 +3519,8 @@ namespace PticaGovorun
 					continue;
 				}
 
-				if (reachedBody && xml.isCharacters())
+				//if (reachedBody && xml.isCharacters())
+				if (xml.isCharacters())
 				{
 					// BUG: if the lines inside the text are separated using LF only on windows machines
 					//      the function below will concatenate the lines. For now, fix LF->CRLF for such files externally
@@ -3540,7 +3548,7 @@ namespace PticaGovorun
 						bool isUkr = checkGoodSentenceUkr(lexemes);
 						if (!isUkr)
 						{
-							if (outputCorpus) // output sentence with bad words
+							if (outputCorpus_) // output sentence with bad words
 							{
 								corpusStream << "BAD: ";
 								for (wv::slice<wchar_t> word : words)
@@ -3559,7 +3567,7 @@ namespace PticaGovorun
 						}
 						else
 						{
-							if (outputCorpus)
+							if (outputCorpus_)
 							{
 								for (const RawTextLexeme& lex : lexemes)
 								{
@@ -3584,14 +3592,229 @@ namespace PticaGovorun
 						size_t calcStatWordPartsCount = 1000000;
 						if (wordParts.size() > calcStatWordPartsCount)
 						{
-							calcNGramStatisticsOnWordPartsBatch(wordParts, outputCorpus, corpusStream);
+							calcNGramStatisticsOnWordPartsBatch(wordParts);
 						}
 					}
 				}
 			}
 			
 			// flush the word parts buffer
-			calcNGramStatisticsOnWordPartsBatch(wordParts, outputCorpus, corpusStream);
+			calcNGramStatisticsOnWordPartsBatch(wordParts);
+
+			if (xml.hasError())
+			{
+				std::wcerr <<"XmlError: " << xml.errorString().toStdWString() << std::endl;
+			}
+
+			++processedFiles;
+		}
+	}
+
+	/// Reads text from FB2 documents. FB2 is an xml format.
+	class Fb2TextBlockReader : public TextBlockReader
+	{
+		QXmlStreamReader& xml_;
+		bool skippedHeader = false;
+	public:
+
+		Fb2TextBlockReader(QXmlStreamReader& xml): xml_(xml)
+		{
+		}
+
+		bool nextBlock(std::vector<wchar_t>& buff) override
+		{
+			if (!skippedHeader)
+			{
+				while (!xml_.atEnd())
+				{
+					QXmlStreamReader::TokenType token = xml_.readNext();
+					auto nodeName = xml_.name();
+					if (xml_.isStartElement() && nodeName == "body")
+						break;
+				}
+				skippedHeader = true;
+			}
+			while (!xml_.atEnd())
+			{
+				QXmlStreamReader::TokenType token = xml_.readNext();
+				auto nodeName = xml_.name();
+
+				if (xml_.isCharacters())
+				{
+					// BUG: if the lines inside the text are separated using LF only on windows machines
+					//      the function below will concatenate the lines. For now, fix LF->CRLF for such files externally
+					QStringRef elementText = xml_.text();
+
+					QString elementStr = elementText.toString();
+					
+					buff.resize(elementStr.size());
+					int copyCount = elementStr.toWCharArray(buff.data());
+					PG_DbgAssert2(copyCount == elementStr.size(), "Not all chars are copied");
+					return true;
+				}
+			}
+			return false;
+		}
+
+		bool hasError() const { return xml_.hasError(); }
+		std::wstring errorStdWString() const { return xml_.errorString().toStdWString(); }
+	};
+
+	void UkrainianPhoneticSplitter::gatherWordPartsSequenceUsageFullSent(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess)
+	{
+		QFile corpusFile;
+		QTextStream corpusStream;
+		if (outputCorpus_)
+		{
+			corpusFile.setFileName(toQString(corpusFilePath_.wstring()));
+			if (!corpusFile.open(QIODevice::WriteOnly | QIODevice::Text))
+				return;
+			corpusStream.setDevice(&corpusFile);
+			corpusStream.setCodec("UTF-8");
+			log_ = &corpusStream;
+		}
+		QFile normalizDebugFile;
+		QTextStream normalizDebugStream;
+		if (outputCorpusNormaliz_)
+		{
+			normalizDebugFile.setFileName(toQString(corpusNormalizFilePath_.wstring()));
+			if (!normalizDebugFile.open(QIODevice::WriteOnly | QIODevice::Text))
+				return;
+			normalizDebugStream.setDevice(&normalizDebugFile);
+			normalizDebugStream.setCodec("UTF-8");
+		}
+
+		QXmlStreamReader xml;
+		totalPreSplitWords = 0;
+
+		std::vector<wv::slice<wchar_t>> words;
+		words.reserve(64);
+		std::vector<const WordPart*> wordParts;
+		wordParts.reserve(1024*1024);
+
+		QString textFilesDirQ = QString::fromStdWString(textFilesDir);
+		QDirIterator it(textFilesDirQ, QStringList() << "*.fb2", QDir::Files, QDirIterator::Subdirectories);
+		int processedFiles = 0;
+		while (it.hasNext())
+		{
+			if (maxFileToProcess != -1 && processedFiles == maxFileToProcess)
+				break;
+
+			//if (processedFiles >= 2) break; // process less work
+
+			QString txtPath = it.next();
+			if (txtPath.contains("BROKEN", Qt::CaseSensitive))
+			{
+				std::wcout << L"SKIPPED " << txtPath.toStdWString() <<std::endl;
+				continue;
+			}
+			std::wcout << txtPath.toStdWString() <<std::endl;
+
+			//
+			QFile file(txtPath);
+			if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+			{
+				std::wcerr << L"Can't open file " << txtPath.toStdWString() <<std::endl;
+				return;
+			}
+			xml.setDevice(&file);
+
+			// parse file
+			Fb2TextBlockReader fb2Reader(xml);
+
+			auto onSent = [&](gsl::span<const RawTextLexeme>& sent)
+			{
+				gsl::span<const RawTextRun> runs = sentParser_->curSentRuns();
+
+				// expansion is required for numbers (arabic and roman)
+				auto needExpansionBefore = [&]() -> bool {
+					return std::any_of(std::begin(runs), std::end(runs), [](const RawTextRun& x)
+					{
+						return x.Type == TextRunType::Digit ||
+							x.Str == L"¬" ||
+							std::all_of(std::begin(x.Str), std::end(x.Str), isRomanNumeral);
+					});
+				};
+
+				std::vector<RawTextLexeme> oneSent(sent.begin(), sent.end());
+				removeWhitespaceLexemes(oneSent);
+
+				auto needExpansionAfter = [&]() -> bool {
+					return std::any_of(std::begin(oneSent), std::end(oneSent), [](const RawTextLexeme& x)
+					{
+						return x.Class == WordClass::Numeral || // arabic or roman
+							x.ValueStr == L"¬";
+					});
+				};
+
+				//if (corpusNormalizDebug_ && needExpansionAfter())
+				if (outputCorpusNormaliz_)
+				{
+					normalizDebugStream << "-- ";
+					for (const RawTextRun& run : runs)
+					{
+						normalizDebugStream << toQString(run.Str);
+					}
+					normalizDebugStream << "\n";
+					normalizDebugStream << "++ ";
+					for (const RawTextLexeme& lex : oneSent)
+					{
+						normalizDebugStream << toQString(lex.ValueStr);
+						normalizDebugStream << " ";
+					}
+					normalizDebugStream << "\n";
+				}
+				
+				//
+				if (needExpansionAfter())
+					return; // keep language model clean
+
+				// remove unnecessary lexemes
+				{
+					auto newEnd = std::remove_if(std::begin(oneSent), std::end(oneSent),
+						[](auto& x)
+					{
+						return
+							x.RunType == TextRunType::Whitespace ||
+							x.RunType == TextRunType::Punctuation ||
+							x.RunType == TextRunType::PunctuationStopSentence;
+					});
+					oneSent.erase(newEnd, std::end(oneSent));
+				}
+
+				if (outputCorpus_)
+				{
+					corpusStream << toQString(sentStartWordPart_->partText()) << " ";
+					for (const RawTextLexeme& lex : oneSent)
+					{
+						corpusStream << toQString(lex.ValueStr);
+						corpusStream << " ";
+					}
+					corpusStream << toQString(sentEndWordPart_->partText());
+					corpusStream << "\n";
+				}
+
+				// augment the sentence with start/end terminators
+				wordParts.push_back(sentStartWordPart_);
+
+				selectWordParts(oneSent, wordParts, totalPreSplitWords);
+
+				// augment the sentence with start/end terminators
+				wordParts.push_back(sentEndWordPart_);
+			};
+
+			sentParser_->setTextBlockReader(&fb2Reader);
+			sentParser_->setOnNextSentence(onSent);
+			sentParser_->run();
+
+			// collect statistics on all word parts from a file
+			calcNGramStatisticsOnWordPartsBatch(wordParts);
+			PG_DbgAssert(wordParts.empty())
+
+			if (fb2Reader.hasError())
+			{
+				std::wcerr <<"XmlError: " << fb2Reader.errorStdWString() << std::endl;
+			}
 
 			++processedFiles;
 		}
@@ -3726,7 +3949,7 @@ namespace PticaGovorun
 		}
 	}
 
-	void UkrainianPhoneticSplitter::calcNGramStatisticsOnWordPartsBatch(std::vector<const WordPart*>& wordParts, bool outputCorpus, QTextStream& corpusStream)
+	void UkrainianPhoneticSplitter::calcNGramStatisticsOnWordPartsBatch(std::vector<const WordPart*>& wordParts)
 	{
 		std::vector<const WordPart*> wordPartsStraight;
 
