@@ -7,12 +7,12 @@
 namespace PticaGovorunTests
 {
 	using namespace PticaGovorun;
-	struct SplitUtteranceTest : testing::Test
+	struct SplitUtteranceIntoPronuncListTest : testing::Test
 	{
 		GrowOnlyPinArena<wchar_t> arena_;
 	};
 
-	TEST_F(SplitUtteranceTest, simple)
+	TEST_F(SplitUtteranceIntoPronuncListTest, simple)
 	{
 		std::vector<boost::wstring_view> pronCodes;
 		splitUtteranceIntoPronuncList(L"пір'я із-за", arena_, pronCodes);
@@ -20,7 +20,7 @@ namespace PticaGovorunTests
 		EXPECT_EQ(L"пір'я", pronCodes[0]);
 		EXPECT_EQ(L"із-за", pronCodes[1]);
 	}
-	TEST_F(SplitUtteranceTest, fillerWords1)
+	TEST_F(SplitUtteranceIntoPronuncListTest, fillerWords1)
 	{
 		std::vector<boost::wstring_view> pronCodes;
 		splitUtteranceIntoPronuncList(L"<s> </s> <sil> [sp]", arena_, pronCodes);
@@ -30,7 +30,7 @@ namespace PticaGovorunTests
 		EXPECT_EQ(L"<sil>", pronCodes[2]);
 		EXPECT_EQ(L"[sp]", pronCodes[3]);
 	}
-	TEST_F(SplitUtteranceTest, fillerWords2)
+	TEST_F(SplitUtteranceIntoPronuncListTest, fillerWords2)
 	{
 		std::vector<boost::wstring_view> pronCodes;
 		splitUtteranceIntoPronuncList(L"<s> happy <sil> sheep </s>", arena_, pronCodes);
@@ -41,7 +41,7 @@ namespace PticaGovorunTests
 		EXPECT_EQ(L"sheep", pronCodes[3]);
 		EXPECT_EQ(L"</s>", pronCodes[4]);
 	}
-	TEST_F(SplitUtteranceTest, ignoreMultipleSpaces)
+	TEST_F(SplitUtteranceIntoPronuncListTest, ignoreMultipleSpaces)
 	{
 		std::vector<boost::wstring_view> pronCodes;
 		splitUtteranceIntoPronuncList(L"one  two   three", arena_, pronCodes);
@@ -50,7 +50,7 @@ namespace PticaGovorunTests
 		EXPECT_EQ(L"two", pronCodes[1]);
 		EXPECT_EQ(L"three", pronCodes[2]);
 	}
-	TEST_F(SplitUtteranceTest, ignoreLeadingPound)
+	TEST_F(SplitUtteranceIntoPronuncListTest, ignoreLeadingPound)
 	{
 		std::vector<boost::wstring_view> pronCodes;
 		splitUtteranceIntoPronuncList(L"#one two", arena_, pronCodes);
@@ -58,7 +58,7 @@ namespace PticaGovorunTests
 		EXPECT_EQ(L"one", pronCodes[0]);
 		EXPECT_EQ(L"two", pronCodes[1]);
 	}
-	TEST_F(SplitUtteranceTest, pronunciationMiniLang)
+	TEST_F(SplitUtteranceIntoPronuncListTest, pronunciationMiniLang)
 	{
 		std::vector<boost::wstring_view> pronCodes;
 		splitUtteranceIntoPronuncList(L"{w:slova,s:2}", arena_, pronCodes);
