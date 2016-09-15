@@ -82,7 +82,7 @@ namespace PticaGovorun
 
 		// Add each pronId usage from speech annotation to the dict.
 		// Used to calculate which pronIds in phonetic dict are not used.
-		void phoneticDictCountPronUsage(const SpeechAnnotation& speechAnnot, std::map<boost::wstring_view, int>& pronIdToUsedCount);
+		void phoneticDictCountPronUsage(const SpeechAnnotation& speechAnnot, GrowOnlyPinArena<wchar_t>& arena, std::map<boost::wstring_view, int>& pronIdToUsedCount);
 
 		// speech annotation
 

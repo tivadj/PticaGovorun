@@ -27,5 +27,8 @@
     <ClCompile Include="IntToUaWordConverterTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\PticaGovorunTests\TextToPhonesTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

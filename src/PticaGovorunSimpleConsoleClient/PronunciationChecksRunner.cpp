@@ -54,10 +54,12 @@ namespace PronunciationChecksRunnerNS
 		std::vector<boost::wstring_view> words;
 		std::wstring word;
 		word.reserve(32);
+		GrowOnlyPinArena<wchar_t> arena(1024);
 		for (const AnnotatedSpeechSegment& seg : segments)
 		{
 			words.clear();
-			splitUtteranceIntoWords(seg.TranscriptText, words);
+			arena.clear();
+			splitUtteranceIntoPronuncList(seg.TranscriptText, arena, words);
 
 			// iterate through words
 			for (boost::wstring_view wordRef : words)

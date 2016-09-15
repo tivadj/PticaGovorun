@@ -479,7 +479,8 @@ namespace RecognizeSpeechSphinxTester
 			// split expected text into words
 
 			std::vector<boost::wstring_view> pronCodesExpected;
-			splitUtteranceIntoWords(seg.Transcription, pronCodesExpected);
+			GrowOnlyPinArena<wchar_t> arena(1024);
+			splitUtteranceIntoPronuncList(seg.Transcription, arena, pronCodesExpected);
 
 			// merge actual pronCodes (word parts)
 

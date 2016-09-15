@@ -91,6 +91,9 @@ namespace PticaGovorun
 			PG_Assert(lineSize >= 0);
 			clear();
 		}
+		GrowOnlyPinArena() {
+			clear();
+		}
 		
 		/// Returns object to the state after the initial construction.
 		void clear()
@@ -99,6 +102,11 @@ namespace PticaGovorun
 			rootLine_.Line.clear();
 			currentLine_ = &rootLine_;
 			linesNumDebug_ = 1;
+		}
+
+		void setLineSize(size_t value)
+		{
+			lineSize_ = value;
 		}
 
 		// Puts data vector into the arena.
@@ -134,7 +142,7 @@ namespace PticaGovorun
 	private:
 		ArenaLine* currentLine_;
 		ArenaLine rootLine_; // root point to keep entire list of allocated lines
-		size_t lineSize_; // the size of every line in the arena
+		size_t lineSize_ = 1024; // the size of every line in the arena
 		size_t linesNumDebug_; // the total number of lines in the arena
 	};
 
@@ -160,6 +168,17 @@ namespace PticaGovorun
 			throw std::bad_alloc();
 
 		*arenaWord = boost::basic_string_view<CharT, std::char_traits<CharT>>(arenaWordPtr, word.size());
+	}
+
+	template <typename CharT>
+	auto registerWordThrow2(GrowOnlyPinArena<CharT>& stringArena,
+		const boost::basic_string_view<CharT, std::char_traits<CharT>> word) -> auto
+	{
+		CharT* arenaWordPtr = stringArena.put(word.begin(), word.end());
+		if (arenaWordPtr == nullptr)
+			throw std::bad_alloc();
+
+		return boost::basic_string_view<CharT, std::char_traits<CharT>>(arenaWordPtr, word.size());
 	}
 
 	inline bool registerWord(QString word, GrowOnlyPinArena<wchar_t>& stringArena, boost::wstring_view& arenaWord)

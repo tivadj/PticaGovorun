@@ -74,3 +74,6 @@ Some abbreviations are pronounced as is and should not be expanded into multiple
 <!-- acceptance -->
 <t input="В 30-х рр. XX ст. в Україні." expect="В тридцятих роках двадцятого століття в Україні ."/>
 </testSuite>
+<!-- 
+у VIII ст. н. е.
+ -->

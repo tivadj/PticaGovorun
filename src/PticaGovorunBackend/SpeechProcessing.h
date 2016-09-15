@@ -18,6 +18,7 @@
 #include "PticaGovorunCore.h"
 #include "MLUtils.h"
 #include "ClnUtils.h"
+#include "ComponentsInfrastructure.h"
 
 namespace PticaGovorun {
 
@@ -177,6 +178,10 @@ struct TimePointMarker
 	bool IsManual;
 };
 
+/// The markers starting with '#' are excluded from building speech model,
+/// but included in validation.
+bool includeInTrainOrTest(const TimePointMarker& marker);
+
 // Represents annotated part of a speech audio used for training the speech recognizer.
 struct AnnotatedSpeechSegment
 {
@@ -216,7 +221,8 @@ PG_EXPORTS bool getDefaultMarkerStopsPlayback(MarkerLevelOfDetail levelOfDetail)
 // Converts language to string.
 PG_EXPORTS std::string speechLanguageToStr(SpeechLanguage lang);
 
-PG_EXPORTS void splitUtteranceIntoWords(boost::wstring_view text, std::vector<boost::wstring_view>& words);
+/// Separates different pronunciations (pronCode or pronunciation's descriptor) from given string.
+PG_EXPORTS void splitUtteranceIntoPronuncList(boost::wstring_view text, GrowOnlyPinArena<wchar_t>& arena, std::vector<boost::wstring_view>& words);
 
 // insertShortPause=true to insert sp phone between words.
 PG_EXPORTS std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstring& text, std::function<auto (const std::wstring&, std::vector<std::string>&) -> bool> wordToPhoneListFun, bool insertShortPause, std::vector<std::string>& speechPhones);

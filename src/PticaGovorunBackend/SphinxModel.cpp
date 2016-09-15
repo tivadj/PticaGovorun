@@ -1283,7 +1283,8 @@ namespace PticaGovorun
 	bool SphinxTrainDataBuilder::isBrokenUtterance(boost::wstring_view text) const
 	{
 		std::vector<boost::wstring_view> textWords;
-		splitUtteranceIntoWords(text, textWords);
+		GrowOnlyPinArena<wchar_t> arena(1024);
+		splitUtteranceIntoPronuncList(text, arena, textWords);
 
 		bool hasBrokenWord = std::any_of(textWords.begin(), textWords.end(), [this](boost::wstring_view word)
 		{
@@ -1771,12 +1772,14 @@ namespace PticaGovorun
 		PhoneAccumulator trainAcc;
 		PhoneAccumulator testAcc;
 		std::vector<boost::wstring_view> pronCodes;
+		GrowOnlyPinArena<wchar_t> arena(1024);
 		for (const auto& segRef : segments)
 		{
 			PhoneAccumulator& acc = segRef.Phase == ResourceUsagePhase::Train ? trainAcc : testAcc;
 			
 			pronCodes.clear();
-			splitUtteranceIntoWords(segRef.Seg->TranscriptText, pronCodes);
+			arena.clear();
+			splitUtteranceIntoPronuncList(segRef.Seg->TranscriptText, arena, pronCodes);
 			
 			for (auto pronCode : pronCodes)
 			{
@@ -1805,7 +1808,8 @@ namespace PticaGovorun
 		auto sentHasRarePhone = [&pronCodes, this](boost::wstring_view text, const std::vector<PhoneId>& rarePhoneIds) -> bool
 		{
 			pronCodes.clear();
-			splitUtteranceIntoWords(text, pronCodes);
+			GrowOnlyPinArena<wchar_t> arena(1024);
+			splitUtteranceIntoPronuncList(text, arena, pronCodes);
 
 			return std::any_of(pronCodes.begin(), pronCodes.end(), [this, &rarePhoneIds](boost::wstring_view pronCode) -> bool
 			{
@@ -1925,6 +1929,7 @@ namespace PticaGovorun
 		QString endSilQ = toQString(fillerEndSilence());
 
 		std::vector<boost::wstring_view> pronCodes;
+		GrowOnlyPinArena<wchar_t> arena(1024);
 		for (const details::AssignedPhaseAudioSegment& segRef : segsRefs)
 		{
 			if (segRef.Phase != targetPhase)
@@ -1943,7 +1948,8 @@ namespace PticaGovorun
 			
 			// output TranscriptText mangling a pronCode if necessary (eg clothes(2)->clothes2)
 			pronCodes.clear();
-			splitUtteranceIntoWords(segRef.Seg->TranscriptText, pronCodes);
+			arena.clear();
+			splitUtteranceIntoPronuncList(segRef.Seg->TranscriptText, arena, pronCodes);
 			for (size_t i = 0; i < pronCodes.size(); ++i)
 			{
 				boost::wstring_view pronCode = pronCodes[i];
@@ -2107,13 +2113,15 @@ namespace PticaGovorun
 	{
 		if (!errMsg_.isEmpty()) return;
 		std::vector<boost::wstring_view> words;
+		GrowOnlyPinArena<wchar_t> arena(1024);
 		for (const auto& segRef : phaseAssignedSegs)
 		{
 			int& utterCounter = segRef.Phase == ResourceUsagePhase::Train ? utterCountTrain_ : utterCountTest_;
 			utterCounter += 1;
 
 			words.clear();
-			splitUtteranceIntoWords(segRef.Seg->TranscriptText, words);
+			arena.clear();
+			splitUtteranceIntoPronuncList(segRef.Seg->TranscriptText, arena, words);
 
 			int& wordCounter = segRef.Phase == ResourceUsagePhase::Train ? wordCountTrain_ : wordCountTest_;
 			wordCounter += (int)words.size();

@@ -170,6 +170,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\PticaGovorunTests\TextToPhonesTests.cpp" />
     <ClCompile Include="IntToUaWordConverterTests.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="TextParseRunsTests.cpp" />

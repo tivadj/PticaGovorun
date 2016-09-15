@@ -15,6 +15,7 @@
 #include "PhoneticService.h"
 #include "InteropPython.h" // phoneNameToPhoneId
 #include "assertImpl.h"
+#include "ComponentsInfrastructure.h"
 
 namespace PticaGovorun 
 {
@@ -62,24 +63,99 @@ namespace PticaGovorun
 		return boost::none;
 	}
 
-	void splitUtteranceIntoWords(boost::wstring_view text, std::vector<boost::wstring_view>& words)
+	bool includeInTrainOrTest(const TimePointMarker& marker)
 	{
-		std::wcmatch matchRes;
+		if (marker.TranscripText.contains(QChar('#')))
+			return false;
+		return true;
+	}
+
+	namespace
+	{
+		bool tryParsePronuncDescriptor(boost::wstring_view word, GrowOnlyPinArena<wchar_t>& arena, boost::wstring_view& arenaWord)
+		{
+			// eg "{w:slova,s:2}"
+
+			if (!word.starts_with(L'{'))
+				return false;
+			auto closePos = word.find(L'}');
+			if (closePos == boost::wstring_view::npos)
+				return false;
+
+			//
+			boost::wstring_view pronCodeStr;
+			boost::wstring_view stressStr;
+			for (auto pos = 1; pos<closePos; )
+			{
+				auto pairEnd = word.find(L',', pos);
+				if (pairEnd == boost::wstring_view::npos)
+					pairEnd = closePos;
+
+				auto pair = word.substr(pos, pairEnd - pos);
+				if (pair.empty())
+					break;
+				
+				auto colonPos = pair.find(L':');
+				if (colonPos == boost::wstring_view::npos)
+					return false;
+
+				auto keyWord = trim(pair.substr(0, colonPos));
+				auto valWord = trim(pair.substr(colonPos+1));
+				if (keyWord == L"w")
+					pronCodeStr = valWord;
+				else if (keyWord == L"s")
+					stressStr = valWord;
+				pos = pairEnd + 1;
+			}
+			if (pronCodeStr.empty() || stressStr.empty())
+				return false;
+
+			std::wstring buf;
+			buf.append(pronCodeStr.data(), pronCodeStr.size());
+			buf.push_back(L'(');
+			buf.append(stressStr.data(), stressStr.size());
+			buf.push_back(L')');
+
+			arenaWord = registerWordThrow2<wchar_t>(arena, buf);
+			return true;
+		}
+	}
+
+	void splitUtteranceIntoPronuncList(boost::wstring_view text, GrowOnlyPinArena<wchar_t>& arena, std::vector<boost::wstring_view>& words)
+	{
 		// clothes clothes(1)
 		// apostrophe (eg: п'ять)
 		// dash (eg: to-do)
 		// angle bracket, slash <s> <sil> </sil>
 		// square bracket [sp] [inh]
-		static std::wregex r(LR"regex([\w\(\)\[\]'-<>/]+)regex"); // match words
+		// leading pound marks 'exclude from build' and ignored "#one two"
+		
+		size_t pos = 0;
 
-		const wchar_t* wordBeg = std::begin(text);
-		while (std::regex_search(wordBeg, std::cend(text), matchRes, r))
+		// ignore leading pound
+		if (!text.empty() && text[0] == L'#')
+			pos += 1;
+
+		for (size_t wordEnd = pos; wordEnd < text.size(); )
 		{
-			auto& wordSlice = matchRes[0];
-			boost::wstring_view word = boost::wstring_view(&*wordSlice.first, wordSlice.second - wordSlice.first);
-			words.push_back(word);
+			size_t sepPos = text.find(L' ', pos);
 
-			wordBeg = wordSlice.second;
+			wordEnd = sepPos;
+			if (sepPos == boost::wstring_view::npos)
+				wordEnd = text.size(); // for last word
+
+			size_t len = wordEnd - pos;
+			if (len > 0)
+			{
+				auto word = text.substr(pos, len);
+				boost::wstring_view arenaWord;
+				if (tryParsePronuncDescriptor(word, arena, arenaWord))
+					words.push_back(arenaWord);
+				else
+					words.push_back(word);
+			}
+
+			pos = wordEnd + 1;
 		}
 	}
 
@@ -95,8 +171,9 @@ namespace PticaGovorun
 		// insert the starting silence phone
 		speechPhones.push_back(PGPhoneSilence);
 
+		GrowOnlyPinArena<wchar_t> arena(1024);
 		std::vector<boost::wstring_view> words;
-		splitUtteranceIntoWords(text, words);
+		splitUtteranceIntoPronuncList(text, arena, words);
 
 		// iterate through words
 		for (boost::wstring_view wordRef : words)
@@ -356,7 +433,7 @@ namespace PticaGovorun
 
 			if (marker.TranscripText.isEmpty()) // ignore empty segments
 				continue;
-			if (marker.TranscripText.contains(QChar('#'))) // ignore markers with pound #
+			if (!includeInTrainOrTest(marker))
 				continue;
 			if (marker.TranscripText == fillerSilQ) // skip silence segments, attach it to neighbour text segments
 				continue;
@@ -424,7 +501,8 @@ namespace PticaGovorun
 				std::wstring txtW = txt.toStdWString();
 				words.clear();
 				wordsNoSp.clear();
-				splitUtteranceIntoWords(txtW, words);
+				GrowOnlyPinArena<wchar_t> arena(1024);
+				splitUtteranceIntoPronuncList(txtW, arena, words);
 
 				seg.TranscriptionStartsWithSilence = words.front() == fillerStartSilence();
 				seg.TranscriptionEndsWithSilence = words.front() == fillerEndSilence();

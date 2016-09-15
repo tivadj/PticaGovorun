@@ -33,8 +33,5 @@
     <ClCompile Include="GrowOnlyPinArenaTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TextToPhonesTests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

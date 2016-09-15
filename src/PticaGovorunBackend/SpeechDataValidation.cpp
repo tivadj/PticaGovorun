@@ -157,7 +157,8 @@ namespace PticaGovorun
 
 		std::wstring textW = toStdWString(text);
 		std::vector<boost::wstring_view> pronCodes;
-		splitUtteranceIntoWords(textW, pronCodes);
+		GrowOnlyPinArena<wchar_t> arena(1024);
+		splitUtteranceIntoPronuncList(textW, arena, pronCodes);
 
 		// iterate through words
 		for (size_t i = 0; i < pronCodes.size(); ++i)
@@ -465,6 +466,7 @@ namespace PticaGovorun
 
 	bool SpeechData::validatePhoneticDictAllPronsAreUsed(QStringList* errMsgs)
 	{
+		GrowOnlyPinArena<wchar_t> arena(1024);
 		std::map<boost::wstring_view, int> pronIdToUsedCount;
 
 		// set up all words in phonetic dictionary for counting
@@ -479,10 +481,10 @@ namespace PticaGovorun
 		pushPronIds(phoneticDictWellFormed_);
 		pushPronIds(phoneticDictBroken_);
 
-		auto countFun = [this, &pronIdToUsedCount](const SpeechAnnotation& annot)
+		auto countFun = [this, &pronIdToUsedCount, &arena](const SpeechAnnotation& annot)
 		{
 			// count usage of pronIds in phonetic dictionary
-			phoneticDictCountPronUsage(annot, pronIdToUsedCount);
+			phoneticDictCountPronUsage(annot, arena, pronIdToUsedCount);
 		};
 		auto oneAnnotErrFun = [this, errMsgs](const char* errMsg)
 		{
@@ -505,7 +507,9 @@ namespace PticaGovorun
 		return numErrs == 0;
 	}
 
-	void SpeechData::phoneticDictCountPronUsage(const SpeechAnnotation& speechAnnot, std::map<boost::wstring_view, int>& pronIdToUsedCount)
+	void SpeechData::phoneticDictCountPronUsage(const SpeechAnnotation& speechAnnot, 
+		GrowOnlyPinArena<wchar_t>& arena,
+		std::map<boost::wstring_view, int>& pronIdToUsedCount)
 	{
 		std::vector<std::pair<const TimePointMarker*, const TimePointMarker*>> segments;
 		collectAnnotatedSegments(speechAnnot.markers(), segments);
@@ -519,7 +523,7 @@ namespace PticaGovorun
 				boost::wstring_view textRef = toWStringRef(text, textBuff);
 
 				std::vector<boost::wstring_view> wordsAsSlices;
-				splitUtteranceIntoWords(textRef, wordsAsSlices);
+				splitUtteranceIntoPronuncList(textRef, arena, wordsAsSlices);
 
 				for (boost::wstring_view pronAsWordRef : wordsAsSlices)
 				{
@@ -608,28 +612,29 @@ namespace PticaGovorun
 
 		std::wstring textW = text.toStdWString();
 
+		GrowOnlyPinArena<wchar_t> arena(1024);
 		std::vector<boost::wstring_view> pronCodes;
-		splitUtteranceIntoWords(textW, pronCodes);
+		splitUtteranceIntoPronuncList(textW, arena, pronCodes);
 
 		// check if the word is in the phonetic dictionary
 		// considers similar occurences of phoneAsWord and the word itself
 		// returns true if exact word match was found
-		auto isPronAsWordInDict = [](const std::map<boost::wstring_view, PhoneticWord>& phoneticDict, boost::wstring_view pronAsWordPattern,
+		auto isPronAsWordInDict = [](const std::map<boost::wstring_view, PhoneticWord>& phoneticDict, boost::wstring_view pronCode,
 			boost::wstring_view& outExactWord, boost::wstring_view& outSimilarPronAsWord) -> bool
 		{
 			// pattern for similar pronAsWord
-			std::wstring patternWithOpenBracketQ = toStdWString(pronAsWordPattern);
+			std::wstring patternWithOpenBracketQ = toStdWString(pronCode);
 			patternWithOpenBracketQ.append(L"(");
 
 			for (const auto& pair : phoneticDict)
 			{
 				boost::wstring_view word = pair.first;
-				if (outExactWord.empty() && word == pronAsWordPattern)
+				if (outExactWord.empty() && word == pronCode)
 					outExactWord = word;
 
 				for (const PronunciationFlavour& pron : pair.second.Pronunciations)
 				{
-					if (pron.PronCode == pronAsWordPattern)
+					if (pron.PronCode == pronCode)
 						return true; // interrupt the search
 
 					if (outSimilarPronAsWord.empty())
