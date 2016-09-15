@@ -39,7 +39,7 @@
     <ClCompile Include="TextParseSentenceTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TextToPhonesTests.cpp">
+    <ClCompile Include="SplitUtteranceIntoPronuncListTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
