@@ -1,9 +1,17 @@
-#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
-//#define CATCH_CONFIG_RUNNER // If own main is implemented
-#include "catch.hpp"
+#include <gtest/gtest.h>
+#include <QApplication>
 
-//int main(int argc, char* const argv[])
-//{
-//	int result = Catch::Session().run(argc, argv);
-//	return result;
-//}
+// HACK: this definition resolves MSVC linkage error about undefined g_linked_ptr_mutex
+namespace testing {
+	namespace internal {
+		GTEST_API_ GTEST_DEFINE_STATIC_MUTEX_(g_linked_ptr_mutex);
+	}
+}
+
+int main(int ac, char* av[])
+{
+	QApplication app(ac, av); // for QApplication::applicationDirPath() to work
+
+	testing::InitGoogleTest(&ac, av);
+	return RUN_ALL_TESTS();
+}

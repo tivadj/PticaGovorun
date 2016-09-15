@@ -55,39 +55,39 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\build-config\Catch.props" />
     <Import Project="..\build-config\PticaGovorunCommon.props" />
     <Import Project="..\build-config\Qt.props" />
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\GSL.props" />
+    <Import Project="..\build-config\gtest.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\build-config\PticaGovorunCommon.props" />
-    <Import Project="..\build-config\Catch.props" />
     <Import Project="..\build-config\Qt.props" />
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\GSL.props" />
+    <Import Project="..\build-config\gtest.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\build-config\Catch.props" />
     <Import Project="..\build-config\PticaGovorunCommon.props" />
     <Import Project="..\build-config\Qt.props" />
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\GSL.props" />
+    <Import Project="..\build-config\gtest.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\build-config\PticaGovorunCommon.props" />
-    <Import Project="..\build-config\Catch.props" />
     <Import Project="..\build-config\Qt.props" />
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\boost.props" />
     <Import Project="..\build-config\GSL.props" />
+    <Import Project="..\build-config\gtest.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -111,7 +111,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;GTEST_HAS_STD_TUPLE_;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
@@ -127,7 +127,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;GTEST_HAS_STD_TUPLE_;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
@@ -145,7 +145,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;GTEST_HAS_STD_TUPLE_;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -163,7 +163,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;GTEST_HAS_STD_TUPLE_;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -176,11 +176,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GrowOnlyPinArenaTests.cpp" />
-    <ClCompile Include="PhonationTextAlignmentTests.cpp" />
-    <ClCompile Include="StringEditDistanceTests.cpp" />
+    <ClCompile Include="IntToUaWordConverterTests.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PhonationTextAlignmentTests.cpp" />
     <ClCompile Include="PhoneticTranscriptionTests.cpp" />
-    <ClCompile Include="TextParsingTests.cpp" />
+    <ClCompile Include="StringEditDistanceTests.cpp" />
+    <ClCompile Include="TextParseRunsTests.cpp" />
+    <ClCompile Include="TextParseSentenceTests.cpp" />
+    <ClCompile Include="TextToPhonesTests.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

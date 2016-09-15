@@ -1,15 +1,19 @@
-#include "catch.hpp"
 #include <vector>
 #include <array>
 #include <string>
 #include <iostream>
 #include <functional>
-
+#include <gtest/gtest.h>
 #include "StringUtils.h"
 #include <TextProcessing.h>
 
-namespace PticaGovorun
+namespace PticaGovorunTests
 {
+	using namespace PticaGovorun;
+	struct PhonationTextAlignmentTest : public testing::Test
+	{
+	};
+
 	class CharPhonationGroupCosts {
 	public:
 		typedef int CostType;
@@ -57,8 +61,8 @@ namespace PticaGovorun
 
 		std::wstring expect1Str(w1Align);
 		std::wstring expect2Str(w2Align);
-		REQUIRE(expect1Str == align1Str);
-		REQUIRE(expect2Str == align2Str);
+		EXPECT_EQ(expect1Str, align1Str);
+		EXPECT_EQ(expect2Str, align2Str);
 	}
 	
 	void testAlign(const wchar_t* w1, const wchar_t* w2, const wchar_t* w1Align, const wchar_t* w2Align,
@@ -69,7 +73,7 @@ namespace PticaGovorun
 			testAlignOneWay(w2, w1, w2Align, w1Align, editOpOrder); // ensure that the algorithm is symmetric
 	}
 
-	TEST_CASE("simple artificial")
+	TEST_F(PhonationTextAlignmentTest, simpleArtificial)
 	{
 		// pA -> pA~
 		// Aq -> ~Aq
@@ -92,7 +96,7 @@ namespace PticaGovorun
 		testAlign(L"AqqA", L"pAApp", L"~AqqA~~", L"pA~~App");
 	}
 
-	TEST_CASE("simple real")
+	TEST_F(PhonationTextAlignmentTest, simpleReal)
 	{
 		// test removal
 		// eat eat
@@ -114,7 +118,7 @@ namespace PticaGovorun
 		testAlign(L"at nose", L"etnos", L"at nose", L"et~nos~");
 	}
 
-	TEST_CASE("burden artificial")
+	TEST_F(PhonationTextAlignmentTest, burdenArtificial)
 	{
 		// order=SRI: remove P, insert Q
 		// pA|ppA|AP|Ap -> pA~ppA~~~A~PAp
@@ -122,7 +126,7 @@ namespace PticaGovorun
 		testAlign(L"pAppAAPAp", L"AqAqqqAQA", L"pA~ppA~~~A~PAp", L"~Aq~~AqqqAQ~A~", false, "SRI");
 	}
 
-	TEST_CASE("edit operation order from right to left")
+	TEST_F(PhonationTextAlignmentTest, editOperationOrderFromRightToLeft)
 	{
 		// remove p first
 		// ppp -> ~~~ppp
@@ -179,8 +183,8 @@ namespace PticaGovorun
 
 		std::wstring expect1Str(w1Align);
 		std::wstring expect2Str(w2Align);
-		REQUIRE(expect1Str == align1Str);
-		REQUIRE(expect2Str == align2Str);
+		EXPECT_EQ(expect1Str, align1Str);
+		EXPECT_EQ(expect2Str, align2Str);
 	}
 	void intAlign(std::initializer_list<int> w1, std::initializer_list<int> w2, const wchar_t* align1Str, const wchar_t* align2Str)
 	{
@@ -188,7 +192,7 @@ namespace PticaGovorun
 		intAlignOneWay(w2, w1, align2Str, align1Str);
 	}
 
-	TEST_CASE("align int seqs")
+	TEST_F(PhonationTextAlignmentTest, alignIntSeqs)
 	{
 		// {77, 2, 79, 13}    -> ~~~77~2~~79~13
 		// {12, 66, 11, 68,6} -> 12~66~11~68~6~

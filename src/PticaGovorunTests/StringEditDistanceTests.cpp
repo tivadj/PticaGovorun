@@ -1,12 +1,17 @@
-#include "catch.hpp"
 #include <vector>
 #include <string>
-
+#include <gtest/gtest.h>
 #include "StringUtils.h"
 #include <TranscriberUI/PhoneticDictionaryViewModel.h>
 
-namespace PticaGovorun
+namespace PticaGovorunTests
 {
+	using namespace PticaGovorun;
+
+	struct StringEditDistanceTest : public testing::Test
+	{
+	};
+
 	template <typename Letter>
 	class WordErrorCosts {
 	public:
@@ -41,26 +46,26 @@ namespace PticaGovorun
 		return result;
 	}
 
-	TEST_CASE("simple1")
+	TEST_F(StringEditDistanceTest, simple1)
 	{
-		REQUIRE(1 == charDist("a1", "b1"));
+		ASSERT_EQ(1, charDist("a1", "b1"));
 
 		//   rests
 		// stres~s
-		REQUIRE(3 == charDist("rests", "stress"));
+		ASSERT_EQ(3, charDist("rests", "stress"));
 
 		// tea t~ea
 		// toe toe~
-		REQUIRE(2 == charDist("tea", "toe"));
+		ASSERT_EQ(2, charDist("tea", "toe"));
 	}
-	TEST_CASE("word as letter")
+	TEST_F(StringEditDistanceTest, wordAsLetter)
 	{
-		REQUIRE(1 == wordDist({ L"a", L"1" },
+		ASSERT_EQ(1, wordDist({ L"a", L"1" },
 		{ L"b", L"1" }));
 		// inserted
-		REQUIRE(1 == wordDist({ L"a", L"1" },
+		ASSERT_EQ(1, wordDist({ L"a", L"1" },
 		{ L"pre", L"a", L"1" }));
 		// removed
-		REQUIRE(1 == wordDist({ L"a", L"1" }, { L"1" }));
+		ASSERT_EQ(1, wordDist({ L"a", L"1" }, { L"1" }));
 	}
 }
