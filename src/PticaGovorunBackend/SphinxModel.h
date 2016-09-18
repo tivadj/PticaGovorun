@@ -157,7 +157,7 @@ namespace PticaGovorun
 			const QString& fileIdsFilePath,
 			std::function<auto (boost::wstring_view)->boost::wstring_view> pronCodeDisplay,
 			const QString& transcriptionFilePath);
-		std::tuple<bool, const char*>  loadSilenceSegment(std::vector<short>& frames, float framesFrameRate) const;
+		void  loadSilenceSegment(std::vector<short>& frames, float framesFrameRate);
 		void buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segRefs, float targetFrameRate, bool padSilence, const std::vector<short>& silenceFrames);
 
 		void generateDataStat(const std::vector<details::AssignedPhaseAudioSegment>& phaseAssignedSegs);

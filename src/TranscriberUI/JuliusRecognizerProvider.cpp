@@ -14,9 +14,9 @@ namespace PticaGovorun
 			rs.SampleRate = SampleRate;
 			rs.UseWsp = false;
 
-			rs.DictionaryFilePath = AppHelpers::mapPathStdString("data/Julius/shrekky/shrekkyDic.voca");
-			rs.LanguageModelFilePath = AppHelpers::mapPathStdString("data/Julius/shrekky/shrekkyLM.blm");
-			rs.AcousticModelFilePath = AppHelpers::mapPathStdString("data/Julius/shrekky/shrekkyAM.bam");
+			rs.DictionaryFilePath = AppHelpers::mapPathStdString("pgdata/Julius/shrekky/shrekkyDic.voca");
+			rs.LanguageModelFilePath = AppHelpers::mapPathStdString("pgdata/Julius/shrekky/shrekkyLM.blm");
+			rs.AcousticModelFilePath = AppHelpers::mapPathStdString("pgdata/Julius/shrekky/shrekkyAM.bam");
 
 			rs.LogFile = recogName + "-LogFile.txt";
 			rs.FileListFileName = recogName + "-FileList.txt";

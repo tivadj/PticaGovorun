@@ -4,7 +4,7 @@
 #include <sstream>
 #include <memory> // std::unique_ptr
 #include <fstream> // std::ofstream
-#include <hash_map>
+#include <unordered_map>
 #include <vector>
 #include <string>
 #include "JuliusToolNativeWrapper.h"
@@ -537,7 +537,7 @@ namespace PticaGovorun {
 		distinctPhoneDistributions.reserve(statesCount);
 
 		{
-			std::hash_map<int, HTK_HMM_State*> stateStateIdToDensity;
+			std::unordered_map<int, HTK_HMM_State*> stateStateIdToDensity;
 			for (size_t i = 0; i < expectedStates.size(); ++i)
 			{
 				const PhoneStateModel& phoneInfo = expectedStates[i];

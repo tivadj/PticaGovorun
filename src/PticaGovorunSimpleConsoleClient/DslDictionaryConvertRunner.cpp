@@ -470,7 +470,12 @@ namespace DslDictionaryConvertRunnerNS
 			}
 
 			// resample samples
-			resampleFrames(frames, frameRate, outputFrameRate, framesResampled);
+			std::wstring errMsgW;
+			if (!resampleFrames(frames, frameRate, outputFrameRate, framesResampled, &errMsgW))
+			{
+				std::wcout << errMsgW << std::endl;
+				return;
+			}
 
 			//
 			std::copy(framesResampled.begin(), framesResampled.end(), std::back_inserter(framesConcat));

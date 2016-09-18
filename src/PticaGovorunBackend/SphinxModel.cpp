@@ -998,10 +998,10 @@ namespace PticaGovorun
 			std::vector<short> silenceFrames;
 			if (padSilence)
 			{
-				std::tie(op, errMsg) = loadSilenceSegment(silenceFrames, outFrameRate);
-				if (!op)
+				loadSilenceSegment(silenceFrames, outFrameRate);
+				if (!errMsg_.isEmpty())
 				{
-					errMsg_ = QString("Can't create wav train/test subfolder. %1").arg(errMsg);
+					errMsg_ = QString("Can't create wav train/test subfolder. %1").arg(errMsg_);
 					return;
 				}
 			}
@@ -1973,23 +1973,25 @@ namespace PticaGovorun
 		return true;
 	}
 
-	std::tuple<bool, const char*>  SphinxTrainDataBuilder::loadSilenceSegment(std::vector<short>& frames, float framesFrameRate) const
+	void  SphinxTrainDataBuilder::loadSilenceSegment(std::vector<short>& frames, float framesFrameRate)
 	{
 		std::vector<short> silenceFrames;
 		float silenceFrameRate = -1;
 		std::string silenceWavPath = AppHelpers::mapPathStdString("pgdata/Sphinx2/SpeechModels/pynzenyk-background-200ms.wav");
 		auto readOp = readAllSamples(silenceWavPath.c_str(), silenceFrames, &silenceFrameRate);
 		if (!std::get<0>(readOp))
-			return std::make_tuple(false, "Can't read silence wav file");
+		{
+			errMsg_ = QString("Can't read silence wav file=%1").arg(QString::fromStdString(silenceWavPath));
+			return;
+		}
 		PG_DbgAssert(silenceFrameRate != -1);
 
-		bool op;
-		const char* errMsg;
-		std::tie(op,errMsg) = resampleFrames(silenceFrames, silenceFrameRate, framesFrameRate, frames);
-		if (!op)
-			return std::make_tuple(false, "Can't resample silence frames");
-
-		return std::make_tuple(true, nullptr);
+		std::wstring errMsg;
+		if (!resampleFrames(silenceFrames, silenceFrameRate, framesFrameRate, frames, &errMsg))
+		{
+			errMsg_ = QString("Can't resample silence frames. %1").arg(QString::fromStdWString(errMsg));
+			return;
+		}
 	}
 
 	void SphinxTrainDataBuilder::buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segsRefs, float targetFrameRate, bool padSilence, const std::vector<short>& silenceFrames)
@@ -2054,11 +2056,10 @@ namespace PticaGovorun
 				bool requireResampling = srcAudioFrameRate != targetFrameRate;
 				if (requireResampling)
 				{
-					const char* errMsg;
-					std::tie(op, errMsg) = resampleFrames(segFrames, srcAudioFrameRate, targetFrameRate, segFramesResamp);
-					if (!op)
+					std::wstring errMsg;
+					if (!resampleFrames(segFrames, srcAudioFrameRate, targetFrameRate, segFramesResamp, &errMsg))
 					{
-						errMsg_ = QString("Can't resample fraemes. %1").arg(errMsg);
+						errMsg_ = QString("Can't resample frames. %1").arg(QString::fromStdWString(errMsg));
 						return;
 					}
 					segFrames = segFramesResamp;

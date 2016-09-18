@@ -11,8 +11,6 @@
 #include <QSettings>
 #include <QStringList>
 
-//#include <samplerate.h>
-
 #if PG_HAS_SPHINX
 #include <pocketsphinx.h>
 #include <pocketsphinx_internal.h> // ps_decoder_s
@@ -1584,39 +1582,31 @@ void SpeechTranscriptionViewModel::recognizeCurrentSegmentSphinxRequest()
 	int frameShift = pFeatInfo->frame_shift;
 
 	// convert to sample frequency required by Sphinx
-	std::vector<float> samplesFloat(std::begin(audioSegmentBuffer_), std::end(audioSegmentBuffer_));
-	std::vector<float> resampledWaveFloat(samplesFloat.size(), 0);
-
-	SRC_DATA convertData;
-	convertData.data_in = samplesFloat.data();
-	convertData.input_frames = samplesFloat.size();
-	convertData.data_out = resampledWaveFloat.data();
-	convertData.output_frames = resampledWaveFloat.size();
-	convertData.src_ratio = sphinxSampleRate / (float)audioFrameRate_;
-
-	int converterType = SRC_SINC_BEST_QUALITY;
-	int channels = 1;
-	int error = src_simple(&convertData, converterType, channels);
-	if (error != 0)
+	double convertRatio = sphinxSampleRate / audioFrameRate_;
+	std::vector<short> resampledWave;
+	std::wstring errMsg;
+	if (!resampleFrames(audioSegmentBuffer_, audioFrameRate_, sphinxSampleRate, resampledWave, &errMsg))
 	{
-		const char* msg = src_strerror(error);
-		qDebug() << msg;
+		nextNotification(toQString(errMsg));
 		return;
 	}
-
-	resampledWaveFloat.resize(convertData.output_frames_gen);
-	std::vector<short> resampledWave(std::begin(resampledWaveFloat), std::end(resampledWaveFloat));
 
 	//
 
 	int ret = ps_start_utt(ps);
 	if (ret < 0)
+	{
+		nextNotification(QString("ps_start_utt.returns < 0"));
 		return;
+	}
 
 	const bool fullUtterance = true;
 	ret = ps_process_raw(ps, resampledWave.data(), resampledWave.size(), false, fullUtterance);
 	if (ret < 0)
+	{
+		nextNotification(QString("ps_process_raw.returns < 0"));
 		return;
+	}
 
 	ret = ps_end_utt(ps);
 	if (ret < 0)
@@ -1627,8 +1617,7 @@ void SpeechTranscriptionViewModel::recognizeCurrentSegmentSphinxRequest()
 	const char* hyp = ps_get_hyp(ps, &score);
 	if (hyp == nullptr)
 	{
-		QString msg("No hypothesis is available");
-		nextNotification(msg);
+		nextNotification(QString("No hypothesis is available"));
 		return;
 	}
 
@@ -1656,9 +1645,9 @@ void SpeechTranscriptionViewModel::recognizeCurrentSegmentSphinxRequest()
 		long sampleEnd = -1;
 		frameRangeToSampleRange(frameStart, frameEnd, FrameToSamplePicker, frameSize, frameShift, sampleBeg, sampleEnd);
 
-		// convert sampleInd back to original sample rate
-		sampleBeg /= convertData.src_ratio;
-		sampleEnd /= convertData.src_ratio;
+		// convert sampleInd in target sample rate back to original sample rate
+		sampleBeg /= convertRatio;
+		sampleEnd /= convertRatio;
 
 		AlignedWord wordBnds;
 		wordBnds.Name = wordQStr;

@@ -107,7 +107,7 @@ std::tuple<bool, std::string> writeAllSamplesWavVirtual(short* sampleData, int s
 	return make_tuple(true, std::string());
 }
 
-std::tuple<bool, const char*> resampleFrames(wv::slice<short> audioSamples, float inputFrameRate, float outFrameRate, std::vector<short>& outFrames)
+bool resampleFrames(gsl::span<const short> audioSamples, float inputFrameRate, float outFrameRate, std::vector<short>& outFrames, std::wstring* errMsg)
 {
 	// we can cast float-short or 
 	// use src_short_to_float_array/src_float_to_short_array which convert to float in [-1;1] range; both work
@@ -132,14 +132,15 @@ std::tuple<bool, const char*> resampleFrames(wv::slice<short> audioSamples, floa
 	if (error != 0)
 	{
 		const char* msg = src_strerror(error);
-		return std::make_tuple(false, msg);
+		*errMsg = QString::fromLatin1(msg).toStdWString();
+		return false;
 	}
 
 	targetSamplesFloat.resize(convertData.output_frames_gen);
 	outFrames.assign(std::begin(targetSamplesFloat), std::end(targetSamplesFloat));
 	//src_float_to_short_array(targetSamplesFloat.data(), targetSamples.data(), targetSamplesFloat.size());
 
-	return std::make_tuple(true, nullptr);
+	return true;
 }
 
 std::tuple<bool, const char*> readAllSamplesFormatAware(const char* fileName, std::vector<short>& result, float *frameRate)

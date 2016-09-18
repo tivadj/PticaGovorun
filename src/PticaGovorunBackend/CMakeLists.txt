@@ -89,6 +89,8 @@ if (WITH_JULIUS)
 	set (Julius4_Julius_LIB_DEBUG "" CACHE PATH "")
 	set (Julius4_Julius_LIB_RELEASE "" CACHE PATH "")
 
+	add_definitions(-DPG_HAS_JULIUS)
+
 	add_library(Julius4_LibSent SHARED IMPORTED)
 	set_target_properties(Julius4_LibSent PROPERTIES
 		INTERFACE_INCLUDE_DIRECTORIES "${Julius4_LibSent_INCLUDE_DIRS}"

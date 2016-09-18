@@ -19,7 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build-config", "build-confi
 		MatlabBuild.props = MatlabBuild.props
 		OpenCV.props = OpenCV.props
 		PocketSphinx.props = PocketSphinx.props
-		PoDoFo.props = PoDoFo.props
 		PortAudio.props = PortAudio.props
 		PticaGovorunCommon.props = PticaGovorunCommon.props
 		Qt.props = Qt.props

@@ -68,7 +68,6 @@
     <Import Project="..\build-config\PticaGovorunCommon.props" />
     <Import Project="..\build-config\Qt.props" />
     <Import Project="..\build-config\LibSndFile.props" />
-    <Import Project="..\build-config\array_view.props" />
     <Import Project="..\build-config\PortAudio.props" />
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\MatlabBuild.props" />
@@ -82,7 +81,6 @@
     <Import Project="..\build-config\PticaGovorunCommon.props" />
     <Import Project="..\build-config\Qt.props" />
     <Import Project="..\build-config\LibSndFile.props" />
-    <Import Project="..\build-config\array_view.props" />
     <Import Project="..\build-config\PortAudio.props" />
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\MatlabBuild.props" />
@@ -96,7 +94,6 @@
     <Import Project="..\build-config\PticaGovorunCommon.props" />
     <Import Project="..\build-config\Qt.props" />
     <Import Project="..\build-config\LibSndFile.props" />
-    <Import Project="..\build-config\array_view.props" />
     <Import Project="..\build-config\PortAudio.props" />
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\MatlabBuild.props" />
@@ -110,7 +107,6 @@
     <Import Project="..\build-config\PticaGovorunCommon.props" />
     <Import Project="..\build-config\Qt.props" />
     <Import Project="..\build-config\LibSndFile.props" />
-    <Import Project="..\build-config\array_view.props" />
     <Import Project="..\build-config\PortAudio.props" />
     <Import Project="..\build-config\OpenCV.props" />
     <Import Project="..\build-config\MatlabBuild.props" />
