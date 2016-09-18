@@ -1,10 +1,5 @@
 #pragma once
 #include <tuple>
-#include <string>
-#include <vector>
-#include <hash_map>
-#include <QObject>
-#include <QTextCodec>
 #include "PticaGovorunCore.h" // PG_EXPORTS
 #include "SpeechProcessing.h" // TimePointMarker
 #include "SpeechAnnotation.h"

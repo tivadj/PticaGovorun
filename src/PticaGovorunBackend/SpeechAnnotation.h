@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <tuple>
-#include <hash_set>
+#include <unordered_set>
 #include <boost/utility/string_view.hpp>
 #include "SpeechProcessing.h"
 #include "assertImpl.h"
@@ -34,7 +34,7 @@ namespace PticaGovorun
 		// Stores markers of all level (word, phone)
 		// The markers are ordered by increased SampleInd.
 		std::vector<TimePointMarker> frameIndMarkers_;
-		std::hash_set<int> usedMarkerIds_; // stores ids of all markers; used to generate new free marker id
+		std::unordered_set<int> usedMarkerIds_; // stores ids of all markers; used to generate new free marker id
 	public:
 		SpeechAnnotation();
 		~SpeechAnnotation();

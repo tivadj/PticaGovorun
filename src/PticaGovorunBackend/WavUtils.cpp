@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include <array>
-#include "WavUtils.h"
-#include <samplerate.h>
 #include <QString>
+#include <sndfile.h> // SF_VIRTUAL_IO
+#include <samplerate.h>
+#include "WavUtils.h"
 #include "FlacUtils.h"
 
 namespace PticaGovorun {
@@ -144,8 +145,10 @@ std::tuple<bool, const char*> resampleFrames(wv::slice<short> audioSamples, floa
 std::tuple<bool, const char*> readAllSamplesFormatAware(const char* fileName, std::vector<short>& result, float *frameRate)
 {
 	QString fileNameQ(fileName);
+#ifdef PG_HAS_FLAC
 	if (fileNameQ.endsWith(".flac"))
 		return readAllSamplesFlac(fileName, result, frameRate);
+#endif
 	if (fileNameQ.endsWith(".wav"))
 	{
 		auto op = readAllSamples(fileName, result, frameRate);

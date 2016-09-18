@@ -1,9 +1,6 @@
 #include <sstream>
-#include <hash_map>
 #include <ctime>
-#include <cstdlib>
 #include <memory>
-#include <array>
 
 #include <QStandardPaths>
 #include <QPointF>
@@ -14,7 +11,7 @@
 #include <QSettings>
 #include <QStringList>
 
-#include <samplerate.h>
+//#include <samplerate.h>
 
 #if PG_HAS_SPHINX
 #include <pocketsphinx.h>

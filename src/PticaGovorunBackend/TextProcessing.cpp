@@ -5,7 +5,6 @@
 #include <cwchar>
 #include <gsl/span>
 #include <boost/lexical_cast.hpp>
-#include "TranscriberUI/AnnotationToolViewModel.h"
 
 namespace PticaGovorun
 {

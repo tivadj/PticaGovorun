@@ -4,7 +4,6 @@
 #include <map>
 #include <atomic>
 #include <memory>
-#include <hash_set>
 
 #include <QPoint>
 #include <QSize>

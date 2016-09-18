@@ -1,15 +1,9 @@
 #include "stdafx.h"
 #include <vector>
-#include <array>
 #include <regex>
-#include <cstring> // strtok
-#include <string.h> // strtok
 #include <cstdlib>
-#include <hash_set>
-#include <QFile>
 #include <QString>
 #include <QDomDocument>
-#include <QStringList>
 #include <QTextStream>
 #include <QXmlStreamWriter>
 
