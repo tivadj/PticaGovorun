@@ -361,8 +361,8 @@ namespace PticaGovorun
 		UseAsSilence
 	};
 
-	std::tuple<bool, const char*> loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir, 
-		MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments)
+	bool loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir, 
+		MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments, std::wstring* errMsg)
 	{
 		if (folderOrWavFilePath.isDir())
 		{
@@ -372,11 +372,10 @@ namespace PticaGovorun
 			QFileInfoList items = dir.entryInfoList(QDir::Filter::Files | QDir::Filter::Dirs | QDir::Filter::NoDotAndDotDot);
 			for (const QFileInfo item : items)
 			{
-				auto subOp = loadSpeechAndAnnotation(item, wavRootDir, annotRootDir, targetLevelOfDetail, loadAudio, segPredBefore, segments);
-				if (!std::get<0>(subOp))
-					return subOp;
+				if (!loadSpeechAndAnnotation(item, wavRootDir, annotRootDir, targetLevelOfDetail, loadAudio, segPredBefore, segments, errMsg))
+					return false;
 			}
-			return std::make_pair(true, "");
+			return true;
 		}
 
 		// process wav file path
@@ -385,12 +384,12 @@ namespace PticaGovorun
 
 		// skip non audio files
 		if (!isSupportedAudioFile(audioFilePath.toStdWString().c_str()))
-			return std::make_pair(true, "");
+			return true;
 			
 		QString xmlFilePath = QString::fromStdWString(speechAnnotationFilePathAbs(folderOrWavFilePath.absoluteFilePath().toStdWString(), wavRootDir, annotRootDir));
 		QFileInfo xmlFilePathInfo(xmlFilePath);
 		if (!xmlFilePathInfo.exists()) // wav has no corresponding markup
-			return std::make_pair(true, "");
+			return true;
 
 		// load audio markup
 		// not all wav files has a markup, hence try to load the markup first
@@ -398,7 +397,10 @@ namespace PticaGovorun
 		SpeechAnnotation speechAnnot;
 		std::tuple<bool, const char*> loadOp = loadAudioMarkupFromXml(audioMarkupFilePathAbs.toStdWString(), speechAnnot);
 		if (!std::get<0>(loadOp))
-			return loadOp;
+		{
+			*errMsg = QString::fromLatin1(std::get<1>(loadOp)).toStdWString();
+			return false;
+		}
 
 		const std::vector<TimePointMarker>& syncPoints = speechAnnot.markers();
 
@@ -538,9 +540,9 @@ namespace PticaGovorun
 				if (speechFrames.empty())
 				{
 					// load wav file
-					auto readOp = readAllSamples(audioFilePath.toStdString(), speechFrames, &frameRate);
-					if (!std::get<0>(readOp))
-						return std::make_pair(false, "Can't read wav file");
+					if (!readAllSamplesFormatAware(audioFilePath.toStdWString(), speechFrames, &frameRate, errMsg))
+						*errMsg = QString("Can't read wav file. %1").arg(QString::fromStdWString(*errMsg)).toStdWString();
+						return false;
 				}
 
 				seg.FrameRate = frameRate;
@@ -553,7 +555,7 @@ namespace PticaGovorun
 			segments.push_back(seg);
 		}
 
-		return std::make_pair(true, "");
+		return true;
 	}
 
 	void collectAnnotatedSegments(const std::vector<TimePointMarker>& markers, std::vector<std::pair<const TimePointMarker*, const TimePointMarker*>>& segments)
@@ -579,7 +581,7 @@ namespace PticaGovorun
 	}
 
 	// phoneNameToFeaturesVector[phone] has mfccVecLen features for one frame, then for another frame, etc.
-	std::tuple<bool, const char*> collectMfccFeatures(const QFileInfo& folderOrWavFilePath, int frameSize, int frameShift, int mfccVecLen, std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector)
+	bool collectMfccFeatures(const QFileInfo& folderOrWavFilePath, int frameSize, int frameShift, int mfccVecLen, std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector, std::wstring* errMsg)
 	{
 		if (folderOrWavFilePath.isDir())
 		{
@@ -589,11 +591,10 @@ namespace PticaGovorun
 			QFileInfoList items = dir.entryInfoList(QDir::Filter::Files | QDir::Filter::Dirs | QDir::Filter::NoDotAndDotDot);
 			for (const QFileInfo item : items)
 			{
-				auto subOp = collectMfccFeatures(item, frameSize, frameShift, mfccVecLen, phoneNameToFeaturesVector);
-				if (!std::get<0>(subOp))
-					return subOp; 
+				if (!collectMfccFeatures(item, frameSize, frameShift, mfccVecLen, phoneNameToFeaturesVector, errMsg))
+					return false; 
 			}
-			return std::make_pair(true, "");
+			return true;
 		}
 
 		// process wav file path
@@ -601,16 +602,16 @@ namespace PticaGovorun
 		QString wavFilePath = folderOrWavFilePath.absoluteFilePath();
 
 		QString extension = folderOrWavFilePath.suffix();
-		if (extension != "wav") // skip non wav files
-			return std::make_pair(true, "");
+		if (!isSupportedAudioFile(wavFilePath.toStdWString().c_str())) // skip non wav files
+			return true;
 		
 		QDir parentDir = folderOrWavFilePath.absoluteDir();
 		QString xmlFileName = folderOrWavFilePath.completeBaseName() + ".xml";
 
 		QString xmlFilePath = parentDir.absoluteFilePath(xmlFileName);
 		QFileInfo xmlFilePathInfo(xmlFilePath);
-		if (!xmlFilePathInfo.exists()) // wav has no corresponding markup	
-			return std::make_pair(true, "");
+		if (!xmlFilePathInfo.exists()) // wav has no corresponding markup
+			return true;
 
 		// load audio markup
 		// not all wav files has a markup, hence try to load the markup first
@@ -619,15 +620,21 @@ namespace PticaGovorun
 		SpeechAnnotation speechAnnot;
 		std::tuple<bool, const char*> loadOp = loadAudioMarkupFromXml(audioMarkupFilePathAbs.toStdWString(), speechAnnot);
 		if (!std::get<0>(loadOp))
-			return loadOp;
+		{
+			*errMsg = QString::fromLatin1(std::get<1>(loadOp)).toStdWString();
+			return false;
+		}
 
 		const std::vector<TimePointMarker>& syncPoints = speechAnnot.markers();
 
 		// load wav file
 		std::vector<short> audioSamples;
-		auto readOp = PticaGovorun::readAllSamples(wavFilePath.toStdString(), audioSamples);
-		if (!std::get<0>(readOp))
-			return std::make_pair(false, "Can't read wav file");
+		float frameRate = -1;
+		if (!readAllSamplesFormatAware(wavFilePath.toStdWString(), audioSamples, &frameRate, errMsg))
+		{
+			*errMsg = QString("Can't read wav file. %1").arg(QString::fromStdWString(*errMsg)).toStdWString();
+			return false;
+		}
 
 		// compute MFCC features
 		for (int i = 0; i < syncPoints.size(); ++i)
@@ -691,7 +698,7 @@ namespace PticaGovorun
 			}
 		}
 
-		return std::make_pair(true, "");
+		return true;
 	}
 
 	// Gets the number of frames from a total number of features and number of MFCC features per frame.

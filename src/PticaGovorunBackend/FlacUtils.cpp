@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "FlacUtils.h"
+#include <QString>
 
 #ifdef PG_HAS_FLAC
 #include "FLAC++/decoder.h"
@@ -83,25 +84,29 @@ namespace PticaGovorun
 		}
 	}
 
-	std::tuple<bool, const char*> readAllSamplesFlac(const char* fileName, std::vector<short>& result, float *frameRate)
+	PG_EXPORTS bool readAllSamplesFlac(const boost::filesystem::path& filePath, std::vector<short>& result, float *frameRate, std::wstring* errMsg)
 	{
 		details::OurDecoder decoder(result);
 		decoder.set_md5_checking(true);
 
-		FLAC__StreamDecoderInitStatus init_status = decoder.init(fileName);
+		FLAC__StreamDecoderInitStatus init_status = decoder.init(filePath.string());
 		if (init_status != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
 			const char* msg = FLAC__StreamDecoderInitStatusString[init_status];
-			return std::make_tuple(false, "ERROR: initializing decoder");
+			*errMsg = QString("ERROR: initializing decoder. %1").arg(msg).toStdWString();
+			return false;
 		}
 
 		bool ok = decoder.process_until_end_of_stream();
 		if (!ok)
-			return std::make_tuple(false, "ERROR: decoder.process_until_end_of_stream");
+		{
+			*errMsg = std::wstring(L"ERROR: decoder.process_until_end_of_stream. %1");
+			return false;
+		}
 
 		if (frameRate != nullptr)
 			*frameRate = decoder.sampleRate();
 
-		return std::make_tuple(true, nullptr);
+		return true;
 	}
 }
 #endif

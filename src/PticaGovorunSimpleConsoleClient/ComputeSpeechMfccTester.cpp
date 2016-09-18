@@ -16,11 +16,12 @@ namespace ComputeSpeechMfccTesterNS
 
 		// load wav file
 		const char* wavFilePath = R"path(E:\devb\workshop\PticaGovorunProj\data\prokopeo_specific\prokopeo_uk_vowels_201412101116.wav)path";
+		float frameRate = -1;
+		std::wstring errMsg;
 		std::vector<short> audioSamples;
-		auto readOp = PticaGovorun::readAllSamples(wavFilePath, audioSamples);
-		if (!std::get<0>(readOp))
+		if (!readAllSamplesWav(wavFilePath, audioSamples, &frameRate, &errMsg))
 		{
-			std::cerr << "Can't read wav file" << std::endl;
+			std::wcerr << "Can't read wav file. " << errMsg << std::endl;
 			return;
 		}
 
@@ -50,11 +51,12 @@ namespace ComputeSpeechMfccTesterNS
 	{
 		// load wav file
 		const char* wavFilePath = R"path(E:\devb\workshop\PticaGovorunProj\data\prokopeo_specific\prokopeo_uk_vowels_201412101116.wav)path";
+		float frameRate = -1;
+		std::wstring errMsg;
 		std::vector<short> audioSamples;
-		auto readOp = PticaGovorun::readAllSamples(wavFilePath, audioSamples);
-		if (!std::get<0>(readOp))
+		if (!readAllSamplesWav(wavFilePath, audioSamples, &frameRate, &errMsg))
 		{
-			std::cerr << "Can't read wav file" << std::endl;
+			std::wcerr << "Can't read wav file. " <<errMsg << std::endl;
 			return;
 		}
 

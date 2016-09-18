@@ -22,6 +22,10 @@ add_definitions(-D_USE_MATH_DEFINES) # define std::max in <math.h>
 add_definitions(-DNOMINMAX) # do not define std::max in <windows.h>
 add_definitions(-DPGAPI_EXPORTS) # declare API as exported
 
+# Julius requires PortAudio
+# PGBackend requires LibSndFile to write wav files of a speech model for training
+# Either LibSndFile or Flac must be enabled to read wav or flac files
+
 #find_package(OpenCV REQUIRED core highgui)
 #find_package(Boost REQUIRED)
 find_package(Boost COMPONENTS filesystem REQUIRED)
@@ -125,9 +129,11 @@ target_link_libraries(PticaGovorunBackend
 	PRIVATE Qt5::Core
 	PRIVATE Qt5::Xml
 	PRIVATE Qt5::Widgets
-	PRIVATE LibSndFile
 	PRIVATE LibSampleRate
 )
+if (WITH_LIBSNDFILE)
+	target_link_libraries(PticaGovorunBackend PRIVATE LibSndFile)
+endif()
 if (WITH_JULIUS)
 	target_link_libraries(PticaGovorunBackend
 			PRIVATE Julius4_LibSent

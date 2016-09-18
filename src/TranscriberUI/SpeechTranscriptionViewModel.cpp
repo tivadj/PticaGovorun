@@ -75,11 +75,10 @@ SpeechTranscriptionViewModel::SpeechTranscriptionViewModel()
 	audioSamples_.clear();
 	diagramSegments_.clear();
 
-	auto readOp = PticaGovorun::readAllSamplesFormatAware(audioFilePath.toStdString().c_str(), audioSamples_, &audioFrameRate_);
-	if (!std::get<0>(readOp))
+	std::wstring errMsgW;
+	if (!readAllSamplesFormatAware(audioFilePath.toStdString().c_str(), audioSamples_, &audioFrameRate_, &errMsgW))
 	{
-		auto msg = std::get<1>(readOp);
-		nextNotification(QString::fromStdString(msg));
+		nextNotification(QString::fromStdWString(errMsgW));
 		return;
     }
 	if (audioFrameRate_ != SampleRate)
@@ -522,6 +521,7 @@ void SpeechTranscriptionViewModel::saveAudioMarkupToXml()
 
 void SpeechTranscriptionViewModel::saveCurrentRangeAsWavRequest()
 {
+#if PG_HAS_LIBSNDFILE
 	long frameLeft;
 	long frameRight;
 	std::tie(frameLeft, frameRight) = getSampleRangeToPlay(cursor_.first, SegmentStartFrameToPlayChoice::SegmentBegin, nullptr);
@@ -539,6 +539,9 @@ void SpeechTranscriptionViewModel::saveCurrentRangeAsWavRequest()
 		return;
 	}
 	nextNotification(QString("Wrote %1 frames to file").arg(len));
+#else
+	nextNotification(QString("LibSndFile is not compiled in. Define WITH_LIBSNDFILE"));
+#endif
 }
 
 	QString SpeechTranscriptionViewModel::modelShortName() const

@@ -233,7 +233,7 @@ namespace PticaGovorun
 		float FrameRate;
 	};
 
-	PG_EXPORTS bool loadSphinxAudio(boost::wstring_view audioDir, const std::vector<std::wstring>& audioRelPathesNoExt, boost::wstring_view audioFileSuffix, std::vector<AudioData>& audioDataList);
+	PG_EXPORTS bool loadSphinxAudio(boost::wstring_view audioDir, const std::vector<std::wstring>& audioRelPathesNoExt, boost::wstring_view audioFileSuffix, std::vector<AudioData>& audioDataList, std::wstring* errMsg);
 
 	bool loadWordList(boost::wstring_view filePath, std::unordered_set<std::wstring>& words);
 	bool writeWordList(const std::vector<boost::wstring_view>& words, boost::filesystem::path filePath, QString* errMsg);

@@ -47,17 +47,17 @@ namespace RecognizeSpeechSphinxTester
 		//SetConsoleOutputCP(65001);
 
 		const char* wavFilePath = R"path(E:\devb\workshop\PticaGovorunProj\data\!\chitki16000Hz.wav)path";
+		std::wstring errMsg;
 		std::vector<short> audioSamples;
 		float frameRate = -1;
-		auto readOp = PticaGovorun::readAllSamples(wavFilePath, audioSamples, &frameRate);
-		if (!std::get<0>(readOp))
+		if (readAllSamplesFormatAware(wavFilePath, audioSamples, &frameRate, &errMsg))
 		{
-			std::cerr << "Can't read wav file" << std::endl;
+			std::wcerr << "Can't read wav file. " <<errMsg << std::endl;
 			return;
 		}
 		if (frameRate != CmuSphinxFrameRate)
 		{
-			std::cerr << "CMU PocketSphinx words with 16KHz files only" << std::endl;
+			std::wcerr << L"CMU PocketSphinx words with 16KHz files only" << std::endl;
 			return;
 		}
 
@@ -788,10 +788,11 @@ namespace RecognizeSpeechSphinxTester
 		}
 
 		std::vector<AudioData> audioDataList;
-		op = loadSphinxAudio(audioDir, audioRelFilePathesNoExt, L"wav", audioDataList);
+		std::wstring errMsg;
+		op = loadSphinxAudio(audioDir, audioRelFilePathesNoExt, L"wav", audioDataList, &errMsg);
 		if (!op)
 		{
-			std::wcerr << "can't read audio data. audioDir=" << audioDir << std::endl;
+			std::wcerr << "Can't read audio data, audioDir=" << audioDir <<" " << errMsg << std::endl;
 			return false;
 		}
 		PG_DbgAssert(audioDataList.size() == speechTranscr.size());

@@ -119,10 +119,10 @@ namespace PticaGovorun {
 
 		std::map<std::string, std::vector<float>>& phoneNameToFeaturesVector = mapIt->second;
 		QFileInfo wavFolder(QString::fromWCharArray(folderOrWavFilesPath));
-		auto featsOp = collectMfccFeatures(wavFolder, frameSize, frameShift, mfccVecLen, phoneNameToFeaturesVector);
-		if (!std::get<0>(featsOp))
+		std::wstring errMsg;
+		if (!collectMfccFeatures(wavFolder, frameSize, frameShift, mfccVecLen, phoneNameToFeaturesVector, &errMsg))
 		{
-			std::wcerr << std::get<1>(featsOp) << std::endl;
+			std::wcerr << errMsg << std::endl;
 			return false;
 		}
 

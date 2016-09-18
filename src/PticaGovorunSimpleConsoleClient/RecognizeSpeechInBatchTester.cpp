@@ -5,8 +5,6 @@
 #include <QFile>
 #include <QTextStream>
 
-#include <samplerate.h>
-
 #include "AudioSpeechDecoder.h"
 #include "WavUtils.h" // readAllSamples
 #include "PhoneticService.h"
@@ -17,44 +15,6 @@ namespace RecognizeSpeechInBatchTester
 	using namespace PticaGovorun;
 	const float CmuSphinxFrameRate = 16000;
 
-	std::tuple<bool,const char*> convertFrameRate(const std::vector<short>& srcFrames, float srcFrameRate, float requiredFrameRate, std::vector<short>& dstFrames)
-	{
-		if (srcFrameRate == requiredFrameRate)
-		{
-			dstFrames = srcFrames;
-			return std::make_tuple(true, nullptr);
-		}
-
-		// cast to float
-		std::vector<float> srcFramesFloat(std::begin(srcFrames), std::end(srcFrames));
-
-		// prepare output buffer
-		double rateRatio = requiredFrameRate / srcFrameRate;
-		size_t dstFramesCount = static_cast<size_t>(srcFrames.size() * rateRatio);
-		std::vector<float> targetSamplesFloat(dstFramesCount, 0);
-		
-		//
-		SRC_DATA convertData;
-		convertData.data_in = srcFramesFloat.data();
-		convertData.input_frames = srcFramesFloat.size();
-		convertData.data_out = targetSamplesFloat.data();
-		convertData.output_frames = targetSamplesFloat.size();
-		convertData.src_ratio = rateRatio;
-
-		int converterType = SRC_SINC_BEST_QUALITY;
-		int channels = 1;
-		int error = src_simple(&convertData, converterType, channels);
-		if (error != 0)
-		{
-			const char* msg = src_strerror(error);
-			return std::make_tuple(false, msg);
-		}
-
-		targetSamplesFloat.resize(convertData.output_frames_gen);
-		dstFrames = std::vector<short>(std::begin(targetSamplesFloat), std::end(targetSamplesFloat));
-		return std::make_tuple(true, nullptr);
-	}
-
 	void recognizeSpeechInBatch(int argc, wchar_t* argv[])
 	{
 		std::wstring audioFilePath = LR"path(C:\devb\PticaGovorunProj\srcrep\data\SpeechAudio\finance.ua-pynzenykvm\2011-04-pynzenyk-q_17.wav)path";
@@ -62,22 +22,19 @@ namespace RecognizeSpeechInBatchTester
 			audioFilePath = argv[1];
 
 		float frameRate = -1;
+		std::wstring errMsg;
 		std::vector<short> audioFrames;
 		audioFrames.reserve(128000);
-		auto readOp = readAllSamples(QString::fromStdWString(audioFilePath).toStdString(), audioFrames, &frameRate);
-		if (!std::get<0>(readOp))
+		if (!readAllSamplesFormatAware(QString::fromStdWString(audioFilePath).toStdString(), audioFrames, &frameRate, &errMsg))
 		{
-			std::cerr << "Can't read wav file" <<std::endl;
+			std::wcerr << "Can't read wav file. " <<errMsg <<std::endl;
 			return;
 		}
 
 		std::vector<short> audioFramesSphinx;
-		bool convOp;
-		const char* errMsg;
-		std::tie(convOp, errMsg) = convertFrameRate(audioFrames, frameRate, CmuSphinxFrameRate, audioFramesSphinx);
-		if (!convOp)
+		if (!resampleFrames(audioFrames, frameRate, CmuSphinxFrameRate, audioFramesSphinx, &errMsg))
 		{
-			std::cerr << errMsg << std::endl;
+			std::wcerr << errMsg << std::endl;
 			return;
 		}
 

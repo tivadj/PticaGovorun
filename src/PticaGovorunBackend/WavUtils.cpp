@@ -1,24 +1,28 @@
 #include "stdafx.h"
 #include <array>
 #include <QString>
+#if PG_HAS_LIBSNDFILE
 #include <sndfile.h> // SF_VIRTUAL_IO
+#endif
 #include <samplerate.h>
 #include "WavUtils.h"
 #include "FlacUtils.h"
+#include "CoreUtils.h"
 
 namespace PticaGovorun {
 
-
-std::tuple<bool, std::string> readAllSamples(const std::string& fileName, std::vector<short>& result, float *frameRate)
+#if PG_HAS_LIBSNDFILE
+bool readAllSamplesWav(const boost::filesystem::path& filePath, std::vector<short>& result, float *frameRate, std::wstring* errMsg)
 {
 	SF_INFO sfInfo;
 	memset(&sfInfo, 0, sizeof(sfInfo));
 
-	SNDFILE* sf = sf_open(fileName.c_str(), SFM_READ, &sfInfo);
+	SNDFILE* sf = sf_open(filePath.string().c_str(), SFM_READ, &sfInfo);
 	if (sf == nullptr)
 	{
 		auto err = sf_strerror(nullptr);
-		return std::make_tuple(false, err);
+		*errMsg = QString::fromLatin1(err).toStdWString();
+		return false;
 	}
 
 	result.clear();
@@ -37,15 +41,17 @@ std::tuple<bool, std::string> readAllSamples(const std::string& fileName, std::v
 		count += readc;
 
 		targetIt = std::copy(begin(buf), begin(buf) + readc, targetIt);
-		//for (size_t i=0; i<buf.size(); ++i)
-		//    result->Append(buf[i]);
 	}
 
 	int code = sf_close(sf);
 	if (code != 0)
-		return std::make_tuple(false, sf_strerror(nullptr));
+	{
+		auto err = sf_strerror(nullptr);
+		*errMsg = QString::fromLatin1(err).toStdWString();
+		return false;
+	}
 
-	return std::make_tuple(true, std::string());
+	return true;
 }
 
 std::tuple<bool, std::string> writeAllSamplesWav(const short* sampleData, int sampleCount, const std::string& fileName, int sampleRate)
@@ -107,6 +113,8 @@ std::tuple<bool, std::string> writeAllSamplesWavVirtual(short* sampleData, int s
 	return make_tuple(true, std::string());
 }
 
+#endif
+
 bool resampleFrames(gsl::span<const short> audioSamples, float inputFrameRate, float outFrameRate, std::vector<short>& outFrames, std::wstring* errMsg)
 {
 	// we can cast float-short or 
@@ -143,29 +151,32 @@ bool resampleFrames(gsl::span<const short> audioSamples, float inputFrameRate, f
 	return true;
 }
 
-std::tuple<bool, const char*> readAllSamplesFormatAware(const char* fileName, std::vector<short>& result, float *frameRate)
+bool readAllSamplesFormatAware(const boost::filesystem::path& filePath, std::vector<short>& result, float *frameRate, std::wstring* errMsg)
 {
-	QString fileNameQ(fileName);
+	QString fileNameQ = toQString(filePath.wstring());
 #ifdef PG_HAS_FLAC
 	if (fileNameQ.endsWith(".flac"))
-		return readAllSamplesFlac(fileName, result, frameRate);
+		return readAllSamplesFlac(filePath, result, frameRate, errMsg);
 #endif
+#ifdef PG_HAS_LIBSNDFILE
 	if (fileNameQ.endsWith(".wav"))
-	{
-		auto op = readAllSamples(fileName, result, frameRate);
-		if (!std::get<0>(op))
-			return std::make_tuple(false, "Error: readAllSamplesWav");
-		return std::make_tuple(true, nullptr);
-	}
-	return std::make_tuple(false, "Error: unknown audio file extension");
+		return readAllSamplesWav(filePath, result, frameRate, errMsg);
+#endif
+	*errMsg = std::wstring(L"Error: unknown audio file extension ") + filePath.extension().wstring();
+	return false;
 }
 
 bool isSupportedAudioFile(const wchar_t* fileName)
 {
 	QString fileNameQ = QString::fromWCharArray(fileName);
-	if (fileNameQ.endsWith(".flac") ||
-		fileNameQ.endsWith(".wav"))
+#ifdef PG_HAS_FLAC
+	if (fileNameQ.endsWith(".flac"))
 		return true;
+#endif
+#ifdef PG_HAS_LIBSNDFILE
+	if (fileNameQ.endsWith(".wav"))
+		return true;
+#endif
 	return false;
 }
 

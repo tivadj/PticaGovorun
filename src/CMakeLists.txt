@@ -19,16 +19,21 @@ include_directories(${GSL_INCLUDE_DIR})
 set(Boost_USE_STATIC_LIBS ON)
 
 # LibSndFile library
-set(LibSndFile_INCLUDE_DIR "" CACHE PATH "")
-set(LibSndFile_LIB_DEBUG "" CACHE PATH "")
-set(LibSndFile_LIB_RELEASE "" CACHE PATH "")
+option(WITH_LIBSNDFILE "Enables reading/writing of WAV files" ON)
+if (WITH_LIBSNDFILE)
+	set(LibSndFile_INCLUDE_DIR "" CACHE PATH "")
+	set(LibSndFile_LIB_DEBUG "" CACHE PATH "")
+	set(LibSndFile_LIB_RELEASE "" CACHE PATH "")
 
-add_library(LibSndFile SHARED IMPORTED)
-set_target_properties(LibSndFile PROPERTIES
-	INTERFACE_INCLUDE_DIRECTORIES "${LibSndFile_INCLUDE_DIR}"
-	IMPORTED_IMPLIB_DEBUG ${LibSndFile_LIB_DEBUG}
-	IMPORTED_IMPLIB_RELEASE ${LibSndFile_LIB_RELEASE}
-)
+	add_definitions(-DPG_HAS_LIBSNDFILE)
+
+	add_library(LibSndFile SHARED IMPORTED)
+	set_target_properties(LibSndFile PROPERTIES
+		INTERFACE_INCLUDE_DIRECTORIES "${LibSndFile_INCLUDE_DIR}"
+		IMPORTED_IMPLIB_DEBUG ${LibSndFile_LIB_DEBUG}
+		IMPORTED_IMPLIB_RELEASE ${LibSndFile_LIB_RELEASE}
+	)
+endif()
 
 
 # LibSampleRate library

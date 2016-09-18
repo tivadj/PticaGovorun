@@ -9,11 +9,12 @@ namespace ResampleAudioTesterNS
 	void resampleWaveform()
 	{
 		const char* wavFilePath = R"path(E:\devb\workshop\PticaGovorunProj\data\!\2011-04-pynzenyk-q_11_0001917-0033272_22050Hz.wav)path";
+		std::wstring errMsg;
+		float frameRate = -1;
 		std::vector<short> audioSamples;
-		auto readOp = PticaGovorun::readAllSamples(wavFilePath, audioSamples);
-		if (!std::get<0>(readOp))
+		if (!PticaGovorun::readAllSamplesWav(wavFilePath, audioSamples, &frameRate, &errMsg))
 		{
-			std::cerr << "Can't read wav file" << std::endl;
+			std::wcerr << "Can't read wav file. " <<errMsg << std::endl;
 			return;
 		}
 

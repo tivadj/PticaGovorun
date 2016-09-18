@@ -18,8 +18,6 @@ namespace PronunciationChecksRunnerNS
 	{
 		QTextCodec* pTextCodec = QTextCodec::codecForName("windows-1251");
 		std::map<std::wstring, std::vector<Pronunc>> wordToPhoneListDict;
-		bool loadOp;
-		const char* errMsg;
 
 		normalizePronunciationVocabulary(wordToPhoneListDict);
 
@@ -30,7 +28,8 @@ namespace PronunciationChecksRunnerNS
 
 		std::vector<AnnotatedSpeechSegment> segments;
 		auto segPredBeforeFun = [](const AnnotatedSpeechSegment& seg) -> bool { return true; };
-		std::tie(loadOp, errMsg) = loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, false, segPredBeforeFun, segments);
+		std::wstring errMsg;
+		bool loadOp = loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, false, segPredBeforeFun, segments, &errMsg);
 
 		//
 

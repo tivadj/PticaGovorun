@@ -740,6 +740,13 @@ namespace PticaGovorun
 		bool swapTrainTestData = AppHelpers::configParamBool(ConfigSwapTrainTestData, false); // swaps train/test portions of data, so that opposite data can be tested when random generator's seed is fixed
 		bool includeBrownBear = AppHelpers::configParamBool(ConfigIncludeBrownBear, false);
 		bool outputWav = AppHelpers::configParamBool(ConfigOutputWav, true);
+#ifndef PG_HAS_LIBSNDFILE
+		if (outputWav)
+		{
+			std::wcout << "Info: LibSndFile is not compiled in. Define WITH_LIBSNDFILE to write output WAV files";
+			outputWav = false;
+		}
+#endif
 		bool outputPhoneticDictAndLangModelAndTranscript = true;
 		int gramDim = AppHelpers::configParamInt(ConfigGramDim, 2); // 1=unigram, 2=bigram
 		bool outputCorpus = AppHelpers::configParamBool(ConfigOutputCorpus, false);
@@ -1695,12 +1702,10 @@ namespace PticaGovorun
 			return true;
 		};
 
-		bool loadOp;
-		const char* errMsg;
-		std::tie(loadOp, errMsg) = loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, false, segPredBeforeFun, segments_);
-		if (!loadOp)
+		std::wstring errMsg;
+		if (!loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, false, segPredBeforeFun, segments_, &errMsg))
 		{
-			errMsg_ = "Can't load audio and annotation";
+			errMsg_ = QString("Can't load audio and annotation. %1").arg(QString::fromStdWString(errMsg));
 			return;
 		}
 	}
@@ -1978,15 +1983,16 @@ namespace PticaGovorun
 		std::vector<short> silenceFrames;
 		float silenceFrameRate = -1;
 		std::string silenceWavPath = AppHelpers::mapPathStdString("pgdata/Sphinx2/SpeechModels/pynzenyk-background-200ms.wav");
-		auto readOp = readAllSamples(silenceWavPath.c_str(), silenceFrames, &silenceFrameRate);
-		if (!std::get<0>(readOp))
+		std::wstring errMsg;
+		if (!readAllSamplesFormatAware(silenceWavPath.c_str(), silenceFrames, &silenceFrameRate, &errMsg))
 		{
-			errMsg_ = QString("Can't read silence wav file=%1").arg(QString::fromStdString(silenceWavPath));
+			errMsg_ = QString("Can't read silence wav file=%1. %2")
+				.arg(QString::fromStdString(silenceWavPath))
+				.arg(QString::fromStdWString(errMsg));
 			return;
 		}
 		PG_DbgAssert(silenceFrameRate != -1);
 
-		std::wstring errMsg;
 		if (!resampleFrames(silenceFrames, silenceFrameRate, framesFrameRate, frames, &errMsg))
 		{
 			errMsg_ = QString("Can't resample silence frames. %1").arg(QString::fromStdWString(errMsg));
@@ -2026,11 +2032,11 @@ namespace PticaGovorun
 			std::wcout << L"wav=" << wavFilePath << std::endl;
 
 			srcAudioFrames.clear();
-			auto readOp = readAllSamplesFormatAware(srcAudioPath.c_str(), srcAudioFrames, &srcAudioFrameRate);
-			if (!std::get<0>(readOp))
+			std::wstring errMsg;
+			if (readAllSamplesFormatAware(srcAudioPath, srcAudioFrames, &srcAudioFrameRate, &errMsg))
 			{
 				errMsg_ = "Can't read audio file. ";
-				errMsg_ += std::get<1>(readOp);
+				errMsg_ += toQString(errMsg);
 				return;
 			}
 
@@ -2100,12 +2106,14 @@ namespace PticaGovorun
 
 				std::string wavSegOutPath = (segRef->OutAudioSegPathParts.AudioSegFilePathNoExt + ".wav").toStdString();
 				std::string errMsg;
+#if PG_HAS_LIBSNDFILE
 				std::tie(op, errMsg) = writeAllSamplesWav(paddedSegFramesOut.data(), (int)paddedSegFramesOut.size(), wavSegOutPath, targetFrameRate);
 				if (!op)
 				{
 					errMsg_ = QString("Can't write output wav segment. %1").arg(errMsg.c_str());
 					return;
 				}
+#endif
 			}
 		}
 	}
@@ -2178,22 +2186,20 @@ namespace PticaGovorun
 		}
 	}
 
-	bool loadSphinxAudio(boost::wstring_view audioDir, const std::vector<std::wstring>& audioRelPathesNoExt, boost::wstring_view audioFileSuffix, std::vector<AudioData>& audioDataList)
+	bool loadSphinxAudio(boost::wstring_view audioDir, const std::vector<std::wstring>& audioRelPathesNoExt, boost::wstring_view audioFileSuffix, std::vector<AudioData>& audioDataList, std::wstring* errMsg)
 	{
 		QString ext = toQString(audioFileSuffix);
 		auto audioDirQ = QDir(toQString(audioDir));
 
-		bool readOp;
-		std::string errMsg;
 		for (const std::wstring& audioPathNoExt : audioRelPathesNoExt)
 		{
 			QString absPath = audioDirQ.filePath(QString("%1.%2").arg(toQString(audioPathNoExt)).arg(ext));
 
 			AudioData audioData;
-
-			std::tie(readOp, errMsg) = readAllSamples(absPath.toStdString(), audioData.Frames, &audioData.FrameRate);
-			if (!readOp)
+			if (!readAllSamplesFormatAware(absPath.toStdWString(), audioData.Frames, &audioData.FrameRate, errMsg))
+			{
 				return false;
+			}
 			audioDataList.push_back(std::move(audioData));
 		}
 		return true;
