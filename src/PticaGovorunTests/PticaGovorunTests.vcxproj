@@ -175,6 +175,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FlacTests.cpp" />
     <ClCompile Include="GrowOnlyPinArenaTests.cpp" />
     <ClCompile Include="IntToUaWordConverterTests.cpp" />
     <ClCompile Include="main.cpp" />
