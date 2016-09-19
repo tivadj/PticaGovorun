@@ -1,3 +1,4 @@
+#if PG_HAS_SPHINX
 #include "AudioSpeechDecoder.h"
 #include <QTextCodec>
 #include "ClnUtils.h"
@@ -207,3 +208,4 @@ namespace PticaGovorun
 		errorMsg_ = errorText;
 	}
 }
+#endif

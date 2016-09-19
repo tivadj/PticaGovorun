@@ -405,21 +405,35 @@ namespace PticaGovorun
 		//	transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::CurrentCursor);
 
 		else if (ke->key() == Qt::Key_Space)
+		{
+#if PG_HAS_PORTAUDIO
 			transcriberModel_->soundPlayerTogglePlayPause();
-		// F9 is used to start playing when typing transcript text in
+#else
+			transcriberModel_->nextNotification(QString("Info: PortAudio dependency was not compiled in (define PG_HAS_PORTAUDIO)."));
+#endif
+		}
 		else if (ke->key() == Qt::Key_F9)
 		{
+#if PG_HAS_PORTAUDIO
+			// F9 is used to start playing when typing transcript text in
 			if (ke->modifiers().testFlag(Qt::ControlModifier))
 				transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::CurrentCursor);
 			else
 				transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::SegmentBegin);
+#else
+			transcriberModel_->nextNotification(QString("Info: PortAudio dependency was not compiled in (define PG_HAS_PORTAUDIO)."));
+#endif
 		}
 		else if (ke->key() == Qt::Key_Backslash)
 		{
+#if PG_HAS_PORTAUDIO
 			if (ke->modifiers().testFlag(Qt::ControlModifier))
 				transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::CurrentCursor);
 			else
 				transcriberModel_->soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice::SegmentBegin);
+#else
+			transcriberModel_->nextNotification(QString("Info: PortAudio dependency was not compiled in (define PG_HAS_PORTAUDIO)."));
+#endif
 		}
 
 		// analyze
@@ -428,7 +442,7 @@ namespace PticaGovorun
 #ifdef PG_HAS_JULIUS
 			transcriberModel_->recognizeCurrentSegmentJuliusRequest();
 #else
-			transcriberModel_->nextNotification(QString("WARN: Julius dependency was not compiled in (define PG_HAS_JULIUS)."));
+			transcriberModel_->nextNotification(QString("Info: Julius dependency was not compiled in (define PG_HAS_JULIUS)."));
 #endif
 		}
 		else if (ke->key() == Qt::Key_A)
@@ -436,7 +450,7 @@ namespace PticaGovorun
 #ifdef PG_HAS_JULIUS
 			transcriberModel_->alignPhonesForCurrentSegmentJuliusRequest();
 #else
-			transcriberModel_->nextNotification(QString("WARN: Julius dependency was not compiled in (define PG_HAS_JULIUS)."));
+			transcriberModel_->nextNotification(QString("Info: Julius dependency was not compiled in (define PG_HAS_JULIUS)."));
 #endif
 		}
 		else if (ke->key() == Qt::Key_F1)
@@ -444,7 +458,7 @@ namespace PticaGovorun
 #if PG_HAS_SPHINX
 			transcriberModel_->recognizeCurrentSegmentSphinxRequest();
 #else
-			transcriberModel_->nextNotification(QString("WARN: Sphinx dependency was not compiled in (define PG_HAS_SPHINX)."));
+			transcriberModel_->nextNotification(QString("Info: Sphinx dependency was not compiled in (define PG_HAS_SPHINX)."));
 #endif
 		}
 

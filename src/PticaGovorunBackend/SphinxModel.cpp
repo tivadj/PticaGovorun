@@ -2356,6 +2356,7 @@ namespace PticaGovorun
 		return noBrokenPron;
 	}
 
+#if PG_HAS_SPHINX
 	cmd_ln_t* SphinxConfig::pg_init_cmd_ln_t(boost::string_view acousticModelDir, boost::string_view langModelFile, boost::string_view phoneticModelFile, bool verbose, bool debug, bool backTrace, boost::string_view logFile)
 	{
 		// cmd_ln_init() redirects to parse_options() which do not use variable number of arguments
@@ -2389,4 +2390,5 @@ namespace PticaGovorun
 			);
 		return config;
 	}
+#endif
 }

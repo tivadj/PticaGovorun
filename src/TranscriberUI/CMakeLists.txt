@@ -8,7 +8,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON) # runs uic
 
-add_definitions(-DHAS_POCKETSPHINX)
 
 #find_package(PticaGovorunBackend REQUIRED)
 
@@ -29,10 +28,16 @@ target_link_libraries(TranscriberUI
 	PRIVATE Qt5::Core
 	PRIVATE Qt5::Widgets
 	PRIVATE Qt5::Gui
-	PRIVATE PortAudio
-	PRIVATE Sphinx_SphinxBase
-	PRIVATE Sphinx_PocketSphinx
 )
+if (WITH_PORTAUDIO)
+	target_link_libraries(TranscriberUI PRIVATE PortAudio)
+endif()
+#if (WITH_SPHINX)
+#	target_link_libraries(TranscriberUI 
+#		PRIVATE Sphinx_SphinxBase
+#		PRIVATE Sphinx_PocketSphinx
+#)
+#endif()
 
 install (TARGETS TranscriberUI
 	RUNTIME DESTINATION bin

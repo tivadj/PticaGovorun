@@ -18,8 +18,27 @@ include_directories(${GSL_INCLUDE_DIR})
 #set(Boost_LIB_DIAGNOSTIC_DEFINITIONS ON) # Prints diagnostics when compiling (linking)
 set(Boost_USE_STATIC_LIBS ON)
 
-# LibSndFile library
+option(WITH_FLAC "Enables reading of FLAC (Free Lossless Audio Codec) audio files (like WAV but with compression)" OFF)
 option(WITH_LIBSNDFILE "Enables reading/writing of WAV files" ON)
+option(WITH_PORTAUDIO "Enables playing audio in GUI projects" ON)
+option(WITH_JULIUS "Enables decoding speech audio using Julius library" OFF)
+option(WITH_SPHINX "Enables decoding speech audio using CMU PocketSphinx library" ON)
+
+# Either LibSndFile or Flac must be enabled to read wav or flac files
+if (WITH_JULIUS)
+	if (NOT WITH_LIBSNDFILE)
+		message("Julius requires LibSndFile library")
+	endif()
+	if (NOT WITH_PORTAUDIO)
+		message("Julius requires PortAudio library")
+	endif()
+endif()
+
+if (NOT WITH_FLAC AND NOT WITH_LIBSNDFILE)
+	message("Specify at least one of Flac or Wav to read audio")
+endif()
+
+# LibSndFile library
 if (WITH_LIBSNDFILE)
 	set(LibSndFile_INCLUDE_DIR "" CACHE PATH "")
 	set(LibSndFile_LIB_DEBUG "" CACHE PATH "")
@@ -48,8 +67,48 @@ set_target_properties(LibSampleRate PROPERTIES
 	IMPORTED_IMPLIB_RELEASE ${LibSampleRate_LIB_RELEASE}
 )
 
+# Flac library
+if (WITH_FLAC)
+	set(FlacC_INCLUDE_DIRS "" CACHE PATH "")
+	set(FlacC_LIB_DEBUG "" CACHE FILEPATH "")
+	set(FlacC_LIB_RELEASE "" CACHE FILEPATH "")
+	set(FlacCpp_LIB_DEBUG "" CACHE FILEPATH "")
+	set(FlacCpp_LIB_RELEASE "" CACHE FILEPATH "")
+
+	#include_directories(${Flac_INCLUDE_DIRS})
+	add_definitions(-DPG_HAS_FLAC)
+
+	add_library(FlacC SHARED IMPORTED)
+	set_target_properties(FlacC PROPERTIES
+		INTERFACE_INCLUDE_DIRECTORIES "${FlacC_INCLUDE_DIRS}"
+		#INTERFACE_COMPILE_DEFINITIONS PG_HAS_FLAC
+		IMPORTED_IMPLIB_DEBUG "${FlacC_LIB_DEBUG}"
+		IMPORTED_IMPLIB_RELEASE "${FlacC_LIB_RELEASE}"
+	)
+	add_library(FlacCpp SHARED IMPORTED)
+	set_target_properties(FlacCpp PROPERTIES
+		IMPORTED_IMPLIB_DEBUG "${FlacCpp_LIB_DEBUG}"
+		IMPORTED_IMPLIB_RELEASE "${FlacCpp_LIB_RELEASE}"
+	)
+endif()
+
+# PortAudio library
+if (WITH_PORTAUDIO)
+	set(PortAudio_INCLUDE_DIRS "" CACHE PATH "")
+	set(PortAudio_LIB_DEBUG "" CACHE FILEPATH "")
+	set(PortAudio_LIB_RELEASE "" CACHE FILEPATH "")
+
+	add_definitions(-DPG_HAS_PORTAUDIO)
+
+	add_library(PortAudio SHARED IMPORTED)
+	set_target_properties(PortAudio PROPERTIES
+		INTERFACE_INCLUDE_DIRECTORIES "${PortAudio_INCLUDE_DIRS}"
+		IMPORTED_IMPLIB_DEBUG ${PortAudio_LIB_DEBUG}
+		IMPORTED_IMPLIB_RELEASE ${PortAudio_LIB_RELEASE}
+	)
+endif()
+
 # Sphinx library
-option(WITH_SPHINX "Enables decoding speech audio using CMU PocketSphinx library" ON)
 if (WITH_SPHINX)
 	set(Sphinx_SphinxBase_INCLUDE_DIRS "" CACHE PATH "")
 	set(Sphinx_SphinxBase_LIB_DEBUG "" CACHE PATH "")
@@ -58,6 +117,8 @@ if (WITH_SPHINX)
 	set(Sphinx_PocketSphinx_LIB_DEBUG "" CACHE PATHS  "")
 	set(Sphinx_PocketSphinx_LIB_RELEASE "" CACHE PATHS  "")
 
+	add_definitions(-DPG_HAS_SPHINX)
+	
 	add_library(Sphinx_SphinxBase SHARED IMPORTED)
 	set_target_properties(Sphinx_SphinxBase PROPERTIES
 		INTERFACE_INCLUDE_DIRECTORIES "${Sphinx_SphinxBase_INCLUDE_DIRS}"
@@ -75,17 +136,43 @@ if (WITH_SPHINX)
 	)
 endif()
 
-# PortAudio library
-set(PortAudio_INCLUDE_DIRS "" CACHE PATH "")
-set(PortAudio_LIB_DEBUG "" CACHE FILEPATH "")
-set(PortAudio_LIB_RELEASE "" CACHE FILEPATH "")
+# Julius4 library
+if (WITH_JULIUS)
+	set (Julius4_LibSent_INCLUDE_DIRS "" CACHE PATH "")
+	set (Julius4_LibSent_LIB_DEBUG "" CACHE PATH "")
+	set (Julius4_LibSent_LIB_RELEASE "" CACHE PATH "")
+	set (Julius4_LibJulius_INCLUDE_DIRS "" CACHE PATH "")
+	set (Julius4_LibJulius_LIB_DEBUG "" CACHE PATH "")
+	set (Julius4_LibJulius_LIB_RELEASE "" CACHE PATH "")
+	set (Julius4_Julius_LIB_DEBUG "" CACHE PATH "")
+	set (Julius4_Julius_LIB_RELEASE "" CACHE PATH "")
 
-add_library(PortAudio SHARED IMPORTED)
-set_target_properties(PortAudio PROPERTIES
-	INTERFACE_INCLUDE_DIRECTORIES "${PortAudio_INCLUDE_DIRS}"
-	IMPORTED_IMPLIB_DEBUG ${PortAudio_LIB_DEBUG}
-	IMPORTED_IMPLIB_RELEASE ${PortAudio_LIB_RELEASE}
-)
+	add_definitions(-DPG_HAS_JULIUS)
+
+	add_library(Julius4_LibSent SHARED IMPORTED)
+	set_target_properties(Julius4_LibSent PROPERTIES
+		INTERFACE_INCLUDE_DIRECTORIES "${Julius4_LibSent_INCLUDE_DIRS}"
+		INTERFACE_LINK_LIBRARIES "PortAudio;ZLib;ws2_32.lib" # TODO: ws2_32 is only for windows
+		#LINK_LIBRARIES "PortAudio;ZLib;ws2_32.lib" # doesn't work
+		#IMPORTED_LINK_DEPENDENT_LIBRARIES "PortAudio;ZLib;ws2_32.lib" # doesn't work
+		IMPORTED_IMPLIB_DEBUG ${Julius4_LibSent_LIB_DEBUG}
+		IMPORTED_IMPLIB_RELEASE ${Julius4_LibSent_LIB_RELEASE}
+		)
+
+	add_library(Julius4_LibJulius SHARED IMPORTED)
+	set_target_properties(Julius4_LibJulius PROPERTIES
+		INTERFACE_INCLUDE_DIRECTORIES "${Julius4_LibJulius_INCLUDE_DIRS}"
+		IMPORTED_IMPLIB_DEBUG ${Julius4_LibJulius_LIB_DEBUG}
+		IMPORTED_IMPLIB_RELEASE ${Julius4_LibJulius_LIB_RELEASE}
+		)
+
+	add_library(Julius4_Julius SHARED IMPORTED)
+	set_target_properties(Julius4_Julius PROPERTIES
+		IMPORTED_IMPLIB_DEBUG ${Julius4_Julius_LIB_DEBUG}
+		IMPORTED_IMPLIB_RELEASE ${Julius4_Julius_LIB_RELEASE}
+		)
+endif()
+
 
 add_subdirectory(PticaGovorunBackend)
 add_subdirectory(TranscriberUI)

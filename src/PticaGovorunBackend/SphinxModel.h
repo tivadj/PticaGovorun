@@ -6,7 +6,9 @@
 #include <QString>
 #include <QVariant>
 #include <QDir>
+#if PG_HAS_SPHINX
 #include <pocketsphinx.h> // cmd_ln_init
+#endif
 #include "PhoneticService.h"
 #include "SpeechProcessing.h"
 #include "SpeechDataValidation.h"
@@ -35,6 +37,7 @@ namespace PticaGovorun
 	// Returns the name of the directory where the sphinx model resides.
 	PG_EXPORTS std::wstring sphinxModelVersionStr(boost::wstring_view modelDir);
 
+#if PG_HAS_SPHINX
 	struct PG_EXPORTS SphinxConfig
 	{
 		// the values are from etc/sphinx_train.cfg
@@ -63,6 +66,7 @@ namespace PticaGovorun
 		                                 boost::string_view phoneticModelFile, bool verbose, bool debug, bool backTrace,
 		                                 boost::string_view logFile);
 	};
+#endif
 
 	/// Maps pronCode to Sphinx display name in .dic, .arpa and .transcript files.
 	struct PronCodeToDisplayNameMap

@@ -22,10 +22,6 @@ add_definitions(-D_USE_MATH_DEFINES) # define std::max in <math.h>
 add_definitions(-DNOMINMAX) # do not define std::max in <windows.h>
 add_definitions(-DPGAPI_EXPORTS) # declare API as exported
 
-# Julius requires PortAudio
-# PGBackend requires LibSndFile to write wav files of a speech model for training
-# Either LibSndFile or Flac must be enabled to read wav or flac files
-
 #find_package(OpenCV REQUIRED core highgui)
 #find_package(Boost REQUIRED)
 find_package(Boost COMPONENTS filesystem REQUIRED)
@@ -37,32 +33,6 @@ find_package(Qt5Widgets REQUIRED) # for QApplication in AppHelpers::mapPath
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(${QT_INCLUDES}) # ?? required?
 #add_definitions(${QT_DEFINITIONS})
-
-option(WITH_FLAC "Enables reading of FLAC (Free Lossless Audio Codec) audio files (like WAV but with compression)" OFF)
-if (WITH_FLAC)
-	set(FlacC_INCLUDE_DIRS "" CACHE PATH "")
-	set(FlacC_LIB_DEBUG "" CACHE FILEPATH "")
-	set(FlacC_LIB_RELEASE "" CACHE FILEPATH "")
-	set(FlacCpp_LIB_DEBUG "" CACHE FILEPATH "")
-	set(FlacCpp_LIB_RELEASE "" CACHE FILEPATH "")
-
-	#include_directories(${Flac_INCLUDE_DIRS})
-	add_definitions(-DPG_HAS_FLAC)
-
-	add_library(FlacC SHARED IMPORTED)
-	set_target_properties(FlacC PROPERTIES
-		INTERFACE_INCLUDE_DIRECTORIES "${FlacC_INCLUDE_DIRS}"
-		#INTERFACE_COMPILE_DEFINITIONS PG_HAS_FLAC
-		IMPORTED_IMPLIB_DEBUG "${FlacC_LIB_DEBUG}"
-		IMPORTED_IMPLIB_RELEASE "${FlacC_LIB_RELEASE}"
-	)
-	add_library(FlacCpp SHARED IMPORTED)
-	set_target_properties(FlacCpp PROPERTIES
-		IMPORTED_IMPLIB_DEBUG "${FlacCpp_LIB_DEBUG}"
-		IMPORTED_IMPLIB_RELEASE "${FlacCpp_LIB_RELEASE}"
-	)
-endif()
-
 
 # ZLib library
 set(ZLib_INCLUDE_DIRS "" CACHE PATH "")
@@ -81,44 +51,6 @@ set_target_properties(ZLib PROPERTIES
 	IMPORTED_LOCATION_RELEASE ${ZLib_LOCATION_DEBUG}
 )
 
-# Julius4 library
-option(WITH_JULIUS "Enables decoding speech audio using Julius library" OFF)
-if (WITH_JULIUS)
-	set (Julius4_LibSent_INCLUDE_DIRS "" CACHE PATH "")
-	set (Julius4_LibSent_LIB_DEBUG "" CACHE PATH "")
-	set (Julius4_LibSent_LIB_RELEASE "" CACHE PATH "")
-	set (Julius4_LibJulius_INCLUDE_DIRS "" CACHE PATH "")
-	set (Julius4_LibJulius_LIB_DEBUG "" CACHE PATH "")
-	set (Julius4_LibJulius_LIB_RELEASE "" CACHE PATH "")
-	set (Julius4_Julius_LIB_DEBUG "" CACHE PATH "")
-	set (Julius4_Julius_LIB_RELEASE "" CACHE PATH "")
-
-	add_definitions(-DPG_HAS_JULIUS)
-
-	add_library(Julius4_LibSent SHARED IMPORTED)
-	set_target_properties(Julius4_LibSent PROPERTIES
-		INTERFACE_INCLUDE_DIRECTORIES "${Julius4_LibSent_INCLUDE_DIRS}"
-		INTERFACE_LINK_LIBRARIES "PortAudio;ZLib;ws2_32.lib" # TODO: ws2_32 is only for windows
-		#LINK_LIBRARIES "PortAudio;ZLib;ws2_32.lib" # doesn't work
-		#IMPORTED_LINK_DEPENDENT_LIBRARIES "PortAudio;ZLib;ws2_32.lib" # doesn't work
-		IMPORTED_IMPLIB_DEBUG ${Julius4_LibSent_LIB_DEBUG}
-		IMPORTED_IMPLIB_RELEASE ${Julius4_LibSent_LIB_RELEASE}
-		)
-
-	add_library(Julius4_LibJulius SHARED IMPORTED)
-	set_target_properties(Julius4_LibJulius PROPERTIES
-		INTERFACE_INCLUDE_DIRECTORIES "${Julius4_LibJulius_INCLUDE_DIRS}"
-		IMPORTED_IMPLIB_DEBUG ${Julius4_LibJulius_LIB_DEBUG}
-		IMPORTED_IMPLIB_RELEASE ${Julius4_LibJulius_LIB_RELEASE}
-		)
-
-	add_library(Julius4_Julius SHARED IMPORTED)
-	set_target_properties(Julius4_Julius PROPERTIES
-		IMPORTED_IMPLIB_DEBUG ${Julius4_Julius_LIB_DEBUG}
-		IMPORTED_IMPLIB_RELEASE ${Julius4_Julius_LIB_RELEASE}
-		)
-endif()
-
 #
 file(GLOB lib_srcs *.cpp)
 file(GLOB lib_hdrs *.h)
@@ -134,6 +66,11 @@ target_link_libraries(PticaGovorunBackend
 if (WITH_LIBSNDFILE)
 	target_link_libraries(PticaGovorunBackend PRIVATE LibSndFile)
 endif()
+if (WITH_FLAC)
+	target_link_libraries(PticaGovorunBackend
+			PRIVATE FlacC
+			PRIVATE FlacCpp)
+endif()
 if (WITH_JULIUS)
 	target_link_libraries(PticaGovorunBackend
 			PRIVATE Julius4_LibSent
@@ -144,11 +81,6 @@ if (WITH_SPHINX)
 	target_link_libraries(PticaGovorunBackend
 			PRIVATE Sphinx_SphinxBase
 			PRIVATE Sphinx_PocketSphinx)
-endif()
-if (WITH_FLAC)
-	target_link_libraries(PticaGovorunBackend
-			PRIVATE FlacC
-			PRIVATE FlacCpp)
 endif()
 
 

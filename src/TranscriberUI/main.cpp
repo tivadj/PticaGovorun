@@ -1,8 +1,11 @@
 #include <QApplication>
 #include <QDebug>
 #include <QDir>
-#include <portaudio.h>
 #include "AnnotationToolWidget.h"
+
+#if PG_HAS_PORTAUDIO
+#include <portaudio.h>
+#endif
 
 #if HAS_MATLAB
 #include "PticaGovorunInteropMatlab.h"
@@ -23,7 +26,7 @@ int main(int argc, char *argv[])
 	qDebug() << "PG_AUX_DICT_PATH=" << qgetenv("PG_AUX_DICT_PATH").constData();
 	qDebug() << "PG_WAV_FILE_PATH=" << qgetenv("PG_WAV_FILE_PATH").constData();
 
-	//
+#if PG_HAS_PORTAUDIO
 	qDebug() << "Initialize PortAudio runtime";
 	PaError err = Pa_Initialize();
 	if (err != paNoError)
@@ -32,6 +35,7 @@ int main(int argc, char *argv[])
 		return err;
 	}
 	qDebug() << "Pa_Initialize: success";
+#endif
 
 #if HAS_MATLAB
 	qDebug() << "Init Matlab runtime";
@@ -56,7 +60,7 @@ int main(int argc, char *argv[])
 	PticaGovorunInteropMatlabTerminate();
 #endif
 
-	//
+#if PG_HAS_PORTAUDIO
 	err = Pa_Terminate();
 	if (err != paNoError)
 	{
@@ -64,6 +68,7 @@ int main(int argc, char *argv[])
 	}
 	else
 		qDebug() << "Pa_Terminate: success";
+#endif
 
 	return appExecOp;
 }

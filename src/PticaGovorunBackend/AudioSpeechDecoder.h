@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#if PG_HAS_SPHINX
 #include <pocketsphinx.h>
 #include "ClnUtils.h"
 #include "PticaGovorunCore.h"
@@ -39,3 +39,4 @@ namespace PticaGovorun
 		void setError(const char* errorText);
 	};
 }
+#endif

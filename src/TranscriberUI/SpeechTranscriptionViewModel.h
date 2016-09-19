@@ -7,7 +7,9 @@
 
 #include <QPoint>
 #include <QSize>
+#if PG_HAS_PORTAUDIO
 #include <portaudio.h>
+#endif
 
 #include "XmlAudioMarkup.h"
 #include "JuliusToolNativeWrapper.h"
@@ -94,37 +96,39 @@ enum class TranscriberCursorKind
 // When playing audio, the current playing sample is shown.
 class SpeechTranscriptionViewModel : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-signals :
-	// Occurs when audio samples where successfully loaded from a file.
-	void audioSamplesLoaded();
-    void audioSamplesChanged();
-	void docOffsetXChanged();
-	void lastMouseDocPosXChanged(float mouseDocPosX);
+	signals :
+			// Occurs when audio samples where successfully loaded from a file.
+			void audioSamplesLoaded();
+			void audioSamplesChanged();
+			void docOffsetXChanged();
+			void lastMouseDocPosXChanged(float mouseDocPosX);
 
-	// Occurs when current frame cursor changes.
-	void cursorChanged(std::pair<long,long> oldValue);
+			// Occurs when current frame cursor changes.
+			void cursorChanged(std::pair<long, long> oldValue);
 
-	// Occurs when current marker selection changed.
-	void currentMarkerIndChanged();
+			// Occurs when current marker selection changed.
+			void currentMarkerIndChanged();
 
-	// Occurs when the index of current playing sample changes.
-	void playingSampleIndChanged(long oldPlayingSampleInd);
+			// Occurs when the index of current playing sample changes.
+			void playingSampleIndChanged(long oldPlayingSampleInd);
 public:
 	SpeechTranscriptionViewModel();
 	void init(std::shared_ptr<SharedServiceProvider> serviceProvider);
 
-    void loadAnnotAndAudioFileRequest();
+	void loadAnnotAndAudioFileRequest();
 
+	// Returns the ordered (first <= second) range of samples to process.
+	// outLeftMarkerInd (may be null): returns the index of current segment's left marker.
+	std::tuple<long, long> getSampleRangeToPlay(long curSampleInd, SegmentStartFrameToPlayChoice startFrameChoice, int* outLeftMarkerInd = nullptr);
+
+#if PG_HAS_PORTAUDIO
+public:
 	// Plays the current segment of audio.
 	// restoreCurFrameInd=true, if current frame must be restored when playing finishes.
 	// The audio samples to play must exist during the process of playing.
 	void soundPlayerPlay(const short* audioSouce, long startPlayingFrameInd, long finishPlayingFrameInd, bool restoreCurFrameInd);
-	
-	// Returns the ordered (first <= second) range of samples to process.
-	// outLeftMarkerInd (may be null): returns the index of current segment's left marker.
-	std::tuple<long, long> getSampleRangeToPlay(long curSampleInd, SegmentStartFrameToPlayChoice startFrameChoice, int* outLeftMarkerInd = nullptr);
 
 	void soundPlayerPlayCurrentSegment(SegmentStartFrameToPlayChoice startFrameChoice);
 	void soundPlayerPause();
@@ -139,7 +143,38 @@ public:
 
 	// updateViewportOffset is true to keep viewport above the playing caret.
 	void setPlayingSampleInd(long value, bool updateViewportOffset);
+private:
+	// Represents internal audio player's data.
+	// The range (StartPlayingFrameInd;FinishPlayingFrameInd) of frames is played.
+	struct SoundPlayerData
+	{
+		SpeechTranscriptionViewModel* transcriberViewModel;
+		const short* AudioSouce;
+		long CurPlayingFrameInd;
 
+#if PG_DEBUG
+		// used to restore cursor to initial position
+		long StartPlayingFrameInd; // is not changed when playing
+#endif
+
+								   // used to determine when to stop playing
+		long FinishPlayingFrameInd; // is not changed when playing
+
+									// True to move the cursor to the last playing sample index when playing stops.
+		bool MoveCursorToLastPlayingPosition = false;
+
+		PaStream *stream;
+		std::atomic<bool> allowPlaying;
+	};
+	SoundPlayerData soundPlayerData_;
+	std::atomic<bool> isPlaying_ = false;
+	long playingSampleInd_ = PticaGovorun::NullSampleInd; // the plyaing sample or -1 if audio is not playing
+#else
+	bool soundPlayerIsPlaying() const { return false; }
+	long playingSampleInd() const { return PticaGovorun::NullSampleInd; }
+#endif
+
+public:
 	//
 	void saveAudioMarkupToXml();
 
@@ -156,10 +191,10 @@ public:
 
 	// The document position (in pixels) which is shown in a viewer. Vary in [0; docWidthPix()] range.
 	float docOffsetX() const;
-    void setDocOffsetX(float docOffsetXPix);
+	void setDocOffsetX(float docOffsetXPix);
 
 	// Width of the document (in pixels).
-    float docWidthPix() const;
+	float docWidthPix() const;
 
 	bool phoneRulerVisible() const;
 
@@ -189,7 +224,7 @@ private:
 	float docPaddingPix_ = 100;
 	bool phoneRulerVisible_ = false;
 	QSizeF viewportSize_;
-	
+
 public:
 	// Returns first visible sample which is at docOffsetX position.
 	float docPosXToSampleInd(float docPosX) const;
@@ -219,7 +254,7 @@ public: // current sample
 	void setLastMousePressPos(const QPointF& localPos, bool isShiftPressed);
 	long currentSampleInd() const;
 	std::pair<long, long> cursor() const;
-	
+
 	// Returns a pair of indices specifying current cursor, so that start <= end.
 	std::pair<long, long> cursorOrdered() const;
 	TranscriberCursorKind cursorKind() const;
@@ -229,7 +264,7 @@ private:
 	void setCursorInternal(long curSampleInd, bool updateCurrentMarkerInd, bool updateViewportOffset);
 	void setCursorInternal(std::pair<long, long> value, bool updateCurrentMarkerInd, bool updateViewportOffset);
 private:
-		
+
 	// The range of samples to perform action on.
 	// when user clicks on the screen the first value is updated
 	// if user selects the region, the second value is updated
@@ -265,7 +300,7 @@ public:
 
 	const wv::slice<const DiagramSegment> diagramSegments() const;
 	void collectDiagramSegmentIndsOverlappingRange(std::pair<long, long> samplesRange, std::vector<int>& diagElemInds);
-	
+
 	// returns true if something was deleted
 	bool deleteDiagramSegmentsAtCursor(std::pair<long, long> samplesRange);
 private:
@@ -275,10 +310,10 @@ public:
 	const PticaGovorun::SpeechAnnotation& speechAnnotation() const;
 	const std::vector<PticaGovorun::TimePointMarker>& frameIndMarkers() const;
 	void setCurrentMarkerSpeaker(const std::wstring& speakerBriefId);
-	
+
 	template <typename MarkerPred>
 	void transformMarkersIf(const std::vector<PticaGovorun::TimePointMarker>& markers, std::vector<MarkerRefToOrigin>& markersOfInterest, MarkerPred canSelectMarker);
-	
+
 	void insertNewMarkerAtCursorRequest();
 
 	void insertNewMarker(const PticaGovorun::TimePointMarker& marker, bool updateCursor, bool updateViewportOffset);
@@ -351,7 +386,7 @@ public:
 private:
 	std::shared_ptr<PticaGovorun::PhoneticDictionaryViewModel> phoneticDictViewModel_;
 	std::shared_ptr<SpeechData> speechData_;
-	
+
 public:
 	void setNotificationService(std::shared_ptr<VisualNotificationService>);
 	void nextNotification(const QString& message) const;
@@ -361,33 +396,7 @@ private:
 private:
 	std::vector<short> audioSamples_;
 	float audioFrameRate_; // frame (sample) rate of current audio
-    QString annotFilePathAbs_; // abs path to speech annotation (xml) file
-
-	// Represents internal audio player's data.
-	// The range (StartPlayingFrameInd;FinishPlayingFrameInd) of frames is played.
-	struct SoundPlayerData
-	{
-		SpeechTranscriptionViewModel* transcriberViewModel;
-		const short* AudioSouce;
-		long CurPlayingFrameInd;
-
-#if PG_DEBUG
-		// used to restore cursor to initial position
-		long StartPlayingFrameInd; // is not changed when playing
-#endif
-
-		// used to determine when to stop playing
-		long FinishPlayingFrameInd; // is not changed when playing
-
-		// True to move the cursor to the last playing sample index when playing stops.
-		bool MoveCursorToLastPlayingPosition = false;
-
-		PaStream *stream;
-		std::atomic<bool> allowPlaying;
-	};
-	SoundPlayerData soundPlayerData_;
-	std::atomic<bool> isPlaying_ = false;
-	long playingSampleInd_ = PticaGovorun::NullSampleInd; // the plyaing sample or -1 if audio is not playing
+	QString annotFilePathAbs_; // abs path to speech annotation (xml) file
 
 	// recognition
 #ifdef PG_HAS_JULIUS
@@ -398,7 +407,7 @@ private:
 	std::map<std::wstring, std::vector<std::string>> wordToPhoneListAuxiliaryDict_;
 #endif
 	std::vector<short> audioSegmentBuffer_; // the buffer to keep the padded audio segments
-	
+
 	// number of padding silence samples to the left and right of audio segment
 	// The silence prefix/suffix for audio is equal across all recognizers.
 	size_t silencePadAudioSamplesCount_ = 0; // pad with couple of windows of FrameSize
