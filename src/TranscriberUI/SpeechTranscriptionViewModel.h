@@ -10,7 +10,6 @@
 #include <portaudio.h>
 
 #include "XmlAudioMarkup.h"
-#include "MLUtils.h"
 #include "JuliusToolNativeWrapper.h"
 #include "SpeechAnnotation.h"
 #include "SpeechProcessing.h"

@@ -188,7 +188,6 @@ namespace PticaGovorun
 			const std::unordered_set<std::wstring>& processedWords);
 
 		void gatherWordPartsSequenceUsage(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess);
-		void gatherWordPartsSequenceUsageFullSent(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess);
 
 		const WordsUsageInfo& wordUsage() const;
 		WordsUsageInfo& wordUsage();

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <functional>
 #include "SpeechAnnotation.h"
 #include <QDir>

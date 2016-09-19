@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "SphinxModel.h"
 #include <vector>
 #include <set>
@@ -1447,8 +1446,7 @@ namespace PticaGovorun
 				std::wcerr << errMsg << std::endl;
 				return;
 			}
-			OutputDebugStringW(dictPath);
-			OutputDebugStringW(L"\n");
+			std::wcout <<dictPath <<std::endl;
 			declinationFileCount++;
 			if (false && declinationFileCount <= 3)
 				break;
@@ -1522,9 +1520,7 @@ namespace PticaGovorun
 		long totalPreSplitWords = 0;
 
 		std::chrono::time_point<Clock> now1 = Clock::now();
-		// old=gatherWordPartsSequenceUsage
-		// new=gatherWordPartsSequenceUsageFullSent
-		phoneticSplitter.gatherWordPartsSequenceUsageFullSent(txtDir.c_str(), totalPreSplitWords, maxFilesToProcess);
+		phoneticSplitter.gatherWordPartsSequenceUsage(txtDir.c_str(), totalPreSplitWords, maxFilesToProcess);
 		std::chrono::time_point<Clock> now2 = Clock::now();
 		auto elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
 		std::wcout << L"gatherWordPartsSequenceUsage took=" << elapsedSec << L"s" << std::endl;

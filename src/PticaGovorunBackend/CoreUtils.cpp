@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <ctime> // time_t
 #include <array>
 #include "CoreUtils.h"

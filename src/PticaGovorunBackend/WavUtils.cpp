@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <array>
 #include <QString>
 #if PG_HAS_LIBSNDFILE

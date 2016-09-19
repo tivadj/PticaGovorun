@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <regex>
 #include <memory>
 #include <cctype> // std::isalpha
@@ -9,7 +8,6 @@
 #include "SpeechProcessing.h"
 #include "XmlAudioMarkup.h"
 #include "WavUtils.h"
-#include "MLUtils.h"
 #include "JuliusToolNativeWrapper.h"
 #include "InteropPython.h"
 #include "PhoneticService.h"

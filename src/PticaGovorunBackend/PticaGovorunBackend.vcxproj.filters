@@ -21,9 +21,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SoundUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="XmlAudioMarkup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -40,9 +37,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PhoneAlignment.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MLUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WavUtils.h">
@@ -95,16 +89,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PticaGovorunBackend.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="XmlAudioMarkup.cpp">
@@ -117,9 +102,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpeechProcessing.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MLUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WavUtils.cpp">

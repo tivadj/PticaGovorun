@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -32,8 +31,9 @@ namespace RunBuildLanguageModelNS
 	{
 		QXmlStreamReader xml;
 
-		std::vector<wv::slice<wchar_t>> words;
+		std::vector<RawTextRun> words;
 		words.reserve(64);
+		std::vector<wchar_t> sentBuff;
 		TextParser wordsReader;
 
 		QString textFilesDirQ = QString::fromStdWString(textFilesDir);
@@ -70,97 +70,23 @@ namespace RunBuildLanguageModelNS
 					//      the function below will concatenate the lines. For now, fix LF->CRLF for such files externally
 					QStringRef elementText = xml.text();
 
-					wv::slice<wchar_t> textToParse = wv::make_view((wchar_t*)elementText.data(), elementText.size());
+					sentBuff.clear();
+					boost::wstring_view textToParse = toWStringRef(elementText, sentBuff);
 					wordsReader.setInputText(textToParse);
 
 					// extract all sentences from paragraph
 					while (true)
 					{
 						words.clear();
-						if (!wordsReader.parseSentence(words))
+						if (!wordsReader.parseTokensTillDot(words))
 							break;
 
-						for (int i = 0; i < words.size(); ++i)
+						for (const auto& run : words)
 						{
-							const wv::slice<wchar_t>& wordSlice = words[i];
-							PG_Assert(!wordSlice.empty());
-
-							// keep ukrainian words only
-							//auto filterOutWord = [](wv::slice<wchar_t> word)
-							//{
-							//	for (size_t charInd = 0; charInd < word.size(); ++charInd)
-							//	{
-							//		wchar_t ch = word[charInd];
-							//		bool isDigit = isDigitChar(ch);
-							//		//bool isLatin = isEnglishChar(ch);
-							//		bool isSureLatin = isExclusiveEnglishChar(ch);
-							//		bool isSureRus = isExclusiveRussianChar(ch);
-							//		//if (isDigit || isLatin || isSureRus)
-							//		if (isDigit || isSureLatin || isSureRus)
-							//			return true;
-							//	}
-							//	return false;
-							//};
-							//if (filterOutWord(wordSlice))
-							//{
-							//	::OutputDebugStringW(toString(wordSlice).c_str());
-							//	::OutputDebugStringW(L"\n");
-							//	continue;
-							//}
-
-							auto wordCharUsage = [](wv::slice<wchar_t> word, int& digitsCount,
-								int& engCount, int& exclEngCount,
-								int& rusCount, int& exclRusCount,
-								int& hyphenCount)
-							{
-								for (size_t charInd = 0; charInd < word.size(); ++charInd)
-								{
-									wchar_t ch = word[charInd];
-									bool isDigit = isDigitChar(ch);
-									bool isEng = isEnglishChar(ch);
-									bool isExclEng = isExclusiveEnglishChar(ch);
-									bool isRus = isRussianChar(ch);
-									bool isExclRus = isExclusiveRussianChar(ch);
-									if (isDigit)
-										digitsCount++;
-									if (isEng)
-										engCount++;
-									if (isExclEng)
-										exclEngCount++;
-									if (isRus)
-										rusCount++;
-									if (isExclRus)
-										exclRusCount++;
-									if (ch == L'-' || ch == L'\'')
-										hyphenCount++;
-								}
-							};
-							int digitsCount = 0;
-							int engCount = 0;
-							int exclEngCount = 0;
-							int rusCount = 0;
-							int exclRusCount = 0;
-							int hyphenCount = 0;
-							wordCharUsage(wordSlice, digitsCount, engCount, exclEngCount, rusCount, exclRusCount, hyphenCount);
-							if (digitsCount > 0 || exclEngCount > 0 || exclRusCount > 0)
-							{
-								if (digitsCount == wordSlice.size() ||  // number
-									(exclEngCount > 0 && (engCount + hyphenCount) == wordSlice.size()) || // english word
-									(exclRusCount > 0 && (rusCount + hyphenCount) == wordSlice.size())    // russian word
-								   )
-								{
-									// do not even print the skipped word
-									continue;
-								}
-								else
-								{
-									::OutputDebugStringW(toString(wordSlice).c_str());
-									::OutputDebugStringW(L"\n");
-								}
+							if (run.Str.empty())
 								continue;
-							}
 
-							std::wstring str = toString(wordSlice);
+							std::wstring str = toString(run.Str);
 
 							const WordPart* wordPart = wordUsage.getOrAddWordPart(str, WordPartSide::WholeWord);
 							

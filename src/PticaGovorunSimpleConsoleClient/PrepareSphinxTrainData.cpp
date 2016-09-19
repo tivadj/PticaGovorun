@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "SphinxModel.h"
 #include <iostream>
 #include <QString>

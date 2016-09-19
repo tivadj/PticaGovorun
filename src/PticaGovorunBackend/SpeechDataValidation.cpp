@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <chrono>
 #include "SpeechDataValidation.h"
 #include "PhoneticService.h"

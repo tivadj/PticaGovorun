@@ -132,7 +132,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;PGAPI_EXPORTS;_CRT_SECURE_NO_WARNINGS;_DEBUG;_WINDOWS;_USRDLL;PTICAGOVORUNBACKEND_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -146,7 +146,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;PGAPI_EXPORTS;_CRT_SECURE_NO_WARNINGS;_DEBUG;_WINDOWS;_USRDLL;PTICAGOVORUNBACKEND_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -161,7 +161,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -179,7 +179,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -206,14 +206,12 @@
     <ClInclude Include="InteropPython.h" />
     <ClInclude Include="JuliusToolNativeWrapper.h" />
     <ClInclude Include="LangStat.h" />
-    <ClInclude Include="MLUtils.h" />
     <ClInclude Include="SpeechDataValidation.h" />
     <ClInclude Include="SphinxModel.h" />
     <ClInclude Include="TextProcessing.h" />
     <ClInclude Include="PhoneAlignment.h" />
     <ClInclude Include="PhoneticService.h" />
     <ClInclude Include="PticaGovorunCore.h" />
-    <ClInclude Include="SoundUtils.h" />
     <ClInclude Include="SpeechAnnotation.h" />
     <ClInclude Include="SpeechProcessing.h" />
     <ClInclude Include="stdafx.h" />
@@ -246,7 +244,6 @@
     <ClCompile Include="InteropPython.cpp" />
     <ClCompile Include="JuliusToolNativeWrapper.cpp" />
     <ClCompile Include="LangStat.cpp" />
-    <ClCompile Include="MLUtils.cpp" />
     <ClCompile Include="PhoneticSerializationXml.cpp" />
     <ClCompile Include="PhoneticStress.cpp" />
     <ClCompile Include="SpeechDataValidation.cpp" />
@@ -254,16 +251,8 @@
     <ClCompile Include="TextProcessing.cpp" />
     <ClCompile Include="PhoneAlignment.cpp" />
     <ClCompile Include="PhoneticService.cpp" />
-    <ClCompile Include="PticaGovorunBackend.cpp" />
-    <ClCompile Include="SoundUtils.cpp" />
     <ClCompile Include="SpeechAnnotation.cpp" />
     <ClCompile Include="SpeechProcessing.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="TextProcessingSerializationXml.cpp" />
     <ClCompile Include="WavUtils.cpp" />
     <ClCompile Include="XmlAudioMarkup.cpp" />

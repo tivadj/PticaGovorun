@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ArpaLanguageModel.h"
 #include <iostream>
 #include <QFile>

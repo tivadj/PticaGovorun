@@ -31,7 +31,6 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>_USE_MATH_DEFINES;NOMINMAX;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions>_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions> <!--allow hash_set-->
       <PreprocessorDefinitions>_HAS_AUTO_PTR_ETC;%(PreprocessorDefinitions)</PreprocessorDefinitions> <!--for now, enable old std::functional stuff-->
       
 
@@ -39,6 +38,8 @@
       <PreprocessorDefinitions>PG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions>PG_HAS_OPENCV999;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions>PG_HAS_FLAC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PG_HAS_PORTAUDIO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PG_HAS_LIBSNDFILE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions>PG_HAS_SPHINX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
       <!-- NOTE: Use MSBuild_PG_HAS_JULIUS to define C++ PG_HAS_JULIUS definition.

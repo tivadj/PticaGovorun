@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <vector>
 #include <iostream>
 #include <cmath> // M_PI
@@ -9,6 +8,7 @@
 namespace ComputeSpeechMfccTesterNS
 {
 	using namespace PticaGovorun;
+#ifdef PG_HAS_JULIUS
 	void computeMfccOnSpeechTest()
 	{
 		// initialize Julius
@@ -46,6 +46,7 @@ namespace ComputeSpeechMfccTesterNS
 			return;
 		}
 	}
+#endif
 
 	void PG_ComputeMfccOnSpeechTest()
 	{

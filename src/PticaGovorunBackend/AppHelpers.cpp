@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "AppHelpers.h"
 #include <QApplication>
 #include <QDir>

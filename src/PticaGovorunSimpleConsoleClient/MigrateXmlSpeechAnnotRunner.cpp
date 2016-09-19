@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <QDir>
 #include <QDirIterator>
 #include <QDebug>

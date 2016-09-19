@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "PhoneticService.h"
 #include <array>
 #include <QDirIterator>
@@ -3361,25 +3360,25 @@ namespace PticaGovorun
 				//std::wcout << L"word finished diffPrefixCount=" << diffPrefixCount << std::endl;
 			}
 			else
-				::DebugBreak(); // unknown word class
+				PG_Assert(false); // unknown word class
 		}
 		const auto& m1 = participleSuffixToWord;
 		const auto& m2 = participleSuffixToWord2;
-		OutputDebugStringW(L"PARTICIPLE\n");
+		std::wcout << L"PARTICIPLE\n";
 		for (const auto& pair : participleSuffixToWord)
 		{
-			OutputDebugStringW(pair.first.c_str());
-			OutputDebugStringW(L"\t");
-			OutputDebugStringW(pair.second.c_str());
-			OutputDebugStringW(L"\n");
+			std::wcout << pair.first.c_str();
+			std::wcout << L"\t";
+			std::wcout << pair.second.c_str();
+			std::wcout << L"\n";
 		}
-		OutputDebugStringW(L"VERBALADVERB\n");
+		std::wcout << L"VERBALADVERB\n";
 		for (const auto& pair : participleSuffixToWord2)
 		{
-			OutputDebugStringW(pair.first.c_str());
-			OutputDebugStringW(L"\t");
-			OutputDebugStringW(pair.second.c_str());
-			OutputDebugStringW(L"\n");
+			std::wcout << pair.first.c_str();
+			std::wcout <<  L"\t";
+			std::wcout << pair.second.c_str();
+			std::wcout << L"\n";
 		}
 	}
 
@@ -3399,12 +3398,12 @@ namespace PticaGovorun
 		{
 			return a.UsedCount > b.UsedCount;
 		});
-		OutputDebugStringW(L"Suffix usage statistics:\n");
+		std::wcout << L"Suffix usage statistics:\n";
 		for (const auto& suffixEnd : sureSuffixesCopy)
 		{
-			OutputDebugStringW(suffixEnd.MatchSuffix.data());
-			OutputDebugStringW(L"\t");
-			OutputDebugStringW(QString::number(suffixEnd.UsedCount).toStdWString().c_str());
+			std::wcout << suffixEnd.MatchSuffix.data();
+			std::wcout << L"\t";
+			std::wcout << QString::number(suffixEnd.UsedCount).toStdWString().c_str();
 
 			wchar_t* classStr = L"";
 			if (suffixEnd.WordClass == WordClass::Verb)
@@ -3415,9 +3414,9 @@ namespace PticaGovorun
 				classStr = L"adj";
 			else if (suffixEnd.WordClass == WordClass::Adverb)
 				classStr = L"adverb";
-			OutputDebugStringW(L" ");
-			OutputDebugStringW(classStr);
-			OutputDebugStringW(L"\n");
+			std::wcout << L" ";
+			std::wcout << classStr;
+			std::wcout << L"\n";
 		}
 	}
 
@@ -3452,162 +3451,6 @@ namespace PticaGovorun
 	void UkrainianPhoneticSplitter::setSentParser(std::shared_ptr<SentenceParser> sentParser)
 	{
 		sentParser_ = sentParser;
-	}
-
-	void UkrainianPhoneticSplitter::gatherWordPartsSequenceUsage(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess)
-	{
-		QFile corpusFile;
-		QTextStream corpusStream;
-		if (outputCorpus_)
-		{
-			corpusFile.setFileName(toQString(corpusFilePath_.wstring()));
-			if (!corpusFile.open(QIODevice::WriteOnly | QIODevice::Text))
-				return;
-			corpusStream.setDevice(&corpusFile);
-			corpusStream.setCodec("UTF-8");
-			log_ = &corpusStream;
-		}
-
-		QXmlStreamReader xml;
-		totalPreSplitWords = 0;
-
-		std::vector<wv::slice<wchar_t>> words;
-		words.reserve(64);
-		std::vector<const WordPart*> wordParts;
-		wordParts.reserve(1024);
-		TextParser wordsReader;
-
-		QString textFilesDirQ = QString::fromStdWString(textFilesDir);
-		QDirIterator it(textFilesDirQ, QStringList() << "*.fb2", QDir::Files, QDirIterator::Subdirectories);
-		int processedFiles = 0;
-		while (it.hasNext())
-		{
-			if (maxFileToProcess != -1 && processedFiles == maxFileToProcess)
-				break;
-
-			//if (processedFiles >= 2) break; // process less work
-
-			QString txtPath = it.next();
-			if (txtPath.contains("BROKEN", Qt::CaseSensitive))
-			{
-				std::wcout << L"SKIPPED " << txtPath.toStdWString() <<std::endl;
-				continue;
-			}
-			std::wcout << txtPath.toStdWString() <<std::endl;
-
-			//
-			QFile file(txtPath);
-			if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-			{
-				std::wcerr << L"Can't open file " << txtPath.toStdWString() <<std::endl;
-				return;
-			}
-
-			// parse file
-			xml.setDevice(&file);
-
-			bool reachedBody = false;
-			while (!xml.atEnd())
-			{
-				QXmlStreamReader::TokenType token = xml.readNext();
-
-				auto nodeName = xml.name();
-
-				if (xml.isStartElement() && xml.name() == "body")
-				{
-					reachedBody = true;
-					continue;
-				}
-
-				//if (reachedBody && xml.isCharacters())
-				if (xml.isCharacters())
-				{
-					// BUG: if the lines inside the text are separated using LF only on windows machines
-					//      the function below will concatenate the lines. For now, fix LF->CRLF for such files externally
-					QStringRef elementText = xml.text();
-
-					wv::slice<wchar_t> textToParse = wv::make_view((wchar_t*)elementText.data(), elementText.size());
-					wordsReader.setInputText(textToParse);
-
-					// extract all sentences from paragraph
-					while (true)
-					{
-						words.clear();
-						if (!wordsReader.parseSentence(words))
-							break;
-						if (words.empty())
-							continue;
-
-						std::vector<RawTextLexeme> lexemes;
-						lexemes.reserve(words.size());
-						analyzeSentence(words, lexemes);
-
-						AbbreviationExpanderUkr abbrExp;
-						abbrExp.expandInplace(0, lexemes);
-
-						bool isUkr = checkGoodSentenceUkr(lexemes);
-						if (!isUkr)
-						{
-							if (outputCorpus_) // output sentence with bad words
-							{
-								corpusStream << "BAD: ";
-								for (wv::slice<wchar_t> word : words)
-								{
-									corpusStream << toQString(boost::wstring_view(word.data(), word.size()));
-									corpusStream << " ";
-								}
-								//for (const WordPart* wp : wordPartsStraight)
-								//{
-								//	printWordPart(wp, corpusStream);
-								//	corpusStream << " ";
-								//}
-								corpusStream << "\n";
-							}
-							continue;
-						}
-						else
-						{
-							if (outputCorpus_)
-							{
-								for (const RawTextLexeme& lex : lexemes)
-								{
-									corpusStream << toQString(lex.ValueStr);
-									corpusStream << " ";
-								}
-								corpusStream << "\n";
-							}
-						}
-
-						{
-							// augment the sentence with start/end terminators
-							wordParts.push_back(sentStartWordPart_);
-
-							selectWordParts(lexemes, wordParts, totalPreSplitWords);
-
-							// augment the sentence with start/end terminators
-							wordParts.push_back(sentEndWordPart_);
-						}
-
-						// calculate statistic only if enough word parts is accumulated
-						size_t calcStatWordPartsCount = 1000000;
-						if (wordParts.size() > calcStatWordPartsCount)
-						{
-							calcNGramStatisticsOnWordPartsBatch(wordParts);
-						}
-					}
-				}
-			}
-			
-			// flush the word parts buffer
-			calcNGramStatisticsOnWordPartsBatch(wordParts);
-
-			if (xml.hasError())
-			{
-				std::wcerr <<"XmlError: " << xml.errorString().toStdWString() << std::endl;
-			}
-
-			++processedFiles;
-		}
 	}
 
 	/// Reads text from FB2 documents. FB2 is an xml format.
@@ -3660,7 +3503,7 @@ namespace PticaGovorun
 		std::wstring errorStdWString() const { return xml_.errorString().toStdWString(); }
 	};
 
-	void UkrainianPhoneticSplitter::gatherWordPartsSequenceUsageFullSent(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess)
+	void UkrainianPhoneticSplitter::gatherWordPartsSequenceUsage(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess)
 	{
 		QFile corpusFile;
 		QTextStream corpusStream;

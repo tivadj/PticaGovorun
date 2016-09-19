@@ -8,7 +8,6 @@
 #include <QSize>
 #include <QFileDialog>
 #include <QTextDocumentFragment>
-#include "SoundUtils.h"
 #include "PhoneticDictionaryDialog.h"
 #include "SpeechTranscriptionWidget.h"
 #include "ComponentsInfrastructure.h"

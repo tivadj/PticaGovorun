@@ -6,7 +6,7 @@ namespace PticaGovorunTests
 {
 	using namespace PticaGovorun;
 
-	bool parseTillDotNoSpace(TextParserNew& wordsReader, std::vector<RawTextRun>& words)
+	bool parseTillDotNoSpace(TextParser& wordsReader, std::vector<RawTextRun>& words)
 	{
 		bool op = wordsReader.parseTokensTillDot(words);
 		removeWhitespaceLexemes(words);
@@ -15,7 +15,7 @@ namespace PticaGovorunTests
 
 	struct TextParseRunsTest : testing::Test
 	{
-		TextParserNew wordsReader;
+		TextParser wordsReader;
 		std::vector<RawTextRun> words;
 	};
 

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "PhoneAlignment.h"
 #include <limits>
 #include "assertImpl.h"

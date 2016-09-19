@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <iostream>
 #include <string>
 #include <QDebug>
@@ -45,6 +44,6 @@ namespace UkrainianPhoneticSplitterNS
 		s.corpusFilePath_ = L"TmpCorpus.txt";
 		s.outputCorpusNormaliz_ = true;
 		s.corpusNormalizFilePath_ = L"TmpCorpusNormaliz.txt";
-		s.gatherWordPartsSequenceUsageFullSent(dirPath.toStdWString().c_str(), totalPreSplitWords, -1);
+		s.gatherWordPartsSequenceUsage(dirPath.toStdWString().c_str(), totalPreSplitWords, -1);
 	}
 }

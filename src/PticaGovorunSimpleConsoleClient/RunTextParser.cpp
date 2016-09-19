@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <iostream>
 #include <string>
 #include <QDebug>
@@ -26,8 +25,9 @@ namespace RunTextParserNS
 
 		QXmlStreamReader xml(&file);
 
-		std::vector<wv::slice<wchar_t>> words;
+		std::vector<RawTextRun> words;
 		words.reserve(64);
+		std::vector<wchar_t> sentBuff;
 		TextParser wordsReader;
 
 		//
@@ -55,14 +55,15 @@ namespace RunTextParserNS
 			{
 				QStringRef elementText = xml.text();
 
-				wv::slice<wchar_t> textToParse = wv::make_view((wchar_t*)elementText.data(), elementText.size());
+				sentBuff.clear();
+				boost::wstring_view textToParse = toWStringRef(elementText, sentBuff);
 				wordsReader.setInputText(textToParse);
 
 				// extract all sentences from paragraph
 				while (true)
 				{
 					words.clear();
-					if (!wordsReader.parseSentence(words))
+					if (!wordsReader.parseTokensTillDot(words))
 						break;
 
 					if (words.empty())
@@ -71,13 +72,13 @@ namespace RunTextParserNS
 					dumpFileStream << "<s>";
 					if (!words.empty())
 					{
-						std::wstring str = toString(words[0]);
+						std::wstring str = toString(words[0].Str);
 						dumpFileStream << " " << QString::fromStdWString(str);
 					}
 					for (int i = 1; i < words.size(); ++i)
 					{
 						dumpFileStream << " ";
-						std::wstring str = toString(words[i]);
+						std::wstring str = toString(words[i].Str);
 						dumpFileStream << QString::fromStdWString(str);
 					}
 					dumpFileStream << " </s>" << endl;

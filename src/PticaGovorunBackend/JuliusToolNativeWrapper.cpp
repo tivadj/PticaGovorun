@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #ifdef PG_HAS_JULIUS
 #include <sstream>
 #include <memory> // std::unique_ptr

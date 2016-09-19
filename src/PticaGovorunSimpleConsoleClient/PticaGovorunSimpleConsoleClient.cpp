@@ -1,8 +1,4 @@
-﻿// PticaGovorunSimpleConsoleClient.cpp : Defines the entry point for the console application.
-//
-
-#include "stdafx.h"
-#include <iostream>
+﻿#include <iostream>
 #include <chrono> // std::chrono::system_clock
 #include <QtCore>
 #include <AppHelpers.h>
@@ -64,7 +60,7 @@ int mainCore(int argc, char* argv[])
 	return 0;
 }
 
-int _tmain(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 	typedef std::chrono::system_clock Clock;
 	std::chrono::time_point<Clock> now1 = Clock::now();

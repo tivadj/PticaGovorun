@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "PhoneticService.h"
 #include <unordered_map>
 #include <QFile>
