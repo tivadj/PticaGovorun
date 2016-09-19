@@ -40,10 +40,13 @@ namespace PticaGovorun
 	}
 }
 
+#if PG_HAS_OPENCV
+#include <opencv2/ml.hpp>
+#endif
+
 #ifdef PG_HAS_JULIUS
 #include <iostream>
 #include "SpeechProcessing.h"
-#include <opencv2/ml.hpp>
 #include "JuliusToolNativeWrapper.h"
 
 namespace PticaGovorun {
@@ -55,8 +58,10 @@ namespace PticaGovorun {
 	// features
 	std::map<int, std::map<std::string, std::vector<float>>> globalIdToPhoneNameToFeaturesVector_;
 
+#if PG_HAS_OPENCV
 	// classifiers
 	std::map<int, std::map<std::string, cv::Ptr<cv::ml::EM>>> globalPhoneNameToEMObj_;
+#endif
 
 	bool globalInitialized_ = false;
 	bool initialize()
@@ -232,7 +237,6 @@ namespace PticaGovorun {
 
 		return true;
 	}
-#endif
 
 	bool evaluateMonophoneClassifier(int classifierId, const float* features, int featuresCountPerFrame, int framesCount, int* phoneIdArray, float* logProbArray)
 	{
@@ -293,5 +297,6 @@ namespace PticaGovorun {
 
 		return true;
 	}
+#endif // PG_HAS_OPENCV
 }
-#endif
+#endif // PG_HAS_JULIUS

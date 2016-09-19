@@ -21,8 +21,9 @@ set(Boost_USE_STATIC_LIBS ON)
 option(WITH_FLAC "Enables reading of FLAC (Free Lossless Audio Codec) audio files (like WAV but with compression)" OFF)
 option(WITH_LIBSNDFILE "Enables reading/writing of WAV files" ON)
 option(WITH_PORTAUDIO "Enables playing audio in GUI projects" ON)
-option(WITH_JULIUS "Enables decoding speech audio using Julius library" OFF)
 option(WITH_SPHINX "Enables decoding speech audio using CMU PocketSphinx library" ON)
+option(WITH_JULIUS "Enables decoding speech audio using Julius library" OFF)
+option(WITH_ZLIB "Required by Julius" OFF)
 
 # Either LibSndFile or Flac must be enabled to read wav or flac files
 if (WITH_JULIUS)
@@ -31,6 +32,9 @@ if (WITH_JULIUS)
 	endif()
 	if (NOT WITH_PORTAUDIO)
 		message("Julius requires PortAudio library")
+	endif()
+	if (NOT WITH_ZLIB)
+		message("Julius requires ZLib library")
 	endif()
 endif()
 
@@ -49,8 +53,8 @@ if (WITH_LIBSNDFILE)
 	add_library(LibSndFile SHARED IMPORTED)
 	set_target_properties(LibSndFile PROPERTIES
 		INTERFACE_INCLUDE_DIRECTORIES "${LibSndFile_INCLUDE_DIR}"
-		IMPORTED_IMPLIB_DEBUG ${LibSndFile_LIB_DEBUG}
-		IMPORTED_IMPLIB_RELEASE ${LibSndFile_LIB_RELEASE}
+		IMPORTED_IMPLIB_DEBUG "${LibSndFile_LIB_DEBUG}"
+		IMPORTED_IMPLIB_RELEASE "${LibSndFile_LIB_RELEASE}"
 	)
 endif()
 
@@ -63,8 +67,8 @@ set (LibSampleRate_LIB_RELEASE "" CACHE PATH "")
 add_library(LibSampleRate SHARED IMPORTED)
 set_target_properties(LibSampleRate PROPERTIES
 	INTERFACE_INCLUDE_DIRECTORIES "${LibSampleRate_INCLUDE_DIR}"
-	IMPORTED_IMPLIB_DEBUG ${LibSampleRate_LIB_DEBUG}
-	IMPORTED_IMPLIB_RELEASE ${LibSampleRate_LIB_RELEASE}
+	IMPORTED_IMPLIB_DEBUG "${LibSampleRate_LIB_DEBUG}"
+	IMPORTED_IMPLIB_RELEASE "${LibSampleRate_LIB_RELEASE}"
 )
 
 # Flac library
@@ -103,27 +107,27 @@ if (WITH_PORTAUDIO)
 	add_library(PortAudio SHARED IMPORTED)
 	set_target_properties(PortAudio PROPERTIES
 		INTERFACE_INCLUDE_DIRECTORIES "${PortAudio_INCLUDE_DIRS}"
-		IMPORTED_IMPLIB_DEBUG ${PortAudio_LIB_DEBUG}
-		IMPORTED_IMPLIB_RELEASE ${PortAudio_LIB_RELEASE}
+		IMPORTED_IMPLIB_DEBUG "${PortAudio_LIB_DEBUG}"
+		IMPORTED_IMPLIB_RELEASE "${PortAudio_LIB_RELEASE}"
 	)
 endif()
 
 # Sphinx library
 if (WITH_SPHINX)
 	set(Sphinx_SphinxBase_INCLUDE_DIRS "" CACHE PATH "")
-	set(Sphinx_SphinxBase_LIB_DEBUG "" CACHE PATH "")
-	set(Sphinx_SphinxBase_LIB_RELEASE "" CACHE PATH "")
-	set(Sphinx_PocketSphinx_INCLUDE_DIRS "" CACHE PATHS "")
-	set(Sphinx_PocketSphinx_LIB_DEBUG "" CACHE PATHS  "")
-	set(Sphinx_PocketSphinx_LIB_RELEASE "" CACHE PATHS  "")
+	set(Sphinx_SphinxBase_LIB_DEBUG "" CACHE FILEPATH "")
+	set(Sphinx_SphinxBase_LIB_RELEASE "" CACHE FILEPATH "")
+	set(Sphinx_PocketSphinx_INCLUDE_DIRS "" CACHE PATH "")
+	set(Sphinx_PocketSphinx_LIB_DEBUG "" CACHE FILEPATH  "")
+	set(Sphinx_PocketSphinx_LIB_RELEASE "" CACHE FILEPATH  "")
 
 	add_definitions(-DPG_HAS_SPHINX)
 	
 	add_library(Sphinx_SphinxBase SHARED IMPORTED)
 	set_target_properties(Sphinx_SphinxBase PROPERTIES
 		INTERFACE_INCLUDE_DIRECTORIES "${Sphinx_SphinxBase_INCLUDE_DIRS}"
-		IMPORTED_IMPLIB_DEBUG ${Sphinx_SphinxBase_LIB_DEBUG}
-		IMPORTED_IMPLIB_RELEASE ${Sphinx_SphinxBase_LIB_RELEASE}
+		IMPORTED_IMPLIB_DEBUG "${Sphinx_SphinxBase_LIB_DEBUG}"
+		IMPORTED_IMPLIB_RELEASE "${Sphinx_SphinxBase_LIB_RELEASE}"
 		#IMPORTED_LOCATION_DEBUG ${Sphinx_SphinxBase_LIB_DEBUG} # NOTE: DLL location!
 		#IMPORTED_LOCATION_RELEASE ${Sphinx_SphinxBase_LIB_RELEASE}
 		)
@@ -131,21 +135,22 @@ if (WITH_SPHINX)
 	add_library(Sphinx_PocketSphinx SHARED IMPORTED)
 	set_target_properties(Sphinx_PocketSphinx PROPERTIES
 		INTERFACE_INCLUDE_DIRECTORIES "${Sphinx_PocketSphinx_INCLUDE_DIRS}"
-		IMPORTED_IMPLIB_DEBUG ${Sphinx_PocketSphinx_LIB_DEBUG}
-		IMPORTED_IMPLIB_RELEASE ${Sphinx_PocketSphinx_LIB_RELEASE}
+		IMPORTED_IMPLIB_DEBUG "${Sphinx_PocketSphinx_LIB_DEBUG}"
+		IMPORTED_IMPLIB_RELEASE "${Sphinx_PocketSphinx_LIB_RELEASE}"
 	)
 endif()
 
 # Julius4 library
 if (WITH_JULIUS)
 	set (Julius4_LibSent_INCLUDE_DIRS "" CACHE PATH "")
-	set (Julius4_LibSent_LIB_DEBUG "" CACHE PATH "")
-	set (Julius4_LibSent_LIB_RELEASE "" CACHE PATH "")
+	set (Julius4_LibSent_LIB_DEBUG "" CACHE FILEPATH "")
+	set (Julius4_LibSent_LIB_RELEASE "" CACHE FILEPATH "")
 	set (Julius4_LibJulius_INCLUDE_DIRS "" CACHE PATH "")
-	set (Julius4_LibJulius_LIB_DEBUG "" CACHE PATH "")
-	set (Julius4_LibJulius_LIB_RELEASE "" CACHE PATH "")
-	set (Julius4_Julius_LIB_DEBUG "" CACHE PATH "")
-	set (Julius4_Julius_LIB_RELEASE "" CACHE PATH "")
+	set (Julius4_LibJulius_LIB_DEBUG "" CACHE FILEPATH "")
+	set (Julius4_LibJulius_LIB_RELEASE "" CACHE FILEPATH "")
+	set (Julius4_Julius_INCLUDE_DIRS "" CACHE PATH "")
+	set (Julius4_Julius_LIB_DEBUG "" CACHE FILEPATH "")
+	set (Julius4_Julius_LIB_RELEASE "" CACHE FILEPATH "")
 
 	add_definitions(-DPG_HAS_JULIUS)
 
@@ -155,24 +160,43 @@ if (WITH_JULIUS)
 		INTERFACE_LINK_LIBRARIES "PortAudio;ZLib;ws2_32.lib" # TODO: ws2_32 is only for windows
 		#LINK_LIBRARIES "PortAudio;ZLib;ws2_32.lib" # doesn't work
 		#IMPORTED_LINK_DEPENDENT_LIBRARIES "PortAudio;ZLib;ws2_32.lib" # doesn't work
-		IMPORTED_IMPLIB_DEBUG ${Julius4_LibSent_LIB_DEBUG}
-		IMPORTED_IMPLIB_RELEASE ${Julius4_LibSent_LIB_RELEASE}
+		IMPORTED_IMPLIB_DEBUG "${Julius4_LibSent_LIB_DEBUG}"
+		IMPORTED_IMPLIB_RELEASE "${Julius4_LibSent_LIB_RELEASE}"
 		)
 
 	add_library(Julius4_LibJulius SHARED IMPORTED)
 	set_target_properties(Julius4_LibJulius PROPERTIES
 		INTERFACE_INCLUDE_DIRECTORIES "${Julius4_LibJulius_INCLUDE_DIRS}"
-		IMPORTED_IMPLIB_DEBUG ${Julius4_LibJulius_LIB_DEBUG}
-		IMPORTED_IMPLIB_RELEASE ${Julius4_LibJulius_LIB_RELEASE}
+		IMPORTED_IMPLIB_DEBUG "${Julius4_LibJulius_LIB_DEBUG}"
+		IMPORTED_IMPLIB_RELEASE "${Julius4_LibJulius_LIB_RELEASE}"
 		)
 
 	add_library(Julius4_Julius SHARED IMPORTED)
 	set_target_properties(Julius4_Julius PROPERTIES
-		IMPORTED_IMPLIB_DEBUG ${Julius4_Julius_LIB_DEBUG}
-		IMPORTED_IMPLIB_RELEASE ${Julius4_Julius_LIB_RELEASE}
+		INTERFACE_INCLUDE_DIRECTORIES "${Julius4_Julius_INCLUDE_DIRS}"
+		IMPORTED_IMPLIB_DEBUG "${Julius4_Julius_LIB_DEBUG}"
+		IMPORTED_IMPLIB_RELEASE "${Julius4_Julius_LIB_RELEASE}"
 		)
 endif()
 
+# ZLib library
+if (WITH_ZLIB)
+	set(ZLib_INCLUDE_DIRS "" CACHE PATH "")
+	set(ZLib_LIB_DEBUG "" CACHE FILEPATH "")
+	set(ZLib_LOCATION_DEBUG "" CACHE FILEPATH "")
+	set(ZLib_LIB_RELEASE "" CACHE FILEPATH "")
+	set(ZLib_LOCATION_RELEASE "" CACHE FILEPATH "")
+
+	add_library(ZLib SHARED IMPORTED)
+	set_target_properties(ZLib PROPERTIES
+		INTERFACE_INCLUDE_DIRECTORIES "${ZLib_INCLUDE_DIRS}"
+		INTERFACE_COMPILE_DEFINITIONS ZLIB_WINAPI
+		IMPORTED_IMPLIB_DEBUG "${ZLib_LIB_DEBUG}"
+		IMPORTED_LOCATION_DEBUG "${ZLib_LOCATION_DEBUG}"
+		IMPORTED_IMPLIB_RELEASE "${ZLib_LIB_RELEASE}"
+		IMPORTED_LOCATION_RELEASE "${ZLib_LOCATION_DEBUG}"
+	)
+endif()
 
 add_subdirectory(PticaGovorunBackend)
 add_subdirectory(TranscriberUI)

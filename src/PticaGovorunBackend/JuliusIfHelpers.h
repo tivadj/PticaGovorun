@@ -1,7 +1,7 @@
 #pragma once
 // Recog*
 //#include <julius/recog.h>
-#include "../../ThirdParty/julius4/libjulius/include/julius/julius.h"
+#include <julius/julius.h>
 
 #if defined JULIUSIFAPI_EXPORTS
 #define JULIUSIF_EXPORTS __declspec(dllexport)

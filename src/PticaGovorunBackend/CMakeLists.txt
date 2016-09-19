@@ -34,23 +34,6 @@ include_directories(${Boost_INCLUDE_DIR})
 include_directories(${QT_INCLUDES}) # ?? required?
 #add_definitions(${QT_DEFINITIONS})
 
-# ZLib library
-set(ZLib_INCLUDE_DIRS "" CACHE PATH "")
-set(ZLib_LIB_DEBUG "" CACHE PATH "")
-set(ZLib_LOCATION_DEBUG "" CACHE PATH "")
-set(ZLib_LIB_RELEASE "" CACHE PATH "")
-set(ZLib_LOCATION_RELEASE "" CACHE PATH "")
-
-add_library(ZLib SHARED IMPORTED)
-set_target_properties(ZLib PROPERTIES
-	INTERFACE_INCLUDE_DIRECTORIES "${ZLib_INCLUDE_DIRS}"
-	INTERFACE_COMPILE_DEFINITIONS ZLIB_WINAPI
-	IMPORTED_IMPLIB_DEBUG ${ZLib_LIB_DEBUG}
-	IMPORTED_LOCATION_DEBUG ${ZLib_LOCATION_DEBUG}
-	IMPORTED_IMPLIB_RELEASE ${ZLib_LIB_RELEASE}
-	IMPORTED_LOCATION_RELEASE ${ZLib_LOCATION_DEBUG}
-)
-
 #
 file(GLOB lib_srcs *.cpp)
 file(GLOB lib_hdrs *.h)
@@ -75,7 +58,12 @@ if (WITH_JULIUS)
 	target_link_libraries(PticaGovorunBackend
 			PRIVATE Julius4_LibSent
 			PRIVATE Julius4_LibJulius
-			PRIVATE Julius4_Julius)
+			PRIVATE Julius4_Julius
+			PRIVATE ZLib
+			)
+endif()
+if (WITH_ZLIB)
+	target_link_libraries(PticaGovorunBackend PRIVATE ZLib)
 endif()
 if (WITH_SPHINX)
 	target_link_libraries(PticaGovorunBackend
