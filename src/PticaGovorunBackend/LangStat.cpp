@@ -1,4 +1,5 @@
 #include <numeric>
+#include <functional>
 #include "LangStat.h"
 #include "assertImpl.h"
 #include "SphinxModel.h"
@@ -33,7 +34,7 @@ namespace PticaGovorun
 
 	size_t WordPart::hashKey() const
 	{
-		return stdext::hash_value(partSide()) ^ stdext::hash_value(partText());
+		return std::hash<size_t>{}((size_t)partSide()) ^ std::hash<std::wstring>{}(partText());
 	}
 
 	bool WordPart::removed() const

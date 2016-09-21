@@ -1,8 +1,8 @@
 #include "PhoneAlignment.h"
 #include <limits>
+#include <algorithm>
+#include <cstddef> // ptrdiff_t
 #include "assertImpl.h"
-
-using namespace std;
 
 namespace PticaGovorun {
 
@@ -11,11 +11,8 @@ PhoneAlignment::PhoneAlignment(size_t statesCount, size_t framesCount, std::func
     framesCount_(framesCount),
     emitFun_(emitFun)
 {
-    if (statesCount_ < 0)
-        throw std::exception("statesCount must be >= 1");
-    if (framesCount < statesCount_)
-        throw std::exception("number of frames must be >= number of states");
-
+	PG_Assert2(statesCount_ >= 0, "statesCount must be >= 1");
+	PG_Assert2(framesCount >= statesCount_, "number of frames must be >= number of states");
     // assert: all emitting probabilities >= 0
 }
 
@@ -84,7 +81,7 @@ void PhoneAlignment::populateOptimalAlignment(std::vector<std::tuple<size_t,size
     {
         if (stateInd == 0 && timeInd == 0) // traced to the beginning
         {
-            auto seg = make_tuple(timeInd, segmentEnd);
+            auto seg = std::make_tuple(timeInd, segmentEnd);
             resultAlignedStates.push_back(seg);
 
             break;
@@ -102,7 +99,7 @@ void PhoneAlignment::populateOptimalAlignment(std::vector<std::tuple<size_t,size
             {
                 // move to the next state
                 // current segment is built
-                auto seg = make_tuple(timeInd, segmentEnd);
+                auto seg = std::make_tuple(timeInd, segmentEnd);
                 resultAlignedStates.push_back(seg);
 
                 segmentEnd = timeInd - 1; // move (left) to the next segment
@@ -113,7 +110,7 @@ void PhoneAlignment::populateOptimalAlignment(std::vector<std::tuple<size_t,size
         --timeInd;
     }
 
-    reverse(begin(resultAlignedStates), end(resultAlignedStates));
+	std::reverse(begin(resultAlignedStates), end(resultAlignedStates));
 }
 
 void PhoneAlignment::populateStateDistributions(const std::vector<std::tuple<size_t,size_t>>& statesAlignment, size_t tailSize,

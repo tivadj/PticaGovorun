@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include <vector>
 #include <unordered_map>
 #include <memory>
@@ -23,7 +23,7 @@ namespace PticaGovorun
 		Alpha,       // alphabetical letters
 		Digit,      // digits
 		Punctuation, // any sort of single char puntation ,-;:
-		PunctuationStopSentence, // single char punctuation which can be at the end of a sentence .!?…
+		PunctuationStopSentence, // single char punctuation which can be at the end of a sentence .!?вЂ¦
 		Whitespace   // space, tag, CR=\r, LF=\n
 	};
 
@@ -93,30 +93,30 @@ namespace PticaGovorun
 	inline std::wstring toString(boost::wstring_view wordSlice) { return wordSlice.to_string(); }
 
 	/// Converts to lower case.
-	inline wchar_t pgToLower(wchar_t x);
+	wchar_t pgToLower(wchar_t x);
 	void pgToLower(boost::wstring_view x, std::wstring* result);
 	
-	/// токсичний -> toksychnyj
+	/// С‚РѕРєСЃРёС‡РЅРёР№ -> toksychnyj
 	PG_EXPORTS void transliterateUaToEn(boost::wstring_view strUa, std::wstring* result);
 
 	PG_EXPORTS bool isApostrophe(wchar_t ch);
-	PG_EXPORTS inline bool isDigitChar(wchar_t ch);
+	PG_EXPORTS bool isDigitChar(wchar_t ch);
 	/// Whether the letter is one of Roman Numerals (I,V,X,L,C,D,M).
-	PG_EXPORTS inline bool isRomanNumeral(wchar_t ch);
+	PG_EXPORTS bool isRomanNumeral(wchar_t ch);
 
-	PG_EXPORTS inline bool isEnglishChar(wchar_t ch);
-	PG_EXPORTS inline bool isEnglishVowel(wchar_t ch, bool includeY);
+	PG_EXPORTS bool isEnglishChar(wchar_t ch);
+	PG_EXPORTS bool isEnglishVowel(wchar_t ch, bool includeY);
 
 	// Returns true if the character is from latin charset and not from cyrillic.
-	PG_EXPORTS inline bool isExclusiveEnglishChar(wchar_t ch);
+	PG_EXPORTS bool isExclusiveEnglishChar(wchar_t ch);
 
-	PG_EXPORTS inline bool isRussianChar(wchar_t ch);
+	PG_EXPORTS bool isRussianChar(wchar_t ch);
 
 	// Returns true if the char belongs to russian alphabet for sure. Returns false if the chars may belong to other cyrilic alphabets.
-	PG_EXPORTS inline bool isExclusiveRussianChar(wchar_t ch);
+	PG_EXPORTS bool isExclusiveRussianChar(wchar_t ch);
 
-	PG_EXPORTS inline bool isUkrainianConsonant(wchar_t ch);
-	PG_EXPORTS inline bool isUkrainianVowel(wchar_t ch);
+	PG_EXPORTS bool isUkrainianConsonant(wchar_t ch);
+	PG_EXPORTS bool isUkrainianVowel(wchar_t ch);
 	PG_EXPORTS int vowelsCountUk(boost::wstring_view word);
 	
 	// Vowel or consonant.
@@ -136,43 +136,45 @@ namespace PticaGovorun
 
 	enum class WordPerson
 	{
-		Impersonal, // безособове,
+		Impersonal, // Р±РµР·РѕСЃРѕР±РѕРІРµ,
 		I,
-		YouFamiliar, // ти
+		YouFamiliar, // С‚Рё
 		He,
 		She,
 		It,
 		We,
-		YouRespectful, // ви
+		YouRespectful, // РІРё
 		They
 	};
 
-	enum class WordClass
+	/// Represents a lexical category of words. Words in one category share similar usage, style, rules etc.
+	// https://en.wikipedia.org/wiki/Part_of_speech
+	enum class PartOfSpeech
 	{
-		Noun,         // іменник, n
-		Pronoun,      // займенник, pron
-		Preposition,  // прийменник(в), предлог, eng(after,for)
-		Verb,         // глагол
-		Adverb,       // прислівник
-		VerbalAdverb, // дієприслівник
-		Adjective,    // прикметник
-		Participle,   // дієприкметник
-		Numeral,      // числівник
-		Conjunction,  // сполучник, conj
-		Interjection, // вигук, int
-		Particle,     // частка
-		Irremovable,  // незмінюване слово
+		Noun,         // С–РјРµРЅРЅРёРє, n
+		Pronoun,      // Р·Р°Р№РјРµРЅРЅРёРє, pron
+		Preposition,  // РїСЂРёР№РјРµРЅРЅРёРє(РІ), РїСЂРµРґР»РѕРі, eng(after,for)
+		Verb,         // РіР»Р°РіРѕР»
+		Adverb,       // РїСЂРёСЃР»С–РІРЅРёРє
+		VerbalAdverb, // РґС–С”РїСЂРёСЃР»С–РІРЅРёРє
+		Adjective,    // РїСЂРёРєРјРµС‚РЅРёРє
+		Participle,   // РґС–С”РїСЂРёРєРјРµС‚РЅРёРє
+		Numeral,      // С‡РёСЃР»С–РІРЅРёРє
+		Conjunction,  // СЃРїРѕР»СѓС‡РЅРёРє, conj
+		Interjection, // РІРёРіСѓРє, int
+		Particle,     // С‡Р°СЃС‚РєР°
+		Irremovable,  // РЅРµР·РјС–РЅСЋРІР°РЅРµ СЃР»РѕРІРѕ
 	};
 
 	enum class WordCase
 	{
-		Nominative,  // називний, nom
-		Genitive,    // родовий, gen
-		Dative,      // давальний, dat
-		Acusative,   // знахідний
-		Instrumental,// орудний
-		Locative,    // місцевий
-		Vocative,    // кличний
+		Nominative,  // РЅР°Р·РёРІРЅРёР№, nom
+		Genitive,    // СЂРѕРґРѕРІРёР№, gen
+		Dative,      // РґР°РІР°Р»СЊРЅРёР№, dat
+		Acusative,   // Р·РЅР°С…С–РґРЅРёР№
+		Instrumental,// РѕСЂСѓРґРЅРёР№
+		Locative,    // РјС–СЃС†РµРІРёР№
+		Vocative,    // РєР»РёС‡РЅРёР№
 	};
 
 	inline const boost::wstring_view toString(WordCase x)
@@ -208,8 +210,8 @@ namespace PticaGovorun
 
 	enum class NumeralCardinality
 	{
-		Cardinal, // means quantity; ua=кількісний, ru=колличественный (три)
-		Ordinal // means order, rank; ua=порядковий, ru=порядковый (третий)
+		Cardinal, // means quantity; ua=РєС–Р»СЊРєС–СЃРЅРёР№, ru=РєРѕР»Р»РёС‡РµСЃС‚РІРµРЅРЅС‹Р№ (С‚СЂРё)
+		Ordinal // means order, rank; ua=РїРѕСЂСЏРґРєРѕРІРёР№, ru=РїРѕСЂСЏРґРєРѕРІС‹Р№ (С‚СЂРµС‚РёР№)
 		// Nominal? the same as Cardinal but aims to not show qunatity ("player number three")number
 	};
 
@@ -227,7 +229,7 @@ namespace PticaGovorun
 	{
 		Masculine, // m
 		Feminine, // f
-		Neuter // neutral, abbrev=n, середній
+		Neuter // neutral, abbrev=n, СЃРµСЂРµРґРЅС–Р№
 	};
 
 	inline const boost::wstring_view toString(WordGender x)
@@ -243,31 +245,31 @@ namespace PticaGovorun
 
 	enum class WordDegree
 	{
-		Positive,    // звичайний
-		Comparative, // вищий
-		Superlative  // найвищий
+		Positive,    // Р·РІРёС‡Р°Р№РЅРёР№
+		Comparative, // РІРёС‰РёР№
+		Superlative  // РЅР°Р№РІРёС‰РёР№
 	};
 
 	enum class WordActiveOrPassive
 	{
-		Active,  // звичайний
-		Passive, // вищий
+		Active,  // Р·РІРёС‡Р°Р№РЅРёР№
+		Passive, // РІРёС‰РёР№
 	};
 
 	/// <summary>
 	/// Perfective referes to action which is completed or result is accomplished.
 	/// </summary>
-	// впливати (недоконаний) - вплинути (доконаний)
+	// РІРїР»РёРІР°С‚Рё (РЅРµРґРѕРєРѕРЅР°РЅРёР№) - РІРїР»РёРЅСѓС‚Рё (РґРѕРєРѕРЅР°РЅРёР№)
 	enum class WordPerfectiveAspect
 	{
-		Perfective,  // доконаний (більшовизувати??)
-		Imperfective,  // недоконаний (білити)
+		Perfective,  // РґРѕРєРѕРЅР°РЅРёР№ (Р±С–Р»СЊС€РѕРІРёР·СѓРІР°С‚Рё??)
+		Imperfective,  // РЅРµРґРѕРєРѕРЅР°РЅРёР№ (Р±С–Р»РёС‚Рё)
 	};
 
 	enum class WordTransitive
 	{
-		Transitive,  // перехідне
-		Intransitive,  // неперехідне
+		Transitive,  // РїРµСЂРµС…С–РґРЅРµ
+		Intransitive,  // РЅРµРїРµСЂРµС…С–РґРЅРµ
 	};
 
 	class WordDeclensionGroup;
@@ -275,14 +277,14 @@ namespace PticaGovorun
 	struct WordDeclensionForm
 	{
 		std::wstring Name;
-		boost::optional<WordClass> WordClass;
+		boost::optional<PartOfSpeech> WordClass;
 		boost::optional<WordCase> Case;
 		boost::optional<ActionTense> Tense;
 		boost::optional<WordPerson> Person;
 		boost::optional<EntityMultiplicity> Multiplicity;
 		/// <summary>
 		/// The beginning for of the verb.
-		/// (інфінітив)
+		/// (С–РЅС„С–РЅС–С‚РёРІ)
 		/// </summary>
 		boost::optional<bool> IsInfinitive;
 		boost::optional<bool> Mandative; // the form of order
@@ -296,7 +298,7 @@ namespace PticaGovorun
 		bool validateConsistency() const
 		{
 			// rule: if Gender => Singular
-			// exception: чисельник 'дві' жіночого роду (чисельник має рід - виняток), одже це - однина. Проте 'дві' це - множина.
+			// exception: С‡РёСЃРµР»СЊРЅРёРє 'РґРІС–' Р¶С–РЅРѕС‡РѕРіРѕ СЂРѕРґСѓ (С‡РёСЃРµР»СЊРЅРёРє РјР°С” СЂС–Рґ - РІРёРЅСЏС‚РѕРє), РѕРґР¶Рµ С†Рµ - РѕРґРЅРёРЅР°. РџСЂРѕС‚Рµ 'РґРІС–' С†Рµ - РјРЅРѕР¶РёРЅР°.
 			if (Gender != boost::none)
 			{
 				bool ok = Multiplicity == boost::none || Multiplicity == EntityMultiplicity::Singular;
@@ -313,7 +315,7 @@ namespace PticaGovorun
 		std::wstring Name;
 		std::vector<WordDeclensionForm> Forms;
 		
-		boost::optional<WordClass> WordClass;
+		boost::optional<PartOfSpeech> WordClass;
 
 		/// <summary>
 		/// If something that is represented by this word is alive or not.
@@ -341,7 +343,7 @@ namespace PticaGovorun
 
 	enum class NumeralLexicalView
 	{
-		Word, // десять
+		Word, // РґРµСЃСЏС‚СЊ
 		Arabic, // 10, 11, 12
 		Roman   // X, XI, XII
 	};
@@ -372,7 +374,7 @@ namespace PticaGovorun
 		boost::wstring_view ValueStr;
 		TextRunType RunType;
 		boost::optional<TextLanguage> Lang;
-		boost::optional<WordClass> Class;
+		boost::optional<PartOfSpeech> Class;
 		boost::optional<WordCase> Case;
 		boost::optional<WordGender> Gender;
 		boost::optional<EntityMultiplicity> Mulitplicity;
@@ -456,25 +458,25 @@ namespace PticaGovorun
 		static bool isWord(const RawTextLexeme& x);
 
 		bool ruleTemplate() { return true; }
-		// eg. "пір^'я"
+		// eg. "РїС–СЂ^'СЏ"
 		bool ruleComposeWordWithApostropheInside();
-		// eg. "в ^XX столітті"
+		// eg. "РІ ^XX СЃС‚РѕР»С–С‚С‚С–"
 		bool ruleExpandRomanNumber();
-		// eg. "У ^90-ті роки"
+		// eg. "РЈ ^90-С‚С– СЂРѕРєРё"
 		bool ruleNumberDiapasonAndEnding();
-		/// eg. "У дев'яності ^рр."
+		/// eg. "РЈ РґРµРІ'СЏРЅРѕСЃС‚С– ^СЂСЂ."
 		bool ruleNumberRokyRoku();
-		/// "на XVI ^ст. припадає"
+		/// "РЅР° XVI ^СЃС‚. РїСЂРёРїР°РґР°С”"
 		bool ruleNumberStolittya();
-		/// "^№146" or "^№ 146"
+		/// "^в„–146" or "^в„– 146"
 		bool ruleSignNAndNumber();
-		/// eg. ty¬coon -> tycoon
+		/// eg. tyВ¬coon -> tycoon
 		bool ruleRepairWordSplitByOptionalHyphen();
-		/// "80—ті"->"80-ті"
+		/// "80вЂ”С‚С–"->"80-С‚С–"
 		bool ruleUnifyHyphen();
 		/// Converts number to words if context information is ready.
 		bool ruleUpgradeNumberToWords();
-		/// eg "від ^11 грудня 2003 ^р."
+		/// eg "РІС–Рґ ^11 РіСЂСѓРґРЅСЏ 2003 ^СЂ."
 		bool ruleDayMonthYear();
 	};
 

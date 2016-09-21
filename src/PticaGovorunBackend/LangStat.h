@@ -2,8 +2,9 @@
 #include <vector>
 #include <array>
 #include <map>
-#include <memory>
+#include <functional>
 #include <unordered_map>
+#include <QString>
 #include "PticaGovorunCore.h"
 #include "ClnUtils.h" // wv::slice
 
@@ -87,7 +88,7 @@ namespace PticaGovorun
 		{
 			size_t operator()(const std::wstring* pStr) const
 			{
-				return std::hash_value(*pStr);
+				return std::hash<std::wstring>{}(*pStr);
 			}
 		};
 		struct WordSeqKeyHasher

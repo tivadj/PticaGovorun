@@ -24,7 +24,7 @@ namespace
 #define PG_AssertHelper(assertCond, msg) if (pgCond(assertCond)) {} \
 	else { \
 		std::wostringstream buf; \
-		buf << __FILE__ ":" << __LINE__ << "," __FUNCTION__ "(): "; \
+		buf << __FILE__ ":" << __LINE__ << "," << __FUNCTION__ << "(): "; \
 		if (msg != nullptr) { \
 			buf << msg; \
 			buf << " -- "; \

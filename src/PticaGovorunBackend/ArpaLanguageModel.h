@@ -8,15 +8,12 @@
 
 namespace PticaGovorun
 {
-	namespace
+	template <typename T, size_t FixedSize>
+	struct ShortArray
 	{
-		template <typename T, size_t FixedSize>
-		struct ShortArray
-		{
-			std::array<T, FixedSize> Array;
-			size_t ActualSize;
-		};
-	}
+		std::array<T, FixedSize> Array;
+		size_t ActualSize;
+	};
 
 	// The row (unigram or bigram) of ARPA model file.
 	struct PG_EXPORTS NGramRow

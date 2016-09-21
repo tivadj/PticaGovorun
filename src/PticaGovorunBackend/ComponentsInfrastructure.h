@@ -48,7 +48,7 @@ namespace PticaGovorun
 	{
 		size_t operator()(const IdWithDebugStr<IdT, CharT, BuffSize> idEx) const
 		{
-			return std::hash_value(idEx.Id);
+			return std::hash<IdT>{}(idEx.Id);
 		}
 	};
 
@@ -64,14 +64,6 @@ namespace PticaGovorun
 		void operator()(T* pObj) const
 		{
 			// no op
-		}
-	};
-
-	struct BoostStringRefHasher
-	{
-		size_t operator()(const boost::wstring_view strRef)
-		{
-			return std::hash_value(strRef.data());
 		}
 	};
 

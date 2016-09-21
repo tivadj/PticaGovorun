@@ -1,4 +1,4 @@
-#include "PhoneticService.h"
+п»ї#include "PhoneticService.h"
 #include <array>
 #include <QDirIterator>
 #include <QXmlStreamReader>
@@ -32,28 +32,28 @@ namespace PticaGovorun
 		const wchar_t Letter_Space = L' ';
 		const wchar_t Letter_Hyphen = L'-';
 		const wchar_t Letter_Apostrophe = L'\'';
-		const wchar_t Letter_A = L'а';
-		const wchar_t Letter_B = L'б';
-		const wchar_t Letter_H = L'г';
-		const wchar_t Letter_D = L'д';
-		const wchar_t Letter_E = L'е';
-		const wchar_t Letter_JE = L'є';
-		const wchar_t Letter_ZH = L'ж';
-		const wchar_t Letter_Z = L'з';
-		const wchar_t Letter_I = L'і';
-		const wchar_t Letter_JI = L'ї';
-		const wchar_t Letter_K = L'к';
-		const wchar_t Letter_N = L'н';
-		const wchar_t Letter_S = L'с';
-		const wchar_t Letter_T = L'т';
-		const wchar_t Letter_U = L'у';
-		const wchar_t Letter_TS = L'ц';
-		const wchar_t Letter_CH = L'ч';
-		const wchar_t Letter_SH = L'ш';
-		const wchar_t Letter_SHCH = L'щ';
-		const wchar_t Letter_SoftSign = L'ь';
-		const wchar_t Letter_JU = L'ю';
-		const wchar_t Letter_JA = L'я';
+		const wchar_t Letter_A = L'Р°';
+		const wchar_t Letter_B = L'Р±';
+		const wchar_t Letter_H = L'Рі';
+		const wchar_t Letter_D = L'Рґ';
+		const wchar_t Letter_E = L'Рµ';
+		const wchar_t Letter_JE = L'С”';
+		const wchar_t Letter_ZH = L'Р¶';
+		const wchar_t Letter_Z = L'Р·';
+		const wchar_t Letter_I = L'С–';
+		const wchar_t Letter_JI = L'С—';
+		const wchar_t Letter_K = L'Рє';
+		const wchar_t Letter_N = L'РЅ';
+		const wchar_t Letter_S = L'СЃ';
+		const wchar_t Letter_T = L'С‚';
+		const wchar_t Letter_U = L'Сѓ';
+		const wchar_t Letter_TS = L'С†';
+		const wchar_t Letter_CH = L'С‡';
+		const wchar_t Letter_SH = L'С€';
+		const wchar_t Letter_SHCH = L'С‰';
+		const wchar_t Letter_SoftSign = L'СЊ';
+		const wchar_t Letter_JU = L'СЋ';
+		const wchar_t Letter_JA = L'СЏ';
 	}
 
 	void Pronunc::setPhones(const std::vector<std::string>& phones)
@@ -378,16 +378,16 @@ namespace PticaGovorun
 		phoneReg.newVowelPhone("A", false); // A
 		if (allowVowelStress)
 			phoneReg.newVowelPhone("A", true); // A1
-		phoneReg.newConsonantPhone("B", SoftHardConsonant::Hard); // B, hard (дріб), palatalized (бюро)
+		phoneReg.newConsonantPhone("B", SoftHardConsonant::Hard); // B, hard (РґСЂС–Р±), palatalized (Р±СЋСЂРѕ)
 		if (allowPalatalizedConsonant)
 			phoneReg.newConsonantPhone("B", palatalProxy); // B''
-		phoneReg.newConsonantPhone("V", SoftHardConsonant::Hard); // V, hard (верф), palatalized (цвях)
+		phoneReg.newConsonantPhone("V", SoftHardConsonant::Hard); // V, hard (РІРµСЂС„), palatalized (С†РІСЏС…)
 		if (allowPalatalizedConsonant)
 			phoneReg.newConsonantPhone("V", palatalProxy); // V''
-		phoneReg.newConsonantPhone("G", SoftHardConsonant::Hard); // G, hard (gudzyk, ґедз), palatalized
+		phoneReg.newConsonantPhone("G", SoftHardConsonant::Hard); // G, hard (gudzyk, Т‘РµРґР·), palatalized
 		if (allowPalatalizedConsonant)
 			phoneReg.newConsonantPhone("G", palatalProxy); // G''
-		phoneReg.newConsonantPhone("H", SoftHardConsonant::Hard); // H, hard (gluhi, геній), palatalized (гірко)
+		phoneReg.newConsonantPhone("H", SoftHardConsonant::Hard); // H, hard (gluhi, РіРµРЅС–Р№), palatalized (РіС–СЂРєРѕ)
 		if (allowPalatalizedConsonant)
 			phoneReg.newConsonantPhone("H", palatalProxy); // H''
 		phoneReg.newConsonantPhone("D", SoftHardConsonant::Hard); // D
@@ -396,13 +396,13 @@ namespace PticaGovorun
 		phoneReg.newConsonantPhone("DZ", SoftHardConsonant::Hard); // DZ
 		if (allowSoftConsonant)
 			phoneReg.newConsonantPhone("DZ", SoftHardConsonant::Soft); // DZ1
-		phoneReg.newConsonantPhone("DZH", SoftHardConsonant::Hard); // DZH hard (джем), palatalized
+		phoneReg.newConsonantPhone("DZH", SoftHardConsonant::Hard); // DZH hard (РґР¶РµРј), palatalized
 		if (allowPalatalizedConsonant)
 			phoneReg.newConsonantPhone("DZH", palatalProxy); // DZH''
 		phoneReg.newVowelPhone("E", false); // E
 		if (allowVowelStress)
 			phoneReg.newVowelPhone("E", true); // E1
-		phoneReg.newConsonantPhone("ZH", SoftHardConsonant::Hard); // ZH, hard (межа), palatalized (ножі)
+		phoneReg.newConsonantPhone("ZH", SoftHardConsonant::Hard); // ZH, hard (РјРµР¶Р°), palatalized (РЅРѕР¶С–)
 		if (allowPalatalizedConsonant)
 			phoneReg.newConsonantPhone("ZH", palatalProxy); // ZH''
 		phoneReg.newConsonantPhone("Z", SoftHardConsonant::Hard); // Z
@@ -414,14 +414,14 @@ namespace PticaGovorun
 		phoneReg.newVowelPhone("I", false); // I
 		if (allowVowelStress)
 			phoneReg.newVowelPhone("I", true); // I1
-		phoneReg.newConsonantPhone("J", SoftHardConsonant::Hard); // J, hard only (й)
-		phoneReg.newConsonantPhone("K", SoftHardConsonant::Hard); // K, hard (килим), palatalized (кінець)
+		phoneReg.newConsonantPhone("J", SoftHardConsonant::Hard); // J, hard only (Р№)
+		phoneReg.newConsonantPhone("K", SoftHardConsonant::Hard); // K, hard (РєРёР»РёРј), palatalized (РєС–РЅРµС†СЊ)
 		if (allowPalatalizedConsonant)
 			phoneReg.newConsonantPhone("K", palatalProxy); // K''
 		phoneReg.newConsonantPhone("L", SoftHardConsonant::Hard); // L
 		if (allowSoftConsonant)
 			phoneReg.newConsonantPhone("L", SoftHardConsonant::Soft); // L1
-		phoneReg.newConsonantPhone("M", SoftHardConsonant::Hard); // M, hard (сім), palatalized (мій)
+		phoneReg.newConsonantPhone("M", SoftHardConsonant::Hard); // M, hard (СЃС–Рј), palatalized (РјС–Р№)
 		if (allowPalatalizedConsonant)
 			phoneReg.newConsonantPhone("M", palatalProxy); // M''
 		phoneReg.newConsonantPhone("N", SoftHardConsonant::Hard); // N
@@ -430,7 +430,7 @@ namespace PticaGovorun
 		phoneReg.newVowelPhone("O", false); // O
 		if (allowVowelStress)
 			phoneReg.newVowelPhone("O", true); // O1
-		phoneReg.newConsonantPhone("P", SoftHardConsonant::Hard); // P, hard (п'ять), palatalized (піл)
+		phoneReg.newConsonantPhone("P", SoftHardConsonant::Hard); // P, hard (Рї'СЏС‚СЊ), palatalized (РїС–Р»)
 		if (allowPalatalizedConsonant)
 			phoneReg.newConsonantPhone("P", palatalProxy); // P''
 		phoneReg.newConsonantPhone("R", SoftHardConsonant::Hard); // R
@@ -445,19 +445,19 @@ namespace PticaGovorun
 		phoneReg.newVowelPhone("U", false); // U
 		if (allowVowelStress)
 			phoneReg.newVowelPhone("U", true); // U1
-		phoneReg.newConsonantPhone("F", SoftHardConsonant::Hard); // F, hard (верф), palatalized (фігура)
+		phoneReg.newConsonantPhone("F", SoftHardConsonant::Hard); // F, hard (РІРµСЂС„), palatalized (С„С–РіСѓСЂР°)
 		if (allowPalatalizedConsonant)
 			phoneReg.newConsonantPhone("F", palatalProxy); // F''
-		phoneReg.newConsonantPhone("KH", SoftHardConsonant::Hard); // KH, hard (х'ю), palatalized (хіба)
+		phoneReg.newConsonantPhone("KH", SoftHardConsonant::Hard); // KH, hard (С…'СЋ), palatalized (С…С–Р±Р°)
 		if (allowPalatalizedConsonant)
 			phoneReg.newConsonantPhone("KH", palatalProxy); // KH''
 		phoneReg.newConsonantPhone("TS", SoftHardConsonant::Hard); // TS
 		if (allowSoftConsonant)
 			phoneReg.newConsonantPhone("TS", SoftHardConsonant::Soft); // TS1
-		phoneReg.newConsonantPhone("CH", SoftHardConsonant::Hard); // CH, hard (час), palatalized (очі)
+		phoneReg.newConsonantPhone("CH", SoftHardConsonant::Hard); // CH, hard (С‡Р°СЃ), palatalized (РѕС‡С–)
 		if (allowPalatalizedConsonant)
 			phoneReg.newConsonantPhone("CH", palatalProxy); // CH''
-		phoneReg.newConsonantPhone("SH", SoftHardConsonant::Hard); // SH, hard (лоша, ш'є) , palatalized (товариші)
+		phoneReg.newConsonantPhone("SH", SoftHardConsonant::Hard); // SH, hard (Р»РѕС€Р°, С€'С”) , palatalized (С‚РѕРІР°СЂРёС€С–)
 		if (allowPalatalizedConsonant)
 			phoneReg.newConsonantPhone("SH", palatalProxy); // SH''
 	}
@@ -596,18 +596,18 @@ namespace PticaGovorun
 
 	bool isUnvoicedCharUk(wchar_t ch)
 	{
-		// кпстфхшцч
-		// КПСТФХШЦЧ
+		// РєРїСЃС‚С„С…С€С†С‡
+		// РљРџРЎРўР¤РҐРЁР¦Р§
 		return
-			ch == L'к' || ch == L'К' ||
-			ch == L'п' || ch == L'П' ||
-			ch == L'с' || ch == L'С' ||
-			ch == L'т' || ch == L'Т' ||
-			ch == L'ф' || ch == L'Ф' ||
-			ch == L'х' || ch == L'Х' ||
-			ch == L'ш' || ch == L'Ш' ||
-			ch == L'ц' || ch == L'Ц' ||
-			ch == L'ч' || ch == L'Ч';
+			ch == L'Рє' || ch == L'Рљ' ||
+			ch == L'Рї' || ch == L'Рџ' ||
+			ch == L'СЃ' || ch == L'РЎ' ||
+			ch == L'С‚' || ch == L'Рў' ||
+			ch == L'С„' || ch == L'Р¤' ||
+			ch == L'С…' || ch == L'РҐ' ||
+			ch == L'С€' || ch == L'РЁ' ||
+			ch == L'С†' || ch == L'Р¦' ||
+			ch == L'С‡' || ch == L'Р§';
 	}
 
 #ifdef PG_HAS_JULIUS
@@ -1158,7 +1158,7 @@ namespace PticaGovorun
 		wchar_t letter = curLetter();
 		PG_DbgAssert(isUkrainianVowel(letter));
 		char isStressed = isLetterStressed_[letterInd_];
-		return isStressed == (char)-1 ? nullptr : (bool)isStressed;
+		return isStressed == (char)-1 ? boost::none : boost::optional<bool>((bool)isStressed);
 	}
 
 	wchar_t WordPhoneticTranscriber::offsetLetter(int offset) const
@@ -1240,7 +1240,7 @@ namespace PticaGovorun
 		wchar_t nextLetter = offsetLetter(1);
 
 		// Z ZH -> ZH ZH
-		// зжер [ZH ZH E R]
+		// Р·Р¶РµСЂ [ZH ZH E R]
 		if (nextLetter == Letter_ZH)
 		{
 			// skip first T
@@ -1253,7 +1253,7 @@ namespace PticaGovorun
 		if (letterInd_ + 2 < word_->size()) // size(D ZH)=2
 		{
 			// Z D ZH -> ZH DZH
-			// з'їзджають [Z J I ZH DZH A J U T]
+			// Р·'С—Р·РґР¶Р°СЋС‚СЊ [Z J I ZH DZH A J U T]
 			if (nextLetter == Letter_D && offsetLetter(2) == Letter_ZH)
 			{
 				// skip first T
@@ -1308,7 +1308,7 @@ namespace PticaGovorun
 		if (letterInd_ + 1 < word_->size()) // size(SH)=1
 		{
 			// S SH -> SH SH
-			// донісши [D O N I SH SH Y]
+			// РґРѕРЅС–СЃС€Рё [D O N I SH SH Y]
 			if (offsetLetter(1) == Letter_SH)
 			{
 				addPhone(newConsonantPhone("SH", SoftHardConsonant::Hard));
@@ -1320,7 +1320,7 @@ namespace PticaGovorun
 		if (letterInd_ + 2 < word_->size()) // size(T D)=2
 		{
 			// S T D -> Z D
-			// шістдесят [SH I Z D E S A T]
+			// С€С–СЃС‚РґРµСЃСЏС‚ [SH I Z D E S A T]
 			if (offsetLetter(1) == Letter_T && offsetLetter(2) == Letter_D)
 			{
 				addPhone(newConsonantPhone("Z", SoftHardConsonant::Hard));
@@ -1333,7 +1333,7 @@ namespace PticaGovorun
 		if (letterInd_ + 4 < word_->size()) // size(T S 1 K)=4
 		{
 			// S T S 1 K -> S1 K
-			// нацистської [N A TS Y S1 K O J I]
+			// РЅР°С†РёСЃС‚СЃСЊРєРѕС— [N A TS Y S1 K O J I]
 			if (offsetLetter(1) == Letter_T && offsetLetter(2) == Letter_S && offsetLetter(3) == Letter_SoftSign && offsetLetter(4) == Letter_K)
 			{
 				addPhone(newConsonantPhone("S", SoftHardConsonant::Soft));
@@ -1345,7 +1345,7 @@ namespace PticaGovorun
 		if (letterInd_ + 2 < word_->size()) // size(T S)=2
 		{
 			// S T S -> S S
-			// шістсот [SH I S S O T]
+			// С€С–СЃС‚СЃРѕС‚ [SH I S S O T]
 			if (offsetLetter(1) == Letter_T && offsetLetter(2) == Letter_S)
 			{
 				addPhone(newConsonantPhone("S", SoftHardConsonant::Hard));
@@ -1357,7 +1357,7 @@ namespace PticaGovorun
 		if (letterInd_ + 2 < word_->size()) // size(T TS)=2
 		{
 			// S T TS -> S TS
-			// відпустці [V I D P U S TS I]
+			// РІС–РґРїСѓСЃС‚С†С– [V I D P U S TS I]
 			if (offsetLetter(1) == Letter_T && offsetLetter(2) == Letter_TS)
 			{
 				addPhone(newConsonantPhone("S", SoftHardConsonant::Hard));
@@ -1378,7 +1378,7 @@ namespace PticaGovorun
 		if (letterInd_ + 1 < word_->size()) // size(S)=1
 		{
 			// T S -> TS
-			// п'ятсот [P J A TS O T]
+			// Рї'СЏС‚СЃРѕС‚ [P J A TS O T]
 			if (offsetLetter(1) == Letter_S)
 			{
 				addPhone(newConsonantPhone("TS", SoftHardConsonant::Hard));
@@ -1389,10 +1389,10 @@ namespace PticaGovorun
 		if (letterInd_ + 2 < word_->size()) // size(1 S)=2
 		{
 			// T 1 S -> TS
-			// триматиметься [T R Y M A T Y M E TS1 A]
+			// С‚СЂРёРјР°С‚РёРјРµС‚СЊСЃСЏ [T R Y M A T Y M E TS1 A]
 			if (offsetLetter(1) == Letter_SoftSign && offsetLetter(2) == Letter_S)
 			{
-				// if тц -> TS TS
+				// if С‚С† -> TS TS
 				addPhone(newConsonantPhone("TS", SoftHardConsonant::Soft));
 				letterInd_ += 2;
 				return true;
@@ -1401,7 +1401,7 @@ namespace PticaGovorun
 		if (letterInd_ + 1 < word_->size()) // size(TS)=1
 		{
 			// T TS -> TS TS
-			// клітці [K L I TS TS I]
+			// РєР»С–С‚С†С– [K L I TS TS I]
 			if (offsetLetter(1) == Letter_TS)
 			{
 				addPhone(newConsonantPhone("TS", SoftHardConsonant::Hard));
@@ -1413,7 +1413,7 @@ namespace PticaGovorun
 		if (letterInd_ + 1 < word_->size()) // size(CH)=1
 		{
 			// T CH -> CH CH
-			// отче [O CH CH E]
+			// РѕС‚С‡Рµ [O CH CH E]
 			if (offsetLetter(1) == Letter_CH)
 			{
 				addPhone(newConsonantPhone("CH", SoftHardConsonant::Hard));
@@ -1459,7 +1459,7 @@ namespace PticaGovorun
 				ph.SoftHard = SoftHardConsonant::Hard;
 			else
 			{
-				// apostrophe after vowel may be used in uk->en transliteration eg. "he's -> хі'з"
+				// apostrophe after vowel may be used in uk->en transliteration eg. "he's -> С…С–'Р·"
 				// accept it; do no action
 			}
 			return true;
@@ -1484,7 +1484,7 @@ namespace PticaGovorun
 				bool ok = prevValue == SoftHardConsonant::Hard || prevValue == SoftHardConsonant::Palatal;
 				if (!ok)
 				{
-					// for eg for Russian word "чьей"
+					// for eg for Russian word "С‡СЊРµР№"
 					errString_ = L"hard and usually hard consonants can become hard";
 					return false;
 				}
@@ -1531,22 +1531,22 @@ namespace PticaGovorun
 			return false;
 		
 		// Rule: JA -> J A when it is the first letter
-		// єврей [J E V R E J]
-		// юнак [J U N A K]
-		// яблуко [J A B L U K O]
+		// С”РІСЂРµР№ [J E V R E J]
+		// СЋРЅР°Рє [J U N A K]
+		// СЏР±Р»СѓРєРѕ [J A B L U K O]
 		// Rule: JA -> J A when the previous letter is a vowel
-		// взаємно [V Z A J E M N O]
-		// настою [N A S T O J U]
-		// абияк [A B Y J A K]
+		// РІР·Р°С”РјРЅРѕ [V Z A J E M N O]
+		// РЅР°СЃС‚РѕСЋ [N A S T O J U]
+		// Р°Р±РёСЏРє [A B Y J A K]
 		// Rule: JA -> J A when the previous letter is the soft sign
-		// коньяку[K O N1 J A K]
-		// мосьє [M O S1 J E]
-		// нью [N1 J U]
-		// "будь-яка" [B U D1 J A K A]
+		// РєРѕРЅСЊСЏРєСѓ[K O N1 J A K]
+		// РјРѕСЃСЊС” [M O S1 J E]
+		// РЅСЊСЋ [N1 J U]
+		// "Р±СѓРґСЊ-СЏРєР°" [B U D1 J A K A]
 		// Rule: JA -> J A when the previous letter is the apostrophe
-		// бур'ян [B U R J A N]
-		// кар'єр [K A R J E R]
-		// комп'ютер [K O M P J U T E R]
+		// Р±СѓСЂ'СЏРЅ [B U R J A N]
+		// РєР°СЂ'С”СЂ [K A R J E R]
+		// РєРѕРјРї'СЋС‚РµСЂ [K O M P J U T E R]
 		auto dualPhone = [this]() ->bool {
 			if (isFirstLetter())
 				return true;
@@ -1590,12 +1590,12 @@ namespace PticaGovorun
 		bool accept = (letter == Letter_JU || letter == Letter_JA || letter == Letter_JE) && !billetPhones_.empty();
 		if (!accept)
 			return false;
-		// люди [L1 U D Y]
-		// олексюк [O L E K S1 U K]
-		// бурю [B U R1 U]
-		// лякати [L1 A K A T Y]
-		// буря [B U R1 A]
-		// зоряний [Z O R1 A N Y J]
+		// Р»СЋРґРё [L1 U D Y]
+		// РѕР»РµРєСЃСЋРє [O L E K S1 U K]
+		// Р±СѓСЂСЋ [B U R1 U]
+		// Р»СЏРєР°С‚Рё [L1 A K A T Y]
+		// Р±СѓСЂСЏ [B U R1 A]
+		// Р·РѕСЂСЏРЅРёР№ [Z O R1 A N Y J]
 		PhoneBillet& prevPh = billetPhones_.back();
 		if (prevPh.DerivedFromChar == CharGroup::Consonant)
 		{
@@ -1611,10 +1611,10 @@ namespace PticaGovorun
 			}
 			prevPh.SoftHard = softDegree;
 
-			// ллє [L1 L1 E1]
-			// суттєво [S U T T E V O]
-			// моделлю [M O D E L1 L1 U]
-			// ілля [I L1 L1 A]
+			// Р»Р»С” [L1 L1 E1]
+			// СЃСѓС‚С‚С”РІРѕ [S U T T E V O]
+			// РјРѕРґРµР»Р»СЋ [M O D E L1 L1 U]
+			// С–Р»Р»СЏ [I L1 L1 A]
 			int prevPrevInd = (int)billetPhones_.size() - 2;
 			if (prevPrevInd >= 0)
 			{
@@ -1640,11 +1640,11 @@ namespace PticaGovorun
 			return false;
 
 		// B->P, H->KH, D->T, ZH->SH, Z->S before unvoiced sound
-		// B->P необхідно [N E O P KH I D N O]
-		// H->KH допомогти [D O P O M O KH T Y]
-		// D->T швидко [SH V Y T K O]
-		// ZH->SH дужче [D U SH CH E]
-		// Z->S безпеки [B E S P E K A]
+		// B->P РЅРµРѕР±С…С–РґРЅРѕ [N E O P KH I D N O]
+		// H->KH РґРѕРїРѕРјРѕРіС‚Рё [D O P O M O KH T Y]
+		// D->T С€РІРёРґРєРѕ [SH V Y T K O]
+		// ZH->SH РґСѓР¶С‡Рµ [D U SH CH E]
+		// Z->S Р±РµР·РїРµРєРё [B E S P E K A]
 		bool beforeUnvoiced = false;
 		{
 			wchar_t nextLetter = offsetLetter(1);
@@ -1857,66 +1857,66 @@ namespace PticaGovorun
 		};
 		switch (letter)
 		{
-		case L'а':
+		case L'Р°':
 			init("A", CharGroup::Vowel); break;
-		case L'б':
+		case L'Р±':
 			init("B", CharGroup::Consonant); break;
-		case L'в':
+		case L'РІ':
 			init("V", CharGroup::Consonant); break;
-		case L'г':
+		case L'Рі':
 			init("H", CharGroup::Consonant); break;
-		case L'ґ':
+		case L'Т‘':
 			init("G", CharGroup::Consonant); break;
-		case L'д':
+		case L'Рґ':
 			init("D", CharGroup::Consonant); break;
-		case L'е':
-		case L'є':
+		case L'Рµ':
+		case L'С”':
 			init("E", CharGroup::Vowel); break;
-		case L'ж':
+		case L'Р¶':
 			init("ZH", CharGroup::Consonant); break;
-		case L'з':
+		case L'Р·':
 			init("Z", CharGroup::Consonant); break;
-		case L'и':
+		case L'Рё':
 			init("Y", CharGroup::Vowel); break;
-		case L'і':
-		case L'ї':
+		case L'С–':
+		case L'С—':
 			init("I", CharGroup::Vowel); break;
-		case L'й':
+		case L'Р№':
 			init("J", CharGroup::Consonant); break;
-		case L'к':
+		case L'Рє':
 			init("K", CharGroup::Consonant); break;
-		case L'л':
+		case L'Р»':
 			init("L", CharGroup::Consonant); break;
-		case L'м':
+		case L'Рј':
 			init("M", CharGroup::Consonant); break;
-		case L'н':
+		case L'РЅ':
 			init("N", CharGroup::Consonant); break;
-		case L'о':
+		case L'Рѕ':
 			init("O", CharGroup::Vowel); break;
-		case L'п':
+		case L'Рї':
 			init("P", CharGroup::Consonant); break;
-		case L'р':
+		case L'СЂ':
 			init("R", CharGroup::Consonant); break;
-		case L'с':
+		case L'СЃ':
 			init("S", CharGroup::Consonant); break;
-		case L'т':
+		case L'С‚':
 			init("T", CharGroup::Consonant); break;
-		case L'у':
+		case L'Сѓ':
 			init("U", CharGroup::Vowel); break;
-		case L'ф':
+		case L'С„':
 			init("F", CharGroup::Consonant); break;
-		case L'х':
+		case L'С…':
 			init("KH", CharGroup::Consonant); break;
-		case L'ц':
+		case L'С†':
 			init("TS", CharGroup::Consonant); break;
-		case L'ч':
+		case L'С‡':
 			init("CH", CharGroup::Consonant); break;
-		case L'ш':
-		case L'щ':
+		case L'С€':
+		case L'С‰':
 			init("SH", CharGroup::Consonant); break;
-		case L'ю':
+		case L'СЋ':
 			init("U", CharGroup::Vowel); break;
-		case L'я':
+		case L'СЏ':
 			init("A", CharGroup::Vowel); break;
 		default:
 			return false;
@@ -2050,13 +2050,13 @@ namespace PticaGovorun
 	{
 		std::wstring MatchSuffix;
 		int TakeCharsCount;
-		WordClass WordClass = WordClass::Verb;
+		PartOfSpeech WordClass = PartOfSpeech::Verb;
 		int UsedCount = 0;
 
 		SuffixEnd(const std::wstring& matchSuffix, int takeCharsCount)
 			: MatchSuffix(matchSuffix),
 			TakeCharsCount(takeCharsCount) {}
-		SuffixEnd(const std::wstring& matchSuffix, int takeCharsCount, PticaGovorun::WordClass wordClass)
+		SuffixEnd(const std::wstring& matchSuffix, int takeCharsCount, PticaGovorun::PartOfSpeech wordClass)
 			: MatchSuffix(matchSuffix),
 			TakeCharsCount(takeCharsCount),
 			WordClass(wordClass) {}
@@ -2068,784 +2068,784 @@ namespace PticaGovorun
 
 	void ensureSureSuffixesInitialized()
 	{
-		// good: називати існують
+		// good: РЅР°Р·РёРІР°С‚Рё С–СЃРЅСѓСЋС‚СЊ
 		// verb+t1
-		// ити
+		// РёС‚Рё
 		static std::vector<SuffixEnd> sureSuffixesStatic = {
-			{ std::wstring(    L"а"), 1, WordClass::Noun }, // ручк~а noun
-			{ std::wstring(    L"а"), 1, WordClass::Numeral }, // багатомільярдн~а ст~а
-			{ std::wstring(    L"а"), 1, WordClass::Adjective }, // ближч~а adj
-			{ std::wstring(  L"ала"), 2 }, // сказа~ла
-			{ std::wstring(L"увала"), 4 }, // існу~вала актуалізу~вала
-			{ std::wstring(L"ювала"), 4 }, // базарю~вала
-			{ std::wstring(  L"ила"), 2 }, // жи~ла би~ла
-			{ std::wstring(  L"іла"), 2 }, // буркоті~ла
-			//{ std::wstring(  L"їла"), 2 }, // благоустрої~ла
-			{ std::wstring( L"оїла"), 3 }, // благоустро~їла
-			{ std::wstring(  L"ола"), 2 }, // боро~ла
-			{ std::wstring(  L"ула"), 2 }, // бамкну~ла
-			{ std::wstring(  L"ьма"), 2, WordClass::Numeral}, // дев'ять~ма
-			{ std::wstring(  L"ома"), 3, WordClass::Numeral}, // дв~ома дев'ять~ома
-			{ std::wstring(  L"іша"), 3, WordClass::Adjective }, // абсурдн~іша
+			{ std::wstring(    L"Р°"), 1, PartOfSpeech::Noun }, // СЂСѓС‡Рє~Р° noun
+			{ std::wstring(    L"Р°"), 1, PartOfSpeech::Numeral }, // Р±Р°РіР°С‚РѕРјС–Р»СЊСЏСЂРґРЅ~Р° СЃС‚~Р°
+			{ std::wstring(    L"Р°"), 1, PartOfSpeech::Adjective }, // Р±Р»РёР¶С‡~Р° adj
+			{ std::wstring(  L"Р°Р»Р°"), 2 }, // СЃРєР°Р·Р°~Р»Р°
+			{ std::wstring(L"СѓРІР°Р»Р°"), 4 }, // С–СЃРЅСѓ~РІР°Р»Р° Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°Р»Р°
+			{ std::wstring(L"СЋРІР°Р»Р°"), 4 }, // Р±Р°Р·Р°СЂСЋ~РІР°Р»Р°
+			{ std::wstring(  L"РёР»Р°"), 2 }, // Р¶Рё~Р»Р° Р±Рё~Р»Р°
+			{ std::wstring(  L"С–Р»Р°"), 2 }, // Р±СѓСЂРєРѕС‚С–~Р»Р°
+			//{ std::wstring(  L"С—Р»Р°"), 2 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~Р»Р°
+			{ std::wstring( L"РѕС—Р»Р°"), 3 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—Р»Р°
+			{ std::wstring(  L"РѕР»Р°"), 2 }, // Р±РѕСЂРѕ~Р»Р°
+			{ std::wstring(  L"СѓР»Р°"), 2 }, // Р±Р°РјРєРЅСѓ~Р»Р°
+			{ std::wstring(  L"СЊРјР°"), 2, PartOfSpeech::Numeral}, // РґРµРІ'СЏС‚СЊ~РјР°
+			{ std::wstring(  L"РѕРјР°"), 3, PartOfSpeech::Numeral}, // РґРІ~РѕРјР° РґРµРІ'СЏС‚СЊ~РѕРјР°
+			{ std::wstring(  L"С–С€Р°"), 3, PartOfSpeech::Adjective }, // Р°Р±СЃСѓСЂРґРЅ~С–С€Р°
 
-			{ std::wstring(  L"ав"), 1 }, // бува~в назива~в ма~в вплива~в
-			{ std::wstring(L"ував"), 3 }, // актуалізу~вав існу~вав
-			{ std::wstring(L"ював"), 3 }, // базарю~вав
-			//{ std::wstring(  L"ев"), 1 }, // ?? NOT дерев~
-			{ std::wstring(  L"ив"), 1 }, // безчести~в би~в
-			{ std::wstring(  L"ів"), 1 }, // буркоті~в
-			{ std::wstring(  L"ів"), 2, WordClass::Noun }, // фургон~ів noun
-			{ std::wstring(  L"їв"), 2, WordClass::Noun }, // аграрі~їв одностро~їв noun
-			//{ std::wstring(  L"їв"), 1 }, // однострої~в благоустрої~в
-			{ std::wstring( L"іїв"), 2 }, // благоустро~їв
-			{ std::wstring( L"оїв"), 2 }, // благоустро~їв verb
-			{ std::wstring(  L"ов"), 1 }, // боро~в (weird word, =боровся)
-			{ std::wstring(  L"ов"), 2, WordClass::Noun }, // церк~ов
-			{ std::wstring(  L"ув"), 1 }, // бамкну~в
+			{ std::wstring(  L"Р°РІ"), 1 }, // Р±СѓРІР°~РІ РЅР°Р·РёРІР°~РІ РјР°~РІ РІРїР»РёРІР°~РІ
+			{ std::wstring(L"СѓРІР°РІ"), 3 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°РІ С–СЃРЅСѓ~РІР°РІ
+			{ std::wstring(L"СЋРІР°РІ"), 3 }, // Р±Р°Р·Р°СЂСЋ~РІР°РІ
+			//{ std::wstring(  L"РµРІ"), 1 }, // ?? NOT РґРµСЂРµРІ~
+			{ std::wstring(  L"РёРІ"), 1 }, // Р±РµР·С‡РµСЃС‚Рё~РІ Р±Рё~РІ
+			{ std::wstring(  L"С–РІ"), 1 }, // Р±СѓСЂРєРѕС‚С–~РІ
+			{ std::wstring(  L"С–РІ"), 2, PartOfSpeech::Noun }, // С„СѓСЂРіРѕРЅ~С–РІ noun
+			{ std::wstring(  L"С—РІ"), 2, PartOfSpeech::Noun }, // Р°РіСЂР°СЂС–~С—РІ РѕРґРЅРѕСЃС‚СЂРѕ~С—РІ noun
+			//{ std::wstring(  L"С—РІ"), 1 }, // РѕРґРЅРѕСЃС‚СЂРѕС—~РІ Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~РІ
+			{ std::wstring( L"С–С—РІ"), 2 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—РІ
+			{ std::wstring( L"РѕС—РІ"), 2 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—РІ verb
+			{ std::wstring(  L"РѕРІ"), 1 }, // Р±РѕСЂРѕ~РІ (weird word, =Р±РѕСЂРѕРІСЃСЏ)
+			{ std::wstring(  L"РѕРІ"), 2, PartOfSpeech::Noun }, // С†РµСЂРє~РѕРІ
+			{ std::wstring(  L"СѓРІ"), 1 }, // Р±Р°РјРєРЅСѓ~РІ
 
-			{ std::wstring(        L"е"), 1 }, // бер~е бамкн~е
-			{ std::wstring(        L"е"), 1, WordClass::Adjective }, // ближч~е близьк~е
-			{ std::wstring(        L"е"), 1, WordClass::Noun }, // фургон~е
-			{ std::wstring(        L"е"), 1, WordClass::Numeral }, // багатомільярдн~е
-			{ std::wstring(      L"име"), 2 }, // брести~ме
-			{ std::wstring(    L"атиме"), 4 }, // назива~тиме
-			{ std::wstring(    L"ятиме"), 4 }, // розмовля~тиме
-			{ std::wstring(  L"уватиме"), 6 }, // існу~ва~тиме актуалізу~ватиме
-			{ std::wstring(  L"юватиме"), 6 }, // базарю~ва~тиме
-			{ std::wstring(    L"итиме"), 4 }, // роби~тиме би~тиме
-			{ std::wstring(    L"ітиме"), 4 }, // буркоті~тиме
-			//{ std::wstring(    L"їтиме"), 4 }, // гної~тиме
-			{ std::wstring(   L"оїтиме"), 5 }, // гно~їтиме
-			{ std::wstring(    L"отиме"), 4 }, // боро~тиме
-			{ std::wstring(    L"утиме"), 4 }, // блякну~тиме
-			{ std::wstring(     L"айте"), 3 }, // назива~йте вплива~йте
-			{ std::wstring(     L"ійте"), 3 }, // бурі~йте
-			{ std::wstring(     L"ойте"), 3 }, // благоустро~йте
-			{ std::wstring(     L"уйте"), 3 }, // у~йте існу~йте
-			{ std::wstring(     L"юйте"), 3 }, // дорівню~йте
-			//{ std::wstring(       L"те"), 2 }, // буркоть~те
-			{ std::wstring(      L"ете"), 2 }, // бере~те бамкне~те
-			//{ std::wstring(     L"мете"), 4 }, // візь~мете
-			{ std::wstring(    L"имете"), 4 }, // іти~мете
-			{ std::wstring(  L"атимете"), 6 }, // існу~ва~тимете ма~тимете бра-тимете
-			{ std::wstring(  L"итимете"), 6 }, // безчести~тимете би~тимете
-			{ std::wstring(  L"ітимете"), 6 }, // буркоті~тимете
-			//{ std::wstring(  L"їтимете"), 6 }, // гної~тимете
-			{ std::wstring(  L"оїтимете"), 7 }, // гно~їтимете
-			{ std::wstring(  L"отимете"), 6 }, // боро~тимете
-			{ std::wstring(  L"утимете"), 6 }, // блякну~тимете
-			{ std::wstring(L"уватимете"), 8 }, // актуалізу~ватимете
-			{ std::wstring(L"юватимете"), 8 }, // дорівню~ватимете
-			{ std::wstring(    L"ьмете"), 4 }, // візь~мете
-			{ std::wstring(     L"аєте"), 3 }, // зна~єте
-			{ std::wstring(     L"ієте"), 3 }, // бурі~єте
-			{ std::wstring(     L"уєте"), 3 }, // існу~єте
-			{ std::wstring(     L"юєте"), 3 }, // дорівню~єте
-			{ std::wstring(     L"'єте"), 3 }, // б'~єте
-			{ std::wstring(      L"ите"), 2 }, // буркоти~те
-			{ std::wstring(      L"іте"), 2 }, // бері~те бамкні~те
-			//{ std::wstring(      L"їте"), 2 }, // благоустрої~те
-			{ std::wstring(     L"оїте"), 3 }, // благоустро~їте
-			{ std::wstring(     L"ийте"), 3 }, // би~йте
-			{ std::wstring(      L"ьте"), 2 }, // буркоть~те
-			{ std::wstring(      L"іше"), 3, WordClass::Adjective }, // абсурдн~іше
-			{ std::wstring(      L"іше"), 3, WordClass::Adverb }, // азартн~іше
-			{ std::wstring( L"є"), 1, WordClass::Adjective }, // автодорожн~є
-			{ std::wstring(L"ає"), 1 }, // вплива~є
-			{ std::wstring(L"еє"), 2, WordClass::Adjective }, // безпосадков~еє багатеньк~еє близьк~еє adj
-			{ std::wstring(L"іє"), 1 }, // бурі~є
-			{ std::wstring(L"ує"), 1 }, // існу~є
-			{ std::wstring(L"ює"), 1 }, // дорівню~є
-			{ std::wstring(L"'є"), 1, WordClass::Noun }, // сім'~є
+			{ std::wstring(        L"Рµ"), 1 }, // Р±РµСЂ~Рµ Р±Р°РјРєРЅ~Рµ
+			{ std::wstring(        L"Рµ"), 1, PartOfSpeech::Adjective }, // Р±Р»РёР¶С‡~Рµ Р±Р»РёР·СЊРє~Рµ
+			{ std::wstring(        L"Рµ"), 1, PartOfSpeech::Noun }, // С„СѓСЂРіРѕРЅ~Рµ
+			{ std::wstring(        L"Рµ"), 1, PartOfSpeech::Numeral }, // Р±Р°РіР°С‚РѕРјС–Р»СЊСЏСЂРґРЅ~Рµ
+			{ std::wstring(      L"РёРјРµ"), 2 }, // Р±СЂРµСЃС‚Рё~РјРµ
+			{ std::wstring(    L"Р°С‚РёРјРµ"), 4 }, // РЅР°Р·РёРІР°~С‚РёРјРµ
+			{ std::wstring(    L"СЏС‚РёРјРµ"), 4 }, // СЂРѕР·РјРѕРІР»СЏ~С‚РёРјРµ
+			{ std::wstring(  L"СѓРІР°С‚РёРјРµ"), 6 }, // С–СЃРЅСѓ~РІР°~С‚РёРјРµ Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёРјРµ
+			{ std::wstring(  L"СЋРІР°С‚РёРјРµ"), 6 }, // Р±Р°Р·Р°СЂСЋ~РІР°~С‚РёРјРµ
+			{ std::wstring(    L"РёС‚РёРјРµ"), 4 }, // СЂРѕР±Рё~С‚РёРјРµ Р±Рё~С‚РёРјРµ
+			{ std::wstring(    L"С–С‚РёРјРµ"), 4 }, // Р±СѓСЂРєРѕС‚С–~С‚РёРјРµ
+			//{ std::wstring(    L"С—С‚РёРјРµ"), 4 }, // РіРЅРѕС—~С‚РёРјРµ
+			{ std::wstring(   L"РѕС—С‚РёРјРµ"), 5 }, // РіРЅРѕ~С—С‚РёРјРµ
+			{ std::wstring(    L"РѕС‚РёРјРµ"), 4 }, // Р±РѕСЂРѕ~С‚РёРјРµ
+			{ std::wstring(    L"СѓС‚РёРјРµ"), 4 }, // Р±Р»СЏРєРЅСѓ~С‚РёРјРµ
+			{ std::wstring(     L"Р°Р№С‚Рµ"), 3 }, // РЅР°Р·РёРІР°~Р№С‚Рµ РІРїР»РёРІР°~Р№С‚Рµ
+			{ std::wstring(     L"С–Р№С‚Рµ"), 3 }, // Р±СѓСЂС–~Р№С‚Рµ
+			{ std::wstring(     L"РѕР№С‚Рµ"), 3 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~Р№С‚Рµ
+			{ std::wstring(     L"СѓР№С‚Рµ"), 3 }, // Сѓ~Р№С‚Рµ С–СЃРЅСѓ~Р№С‚Рµ
+			{ std::wstring(     L"СЋР№С‚Рµ"), 3 }, // РґРѕСЂС–РІРЅСЋ~Р№С‚Рµ
+			//{ std::wstring(       L"С‚Рµ"), 2 }, // Р±СѓСЂРєРѕС‚СЊ~С‚Рµ
+			{ std::wstring(      L"РµС‚Рµ"), 2 }, // Р±РµСЂРµ~С‚Рµ Р±Р°РјРєРЅРµ~С‚Рµ
+			//{ std::wstring(     L"РјРµС‚Рµ"), 4 }, // РІС–Р·СЊ~РјРµС‚Рµ
+			{ std::wstring(    L"РёРјРµС‚Рµ"), 4 }, // С–С‚Рё~РјРµС‚Рµ
+			{ std::wstring(  L"Р°С‚РёРјРµС‚Рµ"), 6 }, // С–СЃРЅСѓ~РІР°~С‚РёРјРµС‚Рµ РјР°~С‚РёРјРµС‚Рµ Р±СЂР°-С‚РёРјРµС‚Рµ
+			{ std::wstring(  L"РёС‚РёРјРµС‚Рµ"), 6 }, // Р±РµР·С‡РµСЃС‚Рё~С‚РёРјРµС‚Рµ Р±Рё~С‚РёРјРµС‚Рµ
+			{ std::wstring(  L"С–С‚РёРјРµС‚Рµ"), 6 }, // Р±СѓСЂРєРѕС‚С–~С‚РёРјРµС‚Рµ
+			//{ std::wstring(  L"С—С‚РёРјРµС‚Рµ"), 6 }, // РіРЅРѕС—~С‚РёРјРµС‚Рµ
+			{ std::wstring(  L"РѕС—С‚РёРјРµС‚Рµ"), 7 }, // РіРЅРѕ~С—С‚РёРјРµС‚Рµ
+			{ std::wstring(  L"РѕС‚РёРјРµС‚Рµ"), 6 }, // Р±РѕСЂРѕ~С‚РёРјРµС‚Рµ
+			{ std::wstring(  L"СѓС‚РёРјРµС‚Рµ"), 6 }, // Р±Р»СЏРєРЅСѓ~С‚РёРјРµС‚Рµ
+			{ std::wstring(L"СѓРІР°С‚РёРјРµС‚Рµ"), 8 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёРјРµС‚Рµ
+			{ std::wstring(L"СЋРІР°С‚РёРјРµС‚Рµ"), 8 }, // РґРѕСЂС–РІРЅСЋ~РІР°С‚РёРјРµС‚Рµ
+			{ std::wstring(    L"СЊРјРµС‚Рµ"), 4 }, // РІС–Р·СЊ~РјРµС‚Рµ
+			{ std::wstring(     L"Р°С”С‚Рµ"), 3 }, // Р·РЅР°~С”С‚Рµ
+			{ std::wstring(     L"С–С”С‚Рµ"), 3 }, // Р±СѓСЂС–~С”С‚Рµ
+			{ std::wstring(     L"СѓС”С‚Рµ"), 3 }, // С–СЃРЅСѓ~С”С‚Рµ
+			{ std::wstring(     L"СЋС”С‚Рµ"), 3 }, // РґРѕСЂС–РІРЅСЋ~С”С‚Рµ
+			{ std::wstring(     L"'С”С‚Рµ"), 3 }, // Р±'~С”С‚Рµ
+			{ std::wstring(      L"РёС‚Рµ"), 2 }, // Р±СѓСЂРєРѕС‚Рё~С‚Рµ
+			{ std::wstring(      L"С–С‚Рµ"), 2 }, // Р±РµСЂС–~С‚Рµ Р±Р°РјРєРЅС–~С‚Рµ
+			//{ std::wstring(      L"С—С‚Рµ"), 2 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~С‚Рµ
+			{ std::wstring(     L"РѕС—С‚Рµ"), 3 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—С‚Рµ
+			{ std::wstring(     L"РёР№С‚Рµ"), 3 }, // Р±Рё~Р№С‚Рµ
+			{ std::wstring(      L"СЊС‚Рµ"), 2 }, // Р±СѓСЂРєРѕС‚СЊ~С‚Рµ
+			{ std::wstring(      L"С–С€Рµ"), 3, PartOfSpeech::Adjective }, // Р°Р±СЃСѓСЂРґРЅ~С–С€Рµ
+			{ std::wstring(      L"С–С€Рµ"), 3, PartOfSpeech::Adverb }, // Р°Р·Р°СЂС‚РЅ~С–С€Рµ
+			{ std::wstring( L"С”"), 1, PartOfSpeech::Adjective }, // Р°РІС‚РѕРґРѕСЂРѕР¶РЅ~С”
+			{ std::wstring(L"Р°С”"), 1 }, // РІРїР»РёРІР°~С”
+			{ std::wstring(L"РµС”"), 2, PartOfSpeech::Adjective }, // Р±РµР·РїРѕСЃР°РґРєРѕРІ~РµС” Р±Р°РіР°С‚РµРЅСЊРє~РµС” Р±Р»РёР·СЊРє~РµС” adj
+			{ std::wstring(L"С–С”"), 1 }, // Р±СѓСЂС–~С”
+			{ std::wstring(L"СѓС”"), 1 }, // С–СЃРЅСѓ~С”
+			{ std::wstring(L"СЋС”"), 1 }, // РґРѕСЂС–РІРЅСЋ~С”
+			{ std::wstring(L"'С”"), 1, PartOfSpeech::Noun }, // СЃС–Рј'~С”
 
-			{ std::wstring(     L"и"), 1, WordClass::Noun }, // ручк~и буркн~и береж~и реклам~и noun
-			{ std::wstring(     L"и"), 1, WordClass::Numeral }, // шістдесят~и
-			{ std::wstring(   L"али"), 2 }, // бува~ли
-			{ std::wstring( L"ували"), 4 }, // актуалізу~вали існу~вали
-			{ std::wstring( L"ювали"), 4 }, // базарю~вали (soft U, not J-U)
-			{ std::wstring(   L"или"), 2 }, // би~ли
-			{ std::wstring(   L"іли"), 2 }, // буркоті~ли
-			//{ std::wstring(   L"їли"), 2 }, // благоустрої~ли
-			{ std::wstring(  L"оїли"), 3 }, // благоустро~їли
-			{ std::wstring(   L"оли"), 2 }, // боро~ли
-			{ std::wstring(   L"ули"), 2 }, // бамкну~ли
-			{ std::wstring(   L"ами"), 3, WordClass::Numeral }, // чотирмаст~ами
-			{ std::wstring(   L"ими"), 2 }, // велики~ми
-			{ std::wstring(   L"ими"), 3, WordClass::Numeral }, // багатомільярдн~ими
-			//{ std::wstring( L"овими"), 5 }, // adjective
-			{ std::wstring(   L"ами"), 3, WordClass::Noun }, // реклам~ами рук~ами ручк~ами фургон~ами
-			{ std::wstring(   L"ями"), 3, WordClass::Noun }, // аграрі~ями обслуговуванн~ями
-			//{ std::wstring(  L"оями"), 2 }, // и~ли noun
-			{ std::wstring(  L"'ями"), 3, WordClass::Noun }, // сім'~ями
-			{ std::wstring(   L"ати"), 2 }, // вплива~ти бра~ти
-			{ std::wstring( L"ювати"), 4 }, // базарю~вати (soft U)
-			{ std::wstring(   L"ити"), 2 }, // жи~ти аркани~ти би~ти
-			{ std::wstring(   L"іти"), 2 }, // буркоті~ти
-			//{ std::wstring(   L"їти"), 2 }, // благоустрої~ти
-			{ std::wstring(  L"оїти"), 3 }, // благоустро~їти
-			{ std::wstring(   L"оти"), 2 }, // боро~ти
-			{ std::wstring(   L"ути"), 2 }, // бамкну~ти
-			{ std::wstring( L"увати"), 4 }, // актуалізу~вати
-			{ std::wstring(   L"ачи"), 2, WordClass::VerbalAdverb }, // бурлача~чи вантажа~чи
-			{ std::wstring(   L"учи"), 2, WordClass::VerbalAdverb }, // беру~чи бережу~чи
-			{ std::wstring(   L"ючи"), 3, WordClass::VerbalAdverb }, // бор~ючи ?
-			//{ std::wstring(  L"аючи"), 3, WordClass::VerbalAdverb }, // незважа~ючи бува~ючи
-			//{ std::wstring(  L"іючи"), 3, WordClass::VerbalAdverb }, // бурі~ючи байдужі~ючи
-			//{ std::wstring(  L"уючи"), 3, WordClass::VerbalAdverb }, // у~ючи існу~ючи
-			//{ std::wstring(  L"юючи"), 3, WordClass::VerbalAdverb }, // дорівню~ючи
-			//{ std::wstring(  L"'ючи"), 3, WordClass::VerbalAdverb }, // б'~ючи
-			{ std::wstring(   L"ячи"), 3, WordClass::VerbalAdverb }, // буркот~ячи виход~ячи буд~ячи
-			{ std::wstring(  L"оячи"), 3, WordClass::VerbalAdverb }, // гно~ячи
-			{ std::wstring(  L"авши"), 3, WordClass::VerbalAdverb }, // ма~вши зна~вши бра~вши
-			{ std::wstring(  L"івши"), 3, WordClass::VerbalAdverb }, // буркоті~вши буботі~вши
-			//{ std::wstring(  L"ївши"), 3, WordClass::VerbalAdverb }, // благоустрої~вши
-			{ std::wstring( L"оївши"), 4, WordClass::VerbalAdverb }, // благоустро~ївши
-			{ std::wstring(  L"увши"), 3, WordClass::VerbalAdverb }, // бамкну~вши бу~вши
-			{ std::wstring(  L"ивши"), 3, WordClass::VerbalAdverb }, // безчести~вши би~вши
-			{ std::wstring(  L"овши"), 3, WordClass::VerbalAdverb }, // боро~вши
-			{ std::wstring(L"ювавши"), 5, WordClass::VerbalAdverb }, // ідорівню~вавши асоцію~вавши
-			{ std::wstring(L"увавши"), 5, WordClass::VerbalAdverb }, // існу~вавши актуалізу~вавши бу~вавши
+			{ std::wstring(     L"Рё"), 1, PartOfSpeech::Noun }, // СЂСѓС‡Рє~Рё Р±СѓСЂРєРЅ~Рё Р±РµСЂРµР¶~Рё СЂРµРєР»Р°Рј~Рё noun
+			{ std::wstring(     L"Рё"), 1, PartOfSpeech::Numeral }, // С€С–СЃС‚РґРµСЃСЏС‚~Рё
+			{ std::wstring(   L"Р°Р»Рё"), 2 }, // Р±СѓРІР°~Р»Рё
+			{ std::wstring( L"СѓРІР°Р»Рё"), 4 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°Р»Рё С–СЃРЅСѓ~РІР°Р»Рё
+			{ std::wstring( L"СЋРІР°Р»Рё"), 4 }, // Р±Р°Р·Р°СЂСЋ~РІР°Р»Рё (soft U, not J-U)
+			{ std::wstring(   L"РёР»Рё"), 2 }, // Р±Рё~Р»Рё
+			{ std::wstring(   L"С–Р»Рё"), 2 }, // Р±СѓСЂРєРѕС‚С–~Р»Рё
+			//{ std::wstring(   L"С—Р»Рё"), 2 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~Р»Рё
+			{ std::wstring(  L"РѕС—Р»Рё"), 3 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—Р»Рё
+			{ std::wstring(   L"РѕР»Рё"), 2 }, // Р±РѕСЂРѕ~Р»Рё
+			{ std::wstring(   L"СѓР»Рё"), 2 }, // Р±Р°РјРєРЅСѓ~Р»Рё
+			{ std::wstring(   L"Р°РјРё"), 3, PartOfSpeech::Numeral }, // С‡РѕС‚РёСЂРјР°СЃС‚~Р°РјРё
+			{ std::wstring(   L"РёРјРё"), 2 }, // РІРµР»РёРєРё~РјРё
+			{ std::wstring(   L"РёРјРё"), 3, PartOfSpeech::Numeral }, // Р±Р°РіР°С‚РѕРјС–Р»СЊСЏСЂРґРЅ~РёРјРё
+			//{ std::wstring( L"РѕРІРёРјРё"), 5 }, // adjective
+			{ std::wstring(   L"Р°РјРё"), 3, PartOfSpeech::Noun }, // СЂРµРєР»Р°Рј~Р°РјРё СЂСѓРє~Р°РјРё СЂСѓС‡Рє~Р°РјРё С„СѓСЂРіРѕРЅ~Р°РјРё
+			{ std::wstring(   L"СЏРјРё"), 3, PartOfSpeech::Noun }, // Р°РіСЂР°СЂС–~СЏРјРё РѕР±СЃР»СѓРіРѕРІСѓРІР°РЅРЅ~СЏРјРё
+			//{ std::wstring(  L"РѕСЏРјРё"), 2 }, // Рё~Р»Рё noun
+			{ std::wstring(  L"'СЏРјРё"), 3, PartOfSpeech::Noun }, // СЃС–Рј'~СЏРјРё
+			{ std::wstring(   L"Р°С‚Рё"), 2 }, // РІРїР»РёРІР°~С‚Рё Р±СЂР°~С‚Рё
+			{ std::wstring( L"СЋРІР°С‚Рё"), 4 }, // Р±Р°Р·Р°СЂСЋ~РІР°С‚Рё (soft U)
+			{ std::wstring(   L"РёС‚Рё"), 2 }, // Р¶Рё~С‚Рё Р°СЂРєР°РЅРё~С‚Рё Р±Рё~С‚Рё
+			{ std::wstring(   L"С–С‚Рё"), 2 }, // Р±СѓСЂРєРѕС‚С–~С‚Рё
+			//{ std::wstring(   L"С—С‚Рё"), 2 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~С‚Рё
+			{ std::wstring(  L"РѕС—С‚Рё"), 3 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—С‚Рё
+			{ std::wstring(   L"РѕС‚Рё"), 2 }, // Р±РѕСЂРѕ~С‚Рё
+			{ std::wstring(   L"СѓС‚Рё"), 2 }, // Р±Р°РјРєРЅСѓ~С‚Рё
+			{ std::wstring( L"СѓРІР°С‚Рё"), 4 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚Рё
+			{ std::wstring(   L"Р°С‡Рё"), 2, PartOfSpeech::VerbalAdverb }, // Р±СѓСЂР»Р°С‡Р°~С‡Рё РІР°РЅС‚Р°Р¶Р°~С‡Рё
+			{ std::wstring(   L"СѓС‡Рё"), 2, PartOfSpeech::VerbalAdverb }, // Р±РµСЂСѓ~С‡Рё Р±РµСЂРµР¶Сѓ~С‡Рё
+			{ std::wstring(   L"СЋС‡Рё"), 3, PartOfSpeech::VerbalAdverb }, // Р±РѕСЂ~СЋС‡Рё ?
+			//{ std::wstring(  L"Р°СЋС‡Рё"), 3, PartOfSpeech::VerbalAdverb }, // РЅРµР·РІР°Р¶Р°~СЋС‡Рё Р±СѓРІР°~СЋС‡Рё
+			//{ std::wstring(  L"С–СЋС‡Рё"), 3, PartOfSpeech::VerbalAdverb }, // Р±СѓСЂС–~СЋС‡Рё Р±Р°Р№РґСѓР¶С–~СЋС‡Рё
+			//{ std::wstring(  L"СѓСЋС‡Рё"), 3, PartOfSpeech::VerbalAdverb }, // Сѓ~СЋС‡Рё С–СЃРЅСѓ~СЋС‡Рё
+			//{ std::wstring(  L"СЋСЋС‡Рё"), 3, PartOfSpeech::VerbalAdverb }, // РґРѕСЂС–РІРЅСЋ~СЋС‡Рё
+			//{ std::wstring(  L"'СЋС‡Рё"), 3, PartOfSpeech::VerbalAdverb }, // Р±'~СЋС‡Рё
+			{ std::wstring(   L"СЏС‡Рё"), 3, PartOfSpeech::VerbalAdverb }, // Р±СѓСЂРєРѕС‚~СЏС‡Рё РІРёС…РѕРґ~СЏС‡Рё Р±СѓРґ~СЏС‡Рё
+			{ std::wstring(  L"РѕСЏС‡Рё"), 3, PartOfSpeech::VerbalAdverb }, // РіРЅРѕ~СЏС‡Рё
+			{ std::wstring(  L"Р°РІС€Рё"), 3, PartOfSpeech::VerbalAdverb }, // РјР°~РІС€Рё Р·РЅР°~РІС€Рё Р±СЂР°~РІС€Рё
+			{ std::wstring(  L"С–РІС€Рё"), 3, PartOfSpeech::VerbalAdverb }, // Р±СѓСЂРєРѕС‚С–~РІС€Рё Р±СѓР±РѕС‚С–~РІС€Рё
+			//{ std::wstring(  L"С—РІС€Рё"), 3, PartOfSpeech::VerbalAdverb }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~РІС€Рё
+			{ std::wstring( L"РѕС—РІС€Рё"), 4, PartOfSpeech::VerbalAdverb }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—РІС€Рё
+			{ std::wstring(  L"СѓРІС€Рё"), 3, PartOfSpeech::VerbalAdverb }, // Р±Р°РјРєРЅСѓ~РІС€Рё Р±Сѓ~РІС€Рё
+			{ std::wstring(  L"РёРІС€Рё"), 3, PartOfSpeech::VerbalAdverb }, // Р±РµР·С‡РµСЃС‚Рё~РІС€Рё Р±Рё~РІС€Рё
+			{ std::wstring(  L"РѕРІС€Рё"), 3, PartOfSpeech::VerbalAdverb }, // Р±РѕСЂРѕ~РІС€Рё
+			{ std::wstring(L"СЋРІР°РІС€Рё"), 5, PartOfSpeech::VerbalAdverb }, // С–РґРѕСЂС–РІРЅСЋ~РІР°РІС€Рё Р°СЃРѕС†С–СЋ~РІР°РІС€Рё
+			{ std::wstring(L"СѓРІР°РІС€Рё"), 5, PartOfSpeech::VerbalAdverb }, // С–СЃРЅСѓ~РІР°РІС€Рё Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°РІС€Рё Р±Сѓ~РІР°РІС€Рё
 
-			{ std::wstring(   L"і"), 1, WordClass::Noun }, // так~і україн~і
-			{ std::wstring(   L"і"), 1, WordClass::Adjective }, // ближч~і близьк~і
-			{ std::wstring(   L"і"), 1, WordClass::Numeral }, // багатомільярдн~і
-			{ std::wstring(L"оєві"), 3, WordClass::Noun }, // одностро~єві noun
-			{ std::wstring( L"еві"), 3, WordClass::Noun }, // княз~еві
-			{ std::wstring( L"єві"), 3, WordClass::Noun }, // аграрі~єві
-			{ std::wstring( L"ові"), 3, WordClass::Noun }, // фургон~ові noun
-			{ std::wstring( L"іші"), 3, WordClass::Adjective }, // абсурдн~іші adj
+			{ std::wstring(   L"С–"), 1, PartOfSpeech::Noun }, // С‚Р°Рє~С– СѓРєСЂР°С—РЅ~С–
+			{ std::wstring(   L"С–"), 1, PartOfSpeech::Adjective }, // Р±Р»РёР¶С‡~С– Р±Р»РёР·СЊРє~С–
+			{ std::wstring(   L"С–"), 1, PartOfSpeech::Numeral }, // Р±Р°РіР°С‚РѕРјС–Р»СЊСЏСЂРґРЅ~С–
+			{ std::wstring(L"РѕС”РІС–"), 3, PartOfSpeech::Noun }, // РѕРґРЅРѕСЃС‚СЂРѕ~С”РІС– noun
+			{ std::wstring( L"РµРІС–"), 3, PartOfSpeech::Noun }, // РєРЅСЏР·~РµРІС–
+			{ std::wstring( L"С”РІС–"), 3, PartOfSpeech::Noun }, // Р°РіСЂР°СЂС–~С”РІС–
+			{ std::wstring( L"РѕРІС–"), 3, PartOfSpeech::Noun }, // С„СѓСЂРіРѕРЅ~РѕРІС– noun
+			{ std::wstring( L"С–С€С–"), 3, PartOfSpeech::Adjective }, // Р°Р±СЃСѓСЂРґРЅ~С–С€С– adj
 
-			{ std::wstring( L"ї"), 1, WordClass::Adjective }, // білоши~ї
-			{ std::wstring( L"ї"), 1, WordClass::Noun }, // одностро~ї
-			{ std::wstring(L"еї"), 1, WordClass::Noun }, // музе~ї
-			{ std::wstring(L"єї"), 2, WordClass::Pronoun }, // ці~єї
-			{ std::wstring(L"иї"), 1, WordClass::Noun }, // коломи~ї
-			{ std::wstring(L"ії"), 2, WordClass::Adjective }, // багатеньк~ії безпосадков~ії adj
-			{ std::wstring(L"ії"), 1, WordClass::Noun }, // полонiзацi~ї телепортаці~ї ліні~ї
-			{ std::wstring(L"ої"), 2, WordClass::Adjective }, // заможн~ої
-			{ std::wstring(L"ої"), 1, WordClass::Noun }, // одностро~ї
-			{ std::wstring(L"ої"), 1, WordClass::Numeral }, // багатомільярдн~ої
-			{ std::wstring(L"уї"), 1, WordClass::Noun }, // буржу~ї
-			{ std::wstring(L"юї"), 1 }, // брю~ї
-			{ std::wstring(L"яї"), 1, WordClass::Noun }, // хазя~ї
+			{ std::wstring( L"С—"), 1, PartOfSpeech::Adjective }, // Р±С–Р»РѕС€Рё~С—
+			{ std::wstring( L"С—"), 1, PartOfSpeech::Noun }, // РѕРґРЅРѕСЃС‚СЂРѕ~С—
+			{ std::wstring(L"РµС—"), 1, PartOfSpeech::Noun }, // РјСѓР·Рµ~С—
+			{ std::wstring(L"С”С—"), 2, PartOfSpeech::Pronoun }, // С†С–~С”С—
+			{ std::wstring(L"РёС—"), 1, PartOfSpeech::Noun }, // РєРѕР»РѕРјРё~С—
+			{ std::wstring(L"С–С—"), 2, PartOfSpeech::Adjective }, // Р±Р°РіР°С‚РµРЅСЊРє~С–С— Р±РµР·РїРѕСЃР°РґРєРѕРІ~С–С— adj
+			{ std::wstring(L"С–С—"), 1, PartOfSpeech::Noun }, // РїРѕР»РѕРЅiР·Р°С†i~С— С‚РµР»РµРїРѕСЂС‚Р°С†С–~С— Р»С–РЅС–~С—
+			{ std::wstring(L"РѕС—"), 2, PartOfSpeech::Adjective }, // Р·Р°РјРѕР¶РЅ~РѕС—
+			{ std::wstring(L"РѕС—"), 1, PartOfSpeech::Noun }, // РѕРґРЅРѕСЃС‚СЂРѕ~С—
+			{ std::wstring(L"РѕС—"), 1, PartOfSpeech::Numeral }, // Р±Р°РіР°С‚РѕРјС–Р»СЊСЏСЂРґРЅ~РѕС—
+			{ std::wstring(L"СѓС—"), 1, PartOfSpeech::Noun }, // Р±СѓСЂР¶Сѓ~С—
+			{ std::wstring(L"СЋС—"), 1 }, // Р±СЂСЋ~С—
+			{ std::wstring(L"СЏС—"), 1, PartOfSpeech::Noun }, // С…Р°Р·СЏ~С—
 
-			{ std::wstring(      L"ай"), 1 }, // назива~й вплива~й
-			{ std::wstring(      L"ей"), 2, WordClass::Noun }, // сім~ей
-			{ std::wstring(      L"ий"), 2, WordClass::Adjective }, // тепл~ий багатеньк~ий adj 
-			{ std::wstring(      L"ий"), 2, WordClass::Numeral }, // багатомільярдн~ий
-			{ std::wstring(      L"ій"), 2, WordClass::Adjective }, // українськ~ій останн~ій автодорожн~ій adj
-			{ std::wstring(      L"ій"), 1, WordClass::Noun }, // однострі~й організаці~й noun
-			{ std::wstring(      L"ій"), 1, WordClass::Numeral }, // багатомільярдн~ій
-			{ std::wstring(      L"ій"), 2, WordClass::Pronoun }, // їхн~ій
-			{ std::wstring(      L"їй"), 2, WordClass::Adjective }, // безкра~їй
-			{ std::wstring(      L"ой"), 1 }, // благоустро~й
-			{ std::wstring(      L"уй"), 1 }, // існу~й
-			{ std::wstring(      L"юй"), 1 }, // дорівню~й
-			{ std::wstring(    L"ілий"), 3, WordClass::Participle }, // бурі~лий байдужі~лий ИЙ
-			{ std::wstring(    L"аний"), 3, WordClass::Participle }, // а~ний бра~ний ИЙ
-			{ std::wstring(  L"ований"), 5, WordClass::Participle }, // актуалізо~ваний анігільо~ваний асоційо~ваний
-			{ std::wstring(  L"уваний"), 5, WordClass::Participle }, // арештову~ваний
-			{ std::wstring(  L"юваний"), 5, WordClass::Participle }, // підозрю~ваний
-			{ std::wstring(    L"ений"), 3, WordClass::Participle }, // безчеще~ний береже~ний вантаже~ний ИЙ
-			{ std::wstring(    L"єний"), 4, WordClass::Adjective }, // благоустро~єний гно~єний заспоко~єний ИЙ
-			{ std::wstring(   L"оєний"), 4, WordClass::Adjective }, // благоустро~єний гно~єний заспоко~єний
-			{ std::wstring(    L"итий"), 3, WordClass::Participle }, // би~тий
-			{ std::wstring(    L"отий"), 3, WordClass::Participle }, // боро~тий
-			{ std::wstring(    L"утий"), 3, WordClass::Participle }, // бовтну~тий
-			{ std::wstring(    L"ачий"), 3, WordClass::Participle }, // бурлача~чий вантажа~чий
-			{ std::wstring(    L"учий"), 3, WordClass::Participle}, // беру~чий бамкну~чий бережу~чий буду~чий
-			{ std::wstring(    L"ючий"), 4, WordClass::Participle }, // compound бор~ючий
-			//{ std::wstring(   L"аючий"), 4, WordClass::Participle }, // вплива~ючий
-			//{ std::wstring(   L"іючий"), 4, WordClass::Participle }, // бурі~ючий байдужі~ючий
-			//{ std::wstring(   L"уючий"), 4 , WordClass::Participle}, // існу~ючий
-			//{ std::wstring(   L"юючий"), 4, WordClass::Participle }, // дорівню~ючий
-			//{ std::wstring(   L"'ючий"), 4, WordClass::Participle }, // б'~ючий
-			{ std::wstring(    L"ячий"), 4, WordClass::Participle }, // буркот~ячий буд~ячий
-			{ std::wstring(   L"оячий"), 4, WordClass::Participle }, // гно~ячий
-			{ std::wstring(     L"ший"), 3, WordClass::Adjective }, // багат~ший
-			{ std::wstring(   L"авший"), 4, WordClass::Participle }, // бра~вший
-			{ std::wstring( L"увавший"), 6, WordClass::Participle }, // існу~вавший актуалізу~вавший бу~вавший
-			{ std::wstring( L"ювавший"), 6, WordClass::Participle }, // базарю~вавший асоцію~вавший
-			{ std::wstring(   L"ивший"), 4, WordClass::Participle }, // безчести~вший би~вший
-			{ std::wstring(   L"івший"), 4, WordClass::Participle }, // буркоті~вший буботі~вший
-			//{ std::wstring(   L"ївший"), 4 }, // благоустрої~вший
-			{ std::wstring(  L"оївший"), 5, WordClass::Participle }, // благоустро~ївший
-			{ std::wstring(   L"овший"), 4, WordClass::Participle }, // боро~вший
-			{ std::wstring(   L"увший"), 4, WordClass::Participle }, // бамкну~вший бу~вший
-			{ std::wstring(    L"іший"), 4, WordClass::Adjective }, // абсурдн~іший
+			{ std::wstring(      L"Р°Р№"), 1 }, // РЅР°Р·РёРІР°~Р№ РІРїР»РёРІР°~Р№
+			{ std::wstring(      L"РµР№"), 2, PartOfSpeech::Noun }, // СЃС–Рј~РµР№
+			{ std::wstring(      L"РёР№"), 2, PartOfSpeech::Adjective }, // С‚РµРїР»~РёР№ Р±Р°РіР°С‚РµРЅСЊРє~РёР№ adj 
+			{ std::wstring(      L"РёР№"), 2, PartOfSpeech::Numeral }, // Р±Р°РіР°С‚РѕРјС–Р»СЊСЏСЂРґРЅ~РёР№
+			{ std::wstring(      L"С–Р№"), 2, PartOfSpeech::Adjective }, // СѓРєСЂР°С—РЅСЃСЊРє~С–Р№ РѕСЃС‚Р°РЅРЅ~С–Р№ Р°РІС‚РѕРґРѕСЂРѕР¶РЅ~С–Р№ adj
+			{ std::wstring(      L"С–Р№"), 1, PartOfSpeech::Noun }, // РѕРґРЅРѕСЃС‚СЂС–~Р№ РѕСЂРіР°РЅС–Р·Р°С†С–~Р№ noun
+			{ std::wstring(      L"С–Р№"), 1, PartOfSpeech::Numeral }, // Р±Р°РіР°С‚РѕРјС–Р»СЊСЏСЂРґРЅ~С–Р№
+			{ std::wstring(      L"С–Р№"), 2, PartOfSpeech::Pronoun }, // С—С…РЅ~С–Р№
+			{ std::wstring(      L"С—Р№"), 2, PartOfSpeech::Adjective }, // Р±РµР·РєСЂР°~С—Р№
+			{ std::wstring(      L"РѕР№"), 1 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~Р№
+			{ std::wstring(      L"СѓР№"), 1 }, // С–СЃРЅСѓ~Р№
+			{ std::wstring(      L"СЋР№"), 1 }, // РґРѕСЂС–РІРЅСЋ~Р№
+			{ std::wstring(    L"С–Р»РёР№"), 3, PartOfSpeech::Participle }, // Р±СѓСЂС–~Р»РёР№ Р±Р°Р№РґСѓР¶С–~Р»РёР№ РР™
+			{ std::wstring(    L"Р°РЅРёР№"), 3, PartOfSpeech::Participle }, // Р°~РЅРёР№ Р±СЂР°~РЅРёР№ РР™
+			{ std::wstring(  L"РѕРІР°РЅРёР№"), 5, PartOfSpeech::Participle }, // Р°РєС‚СѓР°Р»С–Р·Рѕ~РІР°РЅРёР№ Р°РЅС–РіС–Р»СЊРѕ~РІР°РЅРёР№ Р°СЃРѕС†С–Р№Рѕ~РІР°РЅРёР№
+			{ std::wstring(  L"СѓРІР°РЅРёР№"), 5, PartOfSpeech::Participle }, // Р°СЂРµС€С‚РѕРІСѓ~РІР°РЅРёР№
+			{ std::wstring(  L"СЋРІР°РЅРёР№"), 5, PartOfSpeech::Participle }, // РїС–РґРѕР·СЂСЋ~РІР°РЅРёР№
+			{ std::wstring(    L"РµРЅРёР№"), 3, PartOfSpeech::Participle }, // Р±РµР·С‡РµС‰Рµ~РЅРёР№ Р±РµСЂРµР¶Рµ~РЅРёР№ РІР°РЅС‚Р°Р¶Рµ~РЅРёР№ РР™
+			{ std::wstring(    L"С”РЅРёР№"), 4, PartOfSpeech::Adjective }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С”РЅРёР№ РіРЅРѕ~С”РЅРёР№ Р·Р°СЃРїРѕРєРѕ~С”РЅРёР№ РР™
+			{ std::wstring(   L"РѕС”РЅРёР№"), 4, PartOfSpeech::Adjective }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С”РЅРёР№ РіРЅРѕ~С”РЅРёР№ Р·Р°СЃРїРѕРєРѕ~С”РЅРёР№
+			{ std::wstring(    L"РёС‚РёР№"), 3, PartOfSpeech::Participle }, // Р±Рё~С‚РёР№
+			{ std::wstring(    L"РѕС‚РёР№"), 3, PartOfSpeech::Participle }, // Р±РѕСЂРѕ~С‚РёР№
+			{ std::wstring(    L"СѓС‚РёР№"), 3, PartOfSpeech::Participle }, // Р±РѕРІС‚РЅСѓ~С‚РёР№
+			{ std::wstring(    L"Р°С‡РёР№"), 3, PartOfSpeech::Participle }, // Р±СѓСЂР»Р°С‡Р°~С‡РёР№ РІР°РЅС‚Р°Р¶Р°~С‡РёР№
+			{ std::wstring(    L"СѓС‡РёР№"), 3, PartOfSpeech::Participle}, // Р±РµСЂСѓ~С‡РёР№ Р±Р°РјРєРЅСѓ~С‡РёР№ Р±РµСЂРµР¶Сѓ~С‡РёР№ Р±СѓРґСѓ~С‡РёР№
+			{ std::wstring(    L"СЋС‡РёР№"), 4, PartOfSpeech::Participle }, // compound Р±РѕСЂ~СЋС‡РёР№
+			//{ std::wstring(   L"Р°СЋС‡РёР№"), 4, PartOfSpeech::Participle }, // РІРїР»РёРІР°~СЋС‡РёР№
+			//{ std::wstring(   L"С–СЋС‡РёР№"), 4, PartOfSpeech::Participle }, // Р±СѓСЂС–~СЋС‡РёР№ Р±Р°Р№РґСѓР¶С–~СЋС‡РёР№
+			//{ std::wstring(   L"СѓСЋС‡РёР№"), 4 , PartOfSpeech::Participle}, // С–СЃРЅСѓ~СЋС‡РёР№
+			//{ std::wstring(   L"СЋСЋС‡РёР№"), 4, PartOfSpeech::Participle }, // РґРѕСЂС–РІРЅСЋ~СЋС‡РёР№
+			//{ std::wstring(   L"'СЋС‡РёР№"), 4, PartOfSpeech::Participle }, // Р±'~СЋС‡РёР№
+			{ std::wstring(    L"СЏС‡РёР№"), 4, PartOfSpeech::Participle }, // Р±СѓСЂРєРѕС‚~СЏС‡РёР№ Р±СѓРґ~СЏС‡РёР№
+			{ std::wstring(   L"РѕСЏС‡РёР№"), 4, PartOfSpeech::Participle }, // РіРЅРѕ~СЏС‡РёР№
+			{ std::wstring(     L"С€РёР№"), 3, PartOfSpeech::Adjective }, // Р±Р°РіР°С‚~С€РёР№
+			{ std::wstring(   L"Р°РІС€РёР№"), 4, PartOfSpeech::Participle }, // Р±СЂР°~РІС€РёР№
+			{ std::wstring( L"СѓРІР°РІС€РёР№"), 6, PartOfSpeech::Participle }, // С–СЃРЅСѓ~РІР°РІС€РёР№ Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°РІС€РёР№ Р±Сѓ~РІР°РІС€РёР№
+			{ std::wstring( L"СЋРІР°РІС€РёР№"), 6, PartOfSpeech::Participle }, // Р±Р°Р·Р°СЂСЋ~РІР°РІС€РёР№ Р°СЃРѕС†С–СЋ~РІР°РІС€РёР№
+			{ std::wstring(   L"РёРІС€РёР№"), 4, PartOfSpeech::Participle }, // Р±РµР·С‡РµСЃС‚Рё~РІС€РёР№ Р±Рё~РІС€РёР№
+			{ std::wstring(   L"С–РІС€РёР№"), 4, PartOfSpeech::Participle }, // Р±СѓСЂРєРѕС‚С–~РІС€РёР№ Р±СѓР±РѕС‚С–~РІС€РёР№
+			//{ std::wstring(   L"С—РІС€РёР№"), 4 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~РІС€РёР№
+			{ std::wstring(  L"РѕС—РІС€РёР№"), 5, PartOfSpeech::Participle }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—РІС€РёР№
+			{ std::wstring(   L"РѕРІС€РёР№"), 4, PartOfSpeech::Participle }, // Р±РѕСЂРѕ~РІС€РёР№
+			{ std::wstring(   L"СѓРІС€РёР№"), 4, PartOfSpeech::Participle }, // Р±Р°РјРєРЅСѓ~РІС€РёР№ Р±Сѓ~РІС€РёР№
+			{ std::wstring(    L"С–С€РёР№"), 4, PartOfSpeech::Adjective }, // Р°Р±СЃСѓСЂРґРЅ~С–С€РёР№
 
-			{ std::wstring(      L"ам"), 2, WordClass::Noun }, // фургон~ам
-			{ std::wstring(      L"ам"), 2, WordClass::Numeral }, // чотирьомст~ам
-			{ std::wstring(      L"ем"), 1 }, // бер~ем бамкн~ем
-			{ std::wstring(      L"ем"), 2, WordClass::Noun }, // саботаж~ем ERROR: бурозем~ анахтем~(анахтема)
-			{ std::wstring(    L"имем"), 3 }, // брести~мем
-			{ std::wstring(  L"атимем"), 5 }, // бра~тимем
-			{ std::wstring(  L"отимем"), 5 }, // боро~тимем
-			{ std::wstring(L"уватимем"), 7 }, // існу~ва~тимем актуалізу~ватимем
-			{ std::wstring(L"юватимем"), 7 }, // базарю~ва~тимем
-			{ std::wstring(  L"итимем"), 5 }, // роби~тимем би~тимем
-			{ std::wstring(  L"ітимем"), 5 }, // терпі~тимем ?
-			//{ std::wstring( L"їтимем"), 5 }, // гної~тимем
-			{ std::wstring( L"оїтимем"), 6 }, // гно~їтимем
-			{ std::wstring(  L"утимем"), 5 }, // блякну~тимем
-			{ std::wstring(  L"ятимем"), 5 }, // розмовл~ятимем
-			{ std::wstring(      L"єм"), 2, WordClass::Noun }, // composite
-			{ std::wstring(      L"єм"), 2 }, // composite
-			//{ std::wstring(     L"аєм"), 2 }, // зна~єм
-			//{ std::wstring(     L"еєм"), 2 }, // промете~єм noun
-			//{ std::wstring(     L"ієм"), 2 }, // критері~єм noun
-			//{ std::wstring(     L"оєм"), 2 }, // одностро~єм
-			//{ std::wstring(     L"уєм"), 2 }, // чу~єм
-			//{ std::wstring(     L"юєм"), 2 }, // базарю~єм
-			//{ std::wstring(     L"'єм"), 2 }, // б'~єм
-			{ std::wstring(      L"им"), 1 }, // буркоти~м
-			{ std::wstring(      L"им"), 2, WordClass::Numeral }, // багатомільярдн~им
-			{ std::wstring(      L"ім"), 1 }, // бамкні~м бері~м бережі~м
-			{ std::wstring(      L"ім"), 2, WordClass::Numeral }, // багатомільярдн~ім
-			//{ std::wstring(      L"їм"), 1 }, // благоустрої~м
-			{ std::wstring(     L"оїм"), 2 }, // благоустро~їм
-			{ std::wstring(      L"ом"), 2, WordClass::Noun }, // фургон~ом
-			{ std::wstring(      L"ом"), 2, WordClass::Numeral }, // дв~ом одинадцять~ом
-			{ std::wstring(      L"ям"), 2, WordClass::Noun }, // compound люд~ям обслуговуванн~ям
-			//{ std::wstring(     L"оям"), 2, WordClass::Noun }, // одностро~ям
-			//{ std::wstring(     L"'ям"), 2, WordClass::Noun }, // сім'~ям
+			{ std::wstring(      L"Р°Рј"), 2, PartOfSpeech::Noun }, // С„СѓСЂРіРѕРЅ~Р°Рј
+			{ std::wstring(      L"Р°Рј"), 2, PartOfSpeech::Numeral }, // С‡РѕС‚РёСЂСЊРѕРјСЃС‚~Р°Рј
+			{ std::wstring(      L"РµРј"), 1 }, // Р±РµСЂ~РµРј Р±Р°РјРєРЅ~РµРј
+			{ std::wstring(      L"РµРј"), 2, PartOfSpeech::Noun }, // СЃР°Р±РѕС‚Р°Р¶~РµРј ERROR: Р±СѓСЂРѕР·РµРј~ Р°РЅР°С…С‚РµРј~(Р°РЅР°С…С‚РµРјР°)
+			{ std::wstring(    L"РёРјРµРј"), 3 }, // Р±СЂРµСЃС‚Рё~РјРµРј
+			{ std::wstring(  L"Р°С‚РёРјРµРј"), 5 }, // Р±СЂР°~С‚РёРјРµРј
+			{ std::wstring(  L"РѕС‚РёРјРµРј"), 5 }, // Р±РѕСЂРѕ~С‚РёРјРµРј
+			{ std::wstring(L"СѓРІР°С‚РёРјРµРј"), 7 }, // С–СЃРЅСѓ~РІР°~С‚РёРјРµРј Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёРјРµРј
+			{ std::wstring(L"СЋРІР°С‚РёРјРµРј"), 7 }, // Р±Р°Р·Р°СЂСЋ~РІР°~С‚РёРјРµРј
+			{ std::wstring(  L"РёС‚РёРјРµРј"), 5 }, // СЂРѕР±Рё~С‚РёРјРµРј Р±Рё~С‚РёРјРµРј
+			{ std::wstring(  L"С–С‚РёРјРµРј"), 5 }, // С‚РµСЂРїС–~С‚РёРјРµРј ?
+			//{ std::wstring( L"С—С‚РёРјРµРј"), 5 }, // РіРЅРѕС—~С‚РёРјРµРј
+			{ std::wstring( L"РѕС—С‚РёРјРµРј"), 6 }, // РіРЅРѕ~С—С‚РёРјРµРј
+			{ std::wstring(  L"СѓС‚РёРјРµРј"), 5 }, // Р±Р»СЏРєРЅСѓ~С‚РёРјРµРј
+			{ std::wstring(  L"СЏС‚РёРјРµРј"), 5 }, // СЂРѕР·РјРѕРІР»~СЏС‚РёРјРµРј
+			{ std::wstring(      L"С”Рј"), 2, PartOfSpeech::Noun }, // composite
+			{ std::wstring(      L"С”Рј"), 2 }, // composite
+			//{ std::wstring(     L"Р°С”Рј"), 2 }, // Р·РЅР°~С”Рј
+			//{ std::wstring(     L"РµС”Рј"), 2 }, // РїСЂРѕРјРµС‚Рµ~С”Рј noun
+			//{ std::wstring(     L"С–С”Рј"), 2 }, // РєСЂРёС‚РµСЂС–~С”Рј noun
+			//{ std::wstring(     L"РѕС”Рј"), 2 }, // РѕРґРЅРѕСЃС‚СЂРѕ~С”Рј
+			//{ std::wstring(     L"СѓС”Рј"), 2 }, // С‡Сѓ~С”Рј
+			//{ std::wstring(     L"СЋС”Рј"), 2 }, // Р±Р°Р·Р°СЂСЋ~С”Рј
+			//{ std::wstring(     L"'С”Рј"), 2 }, // Р±'~С”Рј
+			{ std::wstring(      L"РёРј"), 1 }, // Р±СѓСЂРєРѕС‚Рё~Рј
+			{ std::wstring(      L"РёРј"), 2, PartOfSpeech::Numeral }, // Р±Р°РіР°С‚РѕРјС–Р»СЊСЏСЂРґРЅ~РёРј
+			{ std::wstring(      L"С–Рј"), 1 }, // Р±Р°РјРєРЅС–~Рј Р±РµСЂС–~Рј Р±РµСЂРµР¶С–~Рј
+			{ std::wstring(      L"С–Рј"), 2, PartOfSpeech::Numeral }, // Р±Р°РіР°С‚РѕРјС–Р»СЊСЏСЂРґРЅ~С–Рј
+			//{ std::wstring(      L"С—Рј"), 1 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~Рј
+			{ std::wstring(     L"РѕС—Рј"), 2 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—Рј
+			{ std::wstring(      L"РѕРј"), 2, PartOfSpeech::Noun }, // С„СѓСЂРіРѕРЅ~РѕРј
+			{ std::wstring(      L"РѕРј"), 2, PartOfSpeech::Numeral }, // РґРІ~РѕРј РѕРґРёРЅР°РґС†СЏС‚СЊ~РѕРј
+			{ std::wstring(      L"СЏРј"), 2, PartOfSpeech::Noun }, // compound Р»СЋРґ~СЏРј РѕР±СЃР»СѓРіРѕРІСѓРІР°РЅРЅ~СЏРј
+			//{ std::wstring(     L"РѕСЏРј"), 2, PartOfSpeech::Noun }, // РѕРґРЅРѕСЃС‚СЂРѕ~СЏРј
+			//{ std::wstring(     L"'СЏРј"), 2, PartOfSpeech::Noun }, // СЃС–Рј'~СЏРј
 
-			{ std::wstring(        L"о"), 1 }, // ручк~о
-			{ std::wstring(        L"о"), 1, WordClass::Adverb }, // азартн~о adverb
-			{ std::wstring(        L"о"), 1, WordClass::Numeral }, // ст~о
-			{ std::wstring(      L"ого"), 3, WordClass::Numeral }, // багатомільярдн~ого
-			{ std::wstring(     L"ього"), 3, WordClass::Pronoun }, // їхнь~ого
-			{ std::wstring(      L"ало"), 2 }, // бракува~ло
-			{ std::wstring(    L"увало"), 4 }, // існу~вало актуалізу~вало
-			{ std::wstring(    L"ювало"), 4 }, // базарю~вало (soft U)
-			{ std::wstring(      L"ило"), 2 }, // жи~ло би~ло
-			{ std::wstring(      L"іло"), 2 }, // буркоті~ло
-			//{ std::wstring(      L"їло"), 2 }, // благоустрої~ло
-			{ std::wstring(     L"оїло"), 3 }, // благоустро~їло
-			{ std::wstring(      L"оло"), 2 }, // боро~ло
-			{ std::wstring(      L"уло"), 2 }, // бамкну~ло
-			//{ std::wstring(       L"мо"), 2 }, // буркоть~мо безчесть~мо
-			{ std::wstring(      L"емо"), 2 }, // бере~мо бамкне~мо
-			{ std::wstring(      L"имо"), 2 }, // буркоти~мо
-			{ std::wstring(  L"атимемо"), 6 }, // існу~ва~тимемо ма~тимемо
-			{ std::wstring(  L"итимемо"), 6 }, // жи~тимемо би~тимемо
-			{ std::wstring(  L"ітимемо"), 6 }, // буркоті~тимемо
-			//{ std::wstring(  L"їтимемо"), 6 }, // гної~тимемо
-			{ std::wstring( L"оїтимемо"), 7 }, // гно~їтимемо
-			{ std::wstring(  L"отимемо"), 6 }, // боро~тимемо
-			{ std::wstring(  L"утимемо"), 6 }, // блякну~тимемо
-			{ std::wstring(L"уватимемо"), 8 }, // актуалізу~ватимемо
-			{ std::wstring(L"юватимемо"), 8 }, // дорівню~ватимемо
-			{ std::wstring(     L"аємо"), 3 }, // зна~ємо
-			{ std::wstring(     L"іємо"), 3 }, // бурі~ємо
-			{ std::wstring(     L"уємо"), 3 }, // існу~ємо
-			{ std::wstring(     L"юємо"), 3 }, // дорівню~ємо
-			{ std::wstring(     L"'ємо"), 3 }, // б'~ємо
-			{ std::wstring(      L"імо"), 2 }, // бері~мо бамкні~мо бережі~мо
-			//{ std::wstring(      L"їмо"), 2 }, // благоустрої~мо
-			{ std::wstring(     L"оїмо"), 3 }, // благоустро~їмо
-			//{ std::wstring(      L"ймо"), 3 }, // NOT клей*ймо
-			{ std::wstring(     L"аймо"), 3 }, // назива~ймо руша~ймо
-			//{ std::wstring(     L"еймо"), 3 }, // no words
-			{ std::wstring(     L"иймо"), 3 }, // бурі~ймо би~ймо
-			{ std::wstring(     L"іймо"), 3 }, // бурі~ймо
-			{ std::wstring(     L"оймо"), 3 }, // благоустро~ймо
-			{ std::wstring(     L"уймо"), 3 }, // існу~ймо актуалізу~ймо
-			{ std::wstring(     L"юймо"), 3 }, // дорівню~ймо
-			{ std::wstring(     L"яймо"), 3 }, // порівня~ймо
-			{ std::wstring(      L"ьмо"), 2 }, // буркоть~мо безчесть~мо
-			{ std::wstring(      L"еро"), 3, WordClass::Numeral }, // дев'ят~еро
+			{ std::wstring(        L"Рѕ"), 1 }, // СЂСѓС‡Рє~Рѕ
+			{ std::wstring(        L"Рѕ"), 1, PartOfSpeech::Adverb }, // Р°Р·Р°СЂС‚РЅ~Рѕ adverb
+			{ std::wstring(        L"Рѕ"), 1, PartOfSpeech::Numeral }, // СЃС‚~Рѕ
+			{ std::wstring(      L"РѕРіРѕ"), 3, PartOfSpeech::Numeral }, // Р±Р°РіР°С‚РѕРјС–Р»СЊСЏСЂРґРЅ~РѕРіРѕ
+			{ std::wstring(     L"СЊРѕРіРѕ"), 3, PartOfSpeech::Pronoun }, // С—С…РЅСЊ~РѕРіРѕ
+			{ std::wstring(      L"Р°Р»Рѕ"), 2 }, // Р±СЂР°РєСѓРІР°~Р»Рѕ
+			{ std::wstring(    L"СѓРІР°Р»Рѕ"), 4 }, // С–СЃРЅСѓ~РІР°Р»Рѕ Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°Р»Рѕ
+			{ std::wstring(    L"СЋРІР°Р»Рѕ"), 4 }, // Р±Р°Р·Р°СЂСЋ~РІР°Р»Рѕ (soft U)
+			{ std::wstring(      L"РёР»Рѕ"), 2 }, // Р¶Рё~Р»Рѕ Р±Рё~Р»Рѕ
+			{ std::wstring(      L"С–Р»Рѕ"), 2 }, // Р±СѓСЂРєРѕС‚С–~Р»Рѕ
+			//{ std::wstring(      L"С—Р»Рѕ"), 2 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~Р»Рѕ
+			{ std::wstring(     L"РѕС—Р»Рѕ"), 3 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—Р»Рѕ
+			{ std::wstring(      L"РѕР»Рѕ"), 2 }, // Р±РѕСЂРѕ~Р»Рѕ
+			{ std::wstring(      L"СѓР»Рѕ"), 2 }, // Р±Р°РјРєРЅСѓ~Р»Рѕ
+			//{ std::wstring(       L"РјРѕ"), 2 }, // Р±СѓСЂРєРѕС‚СЊ~РјРѕ Р±РµР·С‡РµСЃС‚СЊ~РјРѕ
+			{ std::wstring(      L"РµРјРѕ"), 2 }, // Р±РµСЂРµ~РјРѕ Р±Р°РјРєРЅРµ~РјРѕ
+			{ std::wstring(      L"РёРјРѕ"), 2 }, // Р±СѓСЂРєРѕС‚Рё~РјРѕ
+			{ std::wstring(  L"Р°С‚РёРјРµРјРѕ"), 6 }, // С–СЃРЅСѓ~РІР°~С‚РёРјРµРјРѕ РјР°~С‚РёРјРµРјРѕ
+			{ std::wstring(  L"РёС‚РёРјРµРјРѕ"), 6 }, // Р¶Рё~С‚РёРјРµРјРѕ Р±Рё~С‚РёРјРµРјРѕ
+			{ std::wstring(  L"С–С‚РёРјРµРјРѕ"), 6 }, // Р±СѓСЂРєРѕС‚С–~С‚РёРјРµРјРѕ
+			//{ std::wstring(  L"С—С‚РёРјРµРјРѕ"), 6 }, // РіРЅРѕС—~С‚РёРјРµРјРѕ
+			{ std::wstring( L"РѕС—С‚РёРјРµРјРѕ"), 7 }, // РіРЅРѕ~С—С‚РёРјРµРјРѕ
+			{ std::wstring(  L"РѕС‚РёРјРµРјРѕ"), 6 }, // Р±РѕСЂРѕ~С‚РёРјРµРјРѕ
+			{ std::wstring(  L"СѓС‚РёРјРµРјРѕ"), 6 }, // Р±Р»СЏРєРЅСѓ~С‚РёРјРµРјРѕ
+			{ std::wstring(L"СѓРІР°С‚РёРјРµРјРѕ"), 8 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёРјРµРјРѕ
+			{ std::wstring(L"СЋРІР°С‚РёРјРµРјРѕ"), 8 }, // РґРѕСЂС–РІРЅСЋ~РІР°С‚РёРјРµРјРѕ
+			{ std::wstring(     L"Р°С”РјРѕ"), 3 }, // Р·РЅР°~С”РјРѕ
+			{ std::wstring(     L"С–С”РјРѕ"), 3 }, // Р±СѓСЂС–~С”РјРѕ
+			{ std::wstring(     L"СѓС”РјРѕ"), 3 }, // С–СЃРЅСѓ~С”РјРѕ
+			{ std::wstring(     L"СЋС”РјРѕ"), 3 }, // РґРѕСЂС–РІРЅСЋ~С”РјРѕ
+			{ std::wstring(     L"'С”РјРѕ"), 3 }, // Р±'~С”РјРѕ
+			{ std::wstring(      L"С–РјРѕ"), 2 }, // Р±РµСЂС–~РјРѕ Р±Р°РјРєРЅС–~РјРѕ Р±РµСЂРµР¶С–~РјРѕ
+			//{ std::wstring(      L"С—РјРѕ"), 2 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~РјРѕ
+			{ std::wstring(     L"РѕС—РјРѕ"), 3 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—РјРѕ
+			//{ std::wstring(      L"Р№РјРѕ"), 3 }, // NOT РєР»РµР№*Р№РјРѕ
+			{ std::wstring(     L"Р°Р№РјРѕ"), 3 }, // РЅР°Р·РёРІР°~Р№РјРѕ СЂСѓС€Р°~Р№РјРѕ
+			//{ std::wstring(     L"РµР№РјРѕ"), 3 }, // no words
+			{ std::wstring(     L"РёР№РјРѕ"), 3 }, // Р±СѓСЂС–~Р№РјРѕ Р±Рё~Р№РјРѕ
+			{ std::wstring(     L"С–Р№РјРѕ"), 3 }, // Р±СѓСЂС–~Р№РјРѕ
+			{ std::wstring(     L"РѕР№РјРѕ"), 3 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~Р№РјРѕ
+			{ std::wstring(     L"СѓР№РјРѕ"), 3 }, // С–СЃРЅСѓ~Р№РјРѕ Р°РєС‚СѓР°Р»С–Р·Сѓ~Р№РјРѕ
+			{ std::wstring(     L"СЋР№РјРѕ"), 3 }, // РґРѕСЂС–РІРЅСЋ~Р№РјРѕ
+			{ std::wstring(     L"СЏР№РјРѕ"), 3 }, // РїРѕСЂС–РІРЅСЏ~Р№РјРѕ
+			{ std::wstring(      L"СЊРјРѕ"), 2 }, // Р±СѓСЂРєРѕС‚СЊ~РјРѕ Р±РµР·С‡РµСЃС‚СЊ~РјРѕ
+			{ std::wstring(      L"РµСЂРѕ"), 3, PartOfSpeech::Numeral }, // РґРµРІ'СЏС‚~РµСЂРѕ
 			
-			{ std::wstring(      L"у"), 1, WordClass::Noun }, // noun, ручк~у бер~у буркоч~у безчещ~у береж~у
-			{ std::wstring(      L"у"), 1, WordClass::Numeral }, // багатомільярдн~у
-			//{ std::wstring(     L"му"), 2 }, // not usable (фор*м~у)
-			//{ std::wstring(    L"аму"), 2 }, // not usable (са*м~у)
-			{ std::wstring(    L"єму"), 2, WordClass::Pronoun }, // своє~му
-			{ std::wstring(    L"иму"), 2 }, // берег*ти~му
-			//{ std::wstring(   L"тиму"), 4 }, // берег*тиму; г*тиму is too rare to use
-			{ std::wstring(  L"атиму"), 4 }, // бра~тиму
-			{ std::wstring(  L"итиму"), 4 }, // безчести~тиму би~тиму
-			{ std::wstring(  L"ітиму"), 4 }, // буркоті~тиму
-			//{ std::wstring(  L"їтиму"), 4 }, // гної~тиму
-			{ std::wstring( L"оїтиму"), 5 }, // гно~їтиму
-			{ std::wstring(  L"отиму"), 4 }, // боро~тиму
-			{ std::wstring(  L"стиму"), 4 }, // брес~тиму
-			{ std::wstring(  L"утиму"), 4 }, // блякну~тиму
-			{ std::wstring(L"уватиму"), 6 }, // існу~ватиму актуалізу~ватиму
-			{ std::wstring(L"юватиму"), 6 }, // базарю~ватиму
-			{ std::wstring(    L"ому"), 3, WordClass::Adjective }, // бюджетн~ому adj
-			{ std::wstring(    L"ому"), 3, WordClass::Numeral }, // багатомільярдн~ому
-			//{ std::wstring(    L"уму"), 2 }, // not usable (розу*м~у)
+			{ std::wstring(      L"Сѓ"), 1, PartOfSpeech::Noun }, // noun, СЂСѓС‡Рє~Сѓ Р±РµСЂ~Сѓ Р±СѓСЂРєРѕС‡~Сѓ Р±РµР·С‡РµС‰~Сѓ Р±РµСЂРµР¶~Сѓ
+			{ std::wstring(      L"Сѓ"), 1, PartOfSpeech::Numeral }, // Р±Р°РіР°С‚РѕРјС–Р»СЊСЏСЂРґРЅ~Сѓ
+			//{ std::wstring(     L"РјСѓ"), 2 }, // not usable (С„РѕСЂ*Рј~Сѓ)
+			//{ std::wstring(    L"Р°РјСѓ"), 2 }, // not usable (СЃР°*Рј~Сѓ)
+			{ std::wstring(    L"С”РјСѓ"), 2, PartOfSpeech::Pronoun }, // СЃРІРѕС”~РјСѓ
+			{ std::wstring(    L"РёРјСѓ"), 2 }, // Р±РµСЂРµРі*С‚Рё~РјСѓ
+			//{ std::wstring(   L"С‚РёРјСѓ"), 4 }, // Р±РµСЂРµРі*С‚РёРјСѓ; Рі*С‚РёРјСѓ is too rare to use
+			{ std::wstring(  L"Р°С‚РёРјСѓ"), 4 }, // Р±СЂР°~С‚РёРјСѓ
+			{ std::wstring(  L"РёС‚РёРјСѓ"), 4 }, // Р±РµР·С‡РµСЃС‚Рё~С‚РёРјСѓ Р±Рё~С‚РёРјСѓ
+			{ std::wstring(  L"С–С‚РёРјСѓ"), 4 }, // Р±СѓСЂРєРѕС‚С–~С‚РёРјСѓ
+			//{ std::wstring(  L"С—С‚РёРјСѓ"), 4 }, // РіРЅРѕС—~С‚РёРјСѓ
+			{ std::wstring( L"РѕС—С‚РёРјСѓ"), 5 }, // РіРЅРѕ~С—С‚РёРјСѓ
+			{ std::wstring(  L"РѕС‚РёРјСѓ"), 4 }, // Р±РѕСЂРѕ~С‚РёРјСѓ
+			{ std::wstring(  L"СЃС‚РёРјСѓ"), 4 }, // Р±СЂРµСЃ~С‚РёРјСѓ
+			{ std::wstring(  L"СѓС‚РёРјСѓ"), 4 }, // Р±Р»СЏРєРЅСѓ~С‚РёРјСѓ
+			{ std::wstring(L"СѓРІР°С‚РёРјСѓ"), 6 }, // С–СЃРЅСѓ~РІР°С‚РёРјСѓ Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёРјСѓ
+			{ std::wstring(L"СЋРІР°С‚РёРјСѓ"), 6 }, // Р±Р°Р·Р°СЂСЋ~РІР°С‚РёРјСѓ
+			{ std::wstring(    L"РѕРјСѓ"), 3, PartOfSpeech::Adjective }, // Р±СЋРґР¶РµС‚РЅ~РѕРјСѓ adj
+			{ std::wstring(    L"РѕРјСѓ"), 3, PartOfSpeech::Numeral }, // Р±Р°РіР°С‚РѕРјС–Р»СЊСЏСЂРґРЅ~РѕРјСѓ
+			//{ std::wstring(    L"СѓРјСѓ"), 2 }, // not usable (СЂРѕР·Сѓ*Рј~Сѓ)
 
-			{ std::wstring(  L"ах"), 2, WordClass::Noun }, // ручк~ах фургон~ах
-			{ std::wstring(  L"ах"), 2, WordClass::Numeral }, // чотирьохст~ах
-			{ std::wstring(  L"их"), 2, WordClass::Adjective }, // бюджетн~их
-			{ std::wstring(  L"их"), 2, WordClass::Numeral }, // багатомільярдн~их
-			{ std::wstring(  L"ох"), 2, WordClass::Numeral }, // дев'ять~ох дв~ох
-			{ std::wstring(  L"ях"), 2, WordClass::Noun }, // compound
-			//{ std::wstring( L"оях"), 2, WordClass::Noun }, // одностро~ях
-			//{ std::wstring(  L"ях"), 2, WordClass::Noun }, // обслуговуванн~ях
-			//{ std::wstring( L"'ях"), 2, WordClass::Noun }, // сім'~ях
+			{ std::wstring(  L"Р°С…"), 2, PartOfSpeech::Noun }, // СЂСѓС‡Рє~Р°С… С„СѓСЂРіРѕРЅ~Р°С…
+			{ std::wstring(  L"Р°С…"), 2, PartOfSpeech::Numeral }, // С‡РѕС‚РёСЂСЊРѕС…СЃС‚~Р°С…
+			{ std::wstring(  L"РёС…"), 2, PartOfSpeech::Adjective }, // Р±СЋРґР¶РµС‚РЅ~РёС…
+			{ std::wstring(  L"РёС…"), 2, PartOfSpeech::Numeral }, // Р±Р°РіР°С‚РѕРјС–Р»СЊСЏСЂРґРЅ~РёС…
+			{ std::wstring(  L"РѕС…"), 2, PartOfSpeech::Numeral }, // РґРµРІ'СЏС‚СЊ~РѕС… РґРІ~РѕС…
+			{ std::wstring(  L"СЏС…"), 2, PartOfSpeech::Noun }, // compound
+			//{ std::wstring( L"РѕСЏС…"), 2, PartOfSpeech::Noun }, // РѕРґРЅРѕСЃС‚СЂРѕ~СЏС…
+			//{ std::wstring(  L"СЏС…"), 2, PartOfSpeech::Noun }, // РѕР±СЃР»СѓРіРѕРІСѓРІР°РЅРЅ~СЏС…
+			//{ std::wstring( L"'СЏС…"), 2, PartOfSpeech::Noun }, // СЃС–Рј'~СЏС…
 
-			{ std::wstring(      L"еш"), 2 }, // бер~еш бамкн~еш
-			{ std::wstring(    L"имеш"), 3 }, // брести~меш
-			{ std::wstring(  L"атимеш"), 5 }, // бра~тимеш назива~тимеш
-			{ std::wstring(  L"итимеш"), 5 }, // безчести~тимеш би~тимеш
-			{ std::wstring(  L"ітимеш"), 5 }, // буркоті~тимеш
-			//{ std::wstring(  L"їтимеш"), 5 }, // гної~тимеш
-			{ std::wstring( L"оїтимеш"), 6 }, // гно~їтимеш
-			{ std::wstring(  L"отимеш"), 5 }, // боро~тимеш
-			{ std::wstring(  L"утимеш"), 5 }, // блякну~тимеш
-			//{ std::wstring(L"иватимеш"), 7 }, // no words with such suffix
-			{ std::wstring(L"уватимеш"), 7 }, // актуалізу~ватимеш існу~ватимеш
-			{ std::wstring(L"юватимеш"), 7 }, // базарю~ватимеш (soft U)
-			{ std::wstring(     L"аєш"), 2 }, // а~єш ма~єш
-			{ std::wstring(     L"ієш"), 2 }, // бурі~єш
-			{ std::wstring(     L"уєш"), 2 }, // існу~єш
-			{ std::wstring(     L"юєш"), 2 }, // дорівню~єш
-			{ std::wstring(     L"'єш"), 2 }, // б'~єш
-			{ std::wstring(      L"иш"), 1 }, // буркот~иш
-			{ std::wstring(      L"іш"), 2, WordClass::Adverb }, // азартн~іш
-			//{ std::wstring(      L"їш"), 1 }, // благоустрої~ш
-			{ std::wstring(     L"оїш"), 2 }, // благоустро~їш
+			{ std::wstring(      L"РµС€"), 2 }, // Р±РµСЂ~РµС€ Р±Р°РјРєРЅ~РµС€
+			{ std::wstring(    L"РёРјРµС€"), 3 }, // Р±СЂРµСЃС‚Рё~РјРµС€
+			{ std::wstring(  L"Р°С‚РёРјРµС€"), 5 }, // Р±СЂР°~С‚РёРјРµС€ РЅР°Р·РёРІР°~С‚РёРјРµС€
+			{ std::wstring(  L"РёС‚РёРјРµС€"), 5 }, // Р±РµР·С‡РµСЃС‚Рё~С‚РёРјРµС€ Р±Рё~С‚РёРјРµС€
+			{ std::wstring(  L"С–С‚РёРјРµС€"), 5 }, // Р±СѓСЂРєРѕС‚С–~С‚РёРјРµС€
+			//{ std::wstring(  L"С—С‚РёРјРµС€"), 5 }, // РіРЅРѕС—~С‚РёРјРµС€
+			{ std::wstring( L"РѕС—С‚РёРјРµС€"), 6 }, // РіРЅРѕ~С—С‚РёРјРµС€
+			{ std::wstring(  L"РѕС‚РёРјРµС€"), 5 }, // Р±РѕСЂРѕ~С‚РёРјРµС€
+			{ std::wstring(  L"СѓС‚РёРјРµС€"), 5 }, // Р±Р»СЏРєРЅСѓ~С‚РёРјРµС€
+			//{ std::wstring(L"РёРІР°С‚РёРјРµС€"), 7 }, // no words with such suffix
+			{ std::wstring(L"СѓРІР°С‚РёРјРµС€"), 7 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёРјРµС€ С–СЃРЅСѓ~РІР°С‚РёРјРµС€
+			{ std::wstring(L"СЋРІР°С‚РёРјРµС€"), 7 }, // Р±Р°Р·Р°СЂСЋ~РІР°С‚РёРјРµС€ (soft U)
+			{ std::wstring(     L"Р°С”С€"), 2 }, // Р°~С”С€ РјР°~С”С€
+			{ std::wstring(     L"С–С”С€"), 2 }, // Р±СѓСЂС–~С”С€
+			{ std::wstring(     L"СѓС”С€"), 2 }, // С–СЃРЅСѓ~С”С€
+			{ std::wstring(     L"СЋС”С€"), 2 }, // РґРѕСЂС–РІРЅСЋ~С”С€
+			{ std::wstring(     L"'С”С€"), 2 }, // Р±'~С”С€
+			{ std::wstring(      L"РёС€"), 1 }, // Р±СѓСЂРєРѕС‚~РёС€
+			{ std::wstring(      L"С–С€"), 2, PartOfSpeech::Adverb }, // Р°Р·Р°СЂС‚РЅ~С–С€
+			//{ std::wstring(      L"С—С€"), 1 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~С€
+			{ std::wstring(     L"РѕС—С€"), 2 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—С€
 
-			{ std::wstring(      L"алась"), 4 }, // назива~лась
-			{ std::wstring(    L"увалась"), 6 }, // актуалізу~валась
-			{ std::wstring(    L"ювалась"), 6 }, // анігілю~валась
-			{ std::wstring(      L"илась"), 4 }, // брижи~лась би~лась
-			//{ std::wstring(      L"їлась"), 4 }, // благоустрої~лась
-			{ std::wstring(     L"оїлась"), 5 }, // благоустро~їлась
-			{ std::wstring(      L"олась"), 4 }, // боро~лась
-			{ std::wstring(      L"улась"), 4 }, // бехну~лємосяась
-			{ std::wstring(     L"оялась"), 5 }, // бо~ялась
-			{ std::wstring(       L"авсь"), 3 }, // назива~всь
-			{ std::wstring(     L"увавсь"), 5 }, // актуалізу~вавсь
-			{ std::wstring(     L"ювавсь"), 5 }, // анігілю~вавсь
-			{ std::wstring(       L"ивсь"), 3 }, // безчести~всь би~всь
-			//{ std::wstring(       L"ївсь"), 3 }, // благоустрої~всь
-			{ std::wstring(      L"оївсь"), 4 }, // благоустро~ївсь
-			{ std::wstring(       L"овсь"), 3 }, // боро~всь
-			{ std::wstring(       L"увсь"), 3 }, // бехну~всь
-			{ std::wstring(       L"явсь"), 4 }, // бо~явсь
-			// { std::wstring(        L"есь"), 2 }, // no words
-			{ std::wstring(   L"тиметесь"), 8 }, // берег~тиметесь
-			{ std::wstring(  L"атиметесь"), 8 }, // назива~тиметесь
-			//{ std::wstring(  L"їтиметесь"), 7 }, // гної~тиметесь
-			{ std::wstring( L"оїтиметесь"), 9 }, // гно~їтиметесь
-			{ std::wstring(  L"отиметесь"), 8 }, // боро~тиметесь
-			{ std::wstring(L"уватиметесь"), 10 }, // актуалізу~ватиметесь
-			{ std::wstring(L"юватиметесь"), 10 }, // анігілю~ватиметесь
-			{ std::wstring(  L"итиметесь"), 8 }, // брижи~тиметесь би~тиметесь
-			{ std::wstring(  L"ятиметесь"), 9 }, // бо~ятиметесь
-			{ std::wstring(      L"етесь"), 4 }, // бере~тесь
-			{ std::wstring(      L"єтесь"), 5 }, // б'~єтесь
-			{ std::wstring(     L"уєтесь"), 5 }, // актуалізу~єтесь
-			{ std::wstring(      L"итесь"), 4 }, // безчести~тесь
-			{ std::wstring(      L"ітесь"), 4 }, // бері~тесь брижі~тесь диві~тесь
-			//{ std::wstring(      L"їтесь"), 4 }, // благоустрої~тесь
-			{ std::wstring(     L"оїтесь"), 5 }, // благоустро~їтесь бо~їтесь
-			{ std::wstring(     L"айтесь"), 5 }, // назива~йтесь
-			{ std::wstring(     L"ийтесь"), 5 }, // би~йтесь
-			{ std::wstring(     L"ійтесь"), 5 }, // бі~йтесь
-			{ std::wstring(     L"ойтесь"), 5 }, // благоустро~йтесь
-			{ std::wstring(     L"уйтесь"), 5 }, // актуалізу~йтесь
-			{ std::wstring(     L"юйтесь"), 5 }, // анігілю~йтесь
-			{ std::wstring(     L"аєтесь"), 5 }, // а~єтесь назива~єтесь
-			{ std::wstring(     L"юєтесь"), 5 }, // анігілю~єтесь
-			{ std::wstring(      L"ьтесь"), 4 }, // багрянь~тесь
-			{ std::wstring(        L"ись"), 2, WordClass::Verb }, // бери~сь
-			{ std::wstring(        L"ись"), 2, WordClass::VerbalAdverb }, // берігши~сь
-			{ std::wstring(      L"ались"), 4 }, // назива~лись
-			{ std::wstring(    L"ювались"), 6 }, // анігілю~вались
-			{ std::wstring(      L"ились"), 4 }, // брижи~лись би~лись
-			//{ std::wstring(      L"їлись"), 4 }, // благоустрої~лись
-			{ std::wstring(     L"оїлись"), 5 }, // благоустро~їлись
-			{ std::wstring(      L"олись"), 4 }, // боро~лись
-			{ std::wstring(      L"улись"), 4 }, // бехну~лись
-			{ std::wstring(    L"увались"), 6 }, // актуалізу~вались
-			{ std::wstring(      L"ялись"), 5 }, // бо~ялись
-			{ std::wstring(      L"атись"), 4 }, // бра~тись
-			{ std::wstring(    L"уватись"), 6 }, // актуалізу~ватись
-			{ std::wstring(    L"юватись"), 6 }, // анігілю~ватись
-			{ std::wstring(      L"итись"), 4 }, // брижи~тись би~тись
-			//{ std::wstring(      L"їтись"), 4 }, // благоустрої~тись
-			{ std::wstring(     L"оїтись"), 5 }, // благоустро~їтись
-			{ std::wstring(      L"отись"), 4 }, // боро~тись
-			{ std::wstring(      L"утись"), 4 }, // бехну~тись
-			{ std::wstring(      L"ятись"), 5 }, // бо~ятись
-			{ std::wstring(      L"ачись"), 4, WordClass::VerbalAdverb }, // брижа~чись вантажа~чись
-			{ std::wstring(      L"учись"), 4, WordClass::VerbalAdverb }, // беру~чись
-			{ std::wstring(      L"ючись"), 5, WordClass::VerbalAdverb }, // compound
-			//{ std::wstring(     L"аючись"), 5, WordClass::VerbalAdverb }, // намага~ючись
-			//{ std::wstring(     L"уючись"), 5, WordClass::VerbalAdverb }, // диву~ючись
-			//{ std::wstring(     L"юючись"), 5, WordClass::VerbalAdverb }, // анігілю~ючись
-			//{ std::wstring(      L"ючись"), 5, WordClass::VerbalAdverb }, // борю~чись
-			//{ std::wstring(     L"'ючись"), 5, WordClass::VerbalAdverb }, // б'~ючись
-			{ std::wstring(      L"ячись"), 5, WordClass::VerbalAdverb }, // бо~ячись гно~ячись дивл~ячись буд~ячись
-			{ std::wstring(     L"оячись"), 5, WordClass::VerbalAdverb }, // гно~ячись бо~ячись
+			{ std::wstring(      L"Р°Р»Р°СЃСЊ"), 4 }, // РЅР°Р·РёРІР°~Р»Р°СЃСЊ
+			{ std::wstring(    L"СѓРІР°Р»Р°СЃСЊ"), 6 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°Р»Р°СЃСЊ
+			{ std::wstring(    L"СЋРІР°Р»Р°СЃСЊ"), 6 }, // Р°РЅС–РіС–Р»СЋ~РІР°Р»Р°СЃСЊ
+			{ std::wstring(      L"РёР»Р°СЃСЊ"), 4 }, // Р±СЂРёР¶Рё~Р»Р°СЃСЊ Р±Рё~Р»Р°СЃСЊ
+			//{ std::wstring(      L"С—Р»Р°СЃСЊ"), 4 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~Р»Р°СЃСЊ
+			{ std::wstring(     L"РѕС—Р»Р°СЃСЊ"), 5 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—Р»Р°СЃСЊ
+			{ std::wstring(      L"РѕР»Р°СЃСЊ"), 4 }, // Р±РѕСЂРѕ~Р»Р°СЃСЊ
+			{ std::wstring(      L"СѓР»Р°СЃСЊ"), 4 }, // Р±РµС…РЅСѓ~Р»С”РјРѕСЃСЏР°СЃСЊ
+			{ std::wstring(     L"РѕСЏР»Р°СЃСЊ"), 5 }, // Р±Рѕ~СЏР»Р°СЃСЊ
+			{ std::wstring(       L"Р°РІСЃСЊ"), 3 }, // РЅР°Р·РёРІР°~РІСЃСЊ
+			{ std::wstring(     L"СѓРІР°РІСЃСЊ"), 5 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°РІСЃСЊ
+			{ std::wstring(     L"СЋРІР°РІСЃСЊ"), 5 }, // Р°РЅС–РіС–Р»СЋ~РІР°РІСЃСЊ
+			{ std::wstring(       L"РёРІСЃСЊ"), 3 }, // Р±РµР·С‡РµСЃС‚Рё~РІСЃСЊ Р±Рё~РІСЃСЊ
+			//{ std::wstring(       L"С—РІСЃСЊ"), 3 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~РІСЃСЊ
+			{ std::wstring(      L"РѕС—РІСЃСЊ"), 4 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—РІСЃСЊ
+			{ std::wstring(       L"РѕРІСЃСЊ"), 3 }, // Р±РѕСЂРѕ~РІСЃСЊ
+			{ std::wstring(       L"СѓРІСЃСЊ"), 3 }, // Р±РµС…РЅСѓ~РІСЃСЊ
+			{ std::wstring(       L"СЏРІСЃСЊ"), 4 }, // Р±Рѕ~СЏРІСЃСЊ
+			// { std::wstring(        L"РµСЃСЊ"), 2 }, // no words
+			{ std::wstring(   L"С‚РёРјРµС‚РµСЃСЊ"), 8 }, // Р±РµСЂРµРі~С‚РёРјРµС‚РµСЃСЊ
+			{ std::wstring(  L"Р°С‚РёРјРµС‚РµСЃСЊ"), 8 }, // РЅР°Р·РёРІР°~С‚РёРјРµС‚РµСЃСЊ
+			//{ std::wstring(  L"С—С‚РёРјРµС‚РµСЃСЊ"), 7 }, // РіРЅРѕС—~С‚РёРјРµС‚РµСЃСЊ
+			{ std::wstring( L"РѕС—С‚РёРјРµС‚РµСЃСЊ"), 9 }, // РіРЅРѕ~С—С‚РёРјРµС‚РµСЃСЊ
+			{ std::wstring(  L"РѕС‚РёРјРµС‚РµСЃСЊ"), 8 }, // Р±РѕСЂРѕ~С‚РёРјРµС‚РµСЃСЊ
+			{ std::wstring(L"СѓРІР°С‚РёРјРµС‚РµСЃСЊ"), 10 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёРјРµС‚РµСЃСЊ
+			{ std::wstring(L"СЋРІР°С‚РёРјРµС‚РµСЃСЊ"), 10 }, // Р°РЅС–РіС–Р»СЋ~РІР°С‚РёРјРµС‚РµСЃСЊ
+			{ std::wstring(  L"РёС‚РёРјРµС‚РµСЃСЊ"), 8 }, // Р±СЂРёР¶Рё~С‚РёРјРµС‚РµСЃСЊ Р±Рё~С‚РёРјРµС‚РµСЃСЊ
+			{ std::wstring(  L"СЏС‚РёРјРµС‚РµСЃСЊ"), 9 }, // Р±Рѕ~СЏС‚РёРјРµС‚РµСЃСЊ
+			{ std::wstring(      L"РµС‚РµСЃСЊ"), 4 }, // Р±РµСЂРµ~С‚РµСЃСЊ
+			{ std::wstring(      L"С”С‚РµСЃСЊ"), 5 }, // Р±'~С”С‚РµСЃСЊ
+			{ std::wstring(     L"СѓС”С‚РµСЃСЊ"), 5 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~С”С‚РµСЃСЊ
+			{ std::wstring(      L"РёС‚РµСЃСЊ"), 4 }, // Р±РµР·С‡РµСЃС‚Рё~С‚РµСЃСЊ
+			{ std::wstring(      L"С–С‚РµСЃСЊ"), 4 }, // Р±РµСЂС–~С‚РµСЃСЊ Р±СЂРёР¶С–~С‚РµСЃСЊ РґРёРІС–~С‚РµСЃСЊ
+			//{ std::wstring(      L"С—С‚РµСЃСЊ"), 4 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~С‚РµСЃСЊ
+			{ std::wstring(     L"РѕС—С‚РµСЃСЊ"), 5 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—С‚РµСЃСЊ Р±Рѕ~С—С‚РµСЃСЊ
+			{ std::wstring(     L"Р°Р№С‚РµСЃСЊ"), 5 }, // РЅР°Р·РёРІР°~Р№С‚РµСЃСЊ
+			{ std::wstring(     L"РёР№С‚РµСЃСЊ"), 5 }, // Р±Рё~Р№С‚РµСЃСЊ
+			{ std::wstring(     L"С–Р№С‚РµСЃСЊ"), 5 }, // Р±С–~Р№С‚РµСЃСЊ
+			{ std::wstring(     L"РѕР№С‚РµСЃСЊ"), 5 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~Р№С‚РµСЃСЊ
+			{ std::wstring(     L"СѓР№С‚РµСЃСЊ"), 5 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~Р№С‚РµСЃСЊ
+			{ std::wstring(     L"СЋР№С‚РµСЃСЊ"), 5 }, // Р°РЅС–РіС–Р»СЋ~Р№С‚РµСЃСЊ
+			{ std::wstring(     L"Р°С”С‚РµСЃСЊ"), 5 }, // Р°~С”С‚РµСЃСЊ РЅР°Р·РёРІР°~С”С‚РµСЃСЊ
+			{ std::wstring(     L"СЋС”С‚РµСЃСЊ"), 5 }, // Р°РЅС–РіС–Р»СЋ~С”С‚РµСЃСЊ
+			{ std::wstring(      L"СЊС‚РµСЃСЊ"), 4 }, // Р±Р°РіСЂСЏРЅСЊ~С‚РµСЃСЊ
+			{ std::wstring(        L"РёСЃСЊ"), 2, PartOfSpeech::Verb }, // Р±РµСЂРё~СЃСЊ
+			{ std::wstring(        L"РёСЃСЊ"), 2, PartOfSpeech::VerbalAdverb }, // Р±РµСЂС–РіС€Рё~СЃСЊ
+			{ std::wstring(      L"Р°Р»РёСЃСЊ"), 4 }, // РЅР°Р·РёРІР°~Р»РёСЃСЊ
+			{ std::wstring(    L"СЋРІР°Р»РёСЃСЊ"), 6 }, // Р°РЅС–РіС–Р»СЋ~РІР°Р»РёСЃСЊ
+			{ std::wstring(      L"РёР»РёСЃСЊ"), 4 }, // Р±СЂРёР¶Рё~Р»РёСЃСЊ Р±Рё~Р»РёСЃСЊ
+			//{ std::wstring(      L"С—Р»РёСЃСЊ"), 4 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~Р»РёСЃСЊ
+			{ std::wstring(     L"РѕС—Р»РёСЃСЊ"), 5 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—Р»РёСЃСЊ
+			{ std::wstring(      L"РѕР»РёСЃСЊ"), 4 }, // Р±РѕСЂРѕ~Р»РёСЃСЊ
+			{ std::wstring(      L"СѓР»РёСЃСЊ"), 4 }, // Р±РµС…РЅСѓ~Р»РёСЃСЊ
+			{ std::wstring(    L"СѓРІР°Р»РёСЃСЊ"), 6 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°Р»РёСЃСЊ
+			{ std::wstring(      L"СЏР»РёСЃСЊ"), 5 }, // Р±Рѕ~СЏР»РёСЃСЊ
+			{ std::wstring(      L"Р°С‚РёСЃСЊ"), 4 }, // Р±СЂР°~С‚РёСЃСЊ
+			{ std::wstring(    L"СѓРІР°С‚РёСЃСЊ"), 6 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёСЃСЊ
+			{ std::wstring(    L"СЋРІР°С‚РёСЃСЊ"), 6 }, // Р°РЅС–РіС–Р»СЋ~РІР°С‚РёСЃСЊ
+			{ std::wstring(      L"РёС‚РёСЃСЊ"), 4 }, // Р±СЂРёР¶Рё~С‚РёСЃСЊ Р±Рё~С‚РёСЃСЊ
+			//{ std::wstring(      L"С—С‚РёСЃСЊ"), 4 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~С‚РёСЃСЊ
+			{ std::wstring(     L"РѕС—С‚РёСЃСЊ"), 5 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—С‚РёСЃСЊ
+			{ std::wstring(      L"РѕС‚РёСЃСЊ"), 4 }, // Р±РѕСЂРѕ~С‚РёСЃСЊ
+			{ std::wstring(      L"СѓС‚РёСЃСЊ"), 4 }, // Р±РµС…РЅСѓ~С‚РёСЃСЊ
+			{ std::wstring(      L"СЏС‚РёСЃСЊ"), 5 }, // Р±Рѕ~СЏС‚РёСЃСЊ
+			{ std::wstring(      L"Р°С‡РёСЃСЊ"), 4, PartOfSpeech::VerbalAdverb }, // Р±СЂРёР¶Р°~С‡РёСЃСЊ РІР°РЅС‚Р°Р¶Р°~С‡РёСЃСЊ
+			{ std::wstring(      L"СѓС‡РёСЃСЊ"), 4, PartOfSpeech::VerbalAdverb }, // Р±РµСЂСѓ~С‡РёСЃСЊ
+			{ std::wstring(      L"СЋС‡РёСЃСЊ"), 5, PartOfSpeech::VerbalAdverb }, // compound
+			//{ std::wstring(     L"Р°СЋС‡РёСЃСЊ"), 5, PartOfSpeech::VerbalAdverb }, // РЅР°РјР°РіР°~СЋС‡РёСЃСЊ
+			//{ std::wstring(     L"СѓСЋС‡РёСЃСЊ"), 5, PartOfSpeech::VerbalAdverb }, // РґРёРІСѓ~СЋС‡РёСЃСЊ
+			//{ std::wstring(     L"СЋСЋС‡РёСЃСЊ"), 5, PartOfSpeech::VerbalAdverb }, // Р°РЅС–РіС–Р»СЋ~СЋС‡РёСЃСЊ
+			//{ std::wstring(      L"СЋС‡РёСЃСЊ"), 5, PartOfSpeech::VerbalAdverb }, // Р±РѕСЂСЋ~С‡РёСЃСЊ
+			//{ std::wstring(     L"'СЋС‡РёСЃСЊ"), 5, PartOfSpeech::VerbalAdverb }, // Р±'~СЋС‡РёСЃСЊ
+			{ std::wstring(      L"СЏС‡РёСЃСЊ"), 5, PartOfSpeech::VerbalAdverb }, // Р±Рѕ~СЏС‡РёСЃСЊ РіРЅРѕ~СЏС‡РёСЃСЊ РґРёРІР»~СЏС‡РёСЃСЊ Р±СѓРґ~СЏС‡РёСЃСЊ
+			{ std::wstring(     L"РѕСЏС‡РёСЃСЊ"), 5, PartOfSpeech::VerbalAdverb }, // РіРЅРѕ~СЏС‡РёСЃСЊ Р±Рѕ~СЏС‡РёСЃСЊ
 
-			{ std::wstring(     L"авшись"), 5, WordClass::VerbalAdverb }, // назива~вшись бра~вшись
-			{ std::wstring(     L"овшись"), 5, WordClass::VerbalAdverb }, // боро~вшись
-			{ std::wstring(   L"ювавшись"), 7, WordClass::VerbalAdverb }, // анігілю~вавшись асоцію~вавшись
-			{ std::wstring(   L"увавшись"), 7, WordClass::VerbalAdverb }, // актуалізу~вавшись
-			{ std::wstring(     L"ившись"), 5, WordClass::VerbalAdverb }, // брижи~вшись би~вшись
-			//{ std::wstring(     L"ївшись"), 5, WordClass::VerbalAdverb }, // благоустрої~вшись
-			{ std::wstring(    L"оївшись"), 6, WordClass::VerbalAdverb }, // благоустро~ївшись
-			{ std::wstring(     L"увшись"), 5, WordClass::VerbalAdverb }, // бехну~вшись зверну~вшись
-			{ std::wstring(     L"явшись"), 5, WordClass::VerbalAdverb }, // взя~вшись
-			{ std::wstring(    L"оявшись"), 6, WordClass::VerbalAdverb }, // бо~явшись
-			{ std::wstring(       L"айсь"), 3 }, // зна~йсь назива~йсь
-			{ std::wstring(       L"ийсь"), 3 }, // бі~йсь би~йсь
-			{ std::wstring(       L"ійсь"), 3 }, // бі~йсь
-			{ std::wstring(       L"ойсь"), 3 }, // благоустро~йсь
-			{ std::wstring(       L"уйсь"), 3 }, // актуалізу~йсь
-			{ std::wstring(       L"юйсь"), 3 }, // анігілю~йсь
-			//{ std::wstring(        L"ось"), 2 }, // no actual words (all are LOS or MOS) кого~сь ??
-			{ std::wstring(      L"алось"), 5 }, // бра~лось назива~лось ста~лось
-			{ std::wstring(    L"ювалось"), 6 }, // анігілю~валось
-			{ std::wstring(      L"илось"), 4 }, // брижи~лось би~лось
-			//{ std::wstring(      L"їлось"), 4 }, // благоустрої~лось
-			{ std::wstring(     L"оїлось"), 5 }, // благоустро~їлось
-			{ std::wstring(      L"олось"), 4 }, // боро~лось
-			{ std::wstring(      L"улось"), 4 }, // бехну-лось
-			{ std::wstring(    L"увалось"), 6 }, // актуалізу~валось
-			{ std::wstring(      L"ялось"), 5 }, // бо~ялось
-			// { std::wstring(       L"мось"), 4 }, // 
-			{ std::wstring(      L"емось"), 4 }, // береже~мось бере~мось
-			{ std::wstring(    L"имемось"), 6 }, // берегти~мемось (we can't split берег*тимемось)
-			{ std::wstring(  L"атимемось"), 8 }, // бра~тимемось нази~ва~тимемось
-			{ std::wstring(  L"итимемось"), 8 }, // брижи~тимемось би~тимемось
-			//{ std::wstring(  L"їтимемось"), 8 }, // гної~тимемось
-			{ std::wstring(  L"оїтимемось"), 9 }, // гно~їтимемось
-			{ std::wstring(  L"отимемось"), 8 }, // боро~тимемось
-			{ std::wstring(L"уватимемось"), 10 }, // актуалізу~ватимемось
-			{ std::wstring(L"юватимемось"), 10 }, // анігілю~ватимемось
-			{ std::wstring(  L"ятимемось"), 9 }, // бо~ятимемось
-			{ std::wstring(      L"ємось"), 5 }, // б'~ємось
-			//{ std::wstring(     L"аємось"), 5 }, // сподіва~ємось
-			//{ std::wstring(     L"иємось"), 5 }, // поши~ємось
-			//{ std::wstring(     L"іємось"), 5 }, // наді~ємось
-			//{ std::wstring(     L"оємось"), 5 }, // побою~ємось
-			//{ std::wstring(     L"уємось"), 5 }, // користу~ємось актуалізу~ємось
-			//{ std::wstring(     L"юємось"), 5 }, // висловлю~ємось анігілю~ємось
-			//{ std::wstring(     L"яємось"), 5 }, // спиня~ємось
-			//{ std::wstring(     L"'ємось"), 5 }, // відіб'~ємось б'~ємось
-			{ std::wstring(      L"имось"), 4 }, // безчести~мось
-			//{ std::wstring(      L"їмось"), 4 }, // бої~мось благоустрої~мось
-			{ std::wstring(      L"імось"), 4 }, // бережі~мось бері~мось диві~мось
-			{ std::wstring(      L"їмось"), 5 }, // compound
-			//{ std::wstring(     L"иїмось"), 5 }, // чи~їмось
-			//{ std::wstring(     L"оїмось"), 5 }, // бо~їмось благоустро~їмось
-			{ std::wstring(      L"ймось"), 5 }, // compound
-			//{ std::wstring(     L"аймось"), 5 }, // назива~ймось
-			//{ std::wstring(     L"иймось"), 5 }, // би~ймось
-			//{ std::wstring(     L"іймось"), 5 }, // бі~ймось
-			//{ std::wstring(     L"оймось"), 5 }, // благоустро~ймось
-			//{ std::wstring(     L"уймось"), 5 }, // актуалізу~ймось
-			//{ std::wstring(     L"юймось"), 5 }, // анігілю~ймось
-			{ std::wstring(      L"ьмось"), 4 }, // безчесть~мось
-			{ std::wstring(        L"усь"), 2 }, // беру~сь безчещу~сь
-			{ std::wstring(      L"имусь"), 4 }, // берегти~мусь
-			{ std::wstring(    L"атимусь"), 6 }, // назива~тимусь
-			{ std::wstring(    L"їтимусь"), 7 }, // compound
-			//{ std::wstring(   L"оїтимусь"), 7 }, // гно~їтимусь
-			{ std::wstring(    L"отимусь"), 6 }, // боро~тимусь
-			{ std::wstring(  L"уватимусь"), 8 }, // актуалізу~ватимусь
-			{ std::wstring(  L"юватимусь"), 8 }, // анігілю~ватимусь
-			{ std::wstring(    L"итимусь"), 6 }, // брижи~тимусь би~тимусь
-			{ std::wstring(    L"ятимусь"), 7 }, // бо~ятимусь
+			{ std::wstring(     L"Р°РІС€РёСЃСЊ"), 5, PartOfSpeech::VerbalAdverb }, // РЅР°Р·РёРІР°~РІС€РёСЃСЊ Р±СЂР°~РІС€РёСЃСЊ
+			{ std::wstring(     L"РѕРІС€РёСЃСЊ"), 5, PartOfSpeech::VerbalAdverb }, // Р±РѕСЂРѕ~РІС€РёСЃСЊ
+			{ std::wstring(   L"СЋРІР°РІС€РёСЃСЊ"), 7, PartOfSpeech::VerbalAdverb }, // Р°РЅС–РіС–Р»СЋ~РІР°РІС€РёСЃСЊ Р°СЃРѕС†С–СЋ~РІР°РІС€РёСЃСЊ
+			{ std::wstring(   L"СѓРІР°РІС€РёСЃСЊ"), 7, PartOfSpeech::VerbalAdverb }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°РІС€РёСЃСЊ
+			{ std::wstring(     L"РёРІС€РёСЃСЊ"), 5, PartOfSpeech::VerbalAdverb }, // Р±СЂРёР¶Рё~РІС€РёСЃСЊ Р±Рё~РІС€РёСЃСЊ
+			//{ std::wstring(     L"С—РІС€РёСЃСЊ"), 5, PartOfSpeech::VerbalAdverb }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~РІС€РёСЃСЊ
+			{ std::wstring(    L"РѕС—РІС€РёСЃСЊ"), 6, PartOfSpeech::VerbalAdverb }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—РІС€РёСЃСЊ
+			{ std::wstring(     L"СѓРІС€РёСЃСЊ"), 5, PartOfSpeech::VerbalAdverb }, // Р±РµС…РЅСѓ~РІС€РёСЃСЊ Р·РІРµСЂРЅСѓ~РІС€РёСЃСЊ
+			{ std::wstring(     L"СЏРІС€РёСЃСЊ"), 5, PartOfSpeech::VerbalAdverb }, // РІР·СЏ~РІС€РёСЃСЊ
+			{ std::wstring(    L"РѕСЏРІС€РёСЃСЊ"), 6, PartOfSpeech::VerbalAdverb }, // Р±Рѕ~СЏРІС€РёСЃСЊ
+			{ std::wstring(       L"Р°Р№СЃСЊ"), 3 }, // Р·РЅР°~Р№СЃСЊ РЅР°Р·РёРІР°~Р№СЃСЊ
+			{ std::wstring(       L"РёР№СЃСЊ"), 3 }, // Р±С–~Р№СЃСЊ Р±Рё~Р№СЃСЊ
+			{ std::wstring(       L"С–Р№СЃСЊ"), 3 }, // Р±С–~Р№СЃСЊ
+			{ std::wstring(       L"РѕР№СЃСЊ"), 3 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~Р№СЃСЊ
+			{ std::wstring(       L"СѓР№СЃСЊ"), 3 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~Р№СЃСЊ
+			{ std::wstring(       L"СЋР№СЃСЊ"), 3 }, // Р°РЅС–РіС–Р»СЋ~Р№СЃСЊ
+			//{ std::wstring(        L"РѕСЃСЊ"), 2 }, // no actual words (all are LOS or MOS) РєРѕРіРѕ~СЃСЊ ??
+			{ std::wstring(      L"Р°Р»РѕСЃСЊ"), 5 }, // Р±СЂР°~Р»РѕСЃСЊ РЅР°Р·РёРІР°~Р»РѕСЃСЊ СЃС‚Р°~Р»РѕСЃСЊ
+			{ std::wstring(    L"СЋРІР°Р»РѕСЃСЊ"), 6 }, // Р°РЅС–РіС–Р»СЋ~РІР°Р»РѕСЃСЊ
+			{ std::wstring(      L"РёР»РѕСЃСЊ"), 4 }, // Р±СЂРёР¶Рё~Р»РѕСЃСЊ Р±Рё~Р»РѕСЃСЊ
+			//{ std::wstring(      L"С—Р»РѕСЃСЊ"), 4 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~Р»РѕСЃСЊ
+			{ std::wstring(     L"РѕС—Р»РѕСЃСЊ"), 5 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—Р»РѕСЃСЊ
+			{ std::wstring(      L"РѕР»РѕСЃСЊ"), 4 }, // Р±РѕСЂРѕ~Р»РѕСЃСЊ
+			{ std::wstring(      L"СѓР»РѕСЃСЊ"), 4 }, // Р±РµС…РЅСѓ-Р»РѕСЃСЊ
+			{ std::wstring(    L"СѓРІР°Р»РѕСЃСЊ"), 6 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°Р»РѕСЃСЊ
+			{ std::wstring(      L"СЏР»РѕСЃСЊ"), 5 }, // Р±Рѕ~СЏР»РѕСЃСЊ
+			// { std::wstring(       L"РјРѕСЃСЊ"), 4 }, // 
+			{ std::wstring(      L"РµРјРѕСЃСЊ"), 4 }, // Р±РµСЂРµР¶Рµ~РјРѕСЃСЊ Р±РµСЂРµ~РјРѕСЃСЊ
+			{ std::wstring(    L"РёРјРµРјРѕСЃСЊ"), 6 }, // Р±РµСЂРµРіС‚Рё~РјРµРјРѕСЃСЊ (we can't split Р±РµСЂРµРі*С‚РёРјРµРјРѕСЃСЊ)
+			{ std::wstring(  L"Р°С‚РёРјРµРјРѕСЃСЊ"), 8 }, // Р±СЂР°~С‚РёРјРµРјРѕСЃСЊ РЅР°Р·Рё~РІР°~С‚РёРјРµРјРѕСЃСЊ
+			{ std::wstring(  L"РёС‚РёРјРµРјРѕСЃСЊ"), 8 }, // Р±СЂРёР¶Рё~С‚РёРјРµРјРѕСЃСЊ Р±Рё~С‚РёРјРµРјРѕСЃСЊ
+			//{ std::wstring(  L"С—С‚РёРјРµРјРѕСЃСЊ"), 8 }, // РіРЅРѕС—~С‚РёРјРµРјРѕСЃСЊ
+			{ std::wstring(  L"РѕС—С‚РёРјРµРјРѕСЃСЊ"), 9 }, // РіРЅРѕ~С—С‚РёРјРµРјРѕСЃСЊ
+			{ std::wstring(  L"РѕС‚РёРјРµРјРѕСЃСЊ"), 8 }, // Р±РѕСЂРѕ~С‚РёРјРµРјРѕСЃСЊ
+			{ std::wstring(L"СѓРІР°С‚РёРјРµРјРѕСЃСЊ"), 10 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёРјРµРјРѕСЃСЊ
+			{ std::wstring(L"СЋРІР°С‚РёРјРµРјРѕСЃСЊ"), 10 }, // Р°РЅС–РіС–Р»СЋ~РІР°С‚РёРјРµРјРѕСЃСЊ
+			{ std::wstring(  L"СЏС‚РёРјРµРјРѕСЃСЊ"), 9 }, // Р±Рѕ~СЏС‚РёРјРµРјРѕСЃСЊ
+			{ std::wstring(      L"С”РјРѕСЃСЊ"), 5 }, // Р±'~С”РјРѕСЃСЊ
+			//{ std::wstring(     L"Р°С”РјРѕСЃСЊ"), 5 }, // СЃРїРѕРґС–РІР°~С”РјРѕСЃСЊ
+			//{ std::wstring(     L"РёС”РјРѕСЃСЊ"), 5 }, // РїРѕС€Рё~С”РјРѕСЃСЊ
+			//{ std::wstring(     L"С–С”РјРѕСЃСЊ"), 5 }, // РЅР°РґС–~С”РјРѕСЃСЊ
+			//{ std::wstring(     L"РѕС”РјРѕСЃСЊ"), 5 }, // РїРѕР±РѕСЋ~С”РјРѕСЃСЊ
+			//{ std::wstring(     L"СѓС”РјРѕСЃСЊ"), 5 }, // РєРѕСЂРёСЃС‚Сѓ~С”РјРѕСЃСЊ Р°РєС‚СѓР°Р»С–Р·Сѓ~С”РјРѕСЃСЊ
+			//{ std::wstring(     L"СЋС”РјРѕСЃСЊ"), 5 }, // РІРёСЃР»РѕРІР»СЋ~С”РјРѕСЃСЊ Р°РЅС–РіС–Р»СЋ~С”РјРѕСЃСЊ
+			//{ std::wstring(     L"СЏС”РјРѕСЃСЊ"), 5 }, // СЃРїРёРЅСЏ~С”РјРѕСЃСЊ
+			//{ std::wstring(     L"'С”РјРѕСЃСЊ"), 5 }, // РІС–РґС–Р±'~С”РјРѕСЃСЊ Р±'~С”РјРѕСЃСЊ
+			{ std::wstring(      L"РёРјРѕСЃСЊ"), 4 }, // Р±РµР·С‡РµСЃС‚Рё~РјРѕСЃСЊ
+			//{ std::wstring(      L"С—РјРѕСЃСЊ"), 4 }, // Р±РѕС—~РјРѕСЃСЊ Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~РјРѕСЃСЊ
+			{ std::wstring(      L"С–РјРѕСЃСЊ"), 4 }, // Р±РµСЂРµР¶С–~РјРѕСЃСЊ Р±РµСЂС–~РјРѕСЃСЊ РґРёРІС–~РјРѕСЃСЊ
+			{ std::wstring(      L"С—РјРѕСЃСЊ"), 5 }, // compound
+			//{ std::wstring(     L"РёС—РјРѕСЃСЊ"), 5 }, // С‡Рё~С—РјРѕСЃСЊ
+			//{ std::wstring(     L"РѕС—РјРѕСЃСЊ"), 5 }, // Р±Рѕ~С—РјРѕСЃСЊ Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—РјРѕСЃСЊ
+			{ std::wstring(      L"Р№РјРѕСЃСЊ"), 5 }, // compound
+			//{ std::wstring(     L"Р°Р№РјРѕСЃСЊ"), 5 }, // РЅР°Р·РёРІР°~Р№РјРѕСЃСЊ
+			//{ std::wstring(     L"РёР№РјРѕСЃСЊ"), 5 }, // Р±Рё~Р№РјРѕСЃСЊ
+			//{ std::wstring(     L"С–Р№РјРѕСЃСЊ"), 5 }, // Р±С–~Р№РјРѕСЃСЊ
+			//{ std::wstring(     L"РѕР№РјРѕСЃСЊ"), 5 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~Р№РјРѕСЃСЊ
+			//{ std::wstring(     L"СѓР№РјРѕСЃСЊ"), 5 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~Р№РјРѕСЃСЊ
+			//{ std::wstring(     L"СЋР№РјРѕСЃСЊ"), 5 }, // Р°РЅС–РіС–Р»СЋ~Р№РјРѕСЃСЊ
+			{ std::wstring(      L"СЊРјРѕСЃСЊ"), 4 }, // Р±РµР·С‡РµСЃС‚СЊ~РјРѕСЃСЊ
+			{ std::wstring(        L"СѓСЃСЊ"), 2 }, // Р±РµСЂСѓ~СЃСЊ Р±РµР·С‡РµС‰Сѓ~СЃСЊ
+			{ std::wstring(      L"РёРјСѓСЃСЊ"), 4 }, // Р±РµСЂРµРіС‚Рё~РјСѓСЃСЊ
+			{ std::wstring(    L"Р°С‚РёРјСѓСЃСЊ"), 6 }, // РЅР°Р·РёРІР°~С‚РёРјСѓСЃСЊ
+			{ std::wstring(    L"С—С‚РёРјСѓСЃСЊ"), 7 }, // compound
+			//{ std::wstring(   L"РѕС—С‚РёРјСѓСЃСЊ"), 7 }, // РіРЅРѕ~С—С‚РёРјСѓСЃСЊ
+			{ std::wstring(    L"РѕС‚РёРјСѓСЃСЊ"), 6 }, // Р±РѕСЂРѕ~С‚РёРјСѓСЃСЊ
+			{ std::wstring(  L"СѓРІР°С‚РёРјСѓСЃСЊ"), 8 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёРјСѓСЃСЊ
+			{ std::wstring(  L"СЋРІР°С‚РёРјСѓСЃСЊ"), 8 }, // Р°РЅС–РіС–Р»СЋ~РІР°С‚РёРјСѓСЃСЊ
+			{ std::wstring(    L"РёС‚РёРјСѓСЃСЊ"), 6 }, // Р±СЂРёР¶Рё~С‚РёРјСѓСЃСЊ Р±Рё~С‚РёРјСѓСЃСЊ
+			{ std::wstring(    L"СЏС‚РёРјСѓСЃСЊ"), 7 }, // Р±Рѕ~СЏС‚РёРјСѓСЃСЊ
 
-			{ std::wstring(        L"юсь"), 3 }, // дивл~юсь аркан~юсь жур~юсь
-			{ std::wstring(       L"аюсь"), 3 }, // назива~юсь
-			{ std::wstring(       L"іюсь"), 3 }, // розумі~юсь
-			{ std::wstring(       L"июсь"), 3 }, // чи~юсь
-			{ std::wstring(       L"оюсь"), 3 }, // бо~юсь(?or zero) благоустро~юсь ERROR: гно~юсь (need to keep letter 'o')
-			{ std::wstring(       L"уюсь"), 3 }, // актуалізу~юсь
-			{ std::wstring(       L"єюсь"), 4 }, // чи~єюсь
-			{ std::wstring(       L"ююсь"), 3 }, // анігілю~юсь хвилю~юсь
-			{ std::wstring(       L"яюсь"), 3 }, // помиля~юсь
-			{ std::wstring(       L"'юсь"), 3 }, // б'~юсь
+			{ std::wstring(        L"СЋСЃСЊ"), 3 }, // РґРёРІР»~СЋСЃСЊ Р°СЂРєР°РЅ~СЋСЃСЊ Р¶СѓСЂ~СЋСЃСЊ
+			{ std::wstring(       L"Р°СЋСЃСЊ"), 3 }, // РЅР°Р·РёРІР°~СЋСЃСЊ
+			{ std::wstring(       L"С–СЋСЃСЊ"), 3 }, // СЂРѕР·СѓРјС–~СЋСЃСЊ
+			{ std::wstring(       L"РёСЋСЃСЊ"), 3 }, // С‡Рё~СЋСЃСЊ
+			{ std::wstring(       L"РѕСЋСЃСЊ"), 3 }, // Р±Рѕ~СЋСЃСЊ(?or zero) Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~СЋСЃСЊ ERROR: РіРЅРѕ~СЋСЃСЊ (need to keep letter 'o')
+			{ std::wstring(       L"СѓСЋСЃСЊ"), 3 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~СЋСЃСЊ
+			{ std::wstring(       L"С”СЋСЃСЊ"), 4 }, // С‡Рё~С”СЋСЃСЊ
+			{ std::wstring(       L"СЋСЋСЃСЊ"), 3 }, // Р°РЅС–РіС–Р»СЋ~СЋСЃСЊ С…РІРёР»СЋ~СЋСЃСЊ
+			{ std::wstring(       L"СЏСЋСЃСЊ"), 3 }, // РїРѕРјРёР»СЏ~СЋСЃСЊ
+			{ std::wstring(       L"'СЋСЃСЊ"), 3 }, // Р±'~СЋСЃСЊ
 
-			{ std::wstring(       L"ать"), 2 }, // бра~ть бурлача~ть
-			{ std::wstring(     L"увать"), 4 }, // існу~вать
-			{ std::wstring(     L"ювать"), 4 }, // дорівню~вать
-			{ std::wstring(       L"ить"), 2 }, // безчести~ть би~ть
-			{ std::wstring(       L"іть"), 3 }, // бер~іть буркот~іть бамкн~іть
-			//{ std::wstring(       L"їть"), 3 }, // благоустрої~ть
-			{ std::wstring(      L"оїть"), 3 }, // благоустро~їть
-			{ std::wstring(       L"оть"), 3 }, // бор~оть пол~оть кол~оть кіг~оть
-			{ std::wstring(       L"уть"), 3 }, // бер~уть бамкн~уть
-			{ std::wstring(     L"имуть"), 4 }, // брести~муть
-			{ std::wstring(   L"атимуть"), 6 }, // а~тимуть існува~тимуть
-			{ std::wstring(   L"итимуть"), 6 }, // жи~тимуть би~тимуть
-			{ std::wstring(   L"ітимуть"), 6 }, // буркоті~тимуть
-			//{ std::wstring(   L"їтимуть"), 6 }, // гної~тимуть
-			{ std::wstring(  L"оїтимуть"), 7 }, // гно~їтимуть
-			{ std::wstring(   L"отимуть"), 6 }, // боро~тимуть
-			{ std::wstring(   L"утимуть"), 6 }, // блякну~тимуть
-			{ std::wstring( L"уватимуть"), 8 }, // актуалізу~ватимуть
-			{ std::wstring( L"юватимуть"), 8 }, // дорівню~ватимуть
-			{ std::wstring(       L"ють"), 3 }, // бор~ють
-			{ std::wstring(      L"ають"), 3 }, // вважа~ють вплива~ють
-			{ std::wstring(      L"іють"), 3 }, // бурі~ють
-			{ std::wstring(      L"ують"), 3 }, // існу~ють
-			{ std::wstring(      L"юють"), 3 }, // дорівню~ють
-			{ std::wstring(      L"'ють"), 3 }, // дорівню~ють б'~ють
-			{ std::wstring(       L"ять"), 3 }, // буркот~ять гно~ять
-			{ std::wstring(      L"оять"), 3 }, // благоустро~ять
+			{ std::wstring(       L"Р°С‚СЊ"), 2 }, // Р±СЂР°~С‚СЊ Р±СѓСЂР»Р°С‡Р°~С‚СЊ
+			{ std::wstring(     L"СѓРІР°С‚СЊ"), 4 }, // С–СЃРЅСѓ~РІР°С‚СЊ
+			{ std::wstring(     L"СЋРІР°С‚СЊ"), 4 }, // РґРѕСЂС–РІРЅСЋ~РІР°С‚СЊ
+			{ std::wstring(       L"РёС‚СЊ"), 2 }, // Р±РµР·С‡РµСЃС‚Рё~С‚СЊ Р±Рё~С‚СЊ
+			{ std::wstring(       L"С–С‚СЊ"), 3 }, // Р±РµСЂ~С–С‚СЊ Р±СѓСЂРєРѕС‚~С–С‚СЊ Р±Р°РјРєРЅ~С–С‚СЊ
+			//{ std::wstring(       L"С—С‚СЊ"), 3 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~С‚СЊ
+			{ std::wstring(      L"РѕС—С‚СЊ"), 3 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—С‚СЊ
+			{ std::wstring(       L"РѕС‚СЊ"), 3 }, // Р±РѕСЂ~РѕС‚СЊ РїРѕР»~РѕС‚СЊ РєРѕР»~РѕС‚СЊ РєС–Рі~РѕС‚СЊ
+			{ std::wstring(       L"СѓС‚СЊ"), 3 }, // Р±РµСЂ~СѓС‚СЊ Р±Р°РјРєРЅ~СѓС‚СЊ
+			{ std::wstring(     L"РёРјСѓС‚СЊ"), 4 }, // Р±СЂРµСЃС‚Рё~РјСѓС‚СЊ
+			{ std::wstring(   L"Р°С‚РёРјСѓС‚СЊ"), 6 }, // Р°~С‚РёРјСѓС‚СЊ С–СЃРЅСѓРІР°~С‚РёРјСѓС‚СЊ
+			{ std::wstring(   L"РёС‚РёРјСѓС‚СЊ"), 6 }, // Р¶Рё~С‚РёРјСѓС‚СЊ Р±Рё~С‚РёРјСѓС‚СЊ
+			{ std::wstring(   L"С–С‚РёРјСѓС‚СЊ"), 6 }, // Р±СѓСЂРєРѕС‚С–~С‚РёРјСѓС‚СЊ
+			//{ std::wstring(   L"С—С‚РёРјСѓС‚СЊ"), 6 }, // РіРЅРѕС—~С‚РёРјСѓС‚СЊ
+			{ std::wstring(  L"РѕС—С‚РёРјСѓС‚СЊ"), 7 }, // РіРЅРѕ~С—С‚РёРјСѓС‚СЊ
+			{ std::wstring(   L"РѕС‚РёРјСѓС‚СЊ"), 6 }, // Р±РѕСЂРѕ~С‚РёРјСѓС‚СЊ
+			{ std::wstring(   L"СѓС‚РёРјСѓС‚СЊ"), 6 }, // Р±Р»СЏРєРЅСѓ~С‚РёРјСѓС‚СЊ
+			{ std::wstring( L"СѓРІР°С‚РёРјСѓС‚СЊ"), 8 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёРјСѓС‚СЊ
+			{ std::wstring( L"СЋРІР°С‚РёРјСѓС‚СЊ"), 8 }, // РґРѕСЂС–РІРЅСЋ~РІР°С‚РёРјСѓС‚СЊ
+			{ std::wstring(       L"СЋС‚СЊ"), 3 }, // Р±РѕСЂ~СЋС‚СЊ
+			{ std::wstring(      L"Р°СЋС‚СЊ"), 3 }, // РІРІР°Р¶Р°~СЋС‚СЊ РІРїР»РёРІР°~СЋС‚СЊ
+			{ std::wstring(      L"С–СЋС‚СЊ"), 3 }, // Р±СѓСЂС–~СЋС‚СЊ
+			{ std::wstring(      L"СѓСЋС‚СЊ"), 3 }, // С–СЃРЅСѓ~СЋС‚СЊ
+			{ std::wstring(      L"СЋСЋС‚СЊ"), 3 }, // РґРѕСЂС–РІРЅСЋ~СЋС‚СЊ
+			{ std::wstring(      L"'СЋС‚СЊ"), 3 }, // РґРѕСЂС–РІРЅСЋ~СЋС‚СЊ Р±'~СЋС‚СЊ
+			{ std::wstring(       L"СЏС‚СЊ"), 3 }, // Р±СѓСЂРєРѕС‚~СЏС‚СЊ РіРЅРѕ~СЏС‚СЊ
+			{ std::wstring(      L"РѕСЏС‚СЊ"), 3 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~СЏС‚СЊ
 
-			{ std::wstring( L"ю"), 1 }, // аркан~ю
-			{ std::wstring( L"ю"), 1 , WordClass::Noun}, // беззмінніст~ю
-			{ std::wstring(L"аю"), 1 }, // назива~ю
-			{ std::wstring(L"єю"), 2, WordClass::Noun }, // сім'~єю
-			{ std::wstring(L"ію"), 1 }, // бурі~ю
-			{ std::wstring(L"ою"), 1 }, // гно~ю
-			{ std::wstring(L"ою"), 2, WordClass::Noun }, // благоустр~ою змін~ою
-			{ std::wstring(L"ою"), 2, WordClass::Numeral }, // багатомільярдн~ою
-			{ std::wstring(L"ую"), 1 }, // існу~ю актуалізу~ю
-			{ std::wstring(L"юю"), 1 }, // доріню~ю
-			{ std::wstring(L"'ю"), 1, WordClass::Noun }, // сім'~ю
+			{ std::wstring( L"СЋ"), 1 }, // Р°СЂРєР°РЅ~СЋ
+			{ std::wstring( L"СЋ"), 1 , PartOfSpeech::Noun}, // Р±РµР·Р·РјС–РЅРЅС–СЃС‚~СЋ
+			{ std::wstring(L"Р°СЋ"), 1 }, // РЅР°Р·РёРІР°~СЋ
+			{ std::wstring(L"С”СЋ"), 2, PartOfSpeech::Noun }, // СЃС–Рј'~С”СЋ
+			{ std::wstring(L"С–СЋ"), 1 }, // Р±СѓСЂС–~СЋ
+			{ std::wstring(L"РѕСЋ"), 1 }, // РіРЅРѕ~СЋ
+			{ std::wstring(L"РѕСЋ"), 2, PartOfSpeech::Noun }, // Р±Р»Р°РіРѕСѓСЃС‚СЂ~РѕСЋ Р·РјС–РЅ~РѕСЋ
+			{ std::wstring(L"РѕСЋ"), 2, PartOfSpeech::Numeral }, // Р±Р°РіР°С‚РѕРјС–Р»СЊСЏСЂРґРЅ~РѕСЋ
+			{ std::wstring(L"СѓСЋ"), 1 }, // С–СЃРЅСѓ~СЋ Р°РєС‚СѓР°Р»С–Р·Сѓ~СЋ
+			{ std::wstring(L"СЋСЋ"), 1 }, // РґРѕСЂС–РЅСЋ~СЋ
+			{ std::wstring(L"'СЋ"), 1, PartOfSpeech::Noun }, // СЃС–Рј'~СЋ
 
-			{ std::wstring(          L"я"), 1, WordClass::Adjective }, // дорожн~я
-			{ std::wstring(          L"я"), 1, WordClass::Noun }, // обслуговуванн~я
-			{ std::wstring(         L"ая"), 2, WordClass::Adjective }, // безпосадков~ая близьк~ая adj
-			{ std::wstring(         L"яя"), 2, WordClass::Adjective }, // автодорожн~яя
-			{ std::wstring(         L"'я"), 1, WordClass::Noun }, // сім'~я
-			// { std::wstring(         L"ся"), 2 }, // can't detach unvoiced 'Sya'
-			//{ std::wstring(        L"ася"), 2 }, // no words
-			{ std::wstring(       L"лася"), 4 }, // берег~лася
-			{ std::wstring(      L"алася"), 4 }, // назива~лася
-			{ std::wstring(      L"олася"), 4 }, // боро~лася
-			{ std::wstring(    L"увалася"), 6 }, // актуалізу~валася
-			{ std::wstring(    L"ювалася"), 6 }, // анігілю~валася
-			{ std::wstring(      L"илася"), 4 }, // брижи~лася би~лася
-			//{ std::wstring(      L"їлася"), 4 }, // благоустрої~лася
-			{ std::wstring(     L"оїлася"), 5 }, // благоустро~їлася
-			{ std::wstring(      L"улася"), 4 }, // бехну~лася
-			{ std::wstring(      L"ялася"), 5 }, // бо~ялася
-			{ std::wstring(       L"ався"), 3 }, // назива~вся бра~вся
-			{ std::wstring(     L"увався"), 5 }, // актуалізу~вався
-			{ std::wstring(     L"ювався"), 5 }, // анігілю~вався
-			{ std::wstring(       L"ився"), 3 }, // брижи~вся би~вся
-			//{ std::wstring(       L"ївся"), 3 }, // благоустрої~вся
-			{ std::wstring(      L"оївся"), 4 }, // благоустро~ївся
-			{ std::wstring(       L"овся"), 3 }, // боро~вся
-			{ std::wstring(       L"увся"), 3 }, // бехну~вся
-			{ std::wstring(       L"явся"), 3 }, // боя~вся
-			//{ std::wstring(       L"ігся"), 3 }, // берігс~я (бер is too common)
-			{ std::wstring(      L"етеся"), 4 }, // бере~теся береже~теся
-			{ std::wstring(    L"иметеся"), 6 }, // берегти~метеся
-			{ std::wstring(  L"атиметеся"), 8 }, // назива~тиметеся
-			{ std::wstring(L"уватиметеся"), 10 }, // актуалізу~ватиметеся
-			{ std::wstring(L"юватиметеся"), 10 }, // анігілю~ватиметеся
-			{ std::wstring(  L"итиметеся"), 8 }, // брижи~тиметеся би~тиметеся
-			//{ std::wstring(  L"їтиметеся"), 8 }, // гної~тиметеся
-			{ std::wstring( L"оїтиметеся"), 9 }, // гно~їтиметеся
-			{ std::wstring(  L"отиметеся"), 8 }, // боро~тиметеся
-			{ std::wstring(  L"ятиметеся"), 9 }, // бо~ятиметеся
-			{ std::wstring(      L"єтеся"), 5 }, // compound
-			//{ std::wstring(     L"аєтеся"), 5 }, // забира~єтеся назива~єтеся
-			//{ std::wstring(     L"иєтеся"), 5 }, // вши~єтеся
-			//{ std::wstring(     L"ієтеся"), 5 }, // розумі~єтеся
-			//{ std::wstring(     L"уєтеся"), 5 }, // актуалізу~єтеся
-			//{ std::wstring(     L"юєтеся"), 5 }, // анігілю~єтеся
-			//{ std::wstring(     L"яєтеся"), 5 }, // помиля~єтеся
-			//{ std::wstring(     L"'єтеся"), 5 }, // б'~єтеся
-			{ std::wstring(      L"итеся"), 4 }, // брижи~теся
-			{ std::wstring(      L"ітеся"), 4 }, // бері~теся диві~теся
-			//{ std::wstring(      L"їтеся"), 4 }, // бої~теся благоустрої~теся
-			{ std::wstring(     L"оїтеся"), 5 }, // бо~їтеся благоустро~їтеся
-			{ std::wstring(      L"йтеся"), 5 }, // compound
-			//{ std::wstring(     L"айтеся"), 5 }, // назива~йтеся
-			//{ std::wstring(     L"ийтеся"), 5 }, // би~йтеся
-			//{ std::wstring(     L"ійтеся"), 5 }, // бі~йтеся
-			//{ std::wstring(     L"ойтеся"), 5 }, // благоустро~йтеся
-			//{ std::wstring(     L"уйтеся"), 5 }, // актуалізу~йтеся
-			//{ std::wstring(     L"юйтеся"), 5 }, // анігілю~йтеся
-			{ std::wstring(      L"ьтеся"), 4 }, // аркань~теся
-			{ std::wstring(        L"ися"), 3, WordClass::Verb }, // бери~ся диви~ся береж~ися
-			{ std::wstring(        L"ися"), 3, WordClass::VerbalAdverb }, // берігш~ися
-			{ std::wstring(      L"алися"), 4 }, // назива~лися
-			{ std::wstring(    L"увалися"), 6 }, // актуалізу~валися
-			{ std::wstring(    L"ювалися"), 6 }, // анігілю~валися
-			{ std::wstring(      L"илися"), 4 }, // брижи~лися би~лися
-			//{ std::wstring(      L"їлися"), 4 }, // благоустрої~лися
-			{ std::wstring(     L"оїлися"), 5 }, // благоустро~їлися
-			{ std::wstring(      L"олися"), 5 }, // боро~лися
-			{ std::wstring(      L"улися"), 5 }, // бехну~лися
-			{ std::wstring(      L"ялися"), 5 }, // боя~лися
-			{ std::wstring(      L"атися"), 4 }, // назива~тися
-			{ std::wstring(    L"уватися"), 6 }, // актуалізу~ватися
-			{ std::wstring(    L"юватися"), 6 }, // анігілю~ватися
-			{ std::wstring(      L"итися"), 4 }, // брижи~тися би~тися
-			{ std::wstring(      L"отися"), 4 }, // боро~тися
-			//{ std::wstring(      L"їтися"), 4 }, // благоустрої~тися
-			{ std::wstring(     L"оїтися"), 5 }, // благоустро~їтися
-			{ std::wstring(      L"утися"), 4 }, // бехну~тися
-			{ std::wstring(      L"ятися"), 4 }, // бо~ятися
-			{ std::wstring(     L"авшися"), 5, WordClass::VerbalAdverb }, // назива~вшися бра~вшися
-			{ std::wstring(     L"овшися"), 5, WordClass::VerbalAdverb }, // боро~вшися
-			{ std::wstring(   L"увавшися"), 7, WordClass::VerbalAdverb }, // актуалізу~вавшися
-			{ std::wstring(   L"ювавшися"), 7, WordClass::VerbalAdverb }, // анігілю~вавшися асоцію~вавшися
-			{ std::wstring(     L"ившися"), 5, WordClass::VerbalAdverb }, // безчести~вшися би~вшися
-			//{ std::wstring(     L"ївшися"), 5, WordClass::VerbalAdverb }, // благоустрої~вшися
-			{ std::wstring(    L"оївшися"), 6, WordClass::VerbalAdverb }, // благоустро~ївшися
-			{ std::wstring(     L"увшися"), 5, WordClass::VerbalAdverb }, // бовтну~вшися зверну~вшися
+			{ std::wstring(          L"СЏ"), 1, PartOfSpeech::Adjective }, // РґРѕСЂРѕР¶РЅ~СЏ
+			{ std::wstring(          L"СЏ"), 1, PartOfSpeech::Noun }, // РѕР±СЃР»СѓРіРѕРІСѓРІР°РЅРЅ~СЏ
+			{ std::wstring(         L"Р°СЏ"), 2, PartOfSpeech::Adjective }, // Р±РµР·РїРѕСЃР°РґРєРѕРІ~Р°СЏ Р±Р»РёР·СЊРє~Р°СЏ adj
+			{ std::wstring(         L"СЏСЏ"), 2, PartOfSpeech::Adjective }, // Р°РІС‚РѕРґРѕСЂРѕР¶РЅ~СЏСЏ
+			{ std::wstring(         L"'СЏ"), 1, PartOfSpeech::Noun }, // СЃС–Рј'~СЏ
+			// { std::wstring(         L"СЃСЏ"), 2 }, // can't detach unvoiced 'Sya'
+			//{ std::wstring(        L"Р°СЃСЏ"), 2 }, // no words
+			{ std::wstring(       L"Р»Р°СЃСЏ"), 4 }, // Р±РµСЂРµРі~Р»Р°СЃСЏ
+			{ std::wstring(      L"Р°Р»Р°СЃСЏ"), 4 }, // РЅР°Р·РёРІР°~Р»Р°СЃСЏ
+			{ std::wstring(      L"РѕР»Р°СЃСЏ"), 4 }, // Р±РѕСЂРѕ~Р»Р°СЃСЏ
+			{ std::wstring(    L"СѓРІР°Р»Р°СЃСЏ"), 6 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°Р»Р°СЃСЏ
+			{ std::wstring(    L"СЋРІР°Р»Р°СЃСЏ"), 6 }, // Р°РЅС–РіС–Р»СЋ~РІР°Р»Р°СЃСЏ
+			{ std::wstring(      L"РёР»Р°СЃСЏ"), 4 }, // Р±СЂРёР¶Рё~Р»Р°СЃСЏ Р±Рё~Р»Р°СЃСЏ
+			//{ std::wstring(      L"С—Р»Р°СЃСЏ"), 4 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~Р»Р°СЃСЏ
+			{ std::wstring(     L"РѕС—Р»Р°СЃСЏ"), 5 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—Р»Р°СЃСЏ
+			{ std::wstring(      L"СѓР»Р°СЃСЏ"), 4 }, // Р±РµС…РЅСѓ~Р»Р°СЃСЏ
+			{ std::wstring(      L"СЏР»Р°СЃСЏ"), 5 }, // Р±Рѕ~СЏР»Р°СЃСЏ
+			{ std::wstring(       L"Р°РІСЃСЏ"), 3 }, // РЅР°Р·РёРІР°~РІСЃСЏ Р±СЂР°~РІСЃСЏ
+			{ std::wstring(     L"СѓРІР°РІСЃСЏ"), 5 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°РІСЃСЏ
+			{ std::wstring(     L"СЋРІР°РІСЃСЏ"), 5 }, // Р°РЅС–РіС–Р»СЋ~РІР°РІСЃСЏ
+			{ std::wstring(       L"РёРІСЃСЏ"), 3 }, // Р±СЂРёР¶Рё~РІСЃСЏ Р±Рё~РІСЃСЏ
+			//{ std::wstring(       L"С—РІСЃСЏ"), 3 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~РІСЃСЏ
+			{ std::wstring(      L"РѕС—РІСЃСЏ"), 4 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—РІСЃСЏ
+			{ std::wstring(       L"РѕРІСЃСЏ"), 3 }, // Р±РѕСЂРѕ~РІСЃСЏ
+			{ std::wstring(       L"СѓРІСЃСЏ"), 3 }, // Р±РµС…РЅСѓ~РІСЃСЏ
+			{ std::wstring(       L"СЏРІСЃСЏ"), 3 }, // Р±РѕСЏ~РІСЃСЏ
+			//{ std::wstring(       L"С–РіСЃСЏ"), 3 }, // Р±РµСЂС–РіСЃ~СЏ (Р±РµСЂ is too common)
+			{ std::wstring(      L"РµС‚РµСЃСЏ"), 4 }, // Р±РµСЂРµ~С‚РµСЃСЏ Р±РµСЂРµР¶Рµ~С‚РµСЃСЏ
+			{ std::wstring(    L"РёРјРµС‚РµСЃСЏ"), 6 }, // Р±РµСЂРµРіС‚Рё~РјРµС‚РµСЃСЏ
+			{ std::wstring(  L"Р°С‚РёРјРµС‚РµСЃСЏ"), 8 }, // РЅР°Р·РёРІР°~С‚РёРјРµС‚РµСЃСЏ
+			{ std::wstring(L"СѓРІР°С‚РёРјРµС‚РµСЃСЏ"), 10 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёРјРµС‚РµСЃСЏ
+			{ std::wstring(L"СЋРІР°С‚РёРјРµС‚РµСЃСЏ"), 10 }, // Р°РЅС–РіС–Р»СЋ~РІР°С‚РёРјРµС‚РµСЃСЏ
+			{ std::wstring(  L"РёС‚РёРјРµС‚РµСЃСЏ"), 8 }, // Р±СЂРёР¶Рё~С‚РёРјРµС‚РµСЃСЏ Р±Рё~С‚РёРјРµС‚РµСЃСЏ
+			//{ std::wstring(  L"С—С‚РёРјРµС‚РµСЃСЏ"), 8 }, // РіРЅРѕС—~С‚РёРјРµС‚РµСЃСЏ
+			{ std::wstring( L"РѕС—С‚РёРјРµС‚РµСЃСЏ"), 9 }, // РіРЅРѕ~С—С‚РёРјРµС‚РµСЃСЏ
+			{ std::wstring(  L"РѕС‚РёРјРµС‚РµСЃСЏ"), 8 }, // Р±РѕСЂРѕ~С‚РёРјРµС‚РµСЃСЏ
+			{ std::wstring(  L"СЏС‚РёРјРµС‚РµСЃСЏ"), 9 }, // Р±Рѕ~СЏС‚РёРјРµС‚РµСЃСЏ
+			{ std::wstring(      L"С”С‚РµСЃСЏ"), 5 }, // compound
+			//{ std::wstring(     L"Р°С”С‚РµСЃСЏ"), 5 }, // Р·Р°Р±РёСЂР°~С”С‚РµСЃСЏ РЅР°Р·РёРІР°~С”С‚РµСЃСЏ
+			//{ std::wstring(     L"РёС”С‚РµСЃСЏ"), 5 }, // РІС€Рё~С”С‚РµСЃСЏ
+			//{ std::wstring(     L"С–С”С‚РµСЃСЏ"), 5 }, // СЂРѕР·СѓРјС–~С”С‚РµСЃСЏ
+			//{ std::wstring(     L"СѓС”С‚РµСЃСЏ"), 5 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~С”С‚РµСЃСЏ
+			//{ std::wstring(     L"СЋС”С‚РµСЃСЏ"), 5 }, // Р°РЅС–РіС–Р»СЋ~С”С‚РµСЃСЏ
+			//{ std::wstring(     L"СЏС”С‚РµСЃСЏ"), 5 }, // РїРѕРјРёР»СЏ~С”С‚РµСЃСЏ
+			//{ std::wstring(     L"'С”С‚РµСЃСЏ"), 5 }, // Р±'~С”С‚РµСЃСЏ
+			{ std::wstring(      L"РёС‚РµСЃСЏ"), 4 }, // Р±СЂРёР¶Рё~С‚РµСЃСЏ
+			{ std::wstring(      L"С–С‚РµСЃСЏ"), 4 }, // Р±РµСЂС–~С‚РµСЃСЏ РґРёРІС–~С‚РµСЃСЏ
+			//{ std::wstring(      L"С—С‚РµСЃСЏ"), 4 }, // Р±РѕС—~С‚РµСЃСЏ Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~С‚РµСЃСЏ
+			{ std::wstring(     L"РѕС—С‚РµСЃСЏ"), 5 }, // Р±Рѕ~С—С‚РµСЃСЏ Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—С‚РµСЃСЏ
+			{ std::wstring(      L"Р№С‚РµСЃСЏ"), 5 }, // compound
+			//{ std::wstring(     L"Р°Р№С‚РµСЃСЏ"), 5 }, // РЅР°Р·РёРІР°~Р№С‚РµСЃСЏ
+			//{ std::wstring(     L"РёР№С‚РµСЃСЏ"), 5 }, // Р±Рё~Р№С‚РµСЃСЏ
+			//{ std::wstring(     L"С–Р№С‚РµСЃСЏ"), 5 }, // Р±С–~Р№С‚РµСЃСЏ
+			//{ std::wstring(     L"РѕР№С‚РµСЃСЏ"), 5 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~Р№С‚РµСЃСЏ
+			//{ std::wstring(     L"СѓР№С‚РµСЃСЏ"), 5 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~Р№С‚РµСЃСЏ
+			//{ std::wstring(     L"СЋР№С‚РµСЃСЏ"), 5 }, // Р°РЅС–РіС–Р»СЋ~Р№С‚РµСЃСЏ
+			{ std::wstring(      L"СЊС‚РµСЃСЏ"), 4 }, // Р°СЂРєР°РЅСЊ~С‚РµСЃСЏ
+			{ std::wstring(        L"РёСЃСЏ"), 3, PartOfSpeech::Verb }, // Р±РµСЂРё~СЃСЏ РґРёРІРё~СЃСЏ Р±РµСЂРµР¶~РёСЃСЏ
+			{ std::wstring(        L"РёСЃСЏ"), 3, PartOfSpeech::VerbalAdverb }, // Р±РµСЂС–РіС€~РёСЃСЏ
+			{ std::wstring(      L"Р°Р»РёСЃСЏ"), 4 }, // РЅР°Р·РёРІР°~Р»РёСЃСЏ
+			{ std::wstring(    L"СѓРІР°Р»РёСЃСЏ"), 6 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°Р»РёСЃСЏ
+			{ std::wstring(    L"СЋРІР°Р»РёСЃСЏ"), 6 }, // Р°РЅС–РіС–Р»СЋ~РІР°Р»РёСЃСЏ
+			{ std::wstring(      L"РёР»РёСЃСЏ"), 4 }, // Р±СЂРёР¶Рё~Р»РёСЃСЏ Р±Рё~Р»РёСЃСЏ
+			//{ std::wstring(      L"С—Р»РёСЃСЏ"), 4 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~Р»РёСЃСЏ
+			{ std::wstring(     L"РѕС—Р»РёСЃСЏ"), 5 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—Р»РёСЃСЏ
+			{ std::wstring(      L"РѕР»РёСЃСЏ"), 5 }, // Р±РѕСЂРѕ~Р»РёСЃСЏ
+			{ std::wstring(      L"СѓР»РёСЃСЏ"), 5 }, // Р±РµС…РЅСѓ~Р»РёСЃСЏ
+			{ std::wstring(      L"СЏР»РёСЃСЏ"), 5 }, // Р±РѕСЏ~Р»РёСЃСЏ
+			{ std::wstring(      L"Р°С‚РёСЃСЏ"), 4 }, // РЅР°Р·РёРІР°~С‚РёСЃСЏ
+			{ std::wstring(    L"СѓРІР°С‚РёСЃСЏ"), 6 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёСЃСЏ
+			{ std::wstring(    L"СЋРІР°С‚РёСЃСЏ"), 6 }, // Р°РЅС–РіС–Р»СЋ~РІР°С‚РёСЃСЏ
+			{ std::wstring(      L"РёС‚РёСЃСЏ"), 4 }, // Р±СЂРёР¶Рё~С‚РёСЃСЏ Р±Рё~С‚РёСЃСЏ
+			{ std::wstring(      L"РѕС‚РёСЃСЏ"), 4 }, // Р±РѕСЂРѕ~С‚РёСЃСЏ
+			//{ std::wstring(      L"С—С‚РёСЃСЏ"), 4 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~С‚РёСЃСЏ
+			{ std::wstring(     L"РѕС—С‚РёСЃСЏ"), 5 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—С‚РёСЃСЏ
+			{ std::wstring(      L"СѓС‚РёСЃСЏ"), 4 }, // Р±РµС…РЅСѓ~С‚РёСЃСЏ
+			{ std::wstring(      L"СЏС‚РёСЃСЏ"), 4 }, // Р±Рѕ~СЏС‚РёСЃСЏ
+			{ std::wstring(     L"Р°РІС€РёСЃСЏ"), 5, PartOfSpeech::VerbalAdverb }, // РЅР°Р·РёРІР°~РІС€РёСЃСЏ Р±СЂР°~РІС€РёСЃСЏ
+			{ std::wstring(     L"РѕРІС€РёСЃСЏ"), 5, PartOfSpeech::VerbalAdverb }, // Р±РѕСЂРѕ~РІС€РёСЃСЏ
+			{ std::wstring(   L"СѓРІР°РІС€РёСЃСЏ"), 7, PartOfSpeech::VerbalAdverb }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°РІС€РёСЃСЏ
+			{ std::wstring(   L"СЋРІР°РІС€РёСЃСЏ"), 7, PartOfSpeech::VerbalAdverb }, // Р°РЅС–РіС–Р»СЋ~РІР°РІС€РёСЃСЏ Р°СЃРѕС†С–СЋ~РІР°РІС€РёСЃСЏ
+			{ std::wstring(     L"РёРІС€РёСЃСЏ"), 5, PartOfSpeech::VerbalAdverb }, // Р±РµР·С‡РµСЃС‚Рё~РІС€РёСЃСЏ Р±Рё~РІС€РёСЃСЏ
+			//{ std::wstring(     L"С—РІС€РёСЃСЏ"), 5, PartOfSpeech::VerbalAdverb }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~РІС€РёСЃСЏ
+			{ std::wstring(    L"РѕС—РІС€РёСЃСЏ"), 6, PartOfSpeech::VerbalAdverb }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—РІС€РёСЃСЏ
+			{ std::wstring(     L"СѓРІС€РёСЃСЏ"), 5, PartOfSpeech::VerbalAdverb }, // Р±РѕРІС‚РЅСѓ~РІС€РёСЃСЏ Р·РІРµСЂРЅСѓ~РІС€РёСЃСЏ
 
-			{ std::wstring(        L"йся"), 3, WordClass::Participle }, // compound
-			//{ std::wstring(       L"айся"), 3, WordClass::Participle }, // айся назива~йся
-			//{ std::wstring(       L"ийся"), 3, WordClass::Participle }, // берігши~йся би~йся
-			//{ std::wstring(       L"ійся"), 3, WordClass::Participle }, // бі~йся
-			//{ std::wstring(       L"ойся"), 3, WordClass::Participle }, // благоустро~йся
-			//{ std::wstring(       L"уйся"), 3, WordClass::Participle }, // актуалізу~йся
-			//{ std::wstring(       L"юйся"), 3, WordClass::Participle }, // анігілю~йся
-			{ std::wstring(    L"авшийся"), 6, WordClass::Participle }, // бра~вшийся
-			{ std::wstring(  L"увавшийся"), 8, WordClass::Participle }, // акуталізу~вавшийся
-			{ std::wstring(  L"ювавшийся"), 8, WordClass::Participle }, // анігілю~вавшийся асоцію~вавшийся
-			{ std::wstring(    L"ившийся"), 6, WordClass::Participle }, // брижи~вшийся би~вшийся
-			//{ std::wstring(    L"ївшийся"), 6 }, // благоустрої~вшийся
-			{ std::wstring(   L"оївшийся"), 7, WordClass::Participle  }, // благоустро~ївшийся
-			{ std::wstring(    L"овшийся"), 6, WordClass::Participle }, // боро~вшийся
-			{ std::wstring(    L"увшийся"), 6, WordClass::Participle }, // бехну~вшийся
-			{ std::wstring(    L"явшийся"), 7, WordClass::Participle  }, // бо~явшийся
-			{ std::wstring(       L"емся"), 3 }, // бере~мся береже~мся зверне~мся
-			{ std::wstring(     L"имемся"), 5 }, // берегти~мемся
-			{ std::wstring(       L"ємся"), 4 }, // compound
-			//{ std::wstring(      L"аємся"), 4 }, // назива~ємся
-			//{ std::wstring(      L"уємся"), 4 }, // актуалізу~ємся
-			//{ std::wstring(      L"юємся"), 4 }, // анігілю~ємся
-			//{ std::wstring(      L"'ємся"), 4 }, // б'~ємся
-			{ std::wstring(   L"атимемся"), 7 }, // бра~тимемся
-			{ std::wstring(   L"итимемся"), 7 }, // брижи~тимемся би~тимемся
-			//{ std::wstring(   L"їтимемся"), 7 }, // гної~тимемся
-			{ std::wstring(  L"оїтимемся"), 8 }, // гно~їтимемся
-			{ std::wstring(   L"отимемся"), 7 }, // боро~тимемся
-			{ std::wstring( L"уватимемся"), 9 }, // актуалізу~ватимемся
-			{ std::wstring( L"юватимемся"), 9 }, // анігілю~ватимемся
-			{ std::wstring(   L"ятимемся"), 8 }, // бо~ятимемся
-			{ std::wstring(       L"имся"), 3 }, // брижи~мся
-			//{ std::wstring(       L"їмся"), 3 }, // благоустрої~мся
-			{ std::wstring(      L"оїмся"), 4 }, // благоустро~їмся
-			//{ std::wstring(        L"ося"), 2 }, // no words біймо~ся
-			{ std::wstring(       L"лося"), 4 }, // берег~лося
-			{ std::wstring(      L"алося"), 4 }, // назива~лося
-			{ std::wstring(    L"увалося"), 6 }, // актуалізу~валося
-			{ std::wstring(    L"ювалося"), 6 }, // анігілю~валося
-			{ std::wstring(      L"елося"), 4 }, // дове~лося
-			{ std::wstring(      L"илося"), 4 }, // брижи~лося би~лося
-			//{ std::wstring(      L"їлося"), 4 }, // благоустрої~лося
-			{ std::wstring(     L"оїлося"), 5 }, // благоустро~їлося
-			{ std::wstring(      L"олося"), 4 }, // боро~лося
-			{ std::wstring(      L"улося"), 4 }, // бехну~лося
-			{ std::wstring(      L"ялося"), 5 }, // бо~ялося
-			{ std::wstring(       L"мося"), 4 }, // typo:поквап~мося
-			{ std::wstring(      L"амося"), 4 }, // пода~мося
-			{ std::wstring(      L"емося"), 4 }, // бере~мося поверне~мося
-			{ std::wstring(    L"имемося"), 6 }, // берегти~мемося
-			{ std::wstring(  L"атимемося"), 8 }, // назива~тимемося
-			{ std::wstring(L"уватимемося"), 10 }, // актуалізу~ватимемося
-			{ std::wstring(L"юватимемося"), 10 }, // анігілю~ватимемося
-			{ std::wstring(  L"итимемося"), 8 }, // брижи~тимемося би~тимемося
-			//{ std::wstring(  L"їтимемося"), 8 }, // гної~тимемося
-			{ std::wstring( L"оїтимемося"), 9 }, // гно~їтимемося
-			{ std::wstring(  L"отимемося"), 8 }, // боро~тимемося
-			{ std::wstring(  L"ятимемося"), 8 }, // боя~тимемося
-			{ std::wstring(      L"ємося"), 5 }, // compound
-			//{ std::wstring(     L"аємося"), 5 }, // дізна~ємося назива~ємося
-			//{ std::wstring(     L"уємося"), 5 }, // актуалізу~ємося
-			//{ std::wstring(     L"юємося"), 5 }, // анігілю~ємося
-			//{ std::wstring(     L"'ємося"), 5 }, // б'~ємося
-			{ std::wstring(      L"имося"), 4 }, // брижи~мося обмежи-мося
-			{ std::wstring(      L"імося"), 4 }, // бер~імося диві~мося
-			//{ std::wstring(      L"їмося"), 4 }, // no words
-			//{ std::wstring(     L"аїмося"), 4 }, // too little words (на~їмося)
-			{ std::wstring(     L"оїмося"), 5 }, // бо~їмося благоустро~їмося
-			{ std::wstring(      L"ймося"), 5 }, // compound
-			//{ std::wstring(     L"аймося"), 5 }, // назива~ймося верта~ймося
-			//{ std::wstring(     L"иймося"), 5 }, // би~ймося
-			//{ std::wstring(     L"іймося"), 5 }, // бі~ймося
-			//{ std::wstring(     L"оймося"), 5 }, // благоустро~ймося
-			//{ std::wstring(     L"уймося"), 5 }, // актуалізу~ймося
-			//{ std::wstring(     L"юймося"), 5 }, // анігілю~ймося
-			{ std::wstring(      L"ьмося"), 4 }, // безчесть~мося скинь~мося зосередь~мося
-			{ std::wstring(        L"уся"), 3 }, // бер~уся безчещ~уся
-			{ std::wstring(      L"имуся"), 4 }, // берегти~муся
-			{ std::wstring(    L"атимуся"), 6 }, // бра~тимуся
-			{ std::wstring(    L"отимуся"), 6 }, // боро~тимуся
-			//{ std::wstring(    L"їтимуся"), 6 }, // гної~тимуся
-			{ std::wstring(   L"оїтимуся"), 7 }, // гно~їтимуся
-			{ std::wstring(  L"уватимуся"), 8 }, // актуалізу~ватимуся
-			{ std::wstring(  L"юватимуся"), 8 }, // анігілю~ватимуся
-			{ std::wstring(    L"итимуся"), 6 }, // брижи~тимуся би~тимуся
-			{ std::wstring(    L"ятимуся"), 6 }, // бо~ятимуся
-			{ std::wstring(       L"ешся"), 4 }, // бер~ешся
-			{ std::wstring(     L"имешся"), 5 }, // берегти~мешся
-			{ std::wstring(   L"атимешся"), 7 }, // назива~тимешся
-			{ std::wstring(   L"отимешся"), 7 }, // боро~тимешся
-			{ std::wstring( L"уватимешся"), 9 }, // актуалізу~ватимешся
-			{ std::wstring( L"юватимешся"), 9 }, // анігілю~ватимешся
-			{ std::wstring(   L"итимешся"), 7 }, // брижи~тимешся би~тимешся
-			//{ std::wstring(   L"їтимешся"), 7 }, // гної~тимешся
-			{ std::wstring(  L"оїтимешся"), 8 }, // гно~їтимешся
-			{ std::wstring(   L"ятимешся"), 8 }, // бо~ятимешся
-			{ std::wstring(       L"єшся"), 4 }, // compound
-			//{ std::wstring(      L"аєшся"), 4 }, // назива~єшся
-			//{ std::wstring(      L"уєшся"), 4 }, // актуалізу~єшся
-			//{ std::wstring(      L"юєшся"), 4 }, // анігілю~єшся
-			//{ std::wstring(      L"'єшся"), 4 }, // б'~єшся
-			{ std::wstring(       L"ишся"), 4 }, // бриж~ишся
-			//{ std::wstring(       L"їшся"), 4 }, // бо~їшся благоустро~їшся
-			{ std::wstring(      L"оїшся"), 4 }, // бо~їшся благоустро~їшся
-			{ std::wstring(        L"ься"), 2 }, // безчесть~ся, do not work without SA
-			//{ std::wstring(       L"ться"), 4 }, // Must have vowel (Ut1sa) NOT:безчес*ть~ся
-			{ std::wstring(      L"аться"), 4 }, // назива~ться
-			{ std::wstring(    L"уваться"), 6 }, // актуалізу~ваться
-			{ std::wstring(    L"юваться"), 6 }, // анігілю~ваться
-			{ std::wstring(      L"еться"), 4 }, // бере~ться береже~ться
-			{ std::wstring(    L"иметься"), 6 }, // берегти~меться
-			{ std::wstring(  L"атиметься"), 8 }, // назива~тиметься
-			{ std::wstring(L"юватиметься"), 10 }, // анігілю~ватиметься
-			{ std::wstring(L"уватиметься"), 10 }, // актуалізу~ватиметься
-			{ std::wstring(L"итиметься"), 8 }, // брижи~тиметься би~тиметься
-			//{ std::wstring(  L"їтиметься"), 8 }, // гної~тиметься
-			{ std::wstring( L"оїтиметься"), 9 }, // гно~їтиметься
-			{ std::wstring(  L"отиметься"), 8 }, // боро~тиметься
-			{ std::wstring(  L"ятиметься"), 9 }, // бо~ятиметься
+			{ std::wstring(        L"Р№СЃСЏ"), 3, PartOfSpeech::Participle }, // compound
+			//{ std::wstring(       L"Р°Р№СЃСЏ"), 3, PartOfSpeech::Participle }, // Р°Р№СЃСЏ РЅР°Р·РёРІР°~Р№СЃСЏ
+			//{ std::wstring(       L"РёР№СЃСЏ"), 3, PartOfSpeech::Participle }, // Р±РµСЂС–РіС€Рё~Р№СЃСЏ Р±Рё~Р№СЃСЏ
+			//{ std::wstring(       L"С–Р№СЃСЏ"), 3, PartOfSpeech::Participle }, // Р±С–~Р№СЃСЏ
+			//{ std::wstring(       L"РѕР№СЃСЏ"), 3, PartOfSpeech::Participle }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~Р№СЃСЏ
+			//{ std::wstring(       L"СѓР№СЃСЏ"), 3, PartOfSpeech::Participle }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~Р№СЃСЏ
+			//{ std::wstring(       L"СЋР№СЃСЏ"), 3, PartOfSpeech::Participle }, // Р°РЅС–РіС–Р»СЋ~Р№СЃСЏ
+			{ std::wstring(    L"Р°РІС€РёР№СЃСЏ"), 6, PartOfSpeech::Participle }, // Р±СЂР°~РІС€РёР№СЃСЏ
+			{ std::wstring(  L"СѓРІР°РІС€РёР№СЃСЏ"), 8, PartOfSpeech::Participle }, // Р°РєСѓС‚Р°Р»С–Р·Сѓ~РІР°РІС€РёР№СЃСЏ
+			{ std::wstring(  L"СЋРІР°РІС€РёР№СЃСЏ"), 8, PartOfSpeech::Participle }, // Р°РЅС–РіС–Р»СЋ~РІР°РІС€РёР№СЃСЏ Р°СЃРѕС†С–СЋ~РІР°РІС€РёР№СЃСЏ
+			{ std::wstring(    L"РёРІС€РёР№СЃСЏ"), 6, PartOfSpeech::Participle }, // Р±СЂРёР¶Рё~РІС€РёР№СЃСЏ Р±Рё~РІС€РёР№СЃСЏ
+			//{ std::wstring(    L"С—РІС€РёР№СЃСЏ"), 6 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~РІС€РёР№СЃСЏ
+			{ std::wstring(   L"РѕС—РІС€РёР№СЃСЏ"), 7, PartOfSpeech::Participle  }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—РІС€РёР№СЃСЏ
+			{ std::wstring(    L"РѕРІС€РёР№СЃСЏ"), 6, PartOfSpeech::Participle }, // Р±РѕСЂРѕ~РІС€РёР№СЃСЏ
+			{ std::wstring(    L"СѓРІС€РёР№СЃСЏ"), 6, PartOfSpeech::Participle }, // Р±РµС…РЅСѓ~РІС€РёР№СЃСЏ
+			{ std::wstring(    L"СЏРІС€РёР№СЃСЏ"), 7, PartOfSpeech::Participle  }, // Р±Рѕ~СЏРІС€РёР№СЃСЏ
+			{ std::wstring(       L"РµРјСЃСЏ"), 3 }, // Р±РµСЂРµ~РјСЃСЏ Р±РµСЂРµР¶Рµ~РјСЃСЏ Р·РІРµСЂРЅРµ~РјСЃСЏ
+			{ std::wstring(     L"РёРјРµРјСЃСЏ"), 5 }, // Р±РµСЂРµРіС‚Рё~РјРµРјСЃСЏ
+			{ std::wstring(       L"С”РјСЃСЏ"), 4 }, // compound
+			//{ std::wstring(      L"Р°С”РјСЃСЏ"), 4 }, // РЅР°Р·РёРІР°~С”РјСЃСЏ
+			//{ std::wstring(      L"СѓС”РјСЃСЏ"), 4 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~С”РјСЃСЏ
+			//{ std::wstring(      L"СЋС”РјСЃСЏ"), 4 }, // Р°РЅС–РіС–Р»СЋ~С”РјСЃСЏ
+			//{ std::wstring(      L"'С”РјСЃСЏ"), 4 }, // Р±'~С”РјСЃСЏ
+			{ std::wstring(   L"Р°С‚РёРјРµРјСЃСЏ"), 7 }, // Р±СЂР°~С‚РёРјРµРјСЃСЏ
+			{ std::wstring(   L"РёС‚РёРјРµРјСЃСЏ"), 7 }, // Р±СЂРёР¶Рё~С‚РёРјРµРјСЃСЏ Р±Рё~С‚РёРјРµРјСЃСЏ
+			//{ std::wstring(   L"С—С‚РёРјРµРјСЃСЏ"), 7 }, // РіРЅРѕС—~С‚РёРјРµРјСЃСЏ
+			{ std::wstring(  L"РѕС—С‚РёРјРµРјСЃСЏ"), 8 }, // РіРЅРѕ~С—С‚РёРјРµРјСЃСЏ
+			{ std::wstring(   L"РѕС‚РёРјРµРјСЃСЏ"), 7 }, // Р±РѕСЂРѕ~С‚РёРјРµРјСЃСЏ
+			{ std::wstring( L"СѓРІР°С‚РёРјРµРјСЃСЏ"), 9 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёРјРµРјСЃСЏ
+			{ std::wstring( L"СЋРІР°С‚РёРјРµРјСЃСЏ"), 9 }, // Р°РЅС–РіС–Р»СЋ~РІР°С‚РёРјРµРјСЃСЏ
+			{ std::wstring(   L"СЏС‚РёРјРµРјСЃСЏ"), 8 }, // Р±Рѕ~СЏС‚РёРјРµРјСЃСЏ
+			{ std::wstring(       L"РёРјСЃСЏ"), 3 }, // Р±СЂРёР¶Рё~РјСЃСЏ
+			//{ std::wstring(       L"С—РјСЃСЏ"), 3 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~РјСЃСЏ
+			{ std::wstring(      L"РѕС—РјСЃСЏ"), 4 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—РјСЃСЏ
+			//{ std::wstring(        L"РѕСЃСЏ"), 2 }, // no words Р±С–Р№РјРѕ~СЃСЏ
+			{ std::wstring(       L"Р»РѕСЃСЏ"), 4 }, // Р±РµСЂРµРі~Р»РѕСЃСЏ
+			{ std::wstring(      L"Р°Р»РѕСЃСЏ"), 4 }, // РЅР°Р·РёРІР°~Р»РѕСЃСЏ
+			{ std::wstring(    L"СѓРІР°Р»РѕСЃСЏ"), 6 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°Р»РѕСЃСЏ
+			{ std::wstring(    L"СЋРІР°Р»РѕСЃСЏ"), 6 }, // Р°РЅС–РіС–Р»СЋ~РІР°Р»РѕСЃСЏ
+			{ std::wstring(      L"РµР»РѕСЃСЏ"), 4 }, // РґРѕРІРµ~Р»РѕСЃСЏ
+			{ std::wstring(      L"РёР»РѕСЃСЏ"), 4 }, // Р±СЂРёР¶Рё~Р»РѕСЃСЏ Р±Рё~Р»РѕСЃСЏ
+			//{ std::wstring(      L"С—Р»РѕСЃСЏ"), 4 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕС—~Р»РѕСЃСЏ
+			{ std::wstring(     L"РѕС—Р»РѕСЃСЏ"), 5 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—Р»РѕСЃСЏ
+			{ std::wstring(      L"РѕР»РѕСЃСЏ"), 4 }, // Р±РѕСЂРѕ~Р»РѕСЃСЏ
+			{ std::wstring(      L"СѓР»РѕСЃСЏ"), 4 }, // Р±РµС…РЅСѓ~Р»РѕСЃСЏ
+			{ std::wstring(      L"СЏР»РѕСЃСЏ"), 5 }, // Р±Рѕ~СЏР»РѕСЃСЏ
+			{ std::wstring(       L"РјРѕСЃСЏ"), 4 }, // typo:РїРѕРєРІР°Рї~РјРѕСЃСЏ
+			{ std::wstring(      L"Р°РјРѕСЃСЏ"), 4 }, // РїРѕРґР°~РјРѕСЃСЏ
+			{ std::wstring(      L"РµРјРѕСЃСЏ"), 4 }, // Р±РµСЂРµ~РјРѕСЃСЏ РїРѕРІРµСЂРЅРµ~РјРѕСЃСЏ
+			{ std::wstring(    L"РёРјРµРјРѕСЃСЏ"), 6 }, // Р±РµСЂРµРіС‚Рё~РјРµРјРѕСЃСЏ
+			{ std::wstring(  L"Р°С‚РёРјРµРјРѕСЃСЏ"), 8 }, // РЅР°Р·РёРІР°~С‚РёРјРµРјРѕСЃСЏ
+			{ std::wstring(L"СѓРІР°С‚РёРјРµРјРѕСЃСЏ"), 10 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёРјРµРјРѕСЃСЏ
+			{ std::wstring(L"СЋРІР°С‚РёРјРµРјРѕСЃСЏ"), 10 }, // Р°РЅС–РіС–Р»СЋ~РІР°С‚РёРјРµРјРѕСЃСЏ
+			{ std::wstring(  L"РёС‚РёРјРµРјРѕСЃСЏ"), 8 }, // Р±СЂРёР¶Рё~С‚РёРјРµРјРѕСЃСЏ Р±Рё~С‚РёРјРµРјРѕСЃСЏ
+			//{ std::wstring(  L"С—С‚РёРјРµРјРѕСЃСЏ"), 8 }, // РіРЅРѕС—~С‚РёРјРµРјРѕСЃСЏ
+			{ std::wstring( L"РѕС—С‚РёРјРµРјРѕСЃСЏ"), 9 }, // РіРЅРѕ~С—С‚РёРјРµРјРѕСЃСЏ
+			{ std::wstring(  L"РѕС‚РёРјРµРјРѕСЃСЏ"), 8 }, // Р±РѕСЂРѕ~С‚РёРјРµРјРѕСЃСЏ
+			{ std::wstring(  L"СЏС‚РёРјРµРјРѕСЃСЏ"), 8 }, // Р±РѕСЏ~С‚РёРјРµРјРѕСЃСЏ
+			{ std::wstring(      L"С”РјРѕСЃСЏ"), 5 }, // compound
+			//{ std::wstring(     L"Р°С”РјРѕСЃСЏ"), 5 }, // РґС–Р·РЅР°~С”РјРѕСЃСЏ РЅР°Р·РёРІР°~С”РјРѕСЃСЏ
+			//{ std::wstring(     L"СѓС”РјРѕСЃСЏ"), 5 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~С”РјРѕСЃСЏ
+			//{ std::wstring(     L"СЋС”РјРѕСЃСЏ"), 5 }, // Р°РЅС–РіС–Р»СЋ~С”РјРѕСЃСЏ
+			//{ std::wstring(     L"'С”РјРѕСЃСЏ"), 5 }, // Р±'~С”РјРѕСЃСЏ
+			{ std::wstring(      L"РёРјРѕСЃСЏ"), 4 }, // Р±СЂРёР¶Рё~РјРѕСЃСЏ РѕР±РјРµР¶Рё-РјРѕСЃСЏ
+			{ std::wstring(      L"С–РјРѕСЃСЏ"), 4 }, // Р±РµСЂ~С–РјРѕСЃСЏ РґРёРІС–~РјРѕСЃСЏ
+			//{ std::wstring(      L"С—РјРѕСЃСЏ"), 4 }, // no words
+			//{ std::wstring(     L"Р°С—РјРѕСЃСЏ"), 4 }, // too little words (РЅР°~С—РјРѕСЃСЏ)
+			{ std::wstring(     L"РѕС—РјРѕСЃСЏ"), 5 }, // Р±Рѕ~С—РјРѕСЃСЏ Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—РјРѕСЃСЏ
+			{ std::wstring(      L"Р№РјРѕСЃСЏ"), 5 }, // compound
+			//{ std::wstring(     L"Р°Р№РјРѕСЃСЏ"), 5 }, // РЅР°Р·РёРІР°~Р№РјРѕСЃСЏ РІРµСЂС‚Р°~Р№РјРѕСЃСЏ
+			//{ std::wstring(     L"РёР№РјРѕСЃСЏ"), 5 }, // Р±Рё~Р№РјРѕСЃСЏ
+			//{ std::wstring(     L"С–Р№РјРѕСЃСЏ"), 5 }, // Р±С–~Р№РјРѕСЃСЏ
+			//{ std::wstring(     L"РѕР№РјРѕСЃСЏ"), 5 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~Р№РјРѕСЃСЏ
+			//{ std::wstring(     L"СѓР№РјРѕСЃСЏ"), 5 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~Р№РјРѕСЃСЏ
+			//{ std::wstring(     L"СЋР№РјРѕСЃСЏ"), 5 }, // Р°РЅС–РіС–Р»СЋ~Р№РјРѕСЃСЏ
+			{ std::wstring(      L"СЊРјРѕСЃСЏ"), 4 }, // Р±РµР·С‡РµСЃС‚СЊ~РјРѕСЃСЏ СЃРєРёРЅСЊ~РјРѕСЃСЏ Р·РѕСЃРµСЂРµРґСЊ~РјРѕСЃСЏ
+			{ std::wstring(        L"СѓСЃСЏ"), 3 }, // Р±РµСЂ~СѓСЃСЏ Р±РµР·С‡РµС‰~СѓСЃСЏ
+			{ std::wstring(      L"РёРјСѓСЃСЏ"), 4 }, // Р±РµСЂРµРіС‚Рё~РјСѓСЃСЏ
+			{ std::wstring(    L"Р°С‚РёРјСѓСЃСЏ"), 6 }, // Р±СЂР°~С‚РёРјСѓСЃСЏ
+			{ std::wstring(    L"РѕС‚РёРјСѓСЃСЏ"), 6 }, // Р±РѕСЂРѕ~С‚РёРјСѓСЃСЏ
+			//{ std::wstring(    L"С—С‚РёРјСѓСЃСЏ"), 6 }, // РіРЅРѕС—~С‚РёРјСѓСЃСЏ
+			{ std::wstring(   L"РѕС—С‚РёРјСѓСЃСЏ"), 7 }, // РіРЅРѕ~С—С‚РёРјСѓСЃСЏ
+			{ std::wstring(  L"СѓРІР°С‚РёРјСѓСЃСЏ"), 8 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёРјСѓСЃСЏ
+			{ std::wstring(  L"СЋРІР°С‚РёРјСѓСЃСЏ"), 8 }, // Р°РЅС–РіС–Р»СЋ~РІР°С‚РёРјСѓСЃСЏ
+			{ std::wstring(    L"РёС‚РёРјСѓСЃСЏ"), 6 }, // Р±СЂРёР¶Рё~С‚РёРјСѓСЃСЏ Р±Рё~С‚РёРјСѓСЃСЏ
+			{ std::wstring(    L"СЏС‚РёРјСѓСЃСЏ"), 6 }, // Р±Рѕ~СЏС‚РёРјСѓСЃСЏ
+			{ std::wstring(       L"РµС€СЃСЏ"), 4 }, // Р±РµСЂ~РµС€СЃСЏ
+			{ std::wstring(     L"РёРјРµС€СЃСЏ"), 5 }, // Р±РµСЂРµРіС‚Рё~РјРµС€СЃСЏ
+			{ std::wstring(   L"Р°С‚РёРјРµС€СЃСЏ"), 7 }, // РЅР°Р·РёРІР°~С‚РёРјРµС€СЃСЏ
+			{ std::wstring(   L"РѕС‚РёРјРµС€СЃСЏ"), 7 }, // Р±РѕСЂРѕ~С‚РёРјРµС€СЃСЏ
+			{ std::wstring( L"СѓРІР°С‚РёРјРµС€СЃСЏ"), 9 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёРјРµС€СЃСЏ
+			{ std::wstring( L"СЋРІР°С‚РёРјРµС€СЃСЏ"), 9 }, // Р°РЅС–РіС–Р»СЋ~РІР°С‚РёРјРµС€СЃСЏ
+			{ std::wstring(   L"РёС‚РёРјРµС€СЃСЏ"), 7 }, // Р±СЂРёР¶Рё~С‚РёРјРµС€СЃСЏ Р±Рё~С‚РёРјРµС€СЃСЏ
+			//{ std::wstring(   L"С—С‚РёРјРµС€СЃСЏ"), 7 }, // РіРЅРѕС—~С‚РёРјРµС€СЃСЏ
+			{ std::wstring(  L"РѕС—С‚РёРјРµС€СЃСЏ"), 8 }, // РіРЅРѕ~С—С‚РёРјРµС€СЃСЏ
+			{ std::wstring(   L"СЏС‚РёРјРµС€СЃСЏ"), 8 }, // Р±Рѕ~СЏС‚РёРјРµС€СЃСЏ
+			{ std::wstring(       L"С”С€СЃСЏ"), 4 }, // compound
+			//{ std::wstring(      L"Р°С”С€СЃСЏ"), 4 }, // РЅР°Р·РёРІР°~С”С€СЃСЏ
+			//{ std::wstring(      L"СѓС”С€СЃСЏ"), 4 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~С”С€СЃСЏ
+			//{ std::wstring(      L"СЋС”С€СЃСЏ"), 4 }, // Р°РЅС–РіС–Р»СЋ~С”С€СЃСЏ
+			//{ std::wstring(      L"'С”С€СЃСЏ"), 4 }, // Р±'~С”С€СЃСЏ
+			{ std::wstring(       L"РёС€СЃСЏ"), 4 }, // Р±СЂРёР¶~РёС€СЃСЏ
+			//{ std::wstring(       L"С—С€СЃСЏ"), 4 }, // Р±Рѕ~С—С€СЃСЏ Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—С€СЃСЏ
+			{ std::wstring(      L"РѕС—С€СЃСЏ"), 4 }, // Р±Рѕ~С—С€СЃСЏ Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—С€СЃСЏ
+			{ std::wstring(        L"СЊСЃСЏ"), 2 }, // Р±РµР·С‡РµСЃС‚СЊ~СЃСЏ, do not work without SA
+			//{ std::wstring(       L"С‚СЊСЃСЏ"), 4 }, // Must have vowel (Ut1sa) NOT:Р±РµР·С‡РµСЃ*С‚СЊ~СЃСЏ
+			{ std::wstring(      L"Р°С‚СЊСЃСЏ"), 4 }, // РЅР°Р·РёРІР°~С‚СЊСЃСЏ
+			{ std::wstring(    L"СѓРІР°С‚СЊСЃСЏ"), 6 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚СЊСЃСЏ
+			{ std::wstring(    L"СЋРІР°С‚СЊСЃСЏ"), 6 }, // Р°РЅС–РіС–Р»СЋ~РІР°С‚СЊСЃСЏ
+			{ std::wstring(      L"РµС‚СЊСЃСЏ"), 4 }, // Р±РµСЂРµ~С‚СЊСЃСЏ Р±РµСЂРµР¶Рµ~С‚СЊСЃСЏ
+			{ std::wstring(    L"РёРјРµС‚СЊСЃСЏ"), 6 }, // Р±РµСЂРµРіС‚Рё~РјРµС‚СЊСЃСЏ
+			{ std::wstring(  L"Р°С‚РёРјРµС‚СЊСЃСЏ"), 8 }, // РЅР°Р·РёРІР°~С‚РёРјРµС‚СЊСЃСЏ
+			{ std::wstring(L"СЋРІР°С‚РёРјРµС‚СЊСЃСЏ"), 10 }, // Р°РЅС–РіС–Р»СЋ~РІР°С‚РёРјРµС‚СЊСЃСЏ
+			{ std::wstring(L"СѓРІР°С‚РёРјРµС‚СЊСЃСЏ"), 10 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёРјРµС‚СЊСЃСЏ
+			{ std::wstring(L"РёС‚РёРјРµС‚СЊСЃСЏ"), 8 }, // Р±СЂРёР¶Рё~С‚РёРјРµС‚СЊСЃСЏ Р±Рё~С‚РёРјРµС‚СЊСЃСЏ
+			//{ std::wstring(  L"С—С‚РёРјРµС‚СЊСЃСЏ"), 8 }, // РіРЅРѕС—~С‚РёРјРµС‚СЊСЃСЏ
+			{ std::wstring( L"РѕС—С‚РёРјРµС‚СЊСЃСЏ"), 9 }, // РіРЅРѕ~С—С‚РёРјРµС‚СЊСЃСЏ
+			{ std::wstring(  L"РѕС‚РёРјРµС‚СЊСЃСЏ"), 8 }, // Р±РѕСЂРѕ~С‚РёРјРµС‚СЊСЃСЏ
+			{ std::wstring(  L"СЏС‚РёРјРµС‚СЊСЃСЏ"), 9 }, // Р±Рѕ~СЏС‚РёРјРµС‚СЊСЃСЏ
 
-			{ std::wstring(      L"ється"), 5 }, // compound
-			//{ std::wstring(     L"ається"), 5 }, // назива~ється
-			//{ std::wstring(     L"ується"), 5 }, // актуалізу~ється
-			//{ std::wstring(     L"юється"), 5 }, // анігілю~ється
-			//{ std::wstring(     L"'ється"), 5 }, // б'~ється
-			{ std::wstring(      L"иться"), 4 }, // брижи~ться би~ться
-			{ std::wstring(      L"іться"), 4 }, // диві~ться бері~ться бережі~ться
-			//{ std::wstring(      L"їться"), 5 }, // благоустро~їться
-			{ std::wstring(     L"оїться"), 5 }, // благоустро~їться заспоко~їться
-			{ std::wstring(      L"оться"), 4 }, // боро~ться
-			{ std::wstring(      L"уться"), 4 }, // бехну~ться беру~ться
-			{ std::wstring(    L"имуться"), 6 }, // берегти~муться
-			{ std::wstring(  L"атимуться"), 8 }, // назива~тимуться
-			{ std::wstring(  L"отимуться"), 8 }, // боро~тимуться
-			{ std::wstring(L"уватимуться"), 10 }, // актуалізу~ватимуться
-			{ std::wstring(L"юватимуться"), 10 }, // анігілю~ватимуться
-			{ std::wstring(  L"итимуться"), 8 }, // брижи~тимуться би~тимуться
-			//{ std::wstring(  L"їтимуться"), 9 }, // гно~їтимуться
-			{ std::wstring( L"оїтимуться"), 9 }, // гно~їтимуться
-			{ std::wstring(  L"ятимуться"), 9 }, // бо~ятимуться
-			{ std::wstring(      L"ються"), 5 }, // compound бор~ються
-			//{ std::wstring(     L"аються"), 5 }, // назива~ються
-			//{ std::wstring(     L"юються"), 5 }, // анігілю~ються
-			//{ std::wstring(     L"'ються"), 5 }, // б'~ються
-			//{ std::wstring(      L"їться"), 4 }, // заспокої~ться
-			{ std::wstring(     L"уються"), 5 }, // актуалізу~ються
-			{ std::wstring(      L"яться"), 5}, // безчест~яться дивл~яться
-			{ std::wstring(     L"ояться"), 5 }, // заспоко~яться гно~яться бо~яться
-			{ std::wstring(        L"юся"), 3 }, // compound аркан~юся дивл~юся
-			//{ std::wstring(       L"аюся"), 3 }, // зна~юся назива~юся
-			//{ std::wstring(       L"оюся"), 3 }, // бо~юся благоустро~юся гно~юся
-			//{ std::wstring(       L"уюся"), 3 }, // актуалізу~юся
-			//{ std::wstring(       L"ююся"), 3 }, // анігілю~юся хвилю~юся
-			//{ std::wstring(       L"'юся"), 3 }, // б'~юся
+			{ std::wstring(      L"С”С‚СЊСЃСЏ"), 5 }, // compound
+			//{ std::wstring(     L"Р°С”С‚СЊСЃСЏ"), 5 }, // РЅР°Р·РёРІР°~С”С‚СЊСЃСЏ
+			//{ std::wstring(     L"СѓС”С‚СЊСЃСЏ"), 5 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~С”С‚СЊСЃСЏ
+			//{ std::wstring(     L"СЋС”С‚СЊСЃСЏ"), 5 }, // Р°РЅС–РіС–Р»СЋ~С”С‚СЊСЃСЏ
+			//{ std::wstring(     L"'С”С‚СЊСЃСЏ"), 5 }, // Р±'~С”С‚СЊСЃСЏ
+			{ std::wstring(      L"РёС‚СЊСЃСЏ"), 4 }, // Р±СЂРёР¶Рё~С‚СЊСЃСЏ Р±Рё~С‚СЊСЃСЏ
+			{ std::wstring(      L"С–С‚СЊСЃСЏ"), 4 }, // РґРёРІС–~С‚СЊСЃСЏ Р±РµСЂС–~С‚СЊСЃСЏ Р±РµСЂРµР¶С–~С‚СЊСЃСЏ
+			//{ std::wstring(      L"С—С‚СЊСЃСЏ"), 5 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—С‚СЊСЃСЏ
+			{ std::wstring(     L"РѕС—С‚СЊСЃСЏ"), 5 }, // Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~С—С‚СЊСЃСЏ Р·Р°СЃРїРѕРєРѕ~С—С‚СЊСЃСЏ
+			{ std::wstring(      L"РѕС‚СЊСЃСЏ"), 4 }, // Р±РѕСЂРѕ~С‚СЊСЃСЏ
+			{ std::wstring(      L"СѓС‚СЊСЃСЏ"), 4 }, // Р±РµС…РЅСѓ~С‚СЊСЃСЏ Р±РµСЂСѓ~С‚СЊСЃСЏ
+			{ std::wstring(    L"РёРјСѓС‚СЊСЃСЏ"), 6 }, // Р±РµСЂРµРіС‚Рё~РјСѓС‚СЊСЃСЏ
+			{ std::wstring(  L"Р°С‚РёРјСѓС‚СЊСЃСЏ"), 8 }, // РЅР°Р·РёРІР°~С‚РёРјСѓС‚СЊСЃСЏ
+			{ std::wstring(  L"РѕС‚РёРјСѓС‚СЊСЃСЏ"), 8 }, // Р±РѕСЂРѕ~С‚РёРјСѓС‚СЊСЃСЏ
+			{ std::wstring(L"СѓРІР°С‚РёРјСѓС‚СЊСЃСЏ"), 10 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~РІР°С‚РёРјСѓС‚СЊСЃСЏ
+			{ std::wstring(L"СЋРІР°С‚РёРјСѓС‚СЊСЃСЏ"), 10 }, // Р°РЅС–РіС–Р»СЋ~РІР°С‚РёРјСѓС‚СЊСЃСЏ
+			{ std::wstring(  L"РёС‚РёРјСѓС‚СЊСЃСЏ"), 8 }, // Р±СЂРёР¶Рё~С‚РёРјСѓС‚СЊСЃСЏ Р±Рё~С‚РёРјСѓС‚СЊСЃСЏ
+			//{ std::wstring(  L"С—С‚РёРјСѓС‚СЊСЃСЏ"), 9 }, // РіРЅРѕ~С—С‚РёРјСѓС‚СЊСЃСЏ
+			{ std::wstring( L"РѕС—С‚РёРјСѓС‚СЊСЃСЏ"), 9 }, // РіРЅРѕ~С—С‚РёРјСѓС‚СЊСЃСЏ
+			{ std::wstring(  L"СЏС‚РёРјСѓС‚СЊСЃСЏ"), 9 }, // Р±Рѕ~СЏС‚РёРјСѓС‚СЊСЃСЏ
+			{ std::wstring(      L"СЋС‚СЊСЃСЏ"), 5 }, // compound Р±РѕСЂ~СЋС‚СЊСЃСЏ
+			//{ std::wstring(     L"Р°СЋС‚СЊСЃСЏ"), 5 }, // РЅР°Р·РёРІР°~СЋС‚СЊСЃСЏ
+			//{ std::wstring(     L"СЋСЋС‚СЊСЃСЏ"), 5 }, // Р°РЅС–РіС–Р»СЋ~СЋС‚СЊСЃСЏ
+			//{ std::wstring(     L"'СЋС‚СЊСЃСЏ"), 5 }, // Р±'~СЋС‚СЊСЃСЏ
+			//{ std::wstring(      L"С—С‚СЊСЃСЏ"), 4 }, // Р·Р°СЃРїРѕРєРѕС—~С‚СЊСЃСЏ
+			{ std::wstring(     L"СѓСЋС‚СЊСЃСЏ"), 5 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~СЋС‚СЊСЃСЏ
+			{ std::wstring(      L"СЏС‚СЊСЃСЏ"), 5}, // Р±РµР·С‡РµСЃС‚~СЏС‚СЊСЃСЏ РґРёРІР»~СЏС‚СЊСЃСЏ
+			{ std::wstring(     L"РѕСЏС‚СЊСЃСЏ"), 5 }, // Р·Р°СЃРїРѕРєРѕ~СЏС‚СЊСЃСЏ РіРЅРѕ~СЏС‚СЊСЃСЏ Р±Рѕ~СЏС‚СЊСЃСЏ
+			{ std::wstring(        L"СЋСЃСЏ"), 3 }, // compound Р°СЂРєР°РЅ~СЋСЃСЏ РґРёРІР»~СЋСЃСЏ
+			//{ std::wstring(       L"Р°СЋСЃСЏ"), 3 }, // Р·РЅР°~СЋСЃСЏ РЅР°Р·РёРІР°~СЋСЃСЏ
+			//{ std::wstring(       L"РѕСЋСЃСЏ"), 3 }, // Р±Рѕ~СЋСЃСЏ Р±Р»Р°РіРѕСѓСЃС‚СЂРѕ~СЋСЃСЏ РіРЅРѕ~СЋСЃСЏ
+			//{ std::wstring(       L"СѓСЋСЃСЏ"), 3 }, // Р°РєС‚СѓР°Р»С–Р·Сѓ~СЋСЃСЏ
+			//{ std::wstring(       L"СЋСЋСЃСЏ"), 3 }, // Р°РЅС–РіС–Р»СЋ~СЋСЃСЏ С…РІРёР»СЋ~СЋСЃСЏ
+			//{ std::wstring(       L"'СЋСЃСЏ"), 3 }, // Р±'~СЋСЃСЏ
 		};
 
 		static bool sureSuffixesInitialized = false;
@@ -2891,12 +2891,12 @@ namespace PticaGovorun
 		int suffixSize = word.size() - splitPos;
 
 		// soft character modifies the previous character, the can't be separated
-		if (suffixFirstChar == L'ь')
+		if (suffixFirstChar == L'СЊ')
 			return false;
 
 		// WHY?
 		// allow suffixes like "jmo"
-		//if (suffixFirstChar == L'й' && suffixSize == 1)
+		//if (suffixFirstChar == L'Р№' && suffixSize == 1)
 		//	return false;
 
 		// apostrophe makes previous consonant stronger, do not separate it from prefix
@@ -2953,27 +2953,27 @@ namespace PticaGovorun
 
 	// Tries to split the word into two parts, so that the phonetic transcription is not corrupted.
 	// Returns prefix size or -1 if word can't be split.
-	int phoneticSplitOfWord(wv::slice<wchar_t> word, boost::optional<WordClass> wordClass, int* pMatchedSuffixInd)
+	int phoneticSplitOfWord(wv::slice<wchar_t> word, boost::optional<PartOfSpeech> wordClass, int* pMatchedSuffixInd)
 	{
 		ensureSureSuffixesInitialized();
 
 		for (size_t suffixInd = 0; suffixInd < sureSuffixes.size(); ++suffixInd)
 		{
 			const SuffixEnd& suffixEnd = sureSuffixes[suffixInd];
-			WordClass suffixClass = suffixEnd.WordClass;
+			PartOfSpeech suffixClass = suffixEnd.WordClass;
 
-			//WordClass suffixClass = suffixEnd.WordClass;
-			//if (suffixClass == WordClass::Participle || suffixClass == WordClass::VerbalAdverb)
-			//	suffixClass = WordClass::Verb;
+			//PartOfSpeech suffixClass = suffixEnd.PartOfSpeech;
+			//if (suffixClass == PartOfSpeech::Participle || suffixClass == PartOfSpeech::VerbalAdverb)
+			//	suffixClass = PartOfSpeech::Verb;
 
-			//WordClass wordClassTmp = wordClass.get();
-			//if (wordClassTmp == WordClass::Participle || wordClassTmp == WordClass::VerbalAdverb)
-			//	wordClassTmp = WordClass::Verb;
+			//PartOfSpeech wordClassTmp = wordClass.get();
+			//if (wordClassTmp == PartOfSpeech::Participle || wordClassTmp == PartOfSpeech::VerbalAdverb)
+			//	wordClassTmp = PartOfSpeech::Verb;
 
 			if (wordClass != boost::none)
 			{
 				// match word class and suffix (word) class
-				WordClass wordClassTmp = wordClass.get();
+				PartOfSpeech wordClassTmp = wordClass.get();
 				if (wordClassTmp != suffixClass)
 					continue;
 			}
@@ -2985,7 +2985,7 @@ namespace PticaGovorun
 				int prefixSize = (int)word.size() - suffixSize;
 				
 				// prohibit detaching the soft sign from prefix
-				if (word[prefixSize] == L'ь' && prefixSize + 1 < word.size())
+				if (word[prefixSize] == L'СЊ' && prefixSize + 1 < word.size())
 					prefixSize++;
 
 				// trim vowels at the end of the prefix
@@ -3003,18 +3003,18 @@ namespace PticaGovorun
 				}
 
 				// avoid short prefixes, as they will not participate in other words construction frequently
-				// боявшийся -> б
-				// need prefixes with size>1 to distinguish (би~йся, бі~йся)
+				// Р±РѕСЏРІС€РёР№СЃСЏ -> Р±
+				// need prefixes with size>1 to distinguish (Р±Рё~Р№СЃСЏ, Р±С–~Р№СЃСЏ)
 				if (prefixSize <= 1) continue;
 
 				if (!isValidPhoneticSplit(word, prefixSize))
 					continue;
 
-				if (wordClass == WordClass::Participle && suffixEnd.WordClass != WordClass::Participle)
+				if (wordClass == PartOfSpeech::Participle && suffixEnd.WordClass != PartOfSpeech::Participle)
 				{
 					participleSuffixToWord[suffixEnd.MatchSuffix] = std::wstring(word.data(), word.size());
 				}
-				if (wordClass == WordClass::VerbalAdverb && suffixEnd.WordClass != WordClass::VerbalAdverb)
+				if (wordClass == PartOfSpeech::VerbalAdverb && suffixEnd.WordClass != PartOfSpeech::VerbalAdverb)
 				{
 					participleSuffixToWord2[suffixEnd.MatchSuffix] = std::wstring(word.data(), word.size());
 				}
@@ -3168,7 +3168,7 @@ namespace PticaGovorun
 
 	bool isVoiceless(wchar_t ch)
 	{
-		bool voiceless = ch == L'ч'; // буркоч
+		bool voiceless = ch == L'С‡'; // Р±СѓСЂРєРѕС‡
 		return voiceless;
 	}
 
@@ -3204,25 +3204,25 @@ namespace PticaGovorun
 				continue;
 			}
 
-			if (wordGroup.WordClass == WordClass::Irremovable ||
-				wordGroup.WordClass == WordClass::Preposition ||
-				wordGroup.WordClass == WordClass::Pronoun ||
-				wordGroup.WordClass == WordClass::Conjunction ||
-				wordGroup.WordClass == WordClass::Interjection ||
-				wordGroup.WordClass == WordClass::Particle ||
-				wordGroup.WordClass == WordClass::Irremovable)
+			if (wordGroup.WordClass == PartOfSpeech::Irremovable ||
+				wordGroup.WordClass == PartOfSpeech::Preposition ||
+				wordGroup.WordClass == PartOfSpeech::Pronoun ||
+				wordGroup.WordClass == PartOfSpeech::Conjunction ||
+				wordGroup.WordClass == PartOfSpeech::Interjection ||
+				wordGroup.WordClass == PartOfSpeech::Particle ||
+				wordGroup.WordClass == PartOfSpeech::Irremovable)
 			{
 				// keep the word intact
 				continue;
 			}
 			else if (
-				wordGroup.WordClass == WordClass::Adjective ||
-				wordGroup.WordClass == WordClass::Adverb ||
-				wordGroup.WordClass == WordClass::Noun ||
-				wordGroup.WordClass == WordClass::Numeral ||
-				wordGroup.WordClass == WordClass::Verb ||
-				wordGroup.WordClass == WordClass::VerbalAdverb ||
-				wordGroup.WordClass == WordClass::Participle)
+				wordGroup.WordClass == PartOfSpeech::Adjective ||
+				wordGroup.WordClass == PartOfSpeech::Adverb ||
+				wordGroup.WordClass == PartOfSpeech::Noun ||
+				wordGroup.WordClass == PartOfSpeech::Numeral ||
+				wordGroup.WordClass == PartOfSpeech::Verb ||
+				wordGroup.WordClass == PartOfSpeech::VerbalAdverb ||
+				wordGroup.WordClass == PartOfSpeech::Participle)
 			{
 				std::vector<std::wstring> unsplitWords;
 				std::map<std::wstring, int> mapPrefixSizeToCount;
@@ -3240,10 +3240,10 @@ namespace PticaGovorun
 						if (newOffset == (size_t)-1)
 							newOffset = word.size();
 
-						wv::slice<wchar_t> subWord = wv::make_view(word.data() + offset, newOffset - offset);
+						wv::slice<const wchar_t> subWord = wv::make_view(word.data() + offset, newOffset - offset);
 
 						int matchedSuffixInd = -1;
-						WordClass curWordClass = wordGroup.WordClass.get();
+						PartOfSpeech curWordClass = wordGroup.WordClass.get();
 						if (wordForm.WordClass != boost::none)
 							curWordClass = wordForm.WordClass.get();
 
@@ -3257,12 +3257,13 @@ namespace PticaGovorun
 
 							wchar_t wordLastChar = subWord[subWord.size() - 1];
 							bool ok =
-								wordLastChar == L'ь' ||
-								wordLastChar == L'ж' || // бродяж
+								wordLastChar == L'СЊ' ||
+								wordLastChar == L'Р¶' || // Р±СЂРѕРґСЏР¶
 								voiceless;
 
 							// it is ok to not finding consonant+sa
-							if (!ok && endsWith(subWord, (wv::slice<wchar_t>)std::wstring(L"ся")))
+                            std::wstring sya(L"СЃСЏ");
+                            if (!ok && endsWith(subWord, wv::slice<const wchar_t>(sya.data(), sya.data()+sya.size())))
 							{
 								wchar_t prefixLastChar = subWord[subWord.size() - 1 - 2];
 								ok = isUkrainianConsonant(prefixLastChar);
@@ -3281,7 +3282,7 @@ namespace PticaGovorun
 						//if (sepInd != -1)
 						//{
 						//	wv::slice<wchar_t> prefixWord = wv::make_view(subWord.data(), sepInd);
-						//	static std::wstring suffixVa(L"ва");
+						//	static std::wstring suffixVa(L"РІР°");
 						//	if (endsWith(prefixWord, wv::make_view(suffixVa)))
 						//	{
 						//		// skip -va words
@@ -3314,8 +3315,8 @@ namespace PticaGovorun
 						{
 							partsCount = 2;
 
-							wv::slice<wchar_t> prefix = wv::make_view(subWord.data(), sepInd);
-							wv::slice<wchar_t> suffix = wv::make_view(subWord.data() + sepInd, subWord.size() - sepInd);
+							wv::slice<const wchar_t> prefix = wv::make_view(subWord.data(), sepInd);
+							wv::slice<const wchar_t> suffix = wv::make_view(subWord.data() + sepInd, subWord.size() - sepInd);
 
 							partsStrings[0] = toString(prefix);
 							partsSides[0] = WordPartSide::LeftPart;
@@ -3354,7 +3355,7 @@ namespace PticaGovorun
 					const auto& prefix = prefixToCountPair.first;
 					wchar_t ch = prefix[prefix.size() - 1];
 					bool voiceless = isVoiceless(ch);
-					if (ch == L'ь' || voiceless || ch == L'-')
+					if (ch == L'СЊ' || voiceless || ch == L'-')
 						diffPrefixCount--;
 				}
 				//std::wcout << L"word finished diffPrefixCount=" << diffPrefixCount << std::endl;
@@ -3406,13 +3407,13 @@ namespace PticaGovorun
 			std::wcout << QString::number(suffixEnd.UsedCount).toStdWString().c_str();
 
 			wchar_t* classStr = L"";
-			if (suffixEnd.WordClass == WordClass::Verb)
+			if (suffixEnd.WordClass == PartOfSpeech::Verb)
 				classStr = L"v";
-			else if (suffixEnd.WordClass == WordClass::Noun)
+			else if (suffixEnd.WordClass == PartOfSpeech::Noun)
 				classStr = L"n";
-			else if (suffixEnd.WordClass == WordClass::Adjective)
+			else if (suffixEnd.WordClass == PartOfSpeech::Adjective)
 				classStr = L"adj";
-			else if (suffixEnd.WordClass == WordClass::Adverb)
+			else if (suffixEnd.WordClass == PartOfSpeech::Adverb)
 				classStr = L"adverb";
 			std::wcout << L" ";
 			std::wcout << classStr;
@@ -3574,7 +3575,7 @@ namespace PticaGovorun
 					return std::any_of(std::begin(runs), std::end(runs), [](const RawTextRun& x)
 					{
 						return x.Type == TextRunType::Digit ||
-							x.Str == L"¬" ||
+							x.Str == L"В¬" ||
 							std::all_of(std::begin(x.Str), std::end(x.Str), isRomanNumeral);
 					});
 				};
@@ -3585,8 +3586,8 @@ namespace PticaGovorun
 				auto needExpansionAfter = [&]() -> bool {
 					return std::any_of(std::begin(oneSent), std::end(oneSent), [](const RawTextLexeme& x)
 					{
-						return x.Class == WordClass::Numeral || // arabic or roman
-							x.ValueStr == L"¬";
+						return x.Class == PartOfSpeech::Numeral || // arabic or roman
+							x.ValueStr == L"В¬";
 					});
 				};
 
@@ -3713,12 +3714,12 @@ namespace PticaGovorun
 			// output non-leterate words with digits, cryptic symbols, etc.
 			if (digitsCount == wordSlice.size()) // Arabic number
 			{
-				lex.Class = WordClass::Numeral;
+				lex.Class = PartOfSpeech::Numeral;
 				lex.NumeralLexView = NumeralLexicalView::Arabic;
 			}
 			else if (romanChCount == wordSlice.size()) // Roman number
 			{
-				lex.Class = WordClass::Numeral;
+				lex.Class = PartOfSpeech::Numeral;
 				lex.NumeralLexView = NumeralLexicalView::Roman;
 			}
 			else if (exclEngCount > 0 && (engCount + hyphenCount) == wordSlice.size()) // english word
@@ -3836,7 +3837,7 @@ namespace PticaGovorun
 
 		for (const WordPart* wordPart : wordParts)
 		{
-			if (wordPart->partText() == L"валуванн")
+			if (wordPart->partText() == L"РІР°Р»СѓРІР°РЅРЅ")
 			{
 				PG_Assert(true);
 			}
@@ -3881,8 +3882,8 @@ namespace PticaGovorun
 		{
 			partsCount = 2;
 
-			wv::slice<wchar_t> prefix = wv::make_view(wordSlice.data(), sepInd);
-			wv::slice<wchar_t> suffix = wv::make_view(wordSlice.data() + sepInd, wordSlice.size() - sepInd);
+			wv::slice<const wchar_t> prefix = wv::make_view(wordSlice.data(), sepInd);
+			wv::slice<const wchar_t> suffix = wv::make_view(wordSlice.data() + sepInd, wordSlice.size() - sepInd);
 
 			partsStrings[0] = toString(prefix);
 			partsSides[0] = WordPartSide::LeftPart;

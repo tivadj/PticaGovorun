@@ -1,5 +1,4 @@
-//#pragma once // allow multiple inclusions in each translation unit
-#include "stdafx.h"
+#if WIN32 // or perhaps use MSVC
 #include <amp.h>
 #include <amp_math.h> // fast_math
 #include <amp_graphics.h>
@@ -193,3 +192,4 @@ inline T computeGaussMixtureModelGen(int nclusters, const T* pMeans, const T* pI
 
 	return logProb;
 }
+#endif

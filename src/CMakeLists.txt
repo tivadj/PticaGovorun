@@ -2,25 +2,29 @@
 cmake_minimum_required(VERSION 2.8.9)
 project (TranscriberUISolution)
 
-message(STATUS "CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}")
-message(STATUS "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
-
 cmake_policy(SET CMP0020 NEW) # OLD=do not automatically link to 'qtmain.lib' when referencing QtCore target
-set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+# NOTE: the relative path after ${CMAKE_BINARY_DIR} must not be empty, otherwise the g++ link error appears:
+# /usr/bin/ld: cannot open output file .: Is a directory
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# GSL library
-set(GSL_INCLUDE_DIR "" CACHE PATH "")
-include_directories(${GSL_INCLUDE_DIR})
+message(STATUS "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
+message(STATUS "CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}")
+message(STATUS "CMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+message(STATUS "CMAKE_RUNTIME_OUTPUT_DIRECTORY=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
-# Boost
-#set(Boost_DEBUG ON) # Prints diagnostics on CMake configuration
-#set(Boost_LIB_DIAGNOSTIC_DEFINITIONS ON) # Prints diagnostics when compiling (linking)
-set(Boost_USE_STATIC_LIBS ON)
+# at least C++14 is required (eg std::make_unique)
+if (MSVC)
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++latest")
+elseif(UNIX)
+	# PIC (position-independent code) is required by boost_filesystem (compile boost with this cxxflags=-fPIC too)
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fPIC")
+endif()
 
 option(WITH_FLAC "Enables reading of FLAC (Free Lossless Audio Codec) audio files (like WAV but with compression)" OFF)
 option(WITH_LIBSNDFILE "Enables reading/writing of WAV files" ON)
 option(WITH_PORTAUDIO "Enables playing audio in GUI projects" ON)
+option(WITH_SAMPLERATE "Enables changing audio sample rate" ON)
 option(WITH_SPHINX "Enables decoding speech audio using CMU PocketSphinx library" ON)
 option(WITH_JULIUS "Enables decoding speech audio using Julius library" OFF)
 option(WITH_ZLIB "Required by Julius" OFF)
@@ -42,6 +46,15 @@ if (NOT WITH_FLAC AND NOT WITH_LIBSNDFILE)
 	message("Specify at least one of Flac or Wav to read audio")
 endif()
 
+# GSL library
+set(GSL_INCLUDE_DIR "" CACHE PATH "")
+include_directories(${GSL_INCLUDE_DIR})
+
+# Boost
+#set(Boost_DEBUG ON) # Prints diagnostics on CMake configuration
+#set(Boost_LIB_DIAGNOSTIC_DEFINITIONS ON) # Prints diagnostics when compiling (linking)
+#set(Boost_USE_STATIC_LIBS ON)
+
 # LibSndFile library
 if (WITH_LIBSNDFILE)
 	set(LibSndFile_INCLUDE_DIR "" CACHE PATH "")
@@ -60,16 +73,20 @@ endif()
 
 
 # LibSampleRate library
-set (LibSampleRate_INCLUDE_DIR "" CACHE PATH "")
-set (LibSampleRate_LIB_DEBUG "" CACHE PATH "")
-set (LibSampleRate_LIB_RELEASE "" CACHE PATH "")
+if (WITH_SAMPLERATE)
+	set (LibSampleRate_INCLUDE_DIR "" CACHE PATH "")
+	set (LibSampleRate_LIB_DEBUG "" CACHE PATH "")
+	set (LibSampleRate_LIB_RELEASE "" CACHE PATH "")
 
-add_library(LibSampleRate SHARED IMPORTED)
-set_target_properties(LibSampleRate PROPERTIES
-	INTERFACE_INCLUDE_DIRECTORIES "${LibSampleRate_INCLUDE_DIR}"
-	IMPORTED_IMPLIB_DEBUG "${LibSampleRate_LIB_DEBUG}"
-	IMPORTED_IMPLIB_RELEASE "${LibSampleRate_LIB_RELEASE}"
-)
+	add_definitions(-DPG_HAS_SAMPLERATE)
+
+	add_library(LibSampleRate SHARED IMPORTED)
+	set_target_properties(LibSampleRate PROPERTIES
+		INTERFACE_INCLUDE_DIRECTORIES "${LibSampleRate_INCLUDE_DIR}"
+		IMPORTED_IMPLIB_DEBUG "${LibSampleRate_LIB_DEBUG}"
+		IMPORTED_IMPLIB_RELEASE "${LibSampleRate_LIB_RELEASE}"
+	)
+endif()
 
 # Flac library
 if (WITH_FLAC)

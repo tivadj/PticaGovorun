@@ -32,6 +32,14 @@ target_link_libraries(TranscriberUI
 if (WITH_PORTAUDIO)
 	target_link_libraries(TranscriberUI PRIVATE PortAudio)
 endif()
+
+
+#set_target_properties(TranscriberUI PROPERTIES OUTPUT_NAME TranscriberUIOut)
+#set (outName "tmp1")
+#get_target_property(outName TranscriberUI OUTPUT_NAME)
+#message("outName=${outName}")
+
+
 #if (WITH_SPHINX)
 #	target_link_libraries(TranscriberUI 
 #		PRIVATE Sphinx_SphinxBase
@@ -39,10 +47,10 @@ endif()
 #)
 #endif()
 
-install (TARGETS TranscriberUI
-	RUNTIME DESTINATION bin
-	DESTINATION bin
-)
+#install (TARGETS TranscriberUI
+#	RUNTIME DESTINATION bin
+#	DESTINATION bin
+#)
 
 #add_custom_command(TARGET TranscriberUI POST_BUILD
 #    COMMAND ${CMAKE_COMMAND} -E copy_if_different

@@ -12,27 +12,27 @@ namespace PticaGovorun
 {
 	namespace details
 	{
-		boost::optional<WordClass> parseWordClass(QStringRef text)
+		boost::optional<PartOfSpeech> parseWordClass(QStringRef text)
 		{
 			struct WordClassToStr
 			{
-				WordClass WordClass;
+				PartOfSpeech WordClass;
 				const wchar_t* CStr;
 			};
 			static std::array<WordClassToStr, 13> classes = {
-				WordClassToStr{ WordClass::Noun, L"noun" },
-				WordClassToStr{ WordClass::Pronoun, L"pronoun" },
-				WordClassToStr{ WordClass::Preposition, L"preposition" },
-				WordClassToStr{ WordClass::Verb, L"verb" },
-				WordClassToStr{ WordClass::Adverb, L"adverb" },
-				WordClassToStr{ WordClass::VerbalAdverb, L"verbalAdverb" },
-				WordClassToStr{ WordClass::Adjective, L"adjective" },
-				WordClassToStr{ WordClass::Participle, L"participle" },
-				WordClassToStr{ WordClass::Numeral, L"numeral" },
-				WordClassToStr{ WordClass::Conjunction, L"conjunction" },
-				WordClassToStr{ WordClass::Interjection, L"interjection" },
-				WordClassToStr{ WordClass::Particle, L"particle" },
-				WordClassToStr{ WordClass::Irremovable, L"irremovable" },
+				WordClassToStr{ PartOfSpeech::Noun, L"noun" },
+				WordClassToStr{ PartOfSpeech::Pronoun, L"pronoun" },
+				WordClassToStr{ PartOfSpeech::Preposition, L"preposition" },
+				WordClassToStr{ PartOfSpeech::Verb, L"verb" },
+				WordClassToStr{ PartOfSpeech::Adverb, L"adverb" },
+				WordClassToStr{ PartOfSpeech::VerbalAdverb, L"verbalAdverb" },
+				WordClassToStr{ PartOfSpeech::Adjective, L"adjective" },
+				WordClassToStr{ PartOfSpeech::Participle, L"participle" },
+				WordClassToStr{ PartOfSpeech::Numeral, L"numeral" },
+				WordClassToStr{ PartOfSpeech::Conjunction, L"conjunction" },
+				WordClassToStr{ PartOfSpeech::Interjection, L"interjection" },
+				WordClassToStr{ PartOfSpeech::Particle, L"particle" },
+				WordClassToStr{ PartOfSpeech::Irremovable, L"irremovable" },
 			};
 			for(const auto& pair : classes)
 			{
@@ -47,7 +47,7 @@ namespace PticaGovorun
 		{
 			struct WordGenderToStr
 			{
-				WordGender WordGender;
+				WordGender Gender;
 				const wchar_t* CStr;
 			};
 			static std::array<WordGenderToStr, 3> classes = {
@@ -59,7 +59,7 @@ namespace PticaGovorun
 			{
 				const QString wordClassStr = QString::fromWCharArray(pair.CStr);
 				if (text.compare(wordClassStr, Qt::CaseSensitive) == 0)
-					return pair.WordGender;
+					return pair.Gender;
 			}
 			return boost::none;
 		}

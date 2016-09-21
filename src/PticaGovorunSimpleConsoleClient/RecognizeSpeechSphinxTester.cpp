@@ -1055,8 +1055,9 @@ namespace RecognizeSpeechSphinxTester
 		populatePronCodes(phoneticDictFiller, pronCodeToPronObjFiller, duplicatePronCodes);
 
 		//
-		std::wstring timeStampStr;
-		appendTimeStampNow(timeStampStr);
+		std::string timeStampStr1;
+		appendTimeStampNow(timeStampStr1);
+		std::wstring timeStampStr = s2ws(timeStampStr1);
 
 		std::wstringstream dumpFileName;
 

@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include <string>
 #include <vector>
 #include <tuple>
@@ -16,7 +16,7 @@
 
 namespace PticaGovorun
 {
-	// Soft or hard attribute (uk: тверда/м'яка). The third enum value is 'middle-tongued'.
+	// Soft or hard attribute (uk: С‚РІРµСЂРґР°/Рј'СЏРєР°). The third enum value is 'middle-tongued'.
 	enum class SoftHardConsonant
 	{
 		Hard,
@@ -120,7 +120,7 @@ namespace PticaGovorun
 	// Returns false if phone becomes soft in certain letter combinations.
 	bool usuallyHardBasicPhone(const PhoneRegistry& phoneReg, Phone::BasicPhoneIdT basicPhoneId);
 
-	// Checks whether the character is unvoiced (uk:глухий).
+	// Checks whether the character is unvoiced (uk:РіР»СѓС…РёР№).
 	PG_EXPORTS inline bool isUnvoicedCharUk(wchar_t ch);
 
 	// TODO: remove
@@ -372,7 +372,7 @@ namespace PticaGovorun
 	PG_EXPORTS void mergePhoneticDictOnlyNew(std::map<boost::wstring_view, PhoneticWord>& basePhoneticDict, const std::vector<PhoneticWord>& extraPhoneticDict);
 
 	//
-	PG_EXPORTS int phoneticSplitOfWord(wv::slice<wchar_t> word, boost::optional<WordClass> wordClass, int* pMatchedSuffixInd = nullptr);
+	PG_EXPORTS int phoneticSplitOfWord(wv::slice<wchar_t> word, boost::optional<PartOfSpeech> wordClass, int* pMatchedSuffixInd = nullptr);
 
 	// <sil> pseudo word.
 	PG_EXPORTS boost::wstring_view fillerSilence();

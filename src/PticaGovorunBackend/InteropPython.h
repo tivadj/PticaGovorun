@@ -9,8 +9,7 @@ namespace PticaGovorun
 	// Also used for drawing phones grid.
 	PG_EXPORTS void phoneIdToByPhoneName(int phoneId, std::string& phoneName);
 
-	//extern "C" PG_EXPORTS int phoneMonoCount();
-	extern "C" __declspec(dllexport) int phoneMonoCount();
+	extern "C" PG_EXPORTS int phoneMonoCount();
 	
 	// The MFCC functionality is implemented based on Julius recognizer.
 #ifdef PG_HAS_JULIUS

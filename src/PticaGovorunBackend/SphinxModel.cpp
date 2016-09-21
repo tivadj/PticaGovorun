@@ -1,4 +1,4 @@
-#include "SphinxModel.h"
+п»ї#include "SphinxModel.h"
 #include <vector>
 #include <set>
 #include <map>
@@ -466,8 +466,8 @@ namespace PticaGovorun
 			{
 				const PhoneticWord& word = pair.second;
 
-				// if well-formed pronunc=(word=безпеки, pron=беспеки) then text word=безпеки must not be included
-				// if well-formed pronunc=(word=в, pron=в, pron=ф) then text word=ф must not be included
+				// if well-formed pronunc=(word=Р±РµР·РїРµРєРё, pron=Р±РµСЃРїРµРєРё) then text word=Р±РµР·РїРµРєРё must not be included
+				// if well-formed pronunc=(word=РІ, pron=РІ, pron=С„) then text word=С„ must not be included
 				chosenPronCodes.insert(word.Word);
 				for (const PronunciationFlavour& pron : word.Pronunciations)
 					chosenPronCodes.insert(pron.PronCode);
@@ -594,11 +594,11 @@ namespace PticaGovorun
 	}
 
 	/// Constructs mapping from pronCode to it's display name in Sphinx .arpa, .dic and .transcript files.
-	// Initial word with two pronCodes: (word=також, pronCode1=такош(1), pronCode2=такош(2)) will be mapped into three
-	// pronCodes in the Sphinx phonetic dictionary file (.dic): (також, також(11), також(12))
+	// Initial word with two pronCodes: (word=С‚Р°РєРѕР¶, pronCode1=С‚Р°РєРѕС€(1), pronCode2=С‚Р°РєРѕС€(2)) will be mapped into three
+	// pronCodes in the Sphinx phonetic dictionary file (.dic): (С‚Р°РєРѕР¶, С‚Р°РєРѕР¶(11), С‚Р°РєРѕР¶(12))
 	// The first name is a 'base name', two other pronCodes have the same word before parenthesis and are distinguished by number in parenthesis.
-	// This method makes map for the word=також in the form of a list of pairs: (такош(1)-також(11), такош(2)-також(12)).
-	// Sphinx library will output the base word=також if any of two pronCodes with parenthesis is recognized.
+	// This method makes map for the word=С‚Р°РєРѕР¶ in the form of a list of pairs: (С‚Р°РєРѕС€(1)-С‚Р°РєРѕР¶(11), С‚Р°РєРѕС€(2)-С‚Р°РєРѕР¶(12)).
+	// Sphinx library will output the base word=С‚Р°РєРѕР¶ if any of two pronCodes with parenthesis is recognized.
 	void buildPronCodeToSphinxNameMap(
 		const std::map<boost::wstring_view, PhoneticWord>& phoneticDictWellFormed, 
 		const std::map<boost::wstring_view, PhoneticWord>& phoneticDictBroken,
@@ -739,10 +739,11 @@ namespace PticaGovorun
 		bool swapTrainTestData = AppHelpers::configParamBool(ConfigSwapTrainTestData, false); // swaps train/test portions of data, so that opposite data can be tested when random generator's seed is fixed
 		bool includeBrownBear = AppHelpers::configParamBool(ConfigIncludeBrownBear, false);
 		bool outputWav = AppHelpers::configParamBool(ConfigOutputWav, true);
-#ifndef PG_HAS_LIBSNDFILE
+#if !(defined(PG_HAS_LIBSNDFILE) && defined(PG_HAS_SAMPLERATE))
 		if (outputWav)
 		{
-			std::wcout << "Info: LibSndFile is not compiled in. Define WITH_LIBSNDFILE to write output WAV files";
+			std::wcout << "Info: LibSndFile is not compiled in. Define PG_HAS_LIBSNDFILE C++ preprocessor directive";
+			std::wcout << "Info: SampleRate is not compiled in. Define PG_HAS_SAMPLERATE C++ preprocessor directive";
 			outputWav = false;
 		}
 #endif
@@ -1415,23 +1416,23 @@ namespace PticaGovorun
 	{
 		auto dictPathArray = {
 			//LR"path(C:\devb\PticaGovorunProj\srcrep\build\x64\Debug\tmp2.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk01-а-вапно-вапнований).htm.20150228220948.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk02-вапнований-гіберелін-гібернація).htm.20150228213543.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk03-гібернація-дипромоній-дипрофен).htm.20150228141620.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk04-дипрофен-запорошеність-запорошення).htm.20150228220515.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk05-запорошення-іонування-іонувати).htm.20150301145100.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk06-іонувати-кластогенний-клатрат).htm.20150302001636.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk07-клатрат-макроцистис-макроцит).htm.20150316142905.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk08-макроцит-м'яшкурити-н).htm.20150325111235.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk09-н-нестравність-нестратифікований).htm.20150301230606.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk10-нестратифікований-однокенотронний-однокислотний)8.htm.20150301230840.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk11-однокислотний-поконання-поконати).htm.20150325000544.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk12-поконати-п'ять-р).htm.20150408175213.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk13-р-ряцькувати-с).htm.20150407185103.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk14-с-строщити-строювати).htm.20150407185337.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk15-строювати-тях-у).htm.20150407185443.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk16-у-чхун-ш).htm.20150301231717.xml)path",
-			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk17-ш-ящурячий-end).htm.20150301232344.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk01-Р°-РІР°РїРЅРѕ-РІР°РїРЅРѕРІР°РЅРёР№).htm.20150228220948.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk02-РІР°РїРЅРѕРІР°РЅРёР№-РіС–Р±РµСЂРµР»С–РЅ-РіС–Р±РµСЂРЅР°С†С–СЏ).htm.20150228213543.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk03-РіС–Р±РµСЂРЅР°С†С–СЏ-РґРёРїСЂРѕРјРѕРЅС–Р№-РґРёРїСЂРѕС„РµРЅ).htm.20150228141620.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk04-РґРёРїСЂРѕС„РµРЅ-Р·Р°РїРѕСЂРѕС€РµРЅС–СЃС‚СЊ-Р·Р°РїРѕСЂРѕС€РµРЅРЅСЏ).htm.20150228220515.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk05-Р·Р°РїРѕСЂРѕС€РµРЅРЅСЏ-С–РѕРЅСѓРІР°РЅРЅСЏ-С–РѕРЅСѓРІР°С‚Рё).htm.20150301145100.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk06-С–РѕРЅСѓРІР°С‚Рё-РєР»Р°СЃС‚РѕРіРµРЅРЅРёР№-РєР»Р°С‚СЂР°С‚).htm.20150302001636.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk07-РєР»Р°С‚СЂР°С‚-РјР°РєСЂРѕС†РёСЃС‚РёСЃ-РјР°РєСЂРѕС†РёС‚).htm.20150316142905.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk08-РјР°РєСЂРѕС†РёС‚-Рј'СЏС€РєСѓСЂРёС‚Рё-РЅ).htm.20150325111235.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk09-РЅ-РЅРµСЃС‚СЂР°РІРЅС–СЃС‚СЊ-РЅРµСЃС‚СЂР°С‚РёС„С–РєРѕРІР°РЅРёР№).htm.20150301230606.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk10-РЅРµСЃС‚СЂР°С‚РёС„С–РєРѕРІР°РЅРёР№-РѕРґРЅРѕРєРµРЅРѕС‚СЂРѕРЅРЅРёР№-РѕРґРЅРѕРєРёСЃР»РѕС‚РЅРёР№)8.htm.20150301230840.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk11-РѕРґРЅРѕРєРёСЃР»РѕС‚РЅРёР№-РїРѕРєРѕРЅР°РЅРЅСЏ-РїРѕРєРѕРЅР°С‚Рё).htm.20150325000544.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk12-РїРѕРєРѕРЅР°С‚Рё-Рї'СЏС‚СЊ-СЂ).htm.20150408175213.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk13-СЂ-СЂСЏС†СЊРєСѓРІР°С‚Рё-СЃ).htm.20150407185103.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk14-СЃ-СЃС‚СЂРѕС‰РёС‚Рё-СЃС‚СЂРѕСЋРІР°С‚Рё).htm.20150407185337.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk15-СЃС‚СЂРѕСЋРІР°С‚Рё-С‚СЏС…-Сѓ).htm.20150407185443.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk16-Сѓ-С‡С…СѓРЅ-С€).htm.20150301231717.xml)path",
+			LR"path(C:\devb\PticaGovorunProj\data\declinationDictUk\uk17-С€-СЏС‰СѓСЂСЏС‡РёР№-end).htm.20150301232344.xml)path",
 		};
 
 		std::chrono::time_point<Clock> now1 = Clock::now();

@@ -16,11 +16,12 @@ endif()
 message(STATUS "PROJECT_ARCH=${PROJECT_ARCH}") #
 message(STATUS "PLATFORM_SHORT_NAME=${PLATFORM_SHORT_NAME}") #
 
-
 # compiler directives
 add_definitions(-D_USE_MATH_DEFINES) # define std::max in <math.h>
-add_definitions(-DNOMINMAX) # do not define std::max in <windows.h>
-add_definitions(-DPGAPI_EXPORTS) # declare API as exported
+if (WIN32)
+	add_definitions(-DNOMINMAX) # do not define std::max in <windows.h>
+	add_definitions(-DPGAPI_EXPORTS) # declare API as exported
+endif()
 
 #find_package(OpenCV REQUIRED core highgui)
 #find_package(Boost REQUIRED)
@@ -44,7 +45,6 @@ target_link_libraries(PticaGovorunBackend
 	PRIVATE Qt5::Core
 	PRIVATE Qt5::Xml
 	PRIVATE Qt5::Widgets
-	PRIVATE LibSampleRate
 )
 if (WITH_LIBSNDFILE)
 	target_link_libraries(PticaGovorunBackend PRIVATE LibSndFile)
@@ -53,6 +53,9 @@ if (WITH_FLAC)
 	target_link_libraries(PticaGovorunBackend
 			PRIVATE FlacC
 			PRIVATE FlacCpp)
+endif()
+if (WITH_SAMPLERATE)
+	target_link_libraries(PticaGovorunBackend PRIVATE LibSampleRate)
 endif()
 if (WITH_JULIUS)
 	target_link_libraries(PticaGovorunBackend
@@ -81,10 +84,10 @@ target_include_directories(PticaGovorunBackend PUBLIC
 
 export(PACKAGE PticaGovorunBackend)
 
-install (TARGETS PticaGovorunBackend
-	RUNTIME DESTINATION bin
-	DESTINATION bin
-)
+#install (TARGETS PticaGovorunBackend
+#	RUNTIME DESTINATION bin
+#	DESTINATION bin
+#)
 
 
 #set_target_properties(PticaGovorunBackend PROPERTIES INTERFACE_LINK_LIBRARIES Sphinx_SphinxBase) # TODO: doesn't work (interface?)

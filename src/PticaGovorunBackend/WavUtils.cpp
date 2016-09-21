@@ -3,7 +3,11 @@
 #if PG_HAS_LIBSNDFILE
 #include <sndfile.h> // SF_VIRTUAL_IO
 #endif
+
+#if PG_HAS_SAMPLERATE
 #include <samplerate.h>
+#endif
+
 #include "WavUtils.h"
 #include "FlacUtils.h"
 #include "CoreUtils.h"
@@ -116,7 +120,11 @@ std::tuple<bool, std::string> writeAllSamplesWavVirtual(short* sampleData, int s
 
 bool resampleFrames(gsl::span<const short> audioSamples, float inputFrameRate, float outFrameRate, std::vector<short>& outFrames, std::wstring* errMsg)
 {
-	// we can cast float-short or 
+#ifndef PG_HAS_SAMPLERATE
+	if (errMsg != nullptr) *errMsg = L"Resampling is not available because libsamplerate is not compiled in. Specify PG_HAS_SAMPLERATE C++ preprocessor directive";
+	return false;
+#else
+	// we can cast float-short or
 	// use src_short_to_float_array/src_float_to_short_array which convert to float in [-1;1] range; both work
 	std::vector<float> samplesFloat(std::begin(audioSamples), std::end(audioSamples));
 	//src_short_to_float_array(audioSamples.data(), samplesFloat.data(), audioSamples.size());
@@ -148,6 +156,7 @@ bool resampleFrames(gsl::span<const short> audioSamples, float inputFrameRate, f
 	//src_float_to_short_array(targetSamplesFloat.data(), targetSamples.data(), targetSamplesFloat.size());
 
 	return true;
+#endif // PG_HAS_SAMPLERATE
 }
 
 bool readAllSamplesFormatAware(const boost::filesystem::path& filePath, std::vector<short>& result, float *frameRate, std::wstring* errMsg)

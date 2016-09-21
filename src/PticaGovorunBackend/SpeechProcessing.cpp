@@ -122,7 +122,7 @@ namespace PticaGovorun
 	void splitUtteranceIntoPronuncList(boost::wstring_view text, GrowOnlyPinArena<wchar_t>& arena, std::vector<boost::wstring_view>& words)
 	{
 		// clothes clothes(1)
-		// apostrophe (eg: п'ять)
+		// apostrophe (eg: Рї'СЏС‚СЊ)
 		// dash (eg: to-do)
 		// angle bracket, slash <s> <sil> </sil>
 		// square bracket [sp] [inh]
@@ -1081,7 +1081,10 @@ void computeMfcc(wv::slice<float> samplesFloat, const TriangularFilterBank& filt
 	const float DftPadValue = 0;
 	std::vector<float> wavePointsRe(fftNum, DftPadValue);
 	std::vector<float> wavePointsIm(fftNum, DftPadValue);
-	std::copy_n(std::begin(samplesFloat), samplesFloat.size(), stdext::make_checked_array_iterator(wavePointsRe.data(), fftNum));
+
+    PG_DbgAssert(samplesFloat.size() <= wavePointsRe.size());
+	std::copy_n(std::begin(samplesFloat), samplesFloat.size(), wavePointsRe.data());
+
 	FFT(wavePointsRe.data(), wavePointsIm.data(), std::log2(fftNum));
 
 	// weight DFT with filter-bank responses
@@ -1175,9 +1178,9 @@ void computeMfccVelocityAccel(const wv::slice<short> samples, int frameSize, int
 	int staticCoefCount = mfcc_dim + 1; // +1 for zero cepstral coeff
 	for (int frameInd = 0; frameInd < framesCount; ++frameInd)
 	{
-		const short* sampleBeg = samples.data() + frameInd * frameShift;
-		auto sampleBegIt = stdext::make_checked_array_iterator(sampleBeg, frameSize);
-		std::copy_n(sampleBegIt, frameSize, std::begin(samplesFloat));
+		gsl::span<const short> sampleBeg(samples.data() + frameInd * frameShift, frameSize);
+        PG_DbgAssert(sampleBeg.size() <= samplesFloat.size());
+		std::copy_n(sampleBeg.data(), frameSize, std::begin(samplesFloat));
 
 		float* mfccPerFrameBeg = mfccFeatures.data() + frameInd * mfccVecLen;
 		wv::slice<float> mfccPerFrame = wv::make_view(mfccPerFrameBeg, staticCoefCount);

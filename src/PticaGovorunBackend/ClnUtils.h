@@ -62,6 +62,7 @@ namespace wv
 		explicit slice()
 			: data_(nullptr), size_(0)
 		{}
+		slice(const slice<T>&) = default;
 
 		template <class Array>
 		/*implicit*/ slice(Array& v)

@@ -60,7 +60,7 @@ namespace PticaGovorun
 		bool findPronAsWordPhoneticExpansions(const std::map<boost::wstring_view, PhoneticWord>& phoneticDict, boost::wstring_view pronCode, std::vector<PronunciationFlavour>& prons);
 	public:
 		const PhoneticWord* findPhoneticWord(const QString& browseDictStr, const std::wstring& word) const;
-		bool SpeechData::createUpdateDeletePhoneticWord(const QString& dictId, const QString& word, const QString& pronLinesAsStr, QString* errMsg);
+		bool createUpdateDeletePhoneticWord(const QString& dictId, const QString& word, const QString& pronLinesAsStr, QString* errMsg);
 
 		void suggesedWordsUserInput(const QString& browseDictStr, const QString& currentWord, QStringList& result);
 

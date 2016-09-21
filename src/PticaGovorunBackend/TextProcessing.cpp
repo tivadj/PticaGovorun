@@ -1,5 +1,6 @@
 ﻿#include "TextProcessing.h"
 #include "assertImpl.h"
+#include <cmath>
 #include <QChar>
 #include <cwchar>
 #include <gsl/span>
@@ -953,7 +954,7 @@ namespace PticaGovorun
 		lex.ValueStr = numStr;
 		lex.RunType = TextRunType::Alpha;
 		lex.Lang = TextLanguage::Ukrainian;
-		lex.Class = WordClass::Numeral;
+		lex.Class = PartOfSpeech::Numeral;
 		lex.NumeralCardOrd = cardOrd;
 		lex.Case = form.Case;
 		lex.Gender = form.Gender;
@@ -984,7 +985,7 @@ namespace PticaGovorun
 
 		int nonzOrd = lastNonZeroDecimalInd(triple);
 
-		int magnit = static_cast<int>(std::trunc(std::log10f(triple)));
+		int magnit = static_cast<int>(std::trunc(std::log10(triple)));
 		int mul10 = static_cast<int>(std::pow(10, magnit)); // ..., 1000, 100, 10, 1
 
 		int curDecimInd = magnit;
@@ -1093,7 +1094,7 @@ namespace PticaGovorun
 			compoundOrdinal = true;
 
 		//
-		int magnit = static_cast<int>(std::trunc(std::log10f(num)));
+		int magnit = static_cast<int>(std::trunc(std::log10(num)));
 		int curTripleInd = magnit / 3;
 		if (curTripleInd >= (int)zerosWords_.size())
 		{
@@ -1272,7 +1273,7 @@ namespace PticaGovorun
 	bool AbbreviationExpanderUkr::ruleExpandRomanNumber()
 	{
 		// "в ^XX ст." where ^ marks cur lex
-		if (nextLex(0).Class != WordClass::Numeral)
+		if (nextLex(0).Class != PartOfSpeech::Numeral)
 			return false;
 
 		ptrdiff_t num = -1;
@@ -1284,7 +1285,7 @@ namespace PticaGovorun
 		bool numDiapason = false;
 		if (hasNextLex(2) &&
 			nextLex(1).RunType == TextRunType::Punctuation &&
-			nextLex(2).Class == WordClass::Numeral)
+			nextLex(2).Class == PartOfSpeech::Numeral)
 		{
 			if (convertTextToNum(nextLex(2).ValueStr, numTo))
 				numDiapason = true;
@@ -1388,7 +1389,7 @@ namespace PticaGovorun
 
 			// modify
 			if (hasPrepos)
-				nextLex(-2).Class = WordClass::Preposition;
+				nextLex(-2).Class = PartOfSpeech::Preposition;
 
 			if (numDiapason)
 			{
@@ -1570,11 +1571,11 @@ namespace PticaGovorun
 
 		RawTextLexeme yearLex;
 		yearLex.RunType = TextRunType::Alpha;
-		yearLex.Class = WordClass::Noun;
+		yearLex.Class = PartOfSpeech::Noun;
 		bool yearLexValid = false;
 
 		auto& numLex = nextLex(-2);
-		if (numLex.Class == WordClass::Numeral &&
+		if (numLex.Class == PartOfSpeech::Numeral &&
 			numLex.Mulitplicity == EntityMultiplicity::Plural &&
 			nextLex(-1).RunType == TextRunType::Whitespace &&
 			nextLex(0).ValueStr == L"рр" &&
@@ -1598,7 +1599,7 @@ namespace PticaGovorun
 		}
 
 		// "від 11 грудня 2003 ^р."
-		if (numLex.Class == WordClass::Numeral &&
+		if (numLex.Class == PartOfSpeech::Numeral &&
 			numLex.NumeralCardOrd == NumeralCardinality::Ordinal &&
 			nextLex(-1).RunType == TextRunType::Whitespace &&
 			nextLex(0).ValueStr == L"р" &&
@@ -1653,11 +1654,11 @@ namespace PticaGovorun
 			return it != std::end(monthesGenitive);
 		};
 		
-		if (nextLex(0).Class == WordClass::Numeral &&
+		if (nextLex(0).Class == PartOfSpeech::Numeral &&
 			nextLex(1).RunType == TextRunType::Whitespace &&
 			isMonthGenitive(nextLex(2).ValueStr) &&
 			nextLex(3).RunType == TextRunType::Whitespace &&
-			nextLex(4).Class == WordClass::Numeral)
+			nextLex(4).Class == PartOfSpeech::Numeral)
 		{
 			auto& dayLex = nextLex(0);
 			auto& yearLex = nextLex(4);
@@ -1701,7 +1702,7 @@ namespace PticaGovorun
 		if (!hasNextLex(-2) || !hasNextLex(1)) return false;
 
 		auto& numLex = nextLex(-2);
-		if (numLex.Class == WordClass::Numeral &&
+		if (numLex.Class == PartOfSpeech::Numeral &&
 			numLex.Case != boost::none &&
 			nextLex(-1).RunType == TextRunType::Whitespace &&
 			nextLex(0).ValueStr == L"ст" &&
@@ -1722,7 +1723,7 @@ namespace PticaGovorun
 			yearLex.ValueStr = nounStr;
 			yearLex.RunType = TextRunType::Alpha;
 			yearLex.Case = numLex.Case;
-			yearLex.Class = WordClass::Noun;
+			yearLex.Class = PartOfSpeech::Noun;
 			yearLex.Gender = WordGender::Neuter;
 
 			// modify
@@ -1746,14 +1747,14 @@ namespace PticaGovorun
 		RawTextLexeme* numLex = nullptr;
 		bool hasSpace = false; // optional space
 		if (hasNextLex(1) &&
-			nextLex(1).Class == WordClass::Numeral)
+			nextLex(1).Class == PartOfSpeech::Numeral)
 		{
 			numLex = &nextLex(1);
 			hasSpace = false;
 		}
 		else if (hasNextLex(2) &&
 			nextLex(1).RunType == TextRunType::Whitespace &&
-			nextLex(2).Class == WordClass::Numeral)
+			nextLex(2).Class == PartOfSpeech::Numeral)
 		{
 			numLex = &nextLex(2);
 			hasSpace = true;
@@ -1764,7 +1765,7 @@ namespace PticaGovorun
 		// modify
 		numbSignLex.ValueStr = L"номер";
 		numbSignLex.RunType = TextRunType::Alpha;
-		numbSignLex.Class = WordClass::Noun;
+		numbSignLex.Class = PartOfSpeech::Noun;
 		numbSignLex.Gender = WordGender::Masculine;
 		numbSignLex.Mulitplicity = EntityMultiplicity::Singular;
 
@@ -1878,12 +1879,12 @@ namespace PticaGovorun
 			// output non-leterate words with digits, cryptic symbols, etc.
 			if (digitsCount == wordSlice.size()) // Arabic number
 			{
-				lex.Class = WordClass::Numeral;
+				lex.Class = PartOfSpeech::Numeral;
 				lex.NumeralLexView = NumeralLexicalView::Arabic;
 			}
 			else if (romanChCount == wordSlice.size()) // Roman number
 			{
-				lex.Class = WordClass::Numeral;
+				lex.Class = PartOfSpeech::Numeral;
 				lex.NumeralLexView = NumeralLexicalView::Roman;
 			}
 			else if (exclEngCount > 0 && (engCount + hyphenCount) == wordSlice.size()) // english word
