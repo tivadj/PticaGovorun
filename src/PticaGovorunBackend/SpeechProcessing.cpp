@@ -470,7 +470,7 @@ namespace PticaGovorun
 		}
 
 		// audio frames are lazy loaded
-		float frameRate = -1;
+		float frameRateAnnot = speechAnnot.audioSampleRate();
 		std::vector<short> speechFrames;
 
 		// remove [sp]
@@ -493,6 +493,7 @@ namespace PticaGovorun
 			seg.AudioEndsWithSilence = blankSeg.HasEndSilence;
 			seg.StartSilenceFramesCount = blankSeg.StartSilenceFramesCount;
 			seg.EndSilenceFramesCount = blankSeg.EndSilenceFramesCount;
+			seg.FrameRate = frameRateAnnot;
 			QString txt = blankSeg.ContentMarker->TranscripText;
 
 			bool skipShortPause = true;
@@ -538,12 +539,18 @@ namespace PticaGovorun
 				if (speechFrames.empty())
 				{
 					// load wav file
-					if (!readAllSamplesFormatAware(audioFilePath.toStdWString(), speechFrames, &frameRate, errMsg))
+					float frameRateAudio;
+					if (!readAllSamplesFormatAware(audioFilePath.toStdWString(), speechFrames, &frameRateAudio, errMsg))
+					{
 						*errMsg = QString("Can't read wav file. %1").arg(QString::fromStdWString(*errMsg)).toStdWString();
 						return false;
+					}
+					if (frameRateAnnot != frameRateAudio)
+					{
+						*errMsg = QString("SampleRate mismatch in audio and annotation for file %1").arg(audioFilePath).toStdWString();
+						return false;
+					}
 				}
-
-				seg.FrameRate = frameRate;
 
 				long frameStart = blankSeg.StartMarker->SampleInd;
 				long frameEnd = blankSeg.EndMarker->SampleInd;

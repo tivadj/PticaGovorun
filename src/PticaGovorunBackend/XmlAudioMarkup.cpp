@@ -14,6 +14,7 @@ namespace PticaGovorun {
 namespace {
 	static const char* XmlDocName = "audioAnnotation";
 	static const char* AnnotAudioFile = "audioFile";
+	static const char* AnnotAudioSampleRate = "audioSampleRate";
 	static const char* AnnotHeaderName = "header";
 	static const char* HeaderSpeakerNodeName = "speaker";
 	static const char* HeaderSpeakerBriefIdName = "briefId";
@@ -48,6 +49,14 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMa
 	//qDebug() << docElem.tagName();
 	QString audioFileQ = docElem.attribute(AnnotAudioFile, "");
 	annot.setAudioFileRelPath(audioFileQ.toStdWString());
+	
+	//
+	QString sampleRateQ = docElem.attribute(AnnotAudioSampleRate, "");
+	bool opConv = false;
+	float audioSampleRate = sampleRateQ.toFloat(&opConv);
+	if (!opConv)
+		return std::make_tuple(false, "Can't parse audioSampleRate parameter");;
+	annot.setAudioSampleRate(audioSampleRate);
 
 	//
 	QDomNodeList nodeList = docElem.childNodes();
@@ -133,6 +142,16 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMa
 	return std::make_tuple(true, nullptr);
 }
 
+bool loadAudioMarkupXml(const boost::filesystem::path& audioFilePathAbs, SpeechAnnotation& speechAnnot, ErrMsgList* errMsg)
+{
+	bool loadOp;
+	const char* cerr;
+	std::tie(loadOp, cerr) = loadAudioMarkupFromXml(audioFilePathAbs.wstring(), speechAnnot);
+	if (!loadOp && errMsg != nullptr)
+		errMsg->utf8Msg = std::string(cerr);
+	return loadOp;
+}
+
 PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const SpeechAnnotation& annot, const std::wstring& audioMarkupFilePathAbs)
 {
 	QFile file(QString::fromStdWString(audioMarkupFilePathAbs));
@@ -147,6 +166,9 @@ PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const SpeechAnnota
 	xmlWriter.writeStartDocument("1.0");
 	xmlWriter.writeStartElement(XmlDocName);
 	xmlWriter.writeAttribute(AnnotAudioFile, QString::fromStdWString(annot.audioFileRelPath()));
+	bool isInt = annot.audioSampleRate() == std::truncf(annot.audioSampleRate());
+	int prec = isInt ? 0 : 4; // set 0 for integers to avoid padding zeros after comma
+	xmlWriter.writeAttribute(AnnotAudioSampleRate, QString::number(annot.audioSampleRate(), 'f', prec));
 
 	if (!annot.speakers().empty())
 	{

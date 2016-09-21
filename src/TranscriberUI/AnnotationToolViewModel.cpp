@@ -149,9 +149,57 @@ namespace PticaGovorun
 	{
 		return phoneticDictModel_;
 	}
+	
+	bool AnnotationToolViewModel::processCommand(const QString& recipe)
+	{
+		static const int TimePrec = 4;
+		static const char* annotTotalDurationH = "annot.TotalDurationH";
+		if (recipe.contains(QString::fromLatin1(annotTotalDurationH)))
+		{
+			if (speechData_ == nullptr)
+				return false;
+
+			auto projDir = speechData_->speechProjDir();
+			auto annotDir = speechData_->speechAnnotDirPath();
+			auto audioDir = speechData_->speechProjDir() / "SpeechAudio";
+
+			auto segAccept = [](const AnnotatedSpeechSegment& seg)->bool
+			{
+				if (seg.TranscriptText.find(L"#") != std::wstring::npos) // segments to ignore
+					return false;
+				return true;
+			};
+			std::vector<AnnotatedSpeechSegment> segments;
+			std::wstring errMsg;
+			if (!loadSpeechAndAnnotation(toQString(audioDir.wstring()), audioDir.wstring(), annotDir.wstring(), MarkerLevelOfDetail::Word, false, segAccept, segments, &errMsg))
+			{
+				nextNotification(QString::fromStdWString(errMsg));
+				return false;
+			}
+
+			double totalDurH = 0;
+			for (const auto& seg : segments)
+			{
+				ptrdiff_t numSamples = seg.EndMarker.SampleInd - seg.StartMarker.SampleInd;
+				PG_DbgAssert(seg.FrameRate != -1);
+				double dur = numSamples / static_cast<double>(seg.FrameRate); // seconds
+				double durH = dur / 3600; // hours
+				totalDurH += durH;
+			}
+
+			auto msg = QString("%1=%2").arg(QString::fromLatin1(annotTotalDurationH)).arg(totalDurH, 0, 'f', TimePrec);
+			nextNotification(msg);
+			return true;
+		}
+		return false;
+	}
 
 	void AnnotationToolViewModel::playComposingRecipeRequest(QString recipe)
 	{
+		// reuse audio composer for command processing
+		if (processCommand(recipe))
+			return;
+
 		auto m = activeTranscriptionModel();
 		if (m != nullptr)
 			m->playComposingRecipeRequest(recipe);

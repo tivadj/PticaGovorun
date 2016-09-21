@@ -27,6 +27,7 @@ namespace PticaGovorun
 	{
 		friend PG_EXPORTS std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioFilePathAbs, SpeechAnnotation& speechAnnot);
 		std::wstring audioFileRelPath_; // the relative path to corresponding audio file
+		float audioSampleRate_ = -1; // the sampling rate of the audio file
 	private:
 		std::vector<SpeechAnnotationParameter> parameters_;
 		std::vector<SpeakerFantom> speakers_;
@@ -40,7 +41,10 @@ namespace PticaGovorun
 		~SpeechAnnotation();
 
 		std::wstring audioFileRelPath() const;
-		void setAudioFileRelPath(std::wstring value);
+		void setAudioFileRelPath(const std::wstring& value);
+
+		float audioSampleRate() const;
+		void setAudioSampleRate(float value);
 
 		void clear();
 

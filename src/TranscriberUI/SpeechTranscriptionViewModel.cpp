@@ -1828,10 +1828,8 @@ namespace PticaGovorun
 		return silencePadAudioSamplesCount_;
 	}
 
-	void SpeechTranscriptionViewModel::playComposingRecipeRequest(QString recipe)
+	void SpeechTranscriptionViewModel::chooseSpeechSegments(const QString& recipe, std::vector<short>& composedAudio)
 	{
-		composedAudio_.clear();
-
 		// Composition recipe format:
 		// characters after # signs are comments
 		// 0 section contains the name of the file
@@ -1892,7 +1890,7 @@ namespace PticaGovorun
 
 			int repeatTimes = 1; // R3 means repeating three times
 
-			for (int i=2; i < lineParts.size(); i++)
+			for (int i = 2; i < lineParts.size(); i++)
 			{
 				const QString& item = lineParts[i];
 
@@ -1908,8 +1906,15 @@ namespace PticaGovorun
 
 			//
 			for (int i = 0; i < repeatTimes; ++i)
-				std::copy(std::begin(audioSamples_) + fromFrameInd, std::begin(audioSamples_) + toFrameInd, std::back_inserter(composedAudio_));
+				std::copy(std::begin(audioSamples_) + fromFrameInd, std::begin(audioSamples_) + toFrameInd,
+					std::back_inserter(composedAudio));
 		}
+	}
+
+	void SpeechTranscriptionViewModel::playComposingRecipeRequest(const QString& recipe)
+	{
+		composedAudio_.clear();
+		chooseSpeechSegments(recipe, composedAudio_);
 
 #if PG_HAS_PORTAUDIO
 		// play composed audio

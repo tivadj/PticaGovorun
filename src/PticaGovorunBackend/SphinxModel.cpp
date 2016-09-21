@@ -2154,6 +2154,7 @@ namespace PticaGovorun
 		outStream << QString("generationDate=%1").arg(curDateStr) << "\n";
 		outStream << QString("generationDurH=%1").arg(dataGenerationDurSec_ / 3600.0, 0, 'f', TimePrec) << "\n";
 
+		// config parameters
 		for (const auto& pair : speechModelConfig)
 		{
 			outStream << QString::fromStdString(pair.first) << "=" << pair.second.toString() << "\n";

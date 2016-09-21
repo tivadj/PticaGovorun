@@ -67,6 +67,7 @@ namespace PticaGovorun
 
 		// play
 		void playComposingRecipeRequest(QString recipe);
+		bool processCommand(const QString& recipe);
 
 		// navigate
 		void navigateToMarkerRequest();

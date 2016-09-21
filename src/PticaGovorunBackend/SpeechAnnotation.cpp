@@ -23,7 +23,17 @@ namespace PticaGovorun
 		return audioFileRelPath_;
 	}
 
-	void SpeechAnnotation::setAudioFileRelPath(std::wstring value)
+	float SpeechAnnotation::audioSampleRate() const
+	{
+		return audioSampleRate_;
+	}
+
+	void SpeechAnnotation::setAudioSampleRate(float value)
+	{
+		audioSampleRate_ = value;
+	}
+
+	void SpeechAnnotation::setAudioFileRelPath(const std::wstring& value)
 	{
 		audioFileRelPath_ = value;
 	}

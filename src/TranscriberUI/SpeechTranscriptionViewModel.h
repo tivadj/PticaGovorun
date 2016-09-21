@@ -364,7 +364,8 @@ private:
 	std::map<std::string, std::vector<float>> phoneNameToFeaturesVector_;
 
 public: // segment composer
-	void playComposingRecipeRequest(QString recipe);
+	void playComposingRecipeRequest(const QString& recipe);
+	void chooseSpeechSegments(const QString& recipe, std::vector<short>& composedAudio);
 private:
 	std::vector<short> composedAudio_;
 

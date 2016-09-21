@@ -3,6 +3,7 @@
 #include <array>
 #include <memory>
 #include <unordered_map>
+#include <QString>
 #include <boost/utility/string_view.hpp>
 #include "assertImpl.h"
 #include "CoreUtils.h"
@@ -186,5 +187,26 @@ namespace PticaGovorun
 		std::vector<wchar_t> wordBuff;
 		boost::wstring_view wordRef = toWStringRef(word, wordBuff);
 		return registerWord(wordRef, stringArena, arenaWord);
+	}
+
+	/// The list of error messages.
+	struct ErrMsgList
+	{
+		std::string utf8Msg;
+		std::unique_ptr<ErrMsgList> next;
+	};
+
+	inline QString combineErrorMessages(const ErrMsgList& err)
+	{
+		QByteArray buf;
+		for (const ErrMsgList* cur = &err; cur != nullptr; )
+		{
+			QString str = QString::fromUtf8(cur->utf8Msg.data(), cur->utf8Msg.size());
+			buf += str;
+			buf += ' '; // separator
+
+			cur = cur->next != nullptr ? cur->next.get() : nullptr;
+		}
+		return QString(buf);
 	}
 }
