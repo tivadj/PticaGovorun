@@ -480,18 +480,23 @@ namespace PticaGovorun
 		pushPronIds(phoneticDictWellFormed_);
 		pushPronIds(phoneticDictBroken_);
 
+		bool gotError = false;
 		auto countFun = [this, &pronIdToUsedCount, &arena](const SpeechAnnotation& annot)
 		{
 			// count usage of pronIds in phonetic dictionary
 			phoneticDictCountPronUsage(annot, arena, pronIdToUsedCount);
 		};
-		auto oneAnnotErrFun = [this, errMsgs](const char* errMsg)
+		auto oneAnnotErrFun = [this, errMsgs, &gotError](const char* errMsg)
 		{
+			gotError = true;
 			errMsgs->push_back(QString::fromLatin1(errMsg));
 		};
 
 		auto annotDir = speechAnnotDirPath().wstring();
 		iterateAllSpeechAnnotations(annotDir, true, nullptr, countFun, oneAnnotErrFun);
+
+		if (gotError)
+			return false;
 
 		int numErrs = 0;
 		for (const auto& pair : pronIdToUsedCount)
