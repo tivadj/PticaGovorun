@@ -65,16 +65,14 @@ namespace PticaGovorun
 			return;
 		}
 
-		QString audioFileRelPathQ = QString::fromStdWString(speechAnnot_.audioFileRelPath());
-		QDir annotFileDir = QFileInfo(annotFilePathAbs_).absoluteDir();
-		QString audioFilePath =  QFileInfo(annotFileDir, audioFileRelPathQ).canonicalFilePath();
+		auto audioFilePath = audioFilePathAbs();
 
 		//
 		audioSamples_.clear();
 		diagramSegments_.clear();
 
 		std::wstring errMsgW;
-		if (!readAllSamplesFormatAware(audioFilePath.toStdString().c_str(), audioSamples_, &audioFrameRate_, &errMsgW))
+		if (!readAllSamplesFormatAware(audioFilePath, audioSamples_, &audioFrameRate_, &errMsgW))
 		{
 			nextNotification(QString::fromStdWString(errMsgW));
 			return;
@@ -96,7 +94,7 @@ namespace PticaGovorun
 
 		emit audioSamplesChanged();
 
-		QString msg = QString("Loaded '%1' FrameRate=%2 FramesCount=%3").arg(audioFilePath).arg(audioFrameRate_).arg(audioSamples_.size());
+		QString msg = QString("Loaded '%1' FrameRate=%2 FramesCount=%3").arg(toQStringBfs(audioFilePath)).arg(audioFrameRate_).arg(audioSamples_.size());
 		nextNotification(msg);
 
 		//
@@ -561,6 +559,14 @@ namespace PticaGovorun
 	void SpeechTranscriptionViewModel::setAnnotFilePath(const QString& filePath)
 	{
 		annotFilePathAbs_ = filePath;
+	}
+
+	boost::filesystem::path SpeechTranscriptionViewModel::audioFilePathAbs() const
+	{
+		QString audioFileRelPathQ = QString::fromStdWString(speechAnnot_.audioFileRelPath());
+		QDir annotFileDir = QFileInfo(annotFilePathAbs_).absoluteDir();
+		QString audioFilePath = QFileInfo(annotFileDir, audioFileRelPathQ).canonicalFilePath();
+		return boost::filesystem::path(audioFilePath.toStdWString());
 	}
 
 	float SpeechTranscriptionViewModel::pixelsPerSample() const

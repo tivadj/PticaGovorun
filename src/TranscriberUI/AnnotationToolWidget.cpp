@@ -66,6 +66,7 @@ namespace PticaGovorun
 		QObject::connect(annotationToolModel_.get(), SIGNAL(audioTranscriptionListCleared()), this,
 			SLOT(audioTranscriptionToolModel_audioTranscriptionListCleared()));
 		QObject::connect(annotationToolModel_.get(), SIGNAL(newAnnotDirQuery()), this, SLOT(fileWorkspaceModel_newAnnotDirQuery()));
+		QObject::connect(annotationToolModel_.get(), SIGNAL(commandsListChanged()), this, SLOT(annotationToolModel_commandsListChanged()));
 		annotationToolModel_->init(sharedServiceProviderImpl_);
 
 		std::shared_ptr<FileWorkspaceViewModel> fileWorkspaceModel = annotationToolModel_->fileWorkspaceModel();
@@ -111,13 +112,16 @@ namespace PticaGovorun
 
 	void AnnotationToolMainWindow::pushButtonSegmentComposerPlay_Clicked()
 	{
-		QString composingRecipe;
+		QString entireRecipe = ui->plainTextEditAudioSegmentsComposer->toPlainText();
+
+		// update model's text from UI
+		annotationToolModel_->setCommandList(toStdString(entireRecipe), false);
+
+		QString composingRecipe = entireRecipe;
 		if (ui->plainTextEditAudioSegmentsComposer->textCursor().hasSelection())
 			composingRecipe = ui->plainTextEditAudioSegmentsComposer->textCursor().selection().toPlainText();
-		else
-			composingRecipe = ui->plainTextEditAudioSegmentsComposer->toPlainText();
-
-		annotationToolModel_->playComposingRecipeRequest(composingRecipe);
+		
+		annotationToolModel_->playComposingRecipeRequest(toStdString(composingRecipe));
 	}
 
 	void AnnotationToolMainWindow::audioTranscriptionToolModel_addedAudioTranscription(const std::wstring& annotFilePath)
@@ -150,6 +154,12 @@ namespace PticaGovorun
 	{
 		QString dirQ = QFileDialog::getExistingDirectory(this, "Select speech annotation directory", QString(), QFileDialog::ShowDirsOnly);
 		return dirQ;
+	}
+
+	void AnnotationToolMainWindow::annotationToolModel_commandsListChanged()
+	{
+		auto commandsQ = utf8ToQString(annotationToolModel_->commandList());
+		ui->plainTextEditAudioSegmentsComposer->setPlainText(commandsQ);
 	}
 
 	void AnnotationToolMainWindow::nextNotification(const QString& message)

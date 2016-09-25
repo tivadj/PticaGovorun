@@ -26,6 +26,9 @@ namespace PticaGovorun
 
 		// Notifies view to ask a user to set the new speech annotation directory.
 		QString newAnnotDirQuery();
+
+		// commands
+		void commandsListChanged();
 	public:
 		AnnotationToolViewModel();
 		~AnnotationToolViewModel();
@@ -42,10 +45,10 @@ namespace PticaGovorun
 		// Declares a user intent to close new speech annotation directory.
 		void closeAnnotDirRequest();
 
-		// Loads UI state.
-		void loadStateSettings();
+		void load();
 
-		// Saves UI state.
+		// UI state
+		void loadStateSettings();
 		void saveStateSettings();
 
 		void saveRequest();
@@ -65,10 +68,16 @@ namespace PticaGovorun
 
 		std::shared_ptr<PhoneticDictionaryViewModel> phoneticDictModel();
 
+	public:
 		// play
-		void playComposingRecipeRequest(QString recipe);
-		bool processCommand(const QString& recipe);
+		void playComposingRecipeRequest(boost::string_view recipe);
+		bool processCommandsList(boost::string_view recipe);
+		void setCommandList(boost::string_view commandsList, bool updateView = true);
+		boost::string_view commandList() const;
+	private:
+		std::string commandList_;
 
+	public:
 		// navigate
 		void navigateToMarkerRequest();
 

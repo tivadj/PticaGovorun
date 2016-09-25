@@ -112,9 +112,26 @@ namespace PticaGovorun
 		toWStringRef(strQ, buff);
 	}
 
+	QString utf8ToQString(boost::string_view text)
+	{
+		return QString::fromUtf8(text.data(), text.size());
+	}
+
+	std::string toStdString(QString text)
+	{
+		QByteArray bytes = text.toUtf8();
+		return std::string(bytes.data(), bytes.size());
+	}
+
 	QString toQString(boost::wstring_view text)
 	{
 		return QString::fromWCharArray(text.data(), (int)text.size());
+	}
+	
+	QString toQStringBfs(const boost::filesystem::path& text)
+	{
+		auto ws = text.wstring();
+		return QString::fromStdWString(ws);
 	}
 
 	std::wstring toStdWString(boost::wstring_view text)

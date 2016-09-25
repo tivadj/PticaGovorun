@@ -184,6 +184,8 @@ public:
 	QString annotFilePath() const;
 	void setAnnotFilePath(const QString& filePath);
 
+	boost::filesystem::path audioFilePathAbs() const;
+
 	// Number of pixels per one sample in X direction. Used to construct a samples graph.
 	float pixelsPerSample() const;
 

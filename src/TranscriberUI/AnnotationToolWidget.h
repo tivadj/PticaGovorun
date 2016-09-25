@@ -51,7 +51,7 @@ namespace PticaGovorun
 		void audioTranscriptionToolModel_audioTranscriptionRemoved(int ind);
 		void audioTranscriptionToolModel_audioTranscriptionListCleared();
 		QString fileWorkspaceModel_newAnnotDirQuery();
-
+		void annotationToolModel_commandsListChanged();
 	private:
 		class SharedServiceProviderImpl : public SharedServiceProvider
 		{

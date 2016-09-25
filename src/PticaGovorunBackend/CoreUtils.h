@@ -3,6 +3,7 @@
 #include <QString>
 #include <boost/utility/string_view.hpp>
 #include "PticaGovorunCore.h"
+#include <boost/filesystem.hpp>
 
 namespace PticaGovorun
 {
@@ -23,7 +24,10 @@ namespace PticaGovorun
 	PG_EXPORTS void toWStringRef(const QString& str, std::wstring& buff);
 	PG_EXPORTS void toWStringRef(const QStringRef& str, std::wstring& buff);
 
+	PG_EXPORTS QString utf8ToQString(boost::string_view text);
+	PG_EXPORTS std::string toStdString(QString text);
 	PG_EXPORTS QString toQString(boost::wstring_view text);
+	PG_EXPORTS QString toQStringBfs(const boost::filesystem::path& text);
 	PG_EXPORTS std::wstring toStdWString(boost::wstring_view text);
 	PG_EXPORTS void toStdWString(boost::wstring_view text, std::wstring& result);
 }

@@ -6,6 +6,12 @@
 
 namespace PticaGovorun
 {
+	boost::filesystem::path AppHelpers::mapPathBfs(const boost::filesystem::path& appExeRelPath)
+	{
+		QString result = mapPath(QString::fromStdWString(appExeRelPath.wstring()));
+		return result.toStdWString();
+	}
+
 	QString AppHelpers::mapPath(QString appExeRelPath)
 	{
 		QString appDir = QApplication::applicationDirPath();

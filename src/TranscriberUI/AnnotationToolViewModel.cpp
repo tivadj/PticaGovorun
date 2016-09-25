@@ -6,6 +6,7 @@
 #include "PresentationHelpers.h"
 #include "assertImpl.h"
 #include "SpeechDataValidation.h"
+#include "FileHelpers.h"
 
 namespace PticaGovorun
 {
@@ -38,12 +39,29 @@ namespace PticaGovorun
 		juliusRecognizerProvider_ = std::make_shared<JuliusRecognizerProvider>();
 #endif
 
-		loadStateSettings();
+		load();
 	}
 
 	void AnnotationToolViewModel::onClose()
 	{
 		saveStateSettings();
+	}
+
+	void AnnotationToolViewModel::load()
+	{
+		auto commandFilePath = AppHelpers::mapPathBfs("pgdata/commandWindow.txt");
+		ErrMsgList errMsg;
+		if (!readAllText(commandFilePath, commandList_, &errMsg))
+		{
+			nextNotification(QString("Can't read the content of command window. %1").arg(combineErrorMessages(errMsg)));
+		}
+		else
+		{
+			emit commandsListChanged();
+		}
+
+		//
+		loadStateSettings();
 	}
 
 	void AnnotationToolViewModel::loadStateSettings()
@@ -150,11 +168,12 @@ namespace PticaGovorun
 		return phoneticDictModel_;
 	}
 	
-	bool AnnotationToolViewModel::processCommand(const QString& recipe)
+	bool AnnotationToolViewModel::processCommandsList(boost::string_view recipe)
 	{
 		static const int TimePrec = 4;
-		static const char* annotTotalDurationH = "annot.TotalDurationH";
-		if (recipe.contains(QString::fromLatin1(annotTotalDurationH)))
+		static const boost::string_view annotTotalDurationH = "annot.TotalDurationH";
+		
+		if (recipe.find(annotTotalDurationH.data(), 0, annotTotalDurationH.size()) != std::string::npos)
 		{
 			if (speechData_ == nullptr)
 				return false;
@@ -163,15 +182,28 @@ namespace PticaGovorun
 			auto annotDir = speechData_->speechAnnotDirPath();
 			auto audioDir = speechData_->speechProjDir() / "SpeechAudio";
 
+			//
+			static const boost::string_view current = "current";
+			auto folderOrAudioFilePath = audioDir;
+			if (recipe.find(current.data(), 0, current.size()) != std::string::npos)
+			{
+				auto activeModel = activeTranscriptionModel();
+				if (activeModel != nullptr)
+				{
+					folderOrAudioFilePath = activeModel->audioFilePathAbs();
+				}
+			}
+
 			auto segAccept = [](const AnnotatedSpeechSegment& seg)->bool
 			{
 				if (seg.TranscriptText.find(L"#") != std::wstring::npos) // segments to ignore
 					return false;
 				return true;
 			};
+
 			std::vector<AnnotatedSpeechSegment> segments;
 			std::wstring errMsg;
-			if (!loadSpeechAndAnnotation(toQString(audioDir.wstring()), audioDir.wstring(), annotDir.wstring(), MarkerLevelOfDetail::Word, false, segAccept, segments, &errMsg))
+			if (!loadSpeechAndAnnotation(toQString(folderOrAudioFilePath.wstring()), audioDir.wstring(), annotDir.wstring(), MarkerLevelOfDetail::Word, false, segAccept, segments, &errMsg))
 			{
 				nextNotification(QString::fromStdWString(errMsg));
 				return false;
@@ -187,22 +219,37 @@ namespace PticaGovorun
 				totalDurH += durH;
 			}
 
-			auto msg = QString("%1=%2").arg(QString::fromLatin1(annotTotalDurationH)).arg(totalDurH, 0, 'f', TimePrec);
+			auto msg = QString("%1=%2").arg(utf8ToQString(annotTotalDurationH)).arg(totalDurH, 0, 'f', TimePrec);
 			nextNotification(msg);
 			return true;
 		}
 		return false;
 	}
 
-	void AnnotationToolViewModel::playComposingRecipeRequest(QString recipe)
+	void AnnotationToolViewModel::setCommandList(boost::string_view commandsList, bool updateView)
+	{
+		if (commandList_ != commandsList)
+		{
+			commandList_.assign(commandsList.data(), commandsList.size());
+			if (updateView)
+				emit commandsListChanged();
+		}
+	}
+
+	boost::string_view AnnotationToolViewModel::commandList() const
+	{
+		return commandList_;
+	}
+
+	void AnnotationToolViewModel::playComposingRecipeRequest(boost::string_view recipe)
 	{
 		// reuse audio composer for command processing
-		if (processCommand(recipe))
+		if (processCommandsList(recipe))
 			return;
 
 		auto m = activeTranscriptionModel();
 		if (m != nullptr)
-			m->playComposingRecipeRequest(recipe);
+			m->playComposingRecipeRequest(utf8ToQString(commandList_));
 	}
 
 	void AnnotationToolViewModel::navigateToMarkerRequest()

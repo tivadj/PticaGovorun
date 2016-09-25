@@ -1,6 +1,7 @@
 #pragma once
-#include <QString>
 #include <string>
+#include <QString>
+#include <boost/filesystem/path.hpp>
 #include "PticaGovorunCore.h" // PG_EXPORTS
 
 namespace PticaGovorun
@@ -10,6 +11,7 @@ namespace PticaGovorun
 
 	struct PG_EXPORTS AppHelpers
 	{
+		static boost::filesystem::path mapPathBfs(const boost::filesystem::path& appExeRelPath);
 		static QString     mapPath(QString appExeRelPath);
 		static std::string mapPathStdString(QString appExeRelPath);
 		static QString appIniFilePathAbs();

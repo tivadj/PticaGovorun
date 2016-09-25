@@ -202,6 +202,7 @@
     <ClInclude Include="ClnUtils.h" />
     <ClInclude Include="ComponentsInfrastructure.h" />
     <ClInclude Include="CoreUtils.h" />
+    <ClInclude Include="FileHelpers.h" />
     <ClInclude Include="FlacUtils.h" />
     <ClInclude Include="InteropPython.h" />
     <ClInclude Include="JuliusToolNativeWrapper.h" />
@@ -240,6 +241,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="FileHelpers.cpp" />
     <ClCompile Include="FlacUtils.cpp" />
     <ClCompile Include="InteropPython.cpp" />
     <ClCompile Include="JuliusToolNativeWrapper.cpp" />
