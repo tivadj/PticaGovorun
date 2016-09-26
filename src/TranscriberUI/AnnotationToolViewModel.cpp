@@ -168,10 +168,11 @@ namespace PticaGovorun
 		return phoneticDictModel_;
 	}
 	
-	bool AnnotationToolViewModel::processCommandsList(boost::string_view recipe)
+	bool AnnotationToolViewModel::processCommandList(boost::string_view recipe)
 	{
 		static const int TimePrec = 4;
 		static const boost::string_view annotTotalDurationH = "annot.TotalDurationH";
+		static const boost::string_view setCurRecogStr = "setCurRecog";
 		
 		if (recipe.find(annotTotalDurationH.data(), 0, annotTotalDurationH.size()) != std::string::npos)
 		{
@@ -223,6 +224,16 @@ namespace PticaGovorun
 			nextNotification(msg);
 			return true;
 		}
+		else if (recipe.find(setCurRecogStr.data(), 0, setCurRecogStr.size()) != std::string::npos)
+		{
+			auto spacePos = recipe.find_first_of(' ');
+			if (spacePos != std::string::npos)
+			{
+				auto recogName = recipe.substr(spacePos + 1);
+				setRecognizerName(recogName);
+			}
+			return true;
+		}
 		return false;
 	}
 
@@ -244,7 +255,7 @@ namespace PticaGovorun
 	void AnnotationToolViewModel::playComposingRecipeRequest(boost::string_view recipe)
 	{
 		// reuse audio composer for command processing
-		if (processCommandsList(recipe))
+		if (processCommandList(recipe))
 			return;
 
 		auto m = activeTranscriptionModel();
@@ -381,20 +392,20 @@ namespace PticaGovorun
 		emit activeAudioTranscriptionChanged(activeAudioTranscriptionModelInd_);
 	}
 
-	QString AnnotationToolViewModel::recognizerName() const
+	boost::string_view AnnotationToolViewModel::recognizerName() const
 	{
 		return curRecognizerName_;
 	}
 
-	void AnnotationToolViewModel::setRecognizerName(const QString& filePath)
+	void AnnotationToolViewModel::setRecognizerName(boost::string_view recogName)
 	{
-		curRecognizerName_ = filePath;
+		curRecognizerName_.assign(recogName.data(), recogName.size());
 	}
 
 #ifdef PG_HAS_JULIUS
-	std::string AnnotationToolViewModel::recognizerNameHint()
+	boost::string_view AnnotationToolViewModel::recognizerNameHint()
 	{
-		return recognizerName().toStdString();
+		return recognizerName();
 	}
 
 	std::shared_ptr<JuliusRecognizerProvider> AnnotationToolViewModel::juliusRecognizerProvider()

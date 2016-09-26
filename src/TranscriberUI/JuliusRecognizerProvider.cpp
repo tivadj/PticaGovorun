@@ -5,7 +5,7 @@
 
 namespace PticaGovorun
 {
-	bool initRecognizerConfiguration(const std::string& recogName, RecognizerSettings& rs)
+	bool initRecognizerConfiguration(boost::string_view recogName, RecognizerSettings& rs)
 	{
 		if (recogName == "shrekky")
 		{
@@ -18,11 +18,11 @@ namespace PticaGovorun
 			rs.LanguageModelFilePath = AppHelpers::mapPathStdString("pgdata/Julius/shrekky/shrekkyLM.blm");
 			rs.AcousticModelFilePath = AppHelpers::mapPathStdString("pgdata/Julius/shrekky/shrekkyAM.bam");
 
-			rs.LogFile = recogName + "-LogFile.txt";
-			rs.FileListFileName = recogName + "-FileList.txt";
-			rs.TempSoundFile = recogName + "-TmpAudioFile.wav";
-			rs.CfgFileName = recogName + "-Config.txt";
-			rs.CfgHeaderFileName = recogName + "-ConfigHeader.txt";
+			rs.LogFile = toStdString(recogName) + "-LogFile.txt";
+			rs.FileListFileName = toStdString(recogName) + "-FileList.txt";
+			rs.TempSoundFile = toStdString(recogName) + "-TmpAudioFile.wav";
+			rs.CfgFileName = toStdString(recogName) + "-Config.txt";
+			rs.CfgHeaderFileName = toStdString(recogName) + "-ConfigHeader.txt";
 		}
 		else if (recogName == "persian")
 		{
@@ -36,11 +36,11 @@ namespace PticaGovorun
 			rs.AcousticModelFilePath = R"path(C:\progs\cygwin\home\mmore\voxforge_p111-117\auto\acoustic_model_files\hmmdefs)path";
 			rs.TiedListFilePath =      R"path(C:\progs\cygwin\home\mmore\voxforge_p111-117\auto\acoustic_model_files\tiedlist)path";
 
-			rs.LogFile = recogName + "-LogFile.txt";
-			rs.FileListFileName = recogName + "-FileList.txt";
-			rs.TempSoundFile = recogName + "-TmpAudioFile.wav";
-			rs.CfgFileName = recogName + "-Config.txt";
-			rs.CfgHeaderFileName = recogName + "-ConfigHeader.txt";
+			rs.LogFile = toStdString(recogName) + "-LogFile.txt";
+			rs.FileListFileName = toStdString(recogName) + "-FileList.txt";
+			rs.TempSoundFile = toStdString(recogName) + "-TmpAudioFile.wav";
+			rs.CfgFileName = toStdString(recogName) + "-Config.txt";
+			rs.CfgHeaderFileName = toStdString(recogName) + "-ConfigHeader.txt";
 		}
 
 		return true;
@@ -51,7 +51,7 @@ namespace PticaGovorun
 		return !errorString_.empty();
 	}
 
-	JuliusToolWrapper* JuliusRecognizerProvider::instance(const std::string& recogNameHint)
+	JuliusToolWrapper* JuliusRecognizerProvider::instance(boost::string_view recogNameHint)
 	{
 		if (hasError())
 			return nullptr;
@@ -61,7 +61,7 @@ namespace PticaGovorun
 		return recognizer_.get();
 	}
 
-	void JuliusRecognizerProvider::ensureRecognizerIsCreated(const std::string& recogNameHint)
+	void JuliusRecognizerProvider::ensureRecognizerIsCreated(boost::string_view recogNameHint)
 	{
 		// initialize the recognizer lazily
 		if (recognizer_ == nullptr)

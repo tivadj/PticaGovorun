@@ -1331,7 +1331,7 @@ namespace PticaGovorun
 		// initialize the recognizer lazily
 		if (recognizer_ == nullptr)
 		{
-			std::string recogName = recognizerNameHintProvider_->recognizerNameHint();
+			auto recogName = recognizerNameHintProvider_->recognizerNameHint();
 			recognizer_ = juliusRecognizerProvider_->instance(recogName);
 			if (recognizer_ == nullptr)
 			{

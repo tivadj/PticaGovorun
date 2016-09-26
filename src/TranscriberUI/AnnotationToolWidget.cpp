@@ -47,9 +47,7 @@ namespace PticaGovorun
 
 		ui->tabWidgetSpeechTranscriptionTabs->clear();
 
-		QObject::connect(ui->pushButtonSaveAudioAnnot, SIGNAL(clicked()), this, SLOT(pushButtonSaveAudioAnnot_Clicked()));
-		QObject::connect(ui->pushButtonSegmentComposerPlay, SIGNAL(clicked()), this, SLOT(pushButtonSegmentComposerPlay_Clicked()));
-		QObject::connect(ui->lineEditRecognizerName, SIGNAL(editingFinished()), this, SLOT(lineEditRecognizerName_editingFinished()));
+		QObject::connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveAction_triggered()));
 		QObject::connect(ui->tabWidgetSpeechTranscriptionTabs, SIGNAL(tabCloseRequested(int)), this, SLOT(tabWidgetSpeechTranscriptionTabs_tabCloseRequested(int)));
 		QObject::connect(ui->actionOpenAnnotDir, SIGNAL(triggered()), this, SLOT(actionOpenAnnotDir_triggered()));
 		QObject::connect(ui->actionCloseAnnotDir, SIGNAL(triggered()), this, SLOT(actionCloseAnnotDir_triggered()));
@@ -82,7 +80,6 @@ namespace PticaGovorun
 
 	void AnnotationToolMainWindow::updateUI()
 	{
-		ui->lineEditRecognizerName->setText(annotationToolModel_->recognizerName());
 	}
 
 	void AnnotationToolMainWindow::actionOpenAnnotDir_triggered()
@@ -100,14 +97,9 @@ namespace PticaGovorun
 		annotationToolModel_->closeAudioTranscriptionTab(index);
 	}
 
-	void AnnotationToolMainWindow::pushButtonSaveAudioAnnot_Clicked()
+	void AnnotationToolMainWindow::saveAction_triggered()
 	{
 		annotationToolModel_->saveRequest();
-	}
-
-	void AnnotationToolMainWindow::lineEditRecognizerName_editingFinished()
-	{
-		annotationToolModel_->setRecognizerName(ui->lineEditRecognizerName->text());
 	}
 
 	void AnnotationToolMainWindow::pushButtonSegmentComposerPlay_Clicked()

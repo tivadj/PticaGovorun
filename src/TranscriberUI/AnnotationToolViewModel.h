@@ -54,10 +54,10 @@ namespace PticaGovorun
 		void saveRequest();
 
 		// recognizer
-		QString recognizerName() const;
-		void setRecognizerName(const QString& filePath);
+		boost::string_view recognizerName() const;
+		void setRecognizerName(boost::string_view recogName);
 #ifdef PG_HAS_JULIUS
-		std::string recognizerNameHint() override;
+		boost::string_view recognizerNameHint() override;
 		std::shared_ptr<JuliusRecognizerProvider> juliusRecognizerProvider();
 #endif
 		std::shared_ptr<SpeechTranscriptionViewModel> activeTranscriptionModel();
@@ -71,7 +71,7 @@ namespace PticaGovorun
 	public:
 		// play
 		void playComposingRecipeRequest(boost::string_view recipe);
-		bool processCommandsList(boost::string_view recipe);
+		bool processCommandList(boost::string_view recipe);
 		void setCommandList(boost::string_view commandsList, bool updateView = true);
 		boost::string_view commandList() const;
 	private:
@@ -107,7 +107,7 @@ namespace PticaGovorun
 		std::shared_ptr<PhoneRegistry> phoneReg_;
 
 		// recognition
-		QString curRecognizerName_;
+		std::string curRecognizerName_;
 #ifdef PG_HAS_JULIUS
 		std::shared_ptr<JuliusRecognizerProvider> juliusRecognizerProvider_;
 #endif

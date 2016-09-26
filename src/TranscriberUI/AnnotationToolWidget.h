@@ -38,9 +38,7 @@ namespace PticaGovorun
 		void tabWidgetSpeechTranscriptionTabs_tabCloseRequested(int index);
 	
 		// REMOVE
-		void pushButtonSaveAudioAnnot_Clicked();
-
-		void lineEditRecognizerName_editingFinished();
+		void saveAction_triggered();
 
 		// segment composer
 		void pushButtonSegmentComposerPlay_Clicked();

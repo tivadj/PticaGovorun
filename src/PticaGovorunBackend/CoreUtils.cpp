@@ -123,6 +123,11 @@ namespace PticaGovorun
 		return std::string(bytes.data(), bytes.size());
 	}
 
+	std::string toStdString(boost::string_view text)
+	{
+		return std::string(text.data(), text.size());
+	}
+
 	QString toQString(boost::wstring_view text)
 	{
 		return QString::fromWCharArray(text.data(), (int)text.size());
