@@ -2030,7 +2030,7 @@ namespace PticaGovorun
 
 			srcAudioFrames.clear();
 			std::wstring errMsg;
-			if (readAllSamplesFormatAware(srcAudioPath, srcAudioFrames, &srcAudioFrameRate, &errMsg))
+			if (!readAllSamplesFormatAware(srcAudioPath, srcAudioFrames, &srcAudioFrameRate, &errMsg))
 			{
 				errMsg_ = "Can't read audio file. ";
 				errMsg_ += toQString(errMsg);
