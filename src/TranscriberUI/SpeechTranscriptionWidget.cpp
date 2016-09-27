@@ -274,8 +274,13 @@ namespace PticaGovorun
 			langButton = ui->radioButtonLangRu;
 		langButton->setChecked(true);
 
+		bool validAllPhones = false;
+		ui->lineEditMarkerPhoneList->setText(transcriberModel_->currentMarkerPhoneListString(validAllPhones));
+
 		ui->lineEditMarkerText->setText(uiMarkerTranscriptStr);
-		ui->lineEditMarkerPhoneList->setText(transcriberModel_->currentMarkerPhoneListString());
+		ui->lineEditMarkerText->setStyleSheet(validAllPhones ? "" : "border: 1px solid red");
+
+		//
 		ui->checkBoxCurMarkerStopOnPlayback->setEnabled(uiMarkerStopsPlaybackEnabled);
 		ui->checkBoxCurMarkerStopOnPlayback->setChecked(uiMarkerStopsPlayback);
 
@@ -350,7 +355,8 @@ namespace PticaGovorun
 
 	void SpeechTranscriptionWidget::lineEditMarkerText_editingFinished()
 	{
-		transcriberModel_->setCurrentMarkerTranscriptText(ui->lineEditMarkerText->text());
+		transcriberModel_->
+		setCurrentMarkerTranscriptText(ui->lineEditMarkerText->text());
 		ui->widgetSamples->setFocus();
 	}
 

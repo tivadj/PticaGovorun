@@ -147,8 +147,11 @@ namespace PticaGovorun
 		return AppHelpers::mapPath("pgdata/Julius/shrekky/shrekkyDic.voca").toStdWString();
 	}
 
-	std::tuple<bool, const char*> SpeechData::convertTextToPhoneListString(boost::wstring_view text, std::string& speechPhonesString)
+	bool SpeechData::convertTextToPhoneListString(boost::wstring_view text, std::string& speechPhonesString, bool& validAllPhones, ErrMsgList* errMsg)
 	{
+		validAllPhones = false;
+		int proneCodeExpansionErrs = 0;
+
 		ensurePhoneticDictionaryLoaded();
 
 		std::ostringstream buff;
@@ -162,22 +165,37 @@ namespace PticaGovorun
 		// iterate through words
 		for (size_t i = 0; i < pronCodes.size(); ++i)
 		{
-			boost::wstring_view pronIdRef = pronCodes[i];
+			boost::wstring_view pronCode = pronCodes[i];
+
+			// the CR, LF etc may be pasted in the text
+			if (pronCode.find_first_of(L"\r\n\t") != boost::wstring_view::npos)
+			{
+				buff << "CRLF";
+				proneCodeExpansionErrs += 1;
+				continue;
+			}
 
 			// convert word to phones
 			prons.clear();
-			if (!findPronAsWordPhoneticExpansions(pronIdRef, prons))
+			if (!findPronAsWordPhoneticExpansions(pronCode, prons))
+			{
 				buff << "???";
+				proneCodeExpansionErrs += 1;
+			}
 			else if (prons.size() > 1) // more than one possible 
 			{
 				buff << "(...)";
+				proneCodeExpansionErrs += 1;
 			}
 			else
 			{
 				const std::vector<PhoneId>& wordPhones = prons.front().Phones;
 				std::string phoneListStr;
 				if (!phoneListToStr(*phoneReg_, wordPhones, phoneListStr))
-					return std::make_tuple(false, "Can't convert phone list to string");
+				{
+					if (errMsg != nullptr) errMsg->utf8Msg = "Can't convert phone list to string";
+					return false;
+				}
 				buff << phoneListStr;
 			}
 
@@ -188,8 +206,8 @@ namespace PticaGovorun
 		}
 
 		speechPhonesString = buff.str();
-
-		return std::make_tuple(true, nullptr);
+		validAllPhones = proneCodeExpansionErrs == 0;
+		return true; // phone list at least partially populated
 	}
 
 	bool SpeechData::findPronAsWordPhoneticExpansions(boost::wstring_view pronAsWord, std::vector<PronunciationFlavour>& prons)

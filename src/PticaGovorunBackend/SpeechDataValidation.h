@@ -54,7 +54,8 @@ namespace PticaGovorun
 		boost::filesystem::path fillerDictPath();
 		boost::filesystem::path shrekkyDictPath();
 
-		std::tuple<bool, const char*> convertTextToPhoneListString(boost::wstring_view text, std::string& speechPhonesString);
+		/// Returns true if the phone list string is populated.
+		bool convertTextToPhoneListString(boost::wstring_view text, std::string& speechPhonesString, bool& validAllPhones, ErrMsgList* errMsg);
 		bool findPronAsWordPhoneticExpansions(boost::wstring_view pronAsWord, std::vector<PronunciationFlavour>& prons);
 	private:
 		bool findPronAsWordPhoneticExpansions(const std::map<boost::wstring_view, PhoneticWord>& phoneticDict, boost::wstring_view pronCode, std::vector<PronunciationFlavour>& prons);

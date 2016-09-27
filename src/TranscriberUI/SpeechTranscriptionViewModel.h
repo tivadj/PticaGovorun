@@ -333,7 +333,7 @@ public:
 	void setCurrentMarkerStopOnPlayback(bool stopsPlayback);
 	void setCurrentMarkerExcludePhase(boost::optional<ResourceUsagePhase> excludePhase);
 	void setCurrentMarkerLang(PticaGovorun::SpeechLanguage lang);
-	QString currentMarkerPhoneListString() const;
+	QString currentMarkerPhoneListString(bool& validAllPhones) const;
 	void onPronIdPhoneticSpecChanged();
 
 	void setTemplateMarkerLevelOfDetail(PticaGovorun::MarkerLevelOfDetail levelOfDetail);

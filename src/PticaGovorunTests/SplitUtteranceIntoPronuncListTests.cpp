@@ -50,6 +50,18 @@ namespace PticaGovorunTests
 		EXPECT_EQ(L"two", pronCodes[1]);
 		EXPECT_EQ(L"three", pronCodes[2]);
 	}
+	TEST_F(SplitUtteranceIntoPronuncListTest, ignoreTrailingSpaces)
+	{
+		std::vector<boost::wstring_view> pronCodes;
+		splitUtteranceIntoPronuncList(L" one ", arena_, pronCodes);
+		ASSERT_EQ(1, pronCodes.size());
+		EXPECT_EQ(L"one", pronCodes[0]);
+
+		pronCodes.clear();
+		splitUtteranceIntoPronuncList(L"  one  ", arena_, pronCodes);
+		ASSERT_EQ(1, pronCodes.size());
+		EXPECT_EQ(L"one", pronCodes[0]);
+	}
 	TEST_F(SplitUtteranceIntoPronuncListTest, ignoreLeadingPound)
 	{
 		std::vector<boost::wstring_view> pronCodes;

@@ -1296,23 +1296,26 @@ namespace PticaGovorun
 		}
 	}
 
-		QString SpeechTranscriptionViewModel::currentMarkerPhoneListString() const
+		QString SpeechTranscriptionViewModel::currentMarkerPhoneListString(bool& validAllPhones) const
 		{
+			validAllPhones = true; // =ignore
 			if (currentMarkerInd_ == -1)
 				return QString();
+			
 			const TimePointMarker& marker = speechAnnot_.marker(currentMarkerInd_);
-			QString text = marker.TranscripText;
+			
+			// phones available for words only
+			if (marker.LevelOfDetail != MarkerLevelOfDetail::Word)
+				return QString();
 
 			std::vector<wchar_t> textBuff;
-			boost::wstring_view textRef = toWStringRef(text, textBuff);
+			boost::wstring_view textRef = toWStringRef(marker.TranscripText, textBuff);
 
 			std::string phoneListString;
-			bool convOp;
-			const char* errMsg;
-			std::tie(convOp, errMsg) = speechData_->convertTextToPhoneListString(textRef, phoneListString);
-			if (!convOp)
+			ErrMsgList errMsg;
+			if (!speechData_->convertTextToPhoneListString(textRef, phoneListString, validAllPhones, &errMsg))
 			{
-				nextNotification(QString::fromLatin1(errMsg));
+				nextNotification(combineErrorMessages(errMsg));
 				return QString();
 			}
 
