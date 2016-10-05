@@ -384,8 +384,8 @@ namespace PticaGovorun
 		if (!isSupportedAudioFile(audioFilePath.toStdWString().c_str()))
 			return true;
 			
-		QString xmlFilePath = QString::fromStdWString(speechAnnotationFilePathAbs(folderOrWavFilePath.absoluteFilePath().toStdWString(), wavRootDir, annotRootDir));
-		QFileInfo xmlFilePathInfo(xmlFilePath);
+		QString annotFilePath = QString::fromStdWString(speechAnnotationFilePathAbs(folderOrWavFilePath.absoluteFilePath().toStdWString(), wavRootDir, annotRootDir));
+		QFileInfo xmlFilePathInfo(annotFilePath);
 		if (!xmlFilePathInfo.exists()) // wav has no corresponding markup
 			return true;
 
@@ -488,7 +488,8 @@ namespace PticaGovorun
 			seg.StartMarker = *blankSeg.StartMarker;
 			seg.EndMarker = *blankSeg.EndMarker;
 			seg.ContentMarker = *blankSeg.ContentMarker;
-			seg.FilePath = audioFilePath.toStdWString();
+			seg.AnnotFilePath = annotFilePath.toStdWString();
+			seg.AudioFilePath = audioFilePath.toStdWString();
 			seg.AudioStartsWithSilence = blankSeg.HasStartSilence;
 			seg.AudioEndsWithSilence = blankSeg.HasEndSilence;
 			seg.StartSilenceFramesCount = blankSeg.StartSilenceFramesCount;
@@ -511,13 +512,16 @@ namespace PticaGovorun
 				for (size_t i = 0; i < words.size(); ++i)
 				{
 					auto word = words[i];
-					if (word == fillerShortPause())
-					{
-						wordsNoSp.push_back(fillerSilence()); // [sp] -> <sil>
-						continue;
-					}
-					//if (word == fillerShortPause() || word == fillerSilence()) // [sp] -> [], <sil> -> []
+					//if (word == fillerShortPause())
+					//{
+					//	wordsNoSp.push_back(fillerSilence()); // [sp] -> <sil>
 					//	continue;
+					//}
+					// [sp] -> [], <sil> -> [], _s -> []
+					if (word == fillerShortPause() || 
+						word == fillerSilence() ||
+						word == fillerSingleSpace())
+						continue;
 					wordsNoSp.push_back(word);
 				}
 

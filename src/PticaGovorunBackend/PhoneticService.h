@@ -386,6 +386,9 @@ namespace PticaGovorun
 	// [sp] pseudo word.
 	PG_EXPORTS boost::wstring_view fillerShortPause();
 
+	// _s pseudo word. Short pause but shorter than [sp].
+	PG_EXPORTS boost::wstring_view fillerSingleSpace();
+
 	// [inh] pseudo word.
 	PG_EXPORTS boost::wstring_view fillerInhale();
 

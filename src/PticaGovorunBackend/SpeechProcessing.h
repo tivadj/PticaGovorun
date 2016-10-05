@@ -191,7 +191,8 @@ struct AnnotatedSpeechSegment
 
 	SpeechLanguage Language = SpeechLanguage::NotSet;
 
-	std::wstring FilePath;
+	std::wstring AudioFilePath; // absolute path to audio file
+	std::wstring AnnotFilePath; // absolute path to xml file
 
 	// Frames' frame rate.
 	float FrameRate = -1;
