@@ -70,7 +70,7 @@ namespace PronunciationChecksRunnerNS
 					const std::vector<Pronunc>& prons = it->second;
 					if (prons.size() > 1) // word has multiple pronunciations
 					{
-						dumpFileStream << QString::fromStdWString(seg.FilePath) << "\n";
+						dumpFileStream << QString::fromStdWString(seg.AudioFilePath) << "\n";
 						dumpFileStream << QString::fromStdWString(word) << "\n";
 						for (int pronInd = 0; pronInd < prons.size(); pronInd++)
 						{

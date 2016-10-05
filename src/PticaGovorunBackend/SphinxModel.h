@@ -3,6 +3,7 @@
 #include <chrono> // std::chrono::system_clock
 #include <set>
 #include <map>
+#include <random> // std::mt19937
 #include <QString>
 #include <QVariant>
 #include <QDir>
@@ -145,8 +146,8 @@ namespace PticaGovorun
 
 		//
 		void loadAudioAnnotation(const wchar_t* wavRootDir, const wchar_t* annotRootDir, const wchar_t* wavDirToAnalyze, bool includeBrownBear);
-		std::tuple<bool, const char*> partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly, int randSeed,
-			std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds) const;
+		std::tuple<bool, const char*> partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly,
+			std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds);
 
 		// Ensures that the test phoneset is a subset of train phoneset.
 		std::tuple<bool, const char*> putSentencesWithRarePhonesInTrain(std::vector<details::AssignedPhaseAudioSegment>& segments, std::set<PhoneId>& trainPhoneIds) const;
@@ -161,8 +162,7 @@ namespace PticaGovorun
 			const QString& fileIdsFilePath,
 			std::function<auto (boost::wstring_view)->boost::wstring_view> pronCodeDisplay,
 			const QString& transcriptionFilePath);
-		void  loadSilenceSegment(std::vector<short>& frames, float framesFrameRate);
-		void buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segRefs, float targetFrameRate, bool padSilence, const std::vector<short>& silenceFrames);
+		void buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segRefs, float targetFrameRate, bool padSilence, float minSilDurMs);
 
 		void generateDataStat(const std::vector<details::AssignedPhaseAudioSegment>& phaseAssignedSegs);
 		
@@ -172,6 +172,7 @@ namespace PticaGovorun
 	public:
 		QString errMsg_;
 	private:
+		std::mt19937 gen_;
 		QString dbName_;
 		QDir outDir_;
 		QDir speechProjDir_;

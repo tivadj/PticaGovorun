@@ -719,6 +719,7 @@ namespace PticaGovorun
 		const char* ConfigGramDim = "gramDim";
 		const char* ConfigOutputCorpus = "textWorld.outputCorpus";
 		const char* ConfigPadSilence = "padSilence";
+		const char* ConfigMinSilDurMs = "minSilDurMs";
 		const char* ConfigTrainCasesRatio = "trainCasesRatio";
 		const char* ConfigUseBrokenPronsInTrainOnly = "useBrokenPronsInTrainOnly";
 		const char* ConfigAllowSoftHardConsonant = "allowSoftHardConsonant";
@@ -751,6 +752,7 @@ namespace PticaGovorun
 		int gramDim = AppHelpers::configParamInt(ConfigGramDim, 2); // 1=unigram, 2=bigram
 		bool outputCorpus = AppHelpers::configParamBool(ConfigOutputCorpus, false);
 		bool padSilence = AppHelpers::configParamBool(ConfigPadSilence, true); // pad the audio segment with the silence segment
+		int minSilDurMs = AppHelpers::configParamInt(ConfigMinSilDurMs, 300); // minimal duration (milliseconds) of flanked silence
 		bool allowSoftHardConsonant = true;
 		bool allowVowelStress = true;
 		PalatalSupport palatalSupport = PalatalSupport::AsHard;
@@ -766,6 +768,8 @@ namespace PticaGovorun
 		//int maxUnigramsCount = 10000;
 		int maxUnigramsCount = -1;
 
+		//
+		gen_.seed(randSeed);
 		//
 		static const size_t WordsCount = 200000;
 		stringArena_ = std::make_shared<GrowOnlyPinArena<wchar_t>>(WordsCount * 6); // W*C, W words, C chars per word
@@ -843,7 +847,7 @@ namespace PticaGovorun
 		std::vector<details::AssignedPhaseAudioSegment> phaseAssignedSegs;
 		std::set<PhoneId> trainPhoneIds;
 		const char* errMsg;
-		std::tie(op, errMsg) = partitionTrainTestData(segments_, trainCasesRatio, swapTrainTestData, useBrokenPronsInTrainOnly, randSeed, phaseAssignedSegs, trainPhoneIds);
+		std::tie(op, errMsg) = partitionTrainTestData(segments_, trainCasesRatio, swapTrainTestData, useBrokenPronsInTrainOnly, phaseAssignedSegs, trainPhoneIds);
 		if (!op)
 		{
 			errMsg_ = "Can't fix train/test partitioning";
@@ -1002,18 +1006,7 @@ namespace PticaGovorun
 				return;
 			}
 
-			std::vector<short> silenceFrames;
-			if (padSilence)
-			{
-				loadSilenceSegment(silenceFrames, outFrameRate);
-				if (!errMsg_.isEmpty())
-				{
-					errMsg_ = QString("Can't create wav train/test subfolder. %1").arg(errMsg_);
-					return;
-				}
-			}
-
-			buildWavSegments(phaseAssignedSegs, outFrameRate, padSilence, silenceFrames);
+			buildWavSegments(phaseAssignedSegs, outFrameRate, padSilence, minSilDurMs);
 			if (!errMsg_.isEmpty())
 				return;
 		}
@@ -1033,6 +1026,7 @@ namespace PticaGovorun
 		speechModelConfig[ConfigOutputWav] = QVariant::fromValue(outputWav);
 		speechModelConfig[ConfigGramDim] = QVariant::fromValue(gramDim);
 		speechModelConfig[ConfigPadSilence] = QVariant::fromValue(padSilence);
+		speechModelConfig[ConfigMinSilDurMs] = QVariant::fromValue(minSilDurMs);
 		speechModelConfig[ConfigTrainCasesRatio] = QVariant::fromValue(trainCasesRatio);
 		speechModelConfig[ConfigUseBrokenPronsInTrainOnly] = QVariant::fromValue(useBrokenPronsInTrainOnly);
 		speechModelConfig[ConfigAllowSoftHardConsonant] = QVariant::fromValue(allowSoftHardConsonant);
@@ -1707,11 +1701,10 @@ namespace PticaGovorun
 		}
 	}
 
-	std::tuple<bool, const char*> SphinxTrainDataBuilder::partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly, int randSeed, std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds) const
+	std::tuple<bool, const char*> SphinxTrainDataBuilder::partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly, std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds)
 	{
 		// partition train-test data
 		std::vector<std::reference_wrapper<const AnnotatedSpeechSegment>> rejectedSegments;
-		std::mt19937 g(randSeed);
 		std::uniform_real_distribution<float> rnd(0, 1);
 		for (const AnnotatedSpeechSegment& seg : segments)
 		{
@@ -1744,7 +1737,7 @@ namespace PticaGovorun
 			{
 				PG_Assert(!isAlwaysTrain && !isAlwaysTest);
 
-				float val = rnd(g);
+				float val = rnd(gen_);
 				ResourceUsagePhase phase = val < trainCasesRatio ? ResourceUsagePhase::Train : ResourceUsagePhase::Test;
 
 				if (swapTrainTestData)
@@ -1901,7 +1894,7 @@ namespace PticaGovorun
 			const AnnotatedSpeechSegment& seg = *segRef.Seg;
 			if (segRef.Phase != targetPhase)
 				continue;
-			QString wavFilePath = QString::fromStdWString(seg.FilePath);
+			QString wavFilePath = QString::fromStdWString(seg.AudioFilePath);
 			segRef.OutAudioSegPathParts = audioFilePathComponents(audioSrcRootDirPath, wavFilePath, seg, wavBaseOutDirPath, wavDirPathForRelPathes);
 		}
 	}
@@ -1975,29 +1968,7 @@ namespace PticaGovorun
 		return true;
 	}
 
-	void  SphinxTrainDataBuilder::loadSilenceSegment(std::vector<short>& frames, float framesFrameRate)
-	{
-		std::vector<short> silenceFrames;
-		float silenceFrameRate = -1;
-		std::string silenceWavPath = AppHelpers::mapPathStdString("pgdata/Sphinx2/SpeechModels/pynzenyk-background-200ms.wav");
-		std::wstring errMsg;
-		if (!readAllSamplesFormatAware(silenceWavPath.c_str(), silenceFrames, &silenceFrameRate, &errMsg))
-		{
-			errMsg_ = QString("Can't read silence wav file=%1. %2")
-				.arg(QString::fromStdString(silenceWavPath))
-				.arg(QString::fromStdWString(errMsg));
-			return;
-		}
-		PG_DbgAssert(silenceFrameRate != -1);
-
-		if (!resampleFrames(silenceFrames, silenceFrameRate, framesFrameRate, frames, &errMsg))
-		{
-			errMsg_ = QString("Can't resample silence frames. %1").arg(QString::fromStdWString(errMsg));
-			return;
-		}
-	}
-
-	void SphinxTrainDataBuilder::buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segsRefs, float targetFrameRate, bool padSilence, const std::vector<short>& silenceFrames)
+	void SphinxTrainDataBuilder::buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segsRefs, float targetFrameRate, bool padSilence, float minSilDurMs)
 	{
 		// group segmets by source wav file, so wav files are read sequentially
 
@@ -2006,18 +1977,19 @@ namespace PticaGovorun
 
 		for (const details::AssignedPhaseAudioSegment& segRef : segsRefs)
 		{
-			auto it = srcFilePathToSegs.find(segRef.Seg->FilePath);
+			auto it = srcFilePathToSegs.find(segRef.Seg->AudioFilePath);
 			if (it != srcFilePathToSegs.end())
 				it->second.push_back(&segRef);
 			else
-				srcFilePathToSegs.insert({ segRef.Seg->FilePath, VecPerFile{ &segRef } });
+				srcFilePathToSegs.insert({ segRef.Seg->AudioFilePath, VecPerFile{ &segRef } });
 		}
 
 		// audio frames are lazy loaded
 		float srcAudioFrameRate = -1;
 		std::vector<short> srcAudioFrames;
 		std::vector<short> segFramesResamp;
-		std::vector<short> paddedSegFramesOut;
+		std::vector<short> segFramesPad;
+		std::vector<short> curFileAllSil;
 
 		for (const auto& pair : srcFilePathToSegs)
 		{
@@ -2037,6 +2009,36 @@ namespace PticaGovorun
 				return;
 			}
 
+			// prepare silence segments to pad speech segments not flanked with silence
+			curFileAllSil.clear();
+			{
+				PG_Assert(!segs.empty())
+				QString audioMarkupFilePathAbs = toQString(segs.front()->Seg->AnnotFilePath);
+				SpeechAnnotation speechAnnot;
+				std::tuple<bool, const char*> loadOp = loadAudioMarkupFromXml(audioMarkupFilePathAbs.toStdWString(), speechAnnot);
+				if (!std::get<0>(loadOp))
+				{
+					errMsg_ = QString::fromLatin1(std::get<1>(loadOp));
+					return;
+				}
+
+				QString silQ = toQString(fillerSilence());
+				for (size_t i = 0; i<speechAnnot.markersSize(); ++i)
+				{
+					const TimePointMarker& marker = speechAnnot.marker(i);
+					const TimePointMarker& next = speechAnnot.marker(i+1);
+					if (marker.TranscripText == silQ)
+					{
+						gsl::span<const short> silSamples = srcAudioFrames;
+						int len = next.SampleInd - marker.SampleInd;
+						silSamples = silSamples.subspan(marker.SampleInd + static_cast<ptrdiff_t>(len * 0.3),
+							static_cast<ptrdiff_t>(len * 0.4));
+						std::copy(silSamples.begin(), silSamples.end(), std::back_inserter(curFileAllSil));
+					}
+				}
+			}
+
+
 			std::vector<boost::wstring_view> segPronCodes;
 			std::vector<wchar_t> pronCodeBuff;
 
@@ -2052,48 +2054,74 @@ namespace PticaGovorun
 
 				//
 				long segLen = seg.EndMarker.SampleInd - seg.StartMarker.SampleInd;
-				wv::slice<short> segFrames = wv::make_view(srcAudioFrames.data() + seg.StartMarker.SampleInd, segLen);;
+				PG_DbgAssert(segLen >= 0);
+				gsl::span<const short> segFramesNoPad = srcAudioFrames;
+				segFramesNoPad = segFramesNoPad.subspan(seg.StartMarker.SampleInd, segLen);;
 
-				bool op;
-
-				bool requireResampling = srcAudioFrameRate != targetFrameRate;
-				if (requireResampling)
-				{
-					std::wstring errMsg;
-					if (!resampleFrames(segFrames, srcAudioFrameRate, targetFrameRate, segFramesResamp, &errMsg))
-					{
-						errMsg_ = QString("Can't resample frames. %1").arg(QString::fromStdWString(errMsg));
-						return;
-					}
-					segFrames = segFramesResamp;
-				}
 
 				// determine whether to pad the utterance with silence
 				bool startsSil = seg.AudioStartsWithSilence;
 				bool endsSil = seg.AudioEndsWithSilence;
 
 				// pad frames with silence
-				paddedSegFramesOut.clear();
+				segFramesPad.clear();
 
-				const float minSilLenMs = 100;
-				long minSilLenFrames = static_cast<long>(minSilLenMs / 1000 * srcAudioFrameRate);
+				long minSilLenFrames = static_cast<long>(minSilDurMs / 1000 * srcAudioFrameRate);
 				
-				if (padSilence && !startsSil)
-				//if (padSilence && seg.StartSilenceFramesCount < minSilLenFrames)
-					std::copy(silenceFrames.begin(), silenceFrames.end(), std::back_inserter(paddedSegFramesOut));
+				auto chooseSil = [&](int len) -> gsl::span<const short>
+				{
+					PG_DbgAssert(len >= 0);
+					PG_DbgAssert2(len <= curFileAllSil.size(), "Can't find silence for padding. Requested silence duration is longer than annotated silence in all file.");
+					
+					std::uniform_int_distribution<int> uni(0, curFileAllSil.size() - len);
+					auto start = uni(gen_);
+					gsl::span<const short> result = curFileAllSil;
+					result = result.subspan(start, len);
+					return result;
+				};
+				if (padSilence) // start silence
+				{
+					auto existentSilSize = !startsSil ? 0 : std::min(minSilLenFrames, seg.StartSilenceFramesCount);
+					
+					auto extraSilLen = minSilLenFrames - existentSilSize;
+					auto padSil = chooseSil(extraSilLen);
 
-				std::copy(segFrames.begin(), segFrames.end(), std::back_inserter(paddedSegFramesOut));
+					std::copy(padSil.begin(), padSil.end(), std::back_inserter(segFramesPad));
+				}
 
-				if (padSilence && !endsSil)
-				//if (padSilence && seg.EndSilenceFramesCount < minSilLenFrames)
-					std::copy(silenceFrames.begin(), silenceFrames.end(), std::back_inserter(paddedSegFramesOut));
+				std::copy(segFramesNoPad.begin(), segFramesNoPad.end(), std::back_inserter(segFramesPad));
+
+				if (padSilence) // end silence
+				{
+					auto existentSilSize = !endsSil ? 0 : std::min(minSilLenFrames, seg.EndSilenceFramesCount);
+
+					auto extraSilLen = minSilLenFrames - existentSilSize;
+					auto padSil = chooseSil(extraSilLen);
+
+					std::copy(padSil.begin(), padSil.end(), std::back_inserter(segFramesPad));
+				}
+
+				gsl::span<const short> segFramesOut = segFramesPad;
+
+				// resample
+				bool requireResampling = srcAudioFrameRate != targetFrameRate;
+				if (requireResampling)
+				{
+					std::wstring errMsg;
+					if (!resampleFrames(segFramesPad, srcAudioFrameRate, targetFrameRate, segFramesResamp, &errMsg))
+					{
+						errMsg_ = QString("Can't resample frames. %1").arg(QString::fromStdWString(errMsg));
+						return;
+					}
+					segFramesOut = segFramesResamp;
+				}
 
 				// statistics
-				double durSec = paddedSegFramesOut.size() / (double)targetFrameRate; // speech + padded silence
+				double durSec = segFramesPad.size() / (double)targetFrameRate; // speech + padded silence
 				double& durCounter = segRef->Phase == ResourceUsagePhase::Train ? audioDurationSecTrain_ : audioDurationSecTest_;
 				durCounter += durSec;
 
-				double noPadDurSec = segFrames.size() / (double)targetFrameRate; // only speech (no padded silence)
+				double noPadDurSec = segFramesNoPad.size() / (double)targetFrameRate; // only speech (no padded silence)
 				double& noPadDurCounter = segRef->Phase == ResourceUsagePhase::Train ? audioDurationNoPaddingSecTrain_ : audioDurationNoPaddingSecTest_;
 				noPadDurCounter += noPadDurSec;
 
@@ -2102,12 +2130,11 @@ namespace PticaGovorun
 				// write output wav segment
 
 				std::string wavSegOutPath = (segRef->OutAudioSegPathParts.AudioSegFilePathNoExt + ".wav").toStdString();
-				std::string errMsg;
+				ErrMsgList errMsg;
 #if PG_HAS_LIBSNDFILE
-				std::tie(op, errMsg) = writeAllSamplesWav(paddedSegFramesOut.data(), (int)paddedSegFramesOut.size(), wavSegOutPath, targetFrameRate);
-				if (!op)
+				if (!writeAllSamplesWav(segFramesOut, targetFrameRate, wavSegOutPath, &errMsg))
 				{
-					errMsg_ = QString("Can't write output wav segment. %1").arg(errMsg.c_str());
+					errMsg_ = QString("Can't write output wav segment. %1").arg(combineErrorMessages(errMsg));
 					return;
 				}
 #endif

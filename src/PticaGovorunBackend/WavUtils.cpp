@@ -59,31 +59,46 @@ bool readAllSamplesWav(const boost::filesystem::path& filePath, std::vector<shor
 
 std::tuple<bool, std::string> writeAllSamplesWav(const short* sampleData, int sampleCount, const std::string& fileName, int sampleRate)
 {
+	ErrMsgList errMsg;
+	bool suc = writeAllSamplesWav(gsl::span<const short>(sampleData, sampleCount), sampleRate, fileName, &errMsg);
+	return std::make_tuple(suc, errMsg.utf8Msg);
+}
+
+bool writeAllSamplesWav(gsl::span<const short> samples, int sampleRate, const boost::filesystem::path& filePath, ErrMsgList* errMsg)
+{
 	SF_INFO sfInfo;
 	memset(&sfInfo, 0, sizeof(sfInfo));
 	sfInfo.samplerate = sampleRate;
 	sfInfo.channels = 1;
 	sfInfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 
-	SNDFILE* sf = sf_open(fileName.c_str(), SFM_WRITE, &sfInfo);
+	SNDFILE* sf = sf_open(filePath.string().c_str(), SFM_WRITE, &sfInfo);
 	if (sf == nullptr)
 	{
 		auto err = sf_strerror(nullptr);
-		return make_tuple(false, std::string(err));
+		if (errMsg != nullptr)
+			errMsg->utf8Msg = std::string(err);
+		return false;
 	}
 
-	auto wcount = sf_write_short(sf, sampleData, sampleCount);
-	if (wcount != sampleCount)
-		return make_tuple(false, std::string("Can't write all samples to the file"));
+	auto wcount = sf_write_short(sf, samples.data(), samples.size());
+	if (wcount != samples.size())
+	{
+		if (errMsg != nullptr)
+			errMsg->utf8Msg = std::string("Can't write all samples to the file");
+		return false;
+	}
 
 	int code = sf_close(sf);
 	if (code != 0)
 	{
 		auto err = sf_strerror(nullptr);
-		return make_tuple(false, std::string(err));
+		if (errMsg != nullptr)
+			errMsg->utf8Msg = std::string(err);
+		return false;
 	}
 
-	return make_tuple(true, std::string());
+	return true;
 }
 
 std::tuple<bool, std::string> writeAllSamplesWavVirtual(short* sampleData, int sampleCount, int sampleRate,

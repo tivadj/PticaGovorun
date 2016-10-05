@@ -7,12 +7,14 @@
 //#include <sndfile.h> // SF_VIRTUAL_IO
 #include "PticaGovorunCore.h" // PG_EXPORTS
 #include "ClnUtils.h"
+#include "TranscriberUI/FileWorkspaceWidget.h"
 
 namespace PticaGovorun {
 
 #if PG_HAS_LIBSNDFILE
 PG_EXPORTS bool readAllSamplesWav(const boost::filesystem::path& filePath, std::vector<short>& result, float *frameRate, std::wstring* errMsg);
 PG_EXPORTS std::tuple<bool, std::string> writeAllSamplesWav(const short* sampleData, int sampleCount, const std::string& fileName, int sampleRate);
+PG_EXPORTS bool writeAllSamplesWav(gsl::span<const short> samples, int sampleRate, const boost::filesystem::path& filePath, ErrMsgList* errMsg);
 //PG_EXPORTS std::tuple<bool, std::string> writeAllSamplesWavVirtual(short* sampleData, int sampleCount, int sampleRate, const SF_VIRTUAL_IO& virtualIO, void* userData);
 #endif
 
