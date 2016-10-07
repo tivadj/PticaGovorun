@@ -397,7 +397,7 @@ namespace PticaGovorun
 		return valid;
 	}
 
-	void SpeechData::iterateAllSpeechAnnotations(boost::wstring_view annotDir, bool includeBadMarkup,
+	void SpeechData::iterateAllSpeechAnnotations(boost::wstring_view annotDir,
 		std::function<void(const AnnotSpeechFileNode&)> onAnnotFile,
 		std::function<void(const SpeechAnnotation&)> onAnnot,
 		std::function<void(const char*)> onAnnotError)
@@ -414,12 +414,6 @@ namespace PticaGovorun
 		for (const AnnotSpeechFileNode& fileItem : annotInfos)
 		{
 			if (onAnnotFile != nullptr) onAnnotFile(fileItem);
-
-			// do not consider badly marked markup
-			// TODO: fix finance.ua-pynzenykvm markup
-			bool isBadMarkup = fileItem.SpeechAnnotationAbsPath.contains("finance.ua-pynzenykvm");
-			if (isBadMarkup && !includeBadMarkup)
-				continue;
 
 			SpeechAnnotation annot;
 			bool loadOp;
@@ -511,7 +505,7 @@ namespace PticaGovorun
 		};
 
 		auto annotDir = speechAnnotDirPath().wstring();
-		iterateAllSpeechAnnotations(annotDir, true, nullptr, countFun, oneAnnotErrFun);
+		iterateAllSpeechAnnotations(annotDir, nullptr, countFun, oneAnnotErrFun);
 
 		if (gotError)
 			return false;
@@ -521,9 +515,9 @@ namespace PticaGovorun
 		{
 			if (pair.second == 0)
 			{
-				numErrs += 1;
-				if (errMsgs != nullptr)
-					errMsgs->append(QString("PronId=%1 is not used in speech annotation\n").arg(toQString(pair.first)));
+				//numErrs += 1;
+				//if (errMsgs != nullptr)
+				//	errMsgs->append(QString("PronId=%1 is not used in speech annotation\n").arg(toQString(pair.first)));
 			}
 		}
 		return numErrs == 0;
@@ -588,7 +582,7 @@ namespace PticaGovorun
 		};
 
 		auto annotDir = speechAnnotDirPath().wstring();
-		iterateAllSpeechAnnotations(annotDir, false, oneAnnotFileFun, oneAnnotFun, oneAnnotErrFun);
+		iterateAllSpeechAnnotations(annotDir, oneAnnotFileFun, oneAnnotFun, oneAnnotErrFun);
 		return errNum == 0;
 	}
 

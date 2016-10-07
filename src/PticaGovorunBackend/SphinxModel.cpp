@@ -1669,20 +1669,9 @@ namespace PticaGovorun
 				seg.TranscriptText.find(L"[clk]") != std::wstring::npos)
 				return false;
 			
-			// noisy speech
-			if (seg.ContentMarker.SpeakerBriefId == L"pynzenykvm" ||
-				seg.ContentMarker.SpeakerBriefId == L"grytsenkopj" ||
-				seg.ContentMarker.SpeakerBriefId == L"chemerkinsh" ||
-				seg.ContentMarker.SpeakerBriefId == L"sokolovaso" ||
-				seg.ContentMarker.SpeakerBriefId == L"romanukjv" ||
-				seg.ContentMarker.SpeakerBriefId == L"shapovalji" ||
-				seg.ContentMarker.SpeakerBriefId == L"dergachdv")
-				return false;
 			if (!includeBrownBear && seg.ContentMarker.SpeakerBriefId == L"BrownBear1")
 				return false;
 
-			if (seg.TranscriptText.find(L"#") != std::wstring::npos) // segments to ignore
-				return false;
 			if (seg.Language != SpeechLanguage::Ukrainian)
 			{
 				if (seg.TranscriptText.compare(fillerInhale().data()) == 0) // lang(inhale)=null, but we allow it

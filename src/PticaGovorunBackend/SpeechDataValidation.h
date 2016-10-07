@@ -91,7 +91,7 @@ namespace PticaGovorun
 
 		bool validateAllSpeechAnnotations(QStringList* errMsgs);
 
-		static void iterateAllSpeechAnnotations(boost::wstring_view annotDir, bool includeBadMarkup,
+		static void iterateAllSpeechAnnotations(boost::wstring_view annotDir,
 			std::function<void(const AnnotSpeechFileNode&)> onAnnotFile,
 			std::function<void(const SpeechAnnotation&)> onAnnot,
 			std::function<void(const char*)> onAnnotError);
