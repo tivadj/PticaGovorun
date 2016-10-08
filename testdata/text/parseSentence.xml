@@ -6,7 +6,7 @@
 <t input="Г.С.Сковорода народився" expect="Г . С . Сковорода народився" />
 <t input="Сковорода Г.С. народився" expect="Сковорода Г . С . народився" />
 <!-- well known abbreviation doesn't end sentence -->
-<t input="В тридцятих рр. було" expect="В тридцятих рр. було" />
+<t input="В тридцятих рр. було" expect="В тридцятих рр . було" />
 <t input="Змішати 1 л. води та 1 г. цукру" expect="Змішати 1 л . води та 1 г . цукру" />
 
 <t input="O`Brien O’Brien" expect="O'Brien O'Brien" descr="normalization Apostrophes inside word are normalized"/>
