@@ -30,7 +30,7 @@
 namespace RecognizeSpeechSphinxTester
 {
 	using namespace PticaGovorun;
-	const float CmuSphinxFrameRate = 16000;
+	const float CmuSphinxSampleRate = 16000;
 
 	void recognizeWav()
 	{
@@ -46,17 +46,17 @@ namespace RecognizeSpeechSphinxTester
 		//SetConsoleOutputCP(65001);
 
 		const char* wavFilePath = R"path(E:\devb\workshop\PticaGovorunProj\data\!\chitki16000Hz.wav)path";
-		std::wstring errMsg;
+		ErrMsgList errMsg;
 		std::vector<short> audioSamples;
-		float frameRate = -1;
-		if (readAllSamplesFormatAware(wavFilePath, audioSamples, &frameRate, &errMsg))
+		float sampleRate = -1;
+		if (readAllSamplesFormatAware(wavFilePath, audioSamples, &sampleRate, &errMsg))
 		{
-			std::wcerr << "Can't read wav file. " <<errMsg << std::endl;
+			std::cerr << "Can't read wav file. " <<str(errMsg) << std::endl;
 			return;
 		}
-		if (frameRate != CmuSphinxFrameRate)
+		if (sampleRate != CmuSphinxSampleRate)
 		{
-			std::wcerr << L"CMU PocketSphinx words with 16KHz files only" << std::endl;
+			std::cerr << "CMU PocketSphinx words with 16KHz files only" << std::endl;
 			return;
 		}
 
@@ -317,8 +317,8 @@ namespace RecognizeSpeechSphinxTester
 	{
 		std::wstring RelFilePathNoExt; // relative path to speech file
 		std::wstring Transcription;
-		std::vector<short> Frames;
-		float FrameRate;
+		std::vector<short> Samples;
+		float SampleRate;
 	};
 
 	// Result of comparing expected text with decoded speech.
@@ -374,7 +374,7 @@ namespace RecognizeSpeechSphinxTester
 
 	void decodeSpeechSegments(const std::vector<TranscribedAudioSegment>& segs,
 		
-		ps_decoder_t *ps, float targetFrameRate, std::vector<TwoUtterances>& recogUtterances,
+		ps_decoder_t *ps, float targetSampleRate, std::vector<TwoUtterances>& recogUtterances,
 		std::vector<int>& phoneConfusionMat, int phonesCount,
 		int& sentErrorTotalCount,
 		int& wordErrorTotalCount, int& wordTotalCount,
@@ -393,12 +393,12 @@ namespace RecognizeSpeechSphinxTester
 
 			// decode
 
-			const std::vector<short>* speechFramesActual = &seg.Frames;
+			const std::vector<short>* speechFramesActual = &seg.Samples;
 			std::vector<short> speechFramesResamp;
-			bool requireResampling = seg.FrameRate != targetFrameRate;
+			bool requireResampling = seg.SampleRate != targetSampleRate;
 			if (requireResampling)
 			{
-				std::vector<float> inFramesFloat(std::begin(seg.Frames), std::end(seg.Frames));
+				std::vector<float> inFramesFloat(std::begin(seg.Samples), std::end(seg.Samples));
 				std::vector<float> outFramesFloat(inFramesFloat.size(), 0);
 
 				SRC_DATA convertData;
@@ -406,7 +406,7 @@ namespace RecognizeSpeechSphinxTester
 				convertData.input_frames = inFramesFloat.size();
 				convertData.data_out = outFramesFloat.data();
 				convertData.output_frames = outFramesFloat.size();
-				convertData.src_ratio = targetFrameRate / seg.FrameRate;
+				convertData.src_ratio = targetSampleRate / seg.SampleRate;
 
 				int converterType = SRC_SINC_BEST_QUALITY;
 				int channels = 1;
@@ -809,8 +809,8 @@ namespace RecognizeSpeechSphinxTester
 			TranscribedAudioSegment& seg = segments[i];
 			seg.RelFilePathNoExt = audioRelFilePathesNoExt[i];
 			seg.Transcription = speechTranscr[i].Transcription;
-			seg.Frames = std::move(audioDataList[i].Frames);
-			seg.FrameRate = audioDataList[i].FrameRate;
+			seg.Samples = std::move(audioDataList[i].Samples);
+			seg.SampleRate = audioDataList[i].SampleRate;
 		}
 		return true;
 	}
@@ -1089,9 +1089,9 @@ namespace RecognizeSpeechSphinxTester
 		int wordTotalCount = 0;
 		int phoneErrorTotalCount = 0;
 		int phoneTotalCount = 0;
-		float targetFrameRate = CmuSphinxFrameRate;
+		float targetSampleRate = CmuSphinxSampleRate;
 		std::vector<TwoUtterances> recogUtterances;
-		decodeSpeechSegments(segments, ps, targetFrameRate, recogUtterances,
+		decodeSpeechSegments(segments, ps, targetSampleRate, recogUtterances,
 			phoneConfusionMat, regPhonesCount, 
 			sentErrorTotalCount, wordErrorTotalCount, wordTotalCount, phoneErrorTotalCount, phoneTotalCount,
 			phonesEditDist, phoneCosts,

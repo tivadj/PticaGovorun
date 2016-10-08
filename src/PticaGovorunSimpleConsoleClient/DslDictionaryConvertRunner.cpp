@@ -126,7 +126,7 @@ namespace DslDictionaryConvertRunnerNS
 		return true;
 	}
 
-	std::tuple<bool, const char*> readVorbisFrames(wv::slice<uchar> vorbisData, std::vector<short>& frames, float *frameRate)
+	std::tuple<bool, const char*> readVorbisFrames(wv::slice<uchar> vorbisData, std::vector<short>& samples, float *sampleRate)
 	{
 		struct DataReadingOp
 		{
@@ -181,13 +181,13 @@ namespace DslDictionaryConvertRunnerNS
 			return std::make_tuple(false, err);
 		}
 
-		frames.resize(sfInfo.frames);
-		if (frameRate != nullptr)
-			*frameRate = sfInfo.samplerate;
+		samples.resize(sfInfo.frames);
+		if (sampleRate != nullptr)
+			*sampleRate = sfInfo.samplerate;
 
 		long long count = 0;
 		std::array<short, 32> buf;
-		auto targetIt = std::begin(frames);
+		auto targetIt = std::begin(samples);
 		while (true)
 		{
 			auto readc = sf_read_short(sf, &buf[0], buf.size());
@@ -335,7 +335,7 @@ namespace DslDictionaryConvertRunnerNS
 		std::unique_ptr<GrowOnlyPinArena<wchar_t>> stringArena;
 		std::vector<PhoneticWord> phoneticDict; // phonetic transcription of words in DSL dictionary
 		SpeechAnnotation annot;
-		const float outputFrameRate = 22050;
+		const float outputSampleRate = 22050;
 		std::vector<short> framesConcat; // concatenated audio frames for all audio files
 	public:
 		std::wstring errMsg_;
@@ -418,9 +418,9 @@ namespace DslDictionaryConvertRunnerNS
 
 	void DslAndAudioResDictIntoSpeechAnnotConverter::buildSpeechAnnot()
 	{
-		float frameRate = 0;
-		std::vector<short> frames;
-		std::vector<short> framesResampled;
+		float sampleRate = 0;
+		std::vector<short> samples;
+		std::vector<short> samplesResampled;
 
 		const wchar_t* Speaker = L"BrownBear1";
 		annot.addSpeaker(Speaker, Speaker);
@@ -454,14 +454,14 @@ namespace DslDictionaryConvertRunnerNS
 			}
 			const AudioFileSegmentRef& segRef = *segRefIt->second;
 
-			frames.clear();
+			samples.clear();
 
 			// binary data is the OGG container with audio in Vorbis format
 			wv::slice<uchar> vorbisData = wv::make_view(&buffer[segRef.Offset], segRef.Size);
 
 			bool readOp;
 			const char* errMsg;
-			std::tie(readOp, errMsg) = readVorbisFrames(vorbisData, frames, &frameRate);
+			std::tie(readOp, errMsg) = readVorbisFrames(vorbisData, samples, &sampleRate);
 			if (!readOp)
 			{
 				std::wcout << errMsg << std::endl;
@@ -469,15 +469,15 @@ namespace DslDictionaryConvertRunnerNS
 			}
 
 			// resample samples
-			std::wstring errMsgW;
-			if (!resampleFrames(frames, frameRate, outputFrameRate, framesResampled, &errMsgW))
+			ErrMsgList errMsgL;
+			if (!resampleFrames(samples, sampleRate, outputSampleRate, samplesResampled, &errMsgL))
 			{
-				std::wcout << errMsgW << std::endl;
+				std::cout << str(errMsgL) << std::endl;
 				return;
 			}
 
 			//
-			std::copy(framesResampled.begin(), framesResampled.end(), std::back_inserter(framesConcat));
+			std::copy(samplesResampled.begin(), samplesResampled.end(), std::back_inserter(framesConcat));
 
 			TimePointMarker m;
 			m.Id = fileId;
@@ -488,7 +488,7 @@ namespace DslDictionaryConvertRunnerNS
 			m.SpeakerBriefId = Speaker;
 			annot.attachMarker(m);
 
-			frameInd += framesResampled.size();
+			frameInd += samplesResampled.size();
 		}
 
 		// add last marker
@@ -545,7 +545,7 @@ namespace DslDictionaryConvertRunnerNS
 
 		std::stringstream dumpFileNameS;
 		dumpFileNameS << "dict." << timeStampStr << ".wav";
-		writeAllSamplesWav(framesConcat.data(), framesConcat.size(), dumpFileNameS.str(), (int)outputFrameRate);
+		writeAllSamplesWav(framesConcat.data(), framesConcat.size(), dumpFileNameS.str(), (int)outputSampleRate);
 	}
 
 	void run()

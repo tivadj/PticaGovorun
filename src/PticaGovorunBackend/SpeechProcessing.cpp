@@ -206,25 +206,22 @@ namespace PticaGovorun
 		return std::make_tuple(true, L"");
 	}
 
-	void padSilence(const short* audioFrames, int audioFramesCount, int silenceFramesCount, std::vector<short>& paddedAudio)
+	void padSilence(gsl::span<short> audioSamples, int silenceSamplesCount, std::vector<short>& paddedAudio)
 	{
-		PG_Assert(audioFrames != nullptr);
-		PG_Assert(audioFramesCount >= 0);
-		PG_Assert(silenceFramesCount >= 0);
+		PG_Assert(silenceSamplesCount >= 0);
 
-		paddedAudio.resize(audioFramesCount + 2 * silenceFramesCount);
+		paddedAudio.resize(audioSamples.size() + 2 * silenceSamplesCount);
 
-		static const auto FrameSize = sizeof(short);
-		int tmp = sizeof(decltype(paddedAudio[0]));
+		static const auto SampleSize = sizeof(short);
 		
 		// silence before the audio
-		std::memset(paddedAudio.data(), 0, silenceFramesCount * FrameSize);
+		std::memset(paddedAudio.data(), 0, silenceSamplesCount * SampleSize);
 
 		// audio
-		std::memcpy(paddedAudio.data() + silenceFramesCount, audioFrames, audioFramesCount * FrameSize);
+		std::memcpy(paddedAudio.data() + silenceSamplesCount, audioSamples.data(), audioSamples.size() * SampleSize);
 
 		// silence after the audio
-		std::memset(paddedAudio.data() + silenceFramesCount + audioFramesCount, 0, silenceFramesCount * FrameSize);
+		std::memset(paddedAudio.data() + silenceSamplesCount + audioSamples.size(), 0, silenceSamplesCount * SampleSize);
 	}
 
 	void mergeSamePhoneStates(const std::vector<AlignedPhoneme>& phoneStates, std::vector<AlignedPhoneme>& monoPhones)
@@ -327,14 +324,6 @@ namespace PticaGovorun
 		default:
 			PG_Assert2(false, "Unrecognized value of LastFrameSample enum");
 		}
-	}
-
-	// Returns FrameInd which corresponds to FrameInd in resampled audio.
-	long frameIndToResampled(long srcFrameInd, float srcFrameRate, float dstFrameRate)
-	{
-		double timePoint = srcFrameInd / srcFrameRate;
-		long result = static_cast<long>(timePoint * dstFrameRate);
-		return result;
 	}
 
 	std::wstring speechAnnotationFilePathAbs(const std::wstring& wavFileAbs, const std::wstring& wavRootDir, const std::wstring& annotRootDir)
@@ -470,8 +459,8 @@ namespace PticaGovorun
 		}
 
 		// audio frames are lazy loaded
-		float frameRateAnnot = speechAnnot.audioSampleRate();
-		std::vector<short> speechFrames;
+		float sampleRateAnnot = speechAnnot.audioSampleRate();
+		std::vector<short> audioSamples;
 
 		// remove [sp]
 		std::vector<boost::wstring_view> words;
@@ -494,7 +483,7 @@ namespace PticaGovorun
 			seg.AudioEndsWithSilence = blankSeg.HasEndSilence;
 			seg.StartSilenceFramesCount = blankSeg.StartSilenceFramesCount;
 			seg.EndSilenceFramesCount = blankSeg.EndSilenceFramesCount;
-			seg.FrameRate = frameRateAnnot;
+			seg.SampleRate = sampleRateAnnot;
 			QString txt = blankSeg.ContentMarker->TranscripText;
 
 			bool skipShortPause = true;
@@ -540,16 +529,17 @@ namespace PticaGovorun
 			if (loadAudio)
 			{
 				// lazy load audio samples
-				if (speechFrames.empty())
+				if (audioSamples.empty())
 				{
 					// load wav file
-					float frameRateAudio;
-					if (!readAllSamplesFormatAware(audioFilePath.toStdWString(), speechFrames, &frameRateAudio, errMsg))
+					float sampleRateAudio;
+					ErrMsgList errMsgL;
+					if (!readAllSamplesFormatAware(audioFilePath.toStdWString(), audioSamples, &sampleRateAudio, &errMsgL))
 					{
-						*errMsg = QString("Can't read wav file. %1").arg(QString::fromStdWString(*errMsg)).toStdWString();
+						*errMsg = QString("Can't read wav file. %1").arg(combineErrorMessages(errMsgL)).toStdWString();
 						return false;
 					}
-					if (frameRateAnnot != frameRateAudio)
+					if (sampleRateAnnot != sampleRateAudio)
 					{
 						*errMsg = QString("SampleRate mismatch in audio and annotation for file %1").arg(audioFilePath).toStdWString();
 						return false;
@@ -559,7 +549,7 @@ namespace PticaGovorun
 				long frameStart = blankSeg.StartMarker->SampleInd;
 				long frameEnd = blankSeg.EndMarker->SampleInd;
 
-				seg.Frames = std::vector<short>(&speechFrames[frameStart], &speechFrames[frameEnd]);
+				seg.Samples = std::vector<short>(&audioSamples[frameStart], &audioSamples[frameEnd]);
 			}
 			segments.push_back(seg);
 		}
@@ -638,10 +628,14 @@ namespace PticaGovorun
 
 		// load wav file
 		std::vector<short> audioSamples;
-		float frameRate = -1;
-		if (!readAllSamplesFormatAware(wavFilePath.toStdWString(), audioSamples, &frameRate, errMsg))
+		float sampleRate = -1;
+		ErrMsgList errMsgL;
+		if (!readAllSamplesFormatAware(wavFilePath.toStdWString(), audioSamples, &sampleRate, &errMsgL))
 		{
-			*errMsg = QString("Can't read wav file. %1").arg(QString::fromStdWString(*errMsg)).toStdWString();
+			if (errMsg != nullptr)
+			{
+				*errMsg = QString("Can't read wav file. %1").arg(combineErrorMessages(errMsgL)).toStdWString();
+			}
 			return false;
 		}
 

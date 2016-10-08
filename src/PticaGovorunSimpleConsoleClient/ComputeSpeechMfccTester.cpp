@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cmath> // M_PI
 #include "InteropPython.h"
+#include "ComponentsInfrastructure.h"
 #include "WavUtils.h"
 #include "JuliusToolNativeWrapper.h"
 
@@ -16,12 +17,12 @@ namespace ComputeSpeechMfccTesterNS
 
 		// load wav file
 		const char* wavFilePath = R"path(E:\devb\workshop\PticaGovorunProj\data\prokopeo_specific\prokopeo_uk_vowels_201412101116.wav)path";
-		float frameRate = -1;
-		std::wstring errMsg;
+		float sampleRate = -1;
+		ErrMsgList errMsg;
 		std::vector<short> audioSamples;
-		if (!readAllSamplesWav(wavFilePath, audioSamples, &frameRate, &errMsg))
+		if (!readAllSamplesWav(wavFilePath, audioSamples, &sampleRate, &errMsg))
 		{
-			std::wcerr << "Can't read wav file. " << errMsg << std::endl;
+			std::cerr << "Can't read wav file. " << str(errMsg) << std::endl;
 			return;
 		}
 
@@ -52,12 +53,12 @@ namespace ComputeSpeechMfccTesterNS
 	{
 		// load wav file
 		const char* wavFilePath = R"path(E:\devb\workshop\PticaGovorunProj\data\prokopeo_specific\prokopeo_uk_vowels_201412101116.wav)path";
-		float frameRate = -1;
-		std::wstring errMsg;
+		float sampleRate = -1;
+		ErrMsgList errMsg;
 		std::vector<short> audioSamples;
-		if (!readAllSamplesWav(wavFilePath, audioSamples, &frameRate, &errMsg))
+		if (!readAllSamplesWav(wavFilePath, audioSamples, &sampleRate, &errMsg))
 		{
-			std::wcerr << "Can't read wav file. " <<errMsg << std::endl;
+			std::cerr << "Can't read wav file. " <<str(errMsg) << std::endl;
 			return;
 		}
 
@@ -70,7 +71,6 @@ namespace ComputeSpeechMfccTesterNS
 
 		int frameSize = 400;
 		int frameShift = 160;
-		float sampleRate = 22050;
 
 		// init filter bank
 		int binCount = 24; // number of bins in the triangular filter bank

@@ -19,23 +19,23 @@ namespace PticaGovorunTests
 	// Tests that samples do match for the same file in FLAC and WAV formats.
 	TEST_F(FlacTest, flacDecodeAndMatchWav)
 	{
-		std::wstring errMsg;
+		ErrMsgList errMsg;
 
 		// wav
 		std::vector<short> samplesWav;
-		float frameRateWav = -1;
+		float sampleRateWav = -1;
 		auto wavPath = boost::filesystem::path(AppHelpers::mapPath("testdata/audio/ocin_naslidky_golodomoru.wav").toStdWString());
-		bool readOp = readAllSamplesWav(wavPath, samplesWav, &frameRateWav, &errMsg);
-		ASSERT_TRUE(readOp) << errMsg;
+		bool readOp = readAllSamplesWav(wavPath, samplesWav, &sampleRateWav, &errMsg);
+		ASSERT_TRUE(readOp) << str(errMsg);
 
 		// flac
 		std::vector<short> samplesFlac;
-		float frameRateFlac = -1;
+		float sampleRateFlac = -1;
 		auto flacPath = boost::filesystem::path(AppHelpers::mapPath("testdata/audio/ocin_naslidky_golodomoru.flac").toStdWString());
-		readOp = readAllSamplesFlac(flacPath, samplesFlac, &frameRateFlac, &errMsg);
-		ASSERT_TRUE(readOp) << errMsg;
+		readOp = readAllSamplesFlac(flacPath, samplesFlac, &sampleRateFlac, &errMsg);
+		ASSERT_TRUE(readOp) << str(errMsg);
 
-		ASSERT_EQ(frameRateFlac, frameRateWav);
+		ASSERT_EQ(sampleRateFlac, sampleRateWav);
 		ASSERT_THAT(samplesWav, testing::Eq(samplesFlac));
 	}
 }

@@ -214,8 +214,8 @@ namespace PticaGovorun
 			for (const auto& seg : segments)
 			{
 				ptrdiff_t numSamples = seg.EndMarker.SampleInd - seg.StartMarker.SampleInd;
-				PG_DbgAssert(seg.FrameRate != -1);
-				double dur = numSamples / static_cast<double>(seg.FrameRate); // seconds
+				PG_DbgAssert(seg.SampleRate != -1);
+				double dur = numSamples / static_cast<double>(seg.SampleRate); // seconds
 				double durH = dur / 3600; // hours
 				totalDurH += durH;
 			}

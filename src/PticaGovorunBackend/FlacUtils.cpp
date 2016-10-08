@@ -1,4 +1,5 @@
 #include "FlacUtils.h"
+#include <boost/format.hpp>
 #include <QString>
 
 #ifdef PG_HAS_FLAC
@@ -83,27 +84,35 @@ namespace PticaGovorun
 		}
 	}
 
-	PG_EXPORTS bool readAllSamplesFlac(const boost::filesystem::path& filePath, std::vector<short>& result, float *frameRate, std::wstring* errMsg)
+	PG_EXPORTS bool readAllSamplesFlac(const boost::filesystem::path& filePath, std::vector<short>& result, float *sampleRate, ErrMsgList* errMsg)
 	{
 		details::OurDecoder decoder(result);
 		decoder.set_md5_checking(true);
 
 		FLAC__StreamDecoderInitStatus init_status = decoder.init(filePath.string());
-		if (init_status != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
-			const char* msg = FLAC__StreamDecoderInitStatusString[init_status];
-			*errMsg = QString("ERROR: initializing decoder. %1").arg(msg).toStdWString();
+		if (init_status != FLAC__STREAM_DECODER_INIT_STATUS_OK)
+		{
+			if (errMsg != nullptr)
+			{
+				const char* msg = FLAC__StreamDecoderInitStatusString[init_status];
+				auto sub = std::make_unique<ErrMsgList>();
+				sub->utf8Msg = msg;
+				errMsg->utf8Msg = "Can't initialize decoder";
+				errMsg->next = std::move(sub);
+			}
 			return false;
 		}
 
 		bool ok = decoder.process_until_end_of_stream();
 		if (!ok)
 		{
-			*errMsg = std::wstring(L"ERROR: decoder.process_until_end_of_stream. %1");
+			if (errMsg != nullptr)
+				errMsg->utf8Msg = "decoder.process_until_end_of_stream() failed";
 			return false;
 		}
 
-		if (frameRate != nullptr)
-			*frameRate = decoder.sampleRate();
+		if (sampleRate != nullptr)
+			*sampleRate = decoder.sampleRate();
 
 		return true;
 	}

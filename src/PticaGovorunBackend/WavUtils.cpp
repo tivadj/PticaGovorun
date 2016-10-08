@@ -15,7 +15,7 @@
 namespace PticaGovorun {
 
 #if PG_HAS_LIBSNDFILE
-bool readAllSamplesWav(const boost::filesystem::path& filePath, std::vector<short>& result, float *frameRate, std::wstring* errMsg)
+bool readAllSamplesWav(const boost::filesystem::path& filePath, std::vector<short>& result, float *sampleRate, ErrMsgList* errMsg)
 {
 	SF_INFO sfInfo;
 	memset(&sfInfo, 0, sizeof(sfInfo));
@@ -23,15 +23,21 @@ bool readAllSamplesWav(const boost::filesystem::path& filePath, std::vector<shor
 	SNDFILE* sf = sf_open(filePath.string().c_str(), SFM_READ, &sfInfo);
 	if (sf == nullptr)
 	{
-		auto err = sf_strerror(nullptr);
-		*errMsg = QString::fromLatin1(err).toStdWString();
+		if (errMsg != nullptr)
+		{
+			const char* err = sf_strerror(nullptr);
+			auto sub = std::make_unique<ErrMsgList>();
+			sub->utf8Msg = err;
+			errMsg->utf8Msg = "libsndfile.sf_open() failed";
+			errMsg->next = std::move(sub);
+		}
 		return false;
 	}
 
 	result.clear();
 	result.resize(sfInfo.frames);
-	if (frameRate != nullptr)
-		*frameRate = sfInfo.samplerate;
+	if (sampleRate != nullptr)
+		*sampleRate = sfInfo.samplerate;
 
 	long long count = 0;
 	std::array<short, 32> buf;
@@ -49,8 +55,14 @@ bool readAllSamplesWav(const boost::filesystem::path& filePath, std::vector<shor
 	int code = sf_close(sf);
 	if (code != 0)
 	{
-		auto err = sf_strerror(nullptr);
-		*errMsg = QString::fromLatin1(err).toStdWString();
+		if (errMsg != nullptr)
+		{
+			const char* err = sf_strerror(nullptr);
+			auto sub = std::make_unique<ErrMsgList>();
+			sub->utf8Msg = err;
+			errMsg->utf8Msg = "libsndfile.sf_close() failed";
+			errMsg->next = std::move(sub);
+		}
 		return false;
 	}
 
@@ -133,7 +145,7 @@ std::tuple<bool, std::string> writeAllSamplesWavVirtual(short* sampleData, int s
 
 #endif
 
-bool resampleFrames(gsl::span<const short> audioSamples, float inputFrameRate, float outFrameRate, std::vector<short>& outFrames, std::wstring* errMsg)
+bool resampleFrames(gsl::span<const short> audioSamples, float inputSampleRate, float outSampleRate, std::vector<short>& outSamples, ErrMsgList* errMsg)
 {
 #ifndef PG_HAS_SAMPLERATE
 	if (errMsg != nullptr) *errMsg = L"Resampling is not available because libsamplerate is not compiled in. Specify PG_HAS_SAMPLERATE C++ preprocessor directive";
@@ -146,8 +158,8 @@ bool resampleFrames(gsl::span<const short> audioSamples, float inputFrameRate, f
 
 	std::vector<float> targetSamplesFloat(samplesFloat.size(), 0);
 
-	float srcSampleRate = inputFrameRate;
-	float targetSampleRate = outFrameRate;
+	float srcSampleRate = inputSampleRate;
+	float targetSampleRate = outSampleRate;
 
 	SRC_DATA convertData;
 	convertData.data_in = samplesFloat.data();
@@ -161,31 +173,38 @@ bool resampleFrames(gsl::span<const short> audioSamples, float inputFrameRate, f
 	int error = src_simple(&convertData, converterType, channels);
 	if (error != 0)
 	{
-		const char* msg = src_strerror(error);
-		*errMsg = QString::fromLatin1(msg).toStdWString();
+		if (errMsg != nullptr)
+		{
+			const char* msg = src_strerror(error);
+			auto sub = std::make_unique<ErrMsgList>();
+			sub->utf8Msg = msg;
+			errMsg->utf8Msg = "samplerate.src_simple() failed";
+			errMsg->next = std::move(sub);
+		}
 		return false;
 	}
 
 	targetSamplesFloat.resize(convertData.output_frames_gen);
-	outFrames.assign(std::begin(targetSamplesFloat), std::end(targetSamplesFloat));
+	outSamples.assign(std::begin(targetSamplesFloat), std::end(targetSamplesFloat));
 	//src_float_to_short_array(targetSamplesFloat.data(), targetSamples.data(), targetSamplesFloat.size());
 
 	return true;
 #endif // PG_HAS_SAMPLERATE
 }
 
-bool readAllSamplesFormatAware(const boost::filesystem::path& filePath, std::vector<short>& result, float *frameRate, std::wstring* errMsg)
+bool readAllSamplesFormatAware(const boost::filesystem::path& filePath, std::vector<short>& result, float *sampleRate, ErrMsgList* errMsg)
 {
 	QString fileNameQ = toQString(filePath.wstring());
 #ifdef PG_HAS_FLAC
 	if (fileNameQ.endsWith(".flac"))
-		return readAllSamplesFlac(filePath, result, frameRate, errMsg);
+		return readAllSamplesFlac(filePath, result, sampleRate, errMsg);
 #endif
 #ifdef PG_HAS_LIBSNDFILE
 	if (fileNameQ.endsWith(".wav"))
-		return readAllSamplesWav(filePath, result, frameRate, errMsg);
+		return readAllSamplesWav(filePath, result, sampleRate, errMsg);
 #endif
-	*errMsg = std::wstring(L"Error: unknown audio file extension ") + filePath.extension().wstring();
+	if (errMsg != nullptr)
+		errMsg->utf8Msg = std::string("Unknown audio file extension %1%") + filePath.extension().string();
 	return false;
 }
 

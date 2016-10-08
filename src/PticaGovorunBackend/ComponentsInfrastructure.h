@@ -188,6 +188,20 @@ namespace PticaGovorun
 		std::unique_ptr<ErrMsgList> next;
 	};
 
+	inline std::string str(const ErrMsgList& err)
+	{
+		std::string result;
+		for (const ErrMsgList* cur = &err; cur != nullptr; )
+		{
+			const auto& str = cur->utf8Msg;
+			result += str;
+			result += ' '; // separator
+
+			cur = cur->next != nullptr ? cur->next.get() : nullptr;
+		}
+		return result;
+	}
+
 	inline QString combineErrorMessages(const ErrMsgList& err)
 	{
 		QByteArray buf;

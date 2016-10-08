@@ -758,7 +758,7 @@ namespace PticaGovorun
 		PalatalSupport palatalSupport = PalatalSupport::AsHard;
 		bool useBrokenPronsInTrainOnly = true;
 		const double trainCasesRatio = AppHelpers::configParamDouble(ConfigTrainCasesRatio, 0.7);
-		const float outFrameRate = 16000; // Sphinx requires 16k
+		const float outSampleRate = 16000; // Sphinx requires 16k
 		
 		// words with greater usage counter are inlcuded in language model
 		// note, the positive threshold may evict the rare words
@@ -1006,7 +1006,7 @@ namespace PticaGovorun
 				return;
 			}
 
-			buildWavSegments(phaseAssignedSegs, outFrameRate, padSilence, minSilDurMs);
+			buildWavSegments(phaseAssignedSegs, outSampleRate, padSilence, minSilDurMs);
 			if (!errMsg_.isEmpty())
 				return;
 		}
@@ -1957,7 +1957,7 @@ namespace PticaGovorun
 		return true;
 	}
 
-	void SphinxTrainDataBuilder::buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segsRefs, float targetFrameRate, bool padSilence, float minSilDurMs)
+	void SphinxTrainDataBuilder::buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segsRefs, float targetSampleRate, bool padSilence, float minSilDurMs)
 	{
 		// group segmets by source wav file, so wav files are read sequentially
 
@@ -1974,8 +1974,8 @@ namespace PticaGovorun
 		}
 
 		// audio frames are lazy loaded
-		float srcAudioFrameRate = -1;
-		std::vector<short> srcAudioFrames;
+		float srcAudioSampleRate = -1;
+		std::vector<short> srcAudioSamples;
 		std::vector<short> segFramesResamp;
 		std::vector<short> segFramesPad;
 		std::vector<short> curFileAllSil;
@@ -1989,12 +1989,12 @@ namespace PticaGovorun
 			std::string srcAudioPath = QString::fromStdWString(wavFilePath).toStdString();
 			std::wcout << L"wav=" << wavFilePath << std::endl;
 
-			srcAudioFrames.clear();
-			std::wstring errMsg;
-			if (!readAllSamplesFormatAware(srcAudioPath, srcAudioFrames, &srcAudioFrameRate, &errMsg))
+			srcAudioSamples.clear();
+			ErrMsgList errMsg;
+			if (!readAllSamplesFormatAware(srcAudioPath, srcAudioSamples, &srcAudioSampleRate, &errMsg))
 			{
 				errMsg_ = "Can't read audio file. ";
-				errMsg_ += toQString(errMsg);
+				errMsg_ += combineErrorMessages(errMsg);
 				return;
 			}
 
@@ -2018,7 +2018,7 @@ namespace PticaGovorun
 					const TimePointMarker& next = speechAnnot.marker(i+1);
 					if (marker.TranscripText == silQ)
 					{
-						gsl::span<const short> silSamples = srcAudioFrames;
+						gsl::span<const short> silSamples = srcAudioSamples;
 						int len = next.SampleInd - marker.SampleInd;
 						silSamples = silSamples.subspan(marker.SampleInd + static_cast<ptrdiff_t>(len * 0.3),
 							static_cast<ptrdiff_t>(len * 0.4));
@@ -2044,7 +2044,7 @@ namespace PticaGovorun
 				//
 				long segLen = seg.EndMarker.SampleInd - seg.StartMarker.SampleInd;
 				PG_DbgAssert(segLen >= 0);
-				gsl::span<const short> segFramesNoPad = srcAudioFrames;
+				gsl::span<const short> segFramesNoPad = srcAudioSamples;
 				segFramesNoPad = segFramesNoPad.subspan(seg.StartMarker.SampleInd, segLen);;
 
 
@@ -2055,7 +2055,7 @@ namespace PticaGovorun
 				// pad frames with silence
 				segFramesPad.clear();
 
-				long minSilLenFrames = static_cast<long>(minSilDurMs / 1000 * srcAudioFrameRate);
+				long minSilLenFrames = static_cast<long>(minSilDurMs / 1000 * srcAudioSampleRate);
 				
 				auto chooseSil = [&](int len) -> gsl::span<const short>
 				{
@@ -2093,24 +2093,23 @@ namespace PticaGovorun
 				gsl::span<const short> segFramesOut = segFramesPad;
 
 				// resample
-				bool requireResampling = srcAudioFrameRate != targetFrameRate;
+				bool requireResampling = srcAudioSampleRate != targetSampleRate;
 				if (requireResampling)
 				{
-					std::wstring errMsg;
-					if (!resampleFrames(segFramesPad, srcAudioFrameRate, targetFrameRate, segFramesResamp, &errMsg))
+					if (!resampleFrames(segFramesPad, srcAudioSampleRate, targetSampleRate, segFramesResamp, &errMsg))
 					{
-						errMsg_ = QString("Can't resample frames. %1").arg(QString::fromStdWString(errMsg));
+						errMsg_ = QString("Can't resample frames. %1").arg(combineErrorMessages(errMsg));
 						return;
 					}
 					segFramesOut = segFramesResamp;
 				}
 
 				// statistics
-				double durSec = segFramesPad.size() / (double)targetFrameRate; // speech + padded silence
+				double durSec = segFramesPad.size() / (double)targetSampleRate; // speech + padded silence
 				double& durCounter = segRef->Phase == ResourceUsagePhase::Train ? audioDurationSecTrain_ : audioDurationSecTest_;
 				durCounter += durSec;
 
-				double noPadDurSec = segFramesNoPad.size() / (double)targetFrameRate; // only speech (no padded silence)
+				double noPadDurSec = segFramesNoPad.size() / (double)targetSampleRate; // only speech (no padded silence)
 				double& noPadDurCounter = segRef->Phase == ResourceUsagePhase::Train ? audioDurationNoPaddingSecTrain_ : audioDurationNoPaddingSecTest_;
 				noPadDurCounter += noPadDurSec;
 
@@ -2119,9 +2118,8 @@ namespace PticaGovorun
 				// write output wav segment
 
 				std::string wavSegOutPath = (segRef->OutAudioSegPathParts.AudioSegFilePathNoExt + ".wav").toStdString();
-				ErrMsgList errMsg;
 #if PG_HAS_LIBSNDFILE
-				if (!writeAllSamplesWav(segFramesOut, targetFrameRate, wavSegOutPath, &errMsg))
+				if (!writeAllSamplesWav(segFramesOut, targetSampleRate, wavSegOutPath, &errMsg))
 				{
 					errMsg_ = QString("Can't write output wav segment. %1").arg(combineErrorMessages(errMsg));
 					return;
@@ -2210,8 +2208,10 @@ namespace PticaGovorun
 			QString absPath = audioDirQ.filePath(QString("%1.%2").arg(toQString(audioPathNoExt)).arg(ext));
 
 			AudioData audioData;
-			if (!readAllSamplesFormatAware(absPath.toStdWString(), audioData.Frames, &audioData.FrameRate, errMsg))
+			ErrMsgList errMsgL;
+			if (!readAllSamplesFormatAware(absPath.toStdWString(), audioData.Samples, &audioData.SampleRate, &errMsgL))
 			{
+				*errMsg = combineErrorMessages(errMsgL).toStdWString();
 				return false;
 			}
 			audioDataList.push_back(std::move(audioData));

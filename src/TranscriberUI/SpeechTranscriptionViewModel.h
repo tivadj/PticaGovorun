@@ -398,7 +398,7 @@ private:
 
 private:
 	std::vector<short> audioSamples_;
-	float audioFrameRate_; // frame (sample) rate of current audio
+	float audioSampleRate_; // frame (sample) rate of current audio
 	QString annotFilePathAbs_; // abs path to speech annotation (xml) file
 
 	// recognition

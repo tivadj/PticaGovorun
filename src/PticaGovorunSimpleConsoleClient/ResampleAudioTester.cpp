@@ -1,19 +1,22 @@
 #include <vector>
 #include <iostream>
 #include <samplerate.h>
+#include "ComponentsInfrastructure.h" // ErrMsgList
 #include "WavUtils.h" // readAllSamples
 
 namespace ResampleAudioTesterNS
 {
+	using namespace PticaGovorun;
+
 	void resampleWaveform()
 	{
 		const char* wavFilePath = R"path(E:\devb\workshop\PticaGovorunProj\data\!\2011-04-pynzenyk-q_11_0001917-0033272_22050Hz.wav)path";
-		std::wstring errMsg;
-		float frameRate = -1;
+		ErrMsgList errMsg;
+		float sampleRate = -1;
 		std::vector<short> audioSamples;
-		if (!PticaGovorun::readAllSamplesWav(wavFilePath, audioSamples, &frameRate, &errMsg))
+		if (!PticaGovorun::readAllSamplesWav(wavFilePath, audioSamples, &sampleRate, &errMsg))
 		{
-			std::wcerr << "Can't read wav file. " <<errMsg << std::endl;
+			std::cerr << "Can't read wav file. " <<str(errMsg) << std::endl;
 			return;
 		}
 

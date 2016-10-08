@@ -71,20 +71,20 @@ namespace PticaGovorun
 		audioSamples_.clear();
 		diagramSegments_.clear();
 
-		std::wstring errMsgW;
-		if (!readAllSamplesFormatAware(audioFilePath, audioSamples_, &audioFrameRate_, &errMsgW))
+		ErrMsgList errMsgL;
+		if (!readAllSamplesFormatAware(audioFilePath, audioSamples_, &audioSampleRate_, &errMsgL))
 		{
-			nextNotification(QString::fromStdWString(errMsgW));
+			nextNotification(combineErrorMessages(errMsgL));
 			return;
 		}
-		if (audioFrameRate_ != SampleRate)
-			nextNotification("WARN: FrameRate != 22050. Perhaps other parameters (FrameSize, FrameShift) should be changed");
+		if (audioSampleRate_ != SampleRate)
+			nextNotification("WARN: SampleRate != 22050 Hz. Perhaps other parameters (FrameSize, FrameShift) should be changed");
 
 		//
 		docOffsetX_ = 0;
 
 		const float diagWidth = 1000;
-		float seg3sec = audioFrameRate_ * 1.5f;
+		float seg3sec = audioSampleRate_ * 1.5f;
 		scale_ = diagWidth / seg3sec;
 
 		// scale
@@ -94,7 +94,7 @@ namespace PticaGovorun
 
 		emit audioSamplesChanged();
 
-		QString msg = QString("Loaded '%1' FrameRate=%2 FramesCount=%3").arg(toQStringBfs(audioFilePath)).arg(audioFrameRate_).arg(audioSamples_.size());
+		QString msg = QString("Loaded '%1' SampleRate=%2 SamplesCount=%3").arg(toQStringBfs(audioFilePath)).arg(audioSampleRate_).arg(audioSamples_.size());
 		nextNotification(msg);
 
 		//
@@ -270,7 +270,7 @@ namespace PticaGovorun
 			&stream,
 			nullptr, /* no input */
 			&outputParameters,
-			audioFrameRate_,
+			audioSampleRate_,
 			FRAMES_PER_BUFFER,
 			paClipOff,      /* we won't output out of range samples so don't bother clipping them */
 			patestCallback,
@@ -533,7 +533,7 @@ namespace PticaGovorun
 		std::copy_n(&audioSamples_[frameLeft], len, audioSegmentBuffer_.data());
 		bool writeOp;
 		std::string msg;
-		tie(writeOp, msg) = PticaGovorun::writeAllSamplesWav(&audioSamples_[frameLeft], len, "currentRange.wav", audioFrameRate_);
+		tie(writeOp, msg) = PticaGovorun::writeAllSamplesWav(&audioSamples_[frameLeft], len, "currentRange.wav", audioSampleRate_);
 		if (!writeOp)
 		{
 			nextNotification(QString::fromStdString(msg));
@@ -1359,7 +1359,7 @@ namespace PticaGovorun
 		// limit range to some short period, otherwise Julius may crash.
 		// Julius has limitations MAXSPEECHLEN=320k for the number of samples and MAXSEQNUM=150 for the number of words
 		const int maxDur = 10; // sec, max duration to process
-		long maxFrames = audioFrameRate_ * maxDur;
+		long maxFrames = audioSampleRate_ * maxDur;
 		if (len > maxFrames)
 		{
 			auto oldLen = len;
@@ -1369,7 +1369,9 @@ namespace PticaGovorun
 		}
 
 		// pad the audio with silince
-		PticaGovorun::padSilence(&audioSamples_[curSegBeg], len, silencePadAudioSamplesCount_, audioSegmentBuffer_);
+		gsl::span<short> curSeg = audioSamples_;
+		curSeg = curSeg.subspan(curSegBeg, len);
+		PticaGovorun::padSilence(curSeg, silencePadAudioSamplesCount_, audioSegmentBuffer_);
 
 		PticaGovorun::JuiliusRecognitionResult recogResult;
 		auto recogOp = recognizer_->recognize(FrameToSamplePicker, audioSegmentBuffer_.data(), audioSegmentBuffer_.size(), recogResult);
@@ -1483,7 +1485,9 @@ namespace PticaGovorun
 		}
 
 		// pad the audio with silince
-		padSilence(&audioSamples_[curSegBeg], len, silencePadAudioSamplesCount_, audioSegmentBuffer_);
+		gsl::span<short> curSeg = audioSamples_;
+		curSeg = curSeg.subspan(curSegBeg, len);
+		padSilence(curSeg, silencePadAudioSamplesCount_, audioSegmentBuffer_);
 
 		PticaGovorun::AlignmentParams alignmentParams;
 		alignmentParams.FrameSize = recognizer_->settings().FrameSize;
@@ -1575,7 +1579,9 @@ namespace PticaGovorun
 		auto len = curSegEnd - curSegBeg;
 
 		// pad the audio with silince
-		PticaGovorun::padSilence(&audioSamples_[curSegBeg], len, silencePadAudioSamplesCount_, audioSegmentBuffer_);
+		gsl::span<short> curSeg = audioSamples_;
+		curSeg = curSeg.subspan(curSegBeg, len);
+		PticaGovorun::padSilence(curSeg, silencePadAudioSamplesCount_, audioSegmentBuffer_);
 
 		// The name of the directory with sphinx speech model data.
 		QString sphinxModelDirName = AppHelpers::configParamQString("SphinxModelDirName", "persian");
@@ -1597,12 +1603,12 @@ namespace PticaGovorun
 		int frameShift = pFeatInfo->frame_shift;
 
 		// convert to sample frequency required by Sphinx
-		double convertRatio = sphinxSampleRate / audioFrameRate_;
+		double convertRatio = sphinxSampleRate / audioSampleRate_;
 		std::vector<short> resampledWave;
-		std::wstring errMsg;
-		if (!resampleFrames(audioSegmentBuffer_, audioFrameRate_, sphinxSampleRate, resampledWave, &errMsg))
+		ErrMsgList errMsg;
+		if (!resampleFrames(audioSegmentBuffer_, audioSampleRate_, sphinxSampleRate, resampledWave, &errMsg))
 		{
-			nextNotification(toQString(errMsg));
+			nextNotification(combineErrorMessages(errMsg));
 			return;
 		}
 
@@ -1753,7 +1759,7 @@ namespace PticaGovorun
 		if (silenceSlidingWindowDur_ == -1)
 			silenceSlidingWindowDur_ = 120;
 
-		int windowSize = static_cast<int>(silenceSlidingWindowDur_ / 1000 * audioFrameRate_);
+		int windowSize = static_cast<int>(silenceSlidingWindowDur_ / 1000 * audioSampleRate_);
 	
 		if (silenceSlidingWindowShift_ == -1)
 			//silenceSlidingWindowShift_ = windowSize / 3;

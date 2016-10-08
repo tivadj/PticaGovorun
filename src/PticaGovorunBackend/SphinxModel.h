@@ -162,7 +162,7 @@ namespace PticaGovorun
 			const QString& fileIdsFilePath,
 			std::function<auto (boost::wstring_view)->boost::wstring_view> pronCodeDisplay,
 			const QString& transcriptionFilePath);
-		void buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segRefs, float targetFrameRate, bool padSilence, float minSilDurMs);
+		void buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segRefs, float targetSampleRate, bool padSilence, float minSilDurMs);
 
 		void generateDataStat(const std::vector<details::AssignedPhaseAudioSegment>& phaseAssignedSegs);
 		
@@ -234,8 +234,8 @@ namespace PticaGovorun
 	// move to Sphinx
 	struct PG_EXPORTS AudioData
 	{
-		std::vector<short> Frames;
-		float FrameRate;
+		std::vector<short> Samples;
+		float SampleRate;
 	};
 
 	PG_EXPORTS bool loadSphinxAudio(boost::wstring_view audioDir, const std::vector<std::wstring>& audioRelPathesNoExt, boost::wstring_view audioFileSuffix, std::vector<AudioData>& audioDataList, std::wstring* errMsg);

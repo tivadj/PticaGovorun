@@ -1,3 +1,4 @@
+#include <gsl/span>
 #if PG_HAS_SPHINX
 #include <pocketsphinx.h>
 #include "ClnUtils.h"
@@ -8,8 +9,8 @@ namespace PticaGovorun
 	struct ParsedSpeechSegment
 	{
 		std::wstring Word;
-		int StartFrame;
-		int EndFrame;
+		int StartSampleInd;
+		int EndSampleInd;
 	};
 
 	// Converts speech into text in most generic fashion.
@@ -28,7 +29,7 @@ namespace PticaGovorun
 		AudioSpeechDecoder(const AudioSpeechDecoder&) = delete;
 		~AudioSpeechDecoder();
 		
-		void decode(const wv::slice<short> frames, float frameRate, std::vector<std::wstring>& words, int& framesProcessed);
+		void decode(gsl::span<const short> samples, float sampleRate, std::vector<std::wstring>& words, int& samplesProcessed);
 		
 		// Words that placed after the result index are truncated.
 		int determineWordIndToExclude(const std::vector<ParsedSpeechSegment>& wordsMerged) const;

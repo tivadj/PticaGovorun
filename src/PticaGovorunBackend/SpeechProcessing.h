@@ -18,6 +18,7 @@
 #include "PticaGovorunCore.h"
 #include "ClnUtils.h"
 #include "ComponentsInfrastructure.h"
+#include <gsl/span>
 
 namespace PticaGovorun {
 
@@ -194,11 +195,10 @@ struct AnnotatedSpeechSegment
 	std::wstring AudioFilePath; // absolute path to audio file
 	std::wstring AnnotFilePath; // absolute path to xml file
 
-	// Frames' frame rate.
-	float FrameRate = -1;
+	float SampleRate = -1;
 
-	// Actual samples in [FrameStart; FrameEnd) range.
-	std::vector<short> Frames;
+	// Actual samples in [StartMarker; EndMarker) range.
+	std::vector<short> Samples;
 	
 	int StartMarkerId = -1;
 	int EndMarkerId = -1;
@@ -229,7 +229,7 @@ PG_EXPORTS std::tuple<bool, std::wstring> convertTextToPhoneList(const std::wstr
 
 // Appends silience frames before and after the given audio.
 // Result (padded audio) has a size=initial audio size + 2*silenceFramesCount.
-PG_EXPORTS void padSilence(const short* audioFrames, int audioFramesCount, int silenceFramesCount, std::vector<short>& paddedAudio);
+PG_EXPORTS void padSilence(gsl::span<short> audioSamples, int silenceSamplesCount, std::vector<short>& paddedAudio);
 
 // Merges a sequence of phone-states (such as j2,j3,j4,o2,o3...) into monophone sequence (such as j,o...)
 PG_EXPORTS void mergeSamePhoneStates(const std::vector<AlignedPhoneme>& phoneStates, std::vector<AlignedPhoneme>& monoPhones);

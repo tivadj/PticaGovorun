@@ -9,7 +9,7 @@
 
 namespace PticaGovorun
 {
-	const float CmuSphinxFrameRate = 16000;
+	const float CmuSphinxSampleRate = 16000;
 
 	namespace
 	{
@@ -29,7 +29,7 @@ namespace PticaGovorun
 					ParsedSpeechSegment merged = prev;
 					merged.Word.pop_back();
 					merged.Word.append(cur.Word.data() + 1, cur.Word.size() - 1);
-					merged.EndFrame = cur.EndFrame;
+					merged.EndSampleInd = cur.EndSampleInd;
 
 					mergedParts.back() = merged;
 				}
@@ -78,13 +78,13 @@ namespace PticaGovorun
 		}
 	}
 
-	void AudioSpeechDecoder::decode(const wv::slice<short> frames, float frameRate, std::vector<std::wstring>& words, int& framesProcessed)
+	void AudioSpeechDecoder::decode(gsl::span<const short> samples, float sampleRate, std::vector<std::wstring>& words, int& samplesProcessed)
 	{
 		if (hasError_)
 			return;
 
-		framesProcessed = 0;
-		if (frameRate != CmuSphinxFrameRate)
+		samplesProcessed = 0;
+		if (sampleRate != CmuSphinxSampleRate)
 		{
 			setError("Error: Sphinx supports only 16KHz audio");
 			return;
@@ -98,7 +98,7 @@ namespace PticaGovorun
 		}
 
 		bool fullUtterance = true;
-		rv = ps_process_raw(ps_, frames.data(), frames.size(), false, fullUtterance);
+		rv = ps_process_raw(ps_, samples.data(), samples.size(), false, fullUtterance);
 		if (rv < 0)
 		{
 			setError("Error: Can't process utterance");
@@ -130,8 +130,8 @@ namespace PticaGovorun
 
 			ParsedSpeechSegment seg;
 			seg.Word = wordWStr;
-			seg.StartFrame = begSample;
-			seg.EndFrame = endSample;
+			seg.StartSampleInd = begSample;
+			seg.EndSampleInd = endSample;
 			wordsActual.push_back(seg);
 		}
 
@@ -144,10 +144,10 @@ namespace PticaGovorun
 			words.push_back(wordsMerged[i].Word);
 		}
 
-		// determine how many frames were processed
-		framesProcessed = frames.size();
+		// determine how many samples were processed
+		samplesProcessed = samples.size();
 		if (excludeWordInd > 0)
-			framesProcessed = wordsMerged[excludeWordInd - 1].EndFrame;
+			samplesProcessed = wordsMerged[excludeWordInd - 1].EndSampleInd;
 	}
 
 	int AudioSpeechDecoder::determineWordIndToExclude(const std::vector<ParsedSpeechSegment>& wordsMerged) const

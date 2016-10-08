@@ -12,7 +12,7 @@
 namespace RecognizeSpeechInBatchTester
 {
 	using namespace PticaGovorun;
-	const float CmuSphinxFrameRate = 16000;
+	const float CmuSphinxSampleRate = 16000;
 
 	void recognizeSpeechInBatch(int argc, wchar_t* argv[])
 	{
@@ -20,20 +20,20 @@ namespace RecognizeSpeechInBatchTester
 		if (argc > 1)
 			audioFilePath = argv[1];
 
-		float frameRate = -1;
-		std::wstring errMsg;
-		std::vector<short> audioFrames;
-		audioFrames.reserve(128000);
-		if (!readAllSamplesFormatAware(QString::fromStdWString(audioFilePath).toStdString(), audioFrames, &frameRate, &errMsg))
+		float sampleRate = -1;
+		ErrMsgList errMsg;
+		std::vector<short> audioSamples;
+		audioSamples.reserve(128000);
+		if (!readAllSamplesFormatAware(QString::fromStdWString(audioFilePath).toStdString(), audioSamples, &sampleRate, &errMsg))
 		{
-			std::wcerr << "Can't read wav file. " <<errMsg <<std::endl;
+			std::cerr << "Can't read wav file. " <<str(errMsg) <<std::endl;
 			return;
 		}
 
-		std::vector<short> audioFramesSphinx;
-		if (!resampleFrames(audioFrames, frameRate, CmuSphinxFrameRate, audioFramesSphinx, &errMsg))
+		std::vector<short> audioSamplesSphinx;
+		if (!resampleFrames(audioSamples, sampleRate, CmuSphinxSampleRate, audioSamplesSphinx, &errMsg))
 		{
-			std::wcerr << errMsg << std::endl;
+			std::cerr << str(errMsg) << std::endl;
 			return;
 		}
 
@@ -64,14 +64,14 @@ namespace RecognizeSpeechInBatchTester
 		std::vector<std::wstring> words;
 		const float utterenceSec = 10;
 		std::vector<short> utterFrames;
-		for (int decodeFrameInd = 0; decodeFrameInd < audioFramesSphinx.size();)
+		for (int decodeFrameInd = 0; decodeFrameInd < audioSamplesSphinx.size();)
 		{
-			int endFrameInd = decodeFrameInd + utterenceSec * CmuSphinxFrameRate;
-			endFrameInd = std::min(endFrameInd, (int)audioFramesSphinx.size());
-			utterFrames.assign(audioFramesSphinx.data()+decodeFrameInd, audioFramesSphinx.data()+endFrameInd);
+			int endFrameInd = decodeFrameInd + utterenceSec * CmuSphinxSampleRate;
+			endFrameInd = std::min(endFrameInd, (int)audioSamplesSphinx.size());
+			utterFrames.assign(audioSamplesSphinx.data()+decodeFrameInd, audioSamplesSphinx.data()+endFrameInd);
 
 			words.clear();
-			decoder.decode(utterFrames, CmuSphinxFrameRate, words, framesProcessed);
+			decoder.decode(utterFrames, CmuSphinxSampleRate, words, framesProcessed);
 			if (decoder.hasError())
 				break;
 
