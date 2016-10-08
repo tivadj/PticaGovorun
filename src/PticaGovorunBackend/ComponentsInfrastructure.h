@@ -215,4 +215,22 @@ namespace PticaGovorun
 		}
 		return QString(buf);
 	}
+
+	/// Adds a message to a list of error messages.
+	/// The 'topErrMsg' pointer is changed to point to the new message.
+	template <typename ErrorMsgInitializer>
+	void pushErrorMsg(ErrMsgList* topErrMsg, ErrorMsgInitializer newMsgInitFun)
+	{
+		//static_assert([]() { static_cast<ErrorMsgInitializer*>(nullptr)->operator()(ErrMsgList{}); return true; }(), "failed function signature: fn ErrorMsgInitializer(ErrMsgList&)->void");
+		if (topErrMsg == nullptr)
+			return;
+
+		ErrMsgList newTopMsg;
+		newMsgInitFun(newTopMsg);
+
+		newTopMsg.next = std::make_unique<ErrMsgList>();
+		*newTopMsg.next = std::move(*topErrMsg);
+		*topErrMsg = std::move(newTopMsg);
+	}
+
 }

@@ -203,10 +203,11 @@ namespace PticaGovorun
 			};
 
 			std::vector<AnnotatedSpeechSegment> segments;
-			std::wstring errMsg;
-			if (!loadSpeechAndAnnotation(toQString(folderOrAudioFilePath.wstring()), audioDir.wstring(), annotDir.wstring(), MarkerLevelOfDetail::Word, false, segAccept, segments, &errMsg))
+			ErrMsgList errMsg;
+			bool removeSilenceAnnot = true;
+			if (!loadSpeechAndAnnotation(toQString(folderOrAudioFilePath.wstring()), audioDir.wstring(), annotDir.wstring(), MarkerLevelOfDetail::Word, false, removeSilenceAnnot, segAccept, segments, &errMsg))
 			{
-				nextNotification(QString::fromStdWString(errMsg));
+				nextNotification(combineErrorMessages(errMsg));
 				return false;
 			}
 

@@ -719,6 +719,7 @@ namespace PticaGovorun
 		const char* ConfigGramDim = "gramDim";
 		const char* ConfigOutputCorpus = "textWorld.outputCorpus";
 		const char* ConfigPadSilence = "padSilence";
+		const char* ConfigRemoveSilenceAnnot = "removeSilenceAnnot";
 		const char* ConfigMinSilDurMs = "minSilDurMs";
 		const char* ConfigTrainCasesRatio = "trainCasesRatio";
 		const char* ConfigUseBrokenPronsInTrainOnly = "useBrokenPronsInTrainOnly";
@@ -752,6 +753,7 @@ namespace PticaGovorun
 		int gramDim = AppHelpers::configParamInt(ConfigGramDim, 2); // 1=unigram, 2=bigram
 		bool outputCorpus = AppHelpers::configParamBool(ConfigOutputCorpus, false);
 		bool padSilence = AppHelpers::configParamBool(ConfigPadSilence, true); // pad the audio segment with the silence segment
+		bool removeSilenceAnnot = AppHelpers::configParamBool(ConfigRemoveSilenceAnnot, true); // remove silence (<sil>, [sp], _s) from audio annotation
 		int minSilDurMs = AppHelpers::configParamInt(ConfigMinSilDurMs, 300); // minimal duration (milliseconds) of flanked silence
 		bool allowSoftHardConsonant = true;
 		bool allowVowelStress = true;
@@ -798,7 +800,7 @@ namespace PticaGovorun
 		std::wstring speechAnnotRootDir = speechProjDir_.filePath("SpeechAnnot").toStdWString();
 		std::wstring wavDirToAnalyze = speechProjDir_.filePath("SpeechAudio").toStdWString();
 
-		loadAudioAnnotation(speechWavRootDir.c_str(), speechAnnotRootDir.c_str(), wavDirToAnalyze.c_str(), includeBrownBear);
+		loadAudioAnnotation(speechWavRootDir.c_str(), speechAnnotRootDir.c_str(), wavDirToAnalyze.c_str(), includeBrownBear, removeSilenceAnnot);
 		std::wcout << "Found annotated segments: " << segments_.size() << std::endl; // debug
 		if (segments_.empty())
 		{
@@ -1659,7 +1661,7 @@ namespace PticaGovorun
 		return std::make_tuple(true, nullptr);
 	}
 
-	void SphinxTrainDataBuilder::loadAudioAnnotation(const wchar_t* wavRootDir, const wchar_t* annotRootDir, const wchar_t* wavDirToAnalyze, bool includeBrownBear)
+	void SphinxTrainDataBuilder::loadAudioAnnotation(const wchar_t* wavRootDir, const wchar_t* annotRootDir, const wchar_t* wavDirToAnalyze, bool includeBrownBear, bool removeSilenceAnnot)
 	{
 		// load audio segments
 		auto segPredBeforeFun = [includeBrownBear](const AnnotatedSpeechSegment& seg) -> bool
@@ -1682,10 +1684,10 @@ namespace PticaGovorun
 			return true;
 		};
 
-		std::wstring errMsg;
-		if (!loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, false, segPredBeforeFun, segments_, &errMsg))
+		ErrMsgList errMsg;
+		if (!loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, false, removeSilenceAnnot, segPredBeforeFun, segments_, &errMsg))
 		{
-			errMsg_ = QString("Can't load audio and annotation. %1").arg(QString::fromStdWString(errMsg));
+			errMsg_ = QString("Can't load audio and annotation. %1").arg(combineErrorMessages(errMsg));
 			return;
 		}
 	}

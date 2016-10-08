@@ -349,7 +349,7 @@ namespace PticaGovorun
 	};
 
 	bool loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir, 
-		MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments, std::wstring* errMsg)
+		MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, bool removeSilenceAnnot, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments, ErrMsgList* errMsg)
 	{
 		if (folderOrWavFilePath.isDir())
 		{
@@ -359,7 +359,7 @@ namespace PticaGovorun
 			QFileInfoList items = dir.entryInfoList(QDir::Filter::Files | QDir::Filter::Dirs | QDir::Filter::NoDotAndDotDot);
 			for (const QFileInfo item : items)
 			{
-				if (!loadSpeechAndAnnotation(item, wavRootDir, annotRootDir, targetLevelOfDetail, loadAudio, segPredBefore, segments, errMsg))
+				if (!loadSpeechAndAnnotation(item, wavRootDir, annotRootDir, targetLevelOfDetail, loadAudio, removeSilenceAnnot, segPredBefore, segments, errMsg))
 					return false;
 			}
 			return true;
@@ -385,7 +385,8 @@ namespace PticaGovorun
 		std::tuple<bool, const char*> loadOp = loadAudioMarkupFromXml(audioMarkupFilePathAbs.toStdWString(), speechAnnot);
 		if (!std::get<0>(loadOp))
 		{
-			*errMsg = QString::fromLatin1(std::get<1>(loadOp)).toStdWString();
+			if (errMsg != nullptr)
+				errMsg->utf8Msg = std::get<1>(loadOp);
 			return false;
 		}
 
@@ -501,16 +502,23 @@ namespace PticaGovorun
 				for (size_t i = 0; i < words.size(); ++i)
 				{
 					auto word = words[i];
-					//if (word == fillerShortPause())
-					//{
-					//	wordsNoSp.push_back(fillerSilence()); // [sp] -> <sil>
-					//	continue;
-					//}
-					// [sp] -> [], <sil> -> [], _s -> []
-					if (word == fillerShortPause() || 
-						word == fillerSilence() ||
-						word == fillerSingleSpace())
-						continue;
+					if (removeSilenceAnnot)
+					{
+						// [sp] -> [], <sil> -> [], _s -> []
+						if (word == fillerShortPause() ||
+							word == fillerSilence() ||
+							word == fillerSingleSpace())
+							continue;
+					}
+					else
+					{
+						// [sp] -> <sil>, _s -> <sil>
+						if (word == fillerShortPause() || word == fillerSingleSpace())
+						{
+							wordsNoSp.push_back(fillerSilence());
+							continue;
+						}
+					}
 					wordsNoSp.push_back(word);
 				}
 
@@ -533,15 +541,17 @@ namespace PticaGovorun
 				{
 					// load wav file
 					float sampleRateAudio;
-					ErrMsgList errMsgL;
-					if (!readAllSamplesFormatAware(audioFilePath.toStdWString(), audioSamples, &sampleRateAudio, &errMsgL))
+					if (!readAllSamplesFormatAware(audioFilePath.toStdWString(), audioSamples, &sampleRateAudio, errMsg))
 					{
-						*errMsg = QString("Can't read wav file. %1").arg(combineErrorMessages(errMsgL)).toStdWString();
+						pushErrorMsg(errMsg, [&audioFilePath](ErrMsgList& newErr)
+						{
+							newErr.utf8Msg = std::string("Can't read wav file: ") + audioFilePath.toUtf8().toStdString();
+						});
 						return false;
 					}
 					if (sampleRateAnnot != sampleRateAudio)
 					{
-						*errMsg = QString("SampleRate mismatch in audio and annotation for file %1").arg(audioFilePath).toStdWString();
+						errMsg->utf8Msg = std::string("SampleRate mismatch in audio and annotation for file: ") + audioFilePath.toUtf8().toStdString();
 						return false;
 					}
 				}

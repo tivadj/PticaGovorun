@@ -244,7 +244,7 @@ PG_EXPORTS std::wstring speechAnnotationFilePathAbs(const std::wstring& wavFileA
 // targetLevelOfDetail=type of marker (segment) to query annotation.
 // segPredBefore=predicate to determine whether to include segment into the result set; called before actual samples are loaded
 PG_EXPORTS bool loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir,
-	MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments, std::wstring* errMsg);
+	MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, bool removeSilenceAnnot, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments, ErrMsgList* errMsg);
 
 // Collects the segments associated with the set of markers.
 PG_EXPORTS void collectAnnotatedSegments(const std::vector<TimePointMarker>& markers, std::vector<std::pair<const TimePointMarker*, const TimePointMarker*>>& segments);
