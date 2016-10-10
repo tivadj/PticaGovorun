@@ -35,6 +35,7 @@
 #include "SharedServiceProvider.h"
 #include "AppHelpers.h"
 #include "SphinxModel.h"
+#include <boost/format.hpp>
 
 namespace PticaGovorun
 {
@@ -53,12 +54,12 @@ namespace PticaGovorun
 
 	void SpeechTranscriptionViewModel::loadAnnotAndAudioFileRequest()
 	{
-		PG_DbgAssert2(QFileInfo::exists(annotFilePathAbs_), "Annotation file must be specified");
+		PG_DbgAssert2(QFileInfo::exists(toQString(annotFilePathAbs_.wstring())), "Annotation file must be specified");
 
 		speechAnnot_.clear();
 		bool loadOp;
 		const char* errMsg;
-		std::tie(loadOp, errMsg) = loadAudioMarkupFromXml(annotFilePathAbs_.toStdWString(), speechAnnot_);
+		std::tie(loadOp, errMsg) = loadAudioMarkupFromXml(annotFilePathAbs_.wstring(), speechAnnot_);
 		if (!loadOp)
 		{
 			nextNotification(errMsg);
@@ -74,6 +75,10 @@ namespace PticaGovorun
 		ErrMsgList errMsgL;
 		if (!readAllSamplesFormatAware(audioFilePath, audioSamples_, &audioSampleRate_, &errMsgL))
 		{
+			pushErrorMsg(&errMsgL, [&audioFilePath](ErrMsgList& newMsg)
+			{
+				newMsg.utf8Msg = std::string("Can't load audio file: ") + audioFilePath.string();
+			});
 			nextNotification(combineErrorMessages(errMsgL));
 			return;
 		}
@@ -515,7 +520,7 @@ namespace PticaGovorun
 
 	void SpeechTranscriptionViewModel::saveAudioMarkupToXml()
 	{
-		PticaGovorun::saveAudioMarkupToXml(speechAnnot_, annotFilePathAbs_.toStdWString());
+		PticaGovorun::saveAudioMarkupToXml(speechAnnot_, annotFilePathAbs_.wstring());
 	
 		nextNotification(formatLogLineWithTime("Saved xml markup."));
 	}
@@ -547,26 +552,22 @@ namespace PticaGovorun
 
 	QString SpeechTranscriptionViewModel::modelShortName() const
 	{
-		QFileInfo audioFileInfo(annotFilePathAbs_);
-		return audioFileInfo.baseName();
+		return toQStringBfs(annotFilePathAbs_.stem());
 	}
 
-	QString SpeechTranscriptionViewModel::annotFilePath() const
+	const boost::filesystem::path& SpeechTranscriptionViewModel::annotFilePath() const
 	{
 		return annotFilePathAbs_;
 	}
 
-	void SpeechTranscriptionViewModel::setAnnotFilePath(const QString& filePath)
+	void SpeechTranscriptionViewModel::setAnnotFilePath(const boost::filesystem::path& filePath)
 	{
 		annotFilePathAbs_ = filePath;
 	}
 
 	boost::filesystem::path SpeechTranscriptionViewModel::audioFilePathAbs() const
 	{
-		QString audioFileRelPathQ = QString::fromStdWString(speechAnnot_.audioFileRelPath());
-		QDir annotFileDir = QFileInfo(annotFilePathAbs_).absoluteDir();
-		QString audioFilePath = QFileInfo(annotFileDir, audioFileRelPathQ).canonicalFilePath();
-		return boost::filesystem::path(audioFilePath.toStdWString());
+		return annotFilePathAbs_.parent_path() / boost::filesystem::path(speechAnnot_.audioFilePathRel());
 	}
 
 	float SpeechTranscriptionViewModel::pixelsPerSample() const

@@ -40,7 +40,7 @@ namespace PticaGovorun
 		SpeechAnnotation();
 		~SpeechAnnotation();
 
-		std::wstring audioFileRelPath() const;
+		std::wstring audioFilePathRel() const;
 		void setAudioFileRelPath(const std::wstring& value);
 
 		float audioSampleRate() const;

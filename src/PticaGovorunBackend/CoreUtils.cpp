@@ -12,36 +12,6 @@
 
 namespace PticaGovorun
 {
-	std::wstring s2ws(boost::string_view str)
-	{
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8_wchar;
-		std::wstring strWChar = utf8_wchar.from_bytes(str.begin(), str.end());
-		return strWChar;
-	}
-
-	void s2ws(boost::string_view strUtf8, std::wstring& target)
-	{
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8_wchar;
-		// TODO: unnecessary allocation: converter should just add to provided buffer
-		std::wstring strWChar = utf8_wchar.from_bytes(strUtf8.begin(), strUtf8.end());
-		target.append(strWChar.begin(), strWChar.end());
-	}
-
-	void ws2s(boost::wstring_view wstr, std::string& targetUtf8)
-	{
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8_wchar;
-		// TODO: unnecessary allocation: converter should just add to provided buffer
-		std::string strChar = utf8_wchar.to_bytes(wstr.begin(), wstr.end());
-		targetUtf8.append(strChar.data(), strChar.size());
-	}
-
-	std::string ws2s(boost::wstring_view wstr)
-	{
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8_wchar;
-		std::string strChar = utf8_wchar.to_bytes(wstr.begin(), wstr.end());
-		return strChar;
-	}
-
 	/// Formats time as string.
 	template <size_t N>
 	size_t formatTimeStampNow(std::array<char, N>& buf)
@@ -85,6 +55,36 @@ namespace PticaGovorun
 		return text.substr(left, len);
 	}
 
+	std::wstring utf8s2ws(boost::string_view str)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8_wchar;
+		std::wstring strWChar = utf8_wchar.from_bytes(str.begin(), str.end());
+		return strWChar;
+	}
+
+	void utf8s2ws(boost::string_view strUtf8, std::wstring& target)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8_wchar;
+		// TODO: unnecessary allocation: converter should just add to provided buffer
+		std::wstring strWChar = utf8_wchar.from_bytes(strUtf8.begin(), strUtf8.end());
+		target.append(strWChar.begin(), strWChar.end());
+	}
+
+	void toUtf8StdString(boost::wstring_view wstr, std::string& targetUtf8)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8_wchar;
+		// TODO: unnecessary allocation: converter should just add to provided buffer
+		std::string strChar = utf8_wchar.to_bytes(wstr.begin(), wstr.end());
+		targetUtf8.append(strChar.data(), strChar.size());
+	}
+
+	std::string toUtf8StdString(boost::wstring_view wstr)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8_wchar;
+		std::string strChar = utf8_wchar.to_bytes(wstr.begin(), wstr.end());
+		return strChar;
+	}
+
 	boost::wstring_view toWStringRef(const QString& str, std::vector<wchar_t>& buff)
 	{
 		buff.resize(str.size());
@@ -117,7 +117,7 @@ namespace PticaGovorun
 		return QString::fromUtf8(text.data(), text.size());
 	}
 
-	std::string toStdString(QString text)
+	std::string toUtf8StdString(const QString& text)
 	{
 		QByteArray bytes = text.toUtf8();
 		return std::string(bytes.data(), bytes.size());
@@ -133,12 +133,6 @@ namespace PticaGovorun
 		return QString::fromWCharArray(text.data(), (int)text.size());
 	}
 	
-	QString toQStringBfs(const boost::filesystem::path& text)
-	{
-		auto ws = text.wstring();
-		return QString::fromStdWString(ws);
-	}
-
 	std::wstring toStdWString(boost::wstring_view text)
 	{
 		return std::wstring(text.data(), text.size());
@@ -147,5 +141,17 @@ namespace PticaGovorun
 	void toStdWString(boost::wstring_view text, std::wstring& result)
 	{
 		result.assign(text.data(), text.size());
+	}
+
+	QString toQStringBfs(const boost::filesystem::path& text)
+	{
+		auto ws = text.wstring();
+		return QString::fromStdWString(ws);
+	}
+
+	boost::filesystem::path toBfs(const QString& path)
+	{
+		auto ws = path.toStdWString();
+		return boost::filesystem::path(ws);
 	}
 }

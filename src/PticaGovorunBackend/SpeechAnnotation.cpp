@@ -18,7 +18,7 @@ namespace PticaGovorun
 	{
 	}
 
-	std::wstring SpeechAnnotation::audioFileRelPath() const
+	std::wstring SpeechAnnotation::audioFilePathRel() const
 	{
 		return audioFileRelPath_;
 	}

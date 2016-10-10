@@ -376,6 +376,7 @@ namespace PticaGovorun
 
 	// <sil> pseudo word.
 	PG_EXPORTS boost::wstring_view fillerSilence();
+	PG_EXPORTS boost::string_view fillerSilence1();
 
 	// <s> pseudo word.
 	PG_EXPORTS boost::wstring_view fillerStartSilence();

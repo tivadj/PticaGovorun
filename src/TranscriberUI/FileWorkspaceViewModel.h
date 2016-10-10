@@ -18,7 +18,7 @@ namespace PticaGovorun
 	public:
 	signals :
 		// Occurs when audio samples where successfully loaded from a file.
-		void openAnnotFile(const std::wstring& annotFileAbsPath);
+		void openAnnotFile(const boost::filesystem::path& annotFileAbsPath);
 
 		// Occurs when path to speech annotation directory is changed.
 		void annotDirChanged(const std::wstring& oldWorkingDir);

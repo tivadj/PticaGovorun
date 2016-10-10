@@ -44,7 +44,7 @@ namespace PticaGovorun
 		void pushButtonSegmentComposerPlay_Clicked();
 
 		// file workspace
-		void audioTranscriptionToolModel_addedAudioTranscription(const std::wstring& annotFilePath);
+		void audioTranscriptionToolModel_addedAudioTranscription(const boost::filesystem::path& annotFilePath);
 		void audioTranscriptionToolModel_activeAudioTranscriptionChanged(int ind);
 		void audioTranscriptionToolModel_audioTranscriptionRemoved(int ind);
 		void audioTranscriptionToolModel_audioTranscriptionListCleared();

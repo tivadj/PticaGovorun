@@ -165,7 +165,7 @@ PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const SpeechAnnota
 
 	xmlWriter.writeStartDocument("1.0");
 	xmlWriter.writeStartElement(XmlDocName);
-	xmlWriter.writeAttribute(AnnotAudioFile, QString::fromStdWString(annot.audioFileRelPath()));
+	xmlWriter.writeAttribute(AnnotAudioFile, QString::fromStdWString(annot.audioFilePathRel()));
 	bool isInt = annot.audioSampleRate() == std::truncf(annot.audioSampleRate());
 	int prec = isInt ? 0 : 4; // set 0 for integers to avoid padding zeros after comma
 	xmlWriter.writeAttribute(AnnotAudioSampleRate, QString::number(annot.audioSampleRate(), 'f', prec));

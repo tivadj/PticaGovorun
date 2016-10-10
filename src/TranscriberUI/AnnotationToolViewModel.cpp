@@ -31,7 +31,7 @@ namespace PticaGovorun
 		notificationService_ = serviceProvider->notificationService();
 
 		fileWorkspaceViewModel_ = std::make_shared<FileWorkspaceViewModel>();
-		QObject::connect(fileWorkspaceViewModel_.get(), SIGNAL(openAnnotFile(const std::wstring&)), this, SLOT(fileWorkspaceViewModel_openAnnotFile(const std::wstring&)));
+		QObject::connect(fileWorkspaceViewModel_.get(), SIGNAL(openAnnotFile(const boost::filesystem::path&)), this, SLOT(fileWorkspaceViewModel_openAnnotFile(const boost::filesystem::path&)));
 
 		audioMarkupNavigator_ = std::make_shared<AudioMarkupNavigator>();
 
@@ -68,14 +68,14 @@ namespace PticaGovorun
 	{
 		curRecognizerName_ = "shrekky";
 
-		QString speechProjDir = AppHelpers::configParamQString(RecentSpeechProjDir, QString(""));
+		boost::filesystem::path speechProjDir = toBfs(AppHelpers::configParamQString(RecentSpeechProjDir, QString("")));
 		if (tryChangeSpeechProjDir(speechProjDir))
 		{
-			QString recentAnnotFileRelPath = AppHelpers::configParamQString(RecentAnnotFileRelPath, QString(""));
-			if (!recentAnnotFileRelPath.isEmpty())
+			boost::filesystem::path recentAnnotFileRelPath = toBfs(AppHelpers::configParamQString(RecentAnnotFileRelPath, QString("")));
+			if (!recentAnnotFileRelPath.empty())
 			{
-				QString recentAnnotFilePath = QFileInfo(speechProjDir, recentAnnotFileRelPath).canonicalFilePath();
-				fileWorkspaceViewModel_openAnnotFile(recentAnnotFilePath.toStdWString());
+				boost::filesystem::path recentAnnotFilePath = speechProjDir / recentAnnotFileRelPath;
+				fileWorkspaceViewModel_openAnnotFile(recentAnnotFilePath);
 			}
 		}
 	}
@@ -85,22 +85,21 @@ namespace PticaGovorun
 		QString iniAbsPath = AppHelpers::appIniFilePathAbs();
 		QSettings settings(iniAbsPath, QSettings::IniFormat);
 
-		auto annotDirQ = QString::fromStdWString(speechData_->speechProjDir().wstring());
-		if (!annotDirQ.isEmpty())
+		auto projDir = speechData_->speechProjDir();
+		if (!projDir.empty())
 		{
-			settings.setValue(RecentSpeechProjDir, annotDirQ);
+			settings.setValue(RecentSpeechProjDir, toQStringBfs(projDir));
 
 			// save relative path to the last opened audio file
 			auto transcrModel = activeTranscriptionModel();
-			QString audioFileRelPath;
+			boost::filesystem::path audioFileRelPath;
 			if (transcrModel != nullptr)
 			{
-				QString recentAudioFilePath = transcrModel->annotFilePath();
-
-				audioFileRelPath = QDir(annotDirQ).relativeFilePath(recentAudioFilePath);
+				auto recentAudioFilePath = boost::filesystem::relative(transcrModel->annotFilePath(), projDir);
+				audioFileRelPath = projDir / recentAudioFilePath;
 			}
 
-			settings.setValue(RecentAnnotFileRelPath, audioFileRelPath);
+			settings.setValue(RecentAnnotFileRelPath,toQStringBfs(audioFileRelPath));
 		}
 		settings.sync();
 	}
@@ -120,11 +119,11 @@ namespace PticaGovorun
 		return audioTranscriptionModels_[activeAudioTranscriptionModelInd_];
 	}
 
-	std::shared_ptr<SpeechTranscriptionViewModel> AnnotationToolViewModel::audioTranscriptionModelByFilePathAbs(const std::wstring& filePath)
+	std::shared_ptr<SpeechTranscriptionViewModel> AnnotationToolViewModel::audioTranscriptionModelByAnnotFilePathAbs(const boost::filesystem::path& filePath)
 	{
 		auto it = std::find_if(audioTranscriptionModels_.begin(), audioTranscriptionModels_.end(), [&filePath](std::shared_ptr<SpeechTranscriptionViewModel> pTranscriptionModel)
 		{
-			auto p = pTranscriptionModel->annotFilePath().toStdWString();
+			auto p = pTranscriptionModel->annotFilePath();
 			return p == filePath;
 		});
 		if (it == audioTranscriptionModels_.end())
@@ -179,46 +178,42 @@ namespace PticaGovorun
 			if (speechData_ == nullptr)
 				return false;
 
-			auto projDir = speechData_->speechProjDir();
-			auto annotDir = speechData_->speechAnnotDirPath();
-			auto audioDir = speechData_->speechProjDir() / "SpeechAudio";
-
 			//
 			static const boost::string_view current = "current";
-			auto folderOrAudioFilePath = audioDir;
+			auto folderOrAnnotFilePath = speechData_->speechAnnotDirPath();
 			if (recipe.find(current.data(), 0, current.size()) != std::string::npos)
 			{
 				auto activeModel = activeTranscriptionModel();
 				if (activeModel != nullptr)
 				{
-					folderOrAudioFilePath = activeModel->audioFilePathAbs();
+					folderOrAnnotFilePath = activeModel->annotFilePath();
 				}
 			}
-
-			auto segAccept = [](const AnnotatedSpeechSegment& seg)->bool
-			{
-				if (seg.TranscriptText.find(L"#") != std::wstring::npos) // segments to ignore
-					return false;
-				return true;
-			};
-
-			std::vector<AnnotatedSpeechSegment> segments;
+			std::vector<std::unique_ptr<AudioFileAnnotation>> audioAnnots;
 			ErrMsgList errMsg;
-			bool removeSilenceAnnot = true;
-			if (!loadSpeechAndAnnotation(toQString(folderOrAudioFilePath.wstring()), audioDir.wstring(), annotDir.wstring(), MarkerLevelOfDetail::Word, false, removeSilenceAnnot, segAccept, segments, &errMsg))
+			if (!loadAudioAnnotation(folderOrAnnotFilePath, audioAnnots, &errMsg))
 			{
 				nextNotification(combineErrorMessages(errMsg));
 				return false;
 			}
 
+			//
+			static const boost::string_view silenceStr = "silence";
+			bool silenceOnly = recipe.find(silenceStr.data(), 0, silenceStr.size()) != std::string::npos;
+
 			double totalDurH = 0;
-			for (const auto& seg : segments)
+			for (const auto& audioAnnot : audioAnnots)
 			{
-				ptrdiff_t numSamples = seg.EndMarker.SampleInd - seg.StartMarker.SampleInd;
-				PG_DbgAssert(seg.SampleRate != -1);
-				double dur = numSamples / static_cast<double>(seg.SampleRate); // seconds
-				double durH = dur / 3600; // hours
-				totalDurH += durH;
+				PG_DbgAssert(audioAnnot->SampleRate != -1);
+				for (const auto& seg : audioAnnot->Segments)
+				{
+					if (silenceOnly && seg->TranscriptText != fillerSilence1())
+						continue;
+					ptrdiff_t numSamples = seg->durationSamples();
+					double dur = numSamples / static_cast<double>(audioAnnot->SampleRate); // seconds
+					double durH = dur / 3600; // hours
+					totalDurH += durH;
+				}
 			}
 
 			auto msg = QString("%1=%2").arg(utf8ToQString(annotTotalDurationH)).arg(totalDurH, 0, 'f', TimePrec);
@@ -271,11 +266,11 @@ namespace PticaGovorun
 			m->navigateToMarkerRequest();
 	}
 
-	void AnnotationToolViewModel::fileWorkspaceViewModel_openAnnotFile(const std::wstring& annotFilePath)
+	void AnnotationToolViewModel::fileWorkspaceViewModel_openAnnotFile(const boost::filesystem::path& annotFilePath)
 	{
 		if (annotFilePath.empty())
 			return;
-		QString annotFilePathQ = QString::fromStdWString(annotFilePath);
+		QString annotFilePathQ = toQStringBfs(annotFilePath);
 		if (!QFileInfo(annotFilePathQ).exists())
 		{
 			nextNotification(QString("Can't find annotation file '%1'").arg(annotFilePathQ));
@@ -283,7 +278,7 @@ namespace PticaGovorun
 		}
 
 		auto transcriberModel = std::make_shared<SpeechTranscriptionViewModel>();
-		transcriberModel->setAnnotFilePath(annotFilePathQ);
+		transcriberModel->setAnnotFilePath(annotFilePath);
 		transcriberModel->setAudioMarkupNavigator(audioMarkupNavigator_);
 		transcriberModel->setPhoneticDictViewModel(phoneticDictModel_);
 		transcriberModel->setSpeechData(speechData_);
@@ -296,9 +291,9 @@ namespace PticaGovorun
 		emit activeAudioTranscriptionChanged(activeAudioTranscriptionModelInd_);
 	}
 
-	bool AnnotationToolViewModel::tryChangeSpeechProjDir(QString speechProjDir)
+	bool AnnotationToolViewModel::tryChangeSpeechProjDir(const boost::filesystem::path& speechProjDir)
 	{
-		if (speechProjDir.isEmpty())
+		if (speechProjDir.empty())
 			return false;
 
 		//
@@ -313,7 +308,7 @@ namespace PticaGovorun
 		initPhoneRegistryUk(*phoneReg_, allowSoftHardConsonant, allowVowelStress);
 
 		//
-		speechData_ = std::make_shared<SpeechData>(speechProjDir.toStdWString());
+		speechData_ = std::make_shared<SpeechData>(speechProjDir);
 		speechData_->setStringArena(stringArena);
 		speechData_->setPhoneReg(phoneReg_);
 
@@ -333,7 +328,7 @@ namespace PticaGovorun
 	void AnnotationToolViewModel::openAnnotDirRequest()
 	{
 		QString dirQ = newAnnotDirQuery();
-		tryChangeSpeechProjDir(dirQ);
+		tryChangeSpeechProjDir(toBfs(dirQ));
 	}
 
 	void AnnotationToolViewModel::closeAnnotDirRequest()

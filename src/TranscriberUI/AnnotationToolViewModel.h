@@ -19,7 +19,7 @@ namespace PticaGovorun
 		Q_OBJECT
 	public:
 	signals:
-		void addedAudioTranscription(const std::wstring& filePath);
+		void addedAudioTranscription(const boost::filesystem::path& filePath);
 		void activeAudioTranscriptionChanged(int ind);
 		void audioTranscriptionRemoved(int tabIndex);
 		void audioTranscriptionListCleared();
@@ -37,7 +37,7 @@ namespace PticaGovorun
 
 		void closeAudioTranscriptionTab(int tabIndex);
 
-		bool tryChangeSpeechProjDir(QString speechProjDir);
+		bool tryChangeSpeechProjDir(const boost::filesystem::path& speechProjDir);
 
 		// Declares a user intent to open new speech annotation directory.
 		void openAnnotDirRequest();
@@ -61,7 +61,7 @@ namespace PticaGovorun
 		std::shared_ptr<JuliusRecognizerProvider> juliusRecognizerProvider();
 #endif
 		std::shared_ptr<SpeechTranscriptionViewModel> activeTranscriptionModel();
-		std::shared_ptr<SpeechTranscriptionViewModel> audioTranscriptionModelByFilePathAbs(const std::wstring& filePath);
+		std::shared_ptr<SpeechTranscriptionViewModel> audioTranscriptionModelByAnnotFilePathAbs(const boost::filesystem::path& filePath);
 		std::shared_ptr<FileWorkspaceViewModel> fileWorkspaceModel();
 
 		void validateAllSpeechAnnotationRequest();
@@ -90,7 +90,7 @@ namespace PticaGovorun
 
 	private slots:
 		// file workspace
-		void fileWorkspaceViewModel_openAnnotFile(const std::wstring& annotFilePath);
+		void fileWorkspaceViewModel_openAnnotFile(const boost::filesystem::path& annotFilePath);
 	private:
 		void nextNotification(const QString& message) const;
 	private:

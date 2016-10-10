@@ -3034,6 +3034,11 @@ namespace PticaGovorun
 		return L"<sil>";
 	}
 
+	boost::string_view fillerSilence1()
+	{
+		return "<sil>";
+	}
+
 	boost::wstring_view fillerStartSilence()
 	{
 		return L"<s>";

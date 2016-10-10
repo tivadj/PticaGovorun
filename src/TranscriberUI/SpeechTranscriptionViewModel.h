@@ -181,8 +181,8 @@ public:
 	void saveCurrentRangeAsWavRequest();
 
 	QString modelShortName() const;
-	QString annotFilePath() const;
-	void setAnnotFilePath(const QString& filePath);
+	const boost::filesystem::path& annotFilePath() const;
+	void setAnnotFilePath(const boost::filesystem::path& filePath);
 
 	boost::filesystem::path audioFilePathAbs() const;
 
@@ -399,7 +399,7 @@ private:
 private:
 	std::vector<short> audioSamples_;
 	float audioSampleRate_; // frame (sample) rate of current audio
-	QString annotFilePathAbs_; // abs path to speech annotation (xml) file
+	boost::filesystem::path annotFilePathAbs_; // abs path to speech annotation (xml) file
 
 	// recognition
 #ifdef PG_HAS_JULIUS

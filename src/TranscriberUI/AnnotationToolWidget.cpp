@@ -55,8 +55,8 @@ namespace PticaGovorun
 		//
 		sharedServiceProviderImpl_ = std::make_shared<SharedServiceProviderImpl>(*this);
 		annotationToolModel_ = std::make_shared<AnnotationToolViewModel>();
-		QObject::connect(annotationToolModel_.get(), SIGNAL(addedAudioTranscription(const std::wstring&)), this, 
-			SLOT(audioTranscriptionToolModel_addedAudioTranscription(const std::wstring&)));
+		QObject::connect(annotationToolModel_.get(), SIGNAL(addedAudioTranscription(const boost::filesystem::path&)), this,
+			SLOT(audioTranscriptionToolModel_addedAudioTranscription(const boost::filesystem::path&)));
 		QObject::connect(annotationToolModel_.get(), SIGNAL(activeAudioTranscriptionChanged(int)), this, 
 			SLOT(audioTranscriptionToolModel_activeAudioTranscriptionChanged(int)));
 		QObject::connect(annotationToolModel_.get(), SIGNAL(audioTranscriptionRemoved(int)), this, 
@@ -107,18 +107,18 @@ namespace PticaGovorun
 		QString entireRecipe = ui->plainTextEditAudioSegmentsComposer->toPlainText();
 
 		// update model's text from UI
-		annotationToolModel_->setCommandList(toStdString(entireRecipe), false);
+		annotationToolModel_->setCommandList(toUtf8StdString(entireRecipe), false);
 
 		QString composingRecipe = entireRecipe;
 		if (ui->plainTextEditAudioSegmentsComposer->textCursor().hasSelection())
 			composingRecipe = ui->plainTextEditAudioSegmentsComposer->textCursor().selection().toPlainText();
 		
-		annotationToolModel_->playComposingRecipeRequest(toStdString(composingRecipe));
+		annotationToolModel_->playComposingRecipeRequest(toUtf8StdString(composingRecipe));
 	}
 
-	void AnnotationToolMainWindow::audioTranscriptionToolModel_addedAudioTranscription(const std::wstring& annotFilePath)
+	void AnnotationToolMainWindow::audioTranscriptionToolModel_addedAudioTranscription(const boost::filesystem::path& annotFilePath)
 	{
-		std::shared_ptr<SpeechTranscriptionViewModel> transcriberModel = annotationToolModel_->audioTranscriptionModelByFilePathAbs(annotFilePath);
+		std::shared_ptr<SpeechTranscriptionViewModel> transcriberModel = annotationToolModel_->audioTranscriptionModelByAnnotFilePathAbs(annotFilePath);
 		PG_DbgAssert2(transcriberModel != nullptr, "Can't find created model");
 
 		auto wdg = std::make_unique<SpeechTranscriptionWidget>();

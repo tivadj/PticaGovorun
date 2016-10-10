@@ -1057,7 +1057,7 @@ namespace RecognizeSpeechSphinxTester
 		//
 		std::string timeStampStr1;
 		appendTimeStampNow(timeStampStr1);
-		std::wstring timeStampStr = s2ws(timeStampStr1);
+		std::wstring timeStampStr = utf8s2ws(timeStampStr1);
 
 		std::wstringstream dumpFileName;
 

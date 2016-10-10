@@ -4,6 +4,7 @@
 #include <numeric> // std::accumulate
 
 #include <QDir>
+#include <QDirIterator>
 
 #include "SpeechProcessing.h"
 #include "XmlAudioMarkup.h"
@@ -17,6 +18,13 @@
 
 namespace PticaGovorun 
 {
+	ptrdiff_t AnnotatedAudioSegment::durationSamples() const
+	{
+		PG_DbgAssert(EndSampleInd != -1);
+		PG_DbgAssert(StartSampleInd != -1);
+		return EndSampleInd - StartSampleInd;
+	}
+
 	bool getDefaultMarkerStopsPlayback(MarkerLevelOfDetail levelOfDetail)
 	{
 		if (levelOfDetail == MarkerLevelOfDetail::Word)
@@ -347,6 +355,107 @@ namespace PticaGovorun
 		Ignore,
 		UseAsSilence
 	};
+
+	bool loadAudioAnnotation(const boost::filesystem::path& annotFilePathAbs, AudioFileAnnotation& annot, ErrMsgList* errMsg)
+	{
+		SpeechAnnotation speechAnnot;
+		std::tuple<bool, const char*> loadOp = loadAudioMarkupFromXml(annotFilePathAbs.wstring(), speechAnnot);
+		if (!std::get<0>(loadOp))
+		{
+			if (errMsg != nullptr)
+				errMsg->utf8Msg = std::get<1>(loadOp);
+			return false;
+		}
+
+		//
+		annot.AnnotFilePath = annotFilePathAbs;
+		annot.AudioFilePath = annotFilePathAbs.parent_path() / speechAnnot.audioFilePathRel();
+		annot.SampleRate = speechAnnot.audioSampleRate();
+
+		std::vector<const TimePointMarker*> wordMarkers;
+		for (size_t i = 0; i < speechAnnot.markersSize(); ++i)
+		{
+			const auto& marker = speechAnnot.marker(i);
+			if (marker.LevelOfDetail == MarkerLevelOfDetail::Word)
+				wordMarkers.push_back(&marker);
+		}
+
+		const TimePointMarker* prevMarker = nullptr;
+		const TimePointMarker* nextMarker = nullptr;
+		AnnotatedAudioSegment* prevSeg = nullptr;
+		for (size_t i=0; i<wordMarkers.size(); ++i, prevMarker = nextMarker)
+		{
+			nextMarker = wordMarkers[i];
+			if (prevMarker == nullptr ||
+				prevMarker->TranscripText.isEmpty() ||
+				!includeInTrainOrTest(*prevMarker))
+			{
+				prevSeg = nullptr;
+				continue;
+			}
+
+			auto seg = std::make_unique<AnnotatedAudioSegment>();
+			seg->FileContainer = &annot;
+			seg->TranscriptText = toUtf8StdString(prevMarker->TranscripText);
+			seg->TranscriptTextDebug = prevMarker->TranscripText.toStdWString();
+			seg->Language = prevMarker->Language;
+			seg->SpeakerBriefId = toUtf8StdString(prevMarker->SpeakerBriefId);
+			seg->StartMarkerId = prevMarker->Id;
+			seg->EndMarkerId = nextMarker->Id;
+			seg->StartSampleInd = prevMarker->SampleInd;
+			seg->EndSampleInd = nextMarker->SampleInd;
+
+			if (prevSeg != nullptr)
+				prevSeg->NextSegment = seg.get();
+			seg->PrevSegment = prevSeg;
+
+			prevSeg = seg.get();
+
+			annot.Segments.push_back(std::move(seg));
+		}
+
+#if PG_DEBUG
+		for (const auto& seg : annot.Segments)
+		{
+			if (seg->PrevSegment != nullptr)
+			{
+				PG_Assert(seg->PrevSegment->NextSegment == seg.get());
+				PG_Assert(seg->PrevSegment->EndSampleInd == seg->StartSampleInd);
+			}
+		}
+		PG_Assert(annot.Segments.back()->NextSegment == nullptr);
+#endif
+		return true;
+	}
+
+	bool loadAudioAnnotation(const boost::filesystem::path& annotDirOrPathAbs, std::vector<std::unique_ptr<AudioFileAnnotation>>& audioAnnots, ErrMsgList* errMsg)
+	{
+		auto processFile = [&](const auto& filePathAbs) -> bool
+		{
+			auto annot = std::make_unique<AudioFileAnnotation>();
+			if (!loadAudioAnnotation(filePathAbs, *annot, errMsg))
+				return false;
+
+			audioAnnots.push_back(std::move(annot));
+			return true;
+		};
+		if (boost::filesystem::is_directory(annotDirOrPathAbs))
+		{
+			QDirIterator fileIter(toQString(annotDirOrPathAbs.wstring()), QStringList() << "*.xml", QDir::Files, QDirIterator::Subdirectories);
+			for (; fileIter.hasNext(); )
+			{
+				auto annotFilePath = fileIter.next();
+				if (!processFile(annotFilePath.toStdWString()))
+					return false;
+			}
+		}
+		else
+		{
+			if (!processFile(annotDirOrPathAbs))
+				return false;
+		}
+		return true;
+	}
 
 	bool loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir, 
 		MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, bool removeSilenceAnnot, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments, ErrMsgList* errMsg)
@@ -704,7 +813,7 @@ namespace PticaGovorun
 				// dump extracted segments into wav files
 				//std::stringstream ss;
 				//ss << "dump_" << phoneName;
-				//ss << "_" << folderOrWavFilePath.completeBaseName().toStdString();
+				//ss << "_" << folderOrWavFilePath.completeBaseName().toUtf8StdString();
 				//ss << "_" << begSampleInd << "-" << endSampleInd;
 				//ss << ".wav";
 				//auto writeOp = writeAllSamplesWav(&audioSamples[begSampleInd], len, ss.str(), SampleRate);

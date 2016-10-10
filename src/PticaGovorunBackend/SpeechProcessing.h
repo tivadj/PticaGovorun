@@ -215,6 +215,43 @@ struct AnnotatedSpeechSegment
 	bool TranscriptionEndsWithSilence = false;
 };
 
+struct AnnotatedAudioSegment;
+
+struct AudioFileAnnotation
+{
+	AudioFileAnnotation() = default;
+	AudioFileAnnotation(const AudioFileAnnotation&) = delete; // Segment has naked pointer to this
+	boost::filesystem::path AnnotFilePath; // absolute path to xml file
+	boost::filesystem::path AudioFilePath; // absolute path to audio file
+
+	float SampleRate = -1;
+
+	std::vector<std::unique_ptr<AnnotatedAudioSegment>> Segments;
+};
+
+struct PG_EXPORTS AnnotatedAudioSegment
+{
+	// Text associated with this speech segment.
+	std::string TranscriptText;
+	std::wstring TranscriptTextDebug;
+	SpeechLanguage Language = SpeechLanguage::NotSet;
+
+	// The speaker id or speaker's name.
+	std::string SpeakerBriefId;
+
+	int StartMarkerId = -1;
+	int EndMarkerId = -1;
+
+	ptrdiff_t StartSampleInd = -1;
+	ptrdiff_t EndSampleInd = -1;
+
+	AudioFileAnnotation* FileContainer = nullptr;
+	AnnotatedAudioSegment* PrevSegment = nullptr;
+	AnnotatedAudioSegment* NextSegment = nullptr;
+
+	ptrdiff_t durationSamples() const;
+};
+
 // Determines if a marker with given level of detail will stop the audio playback.
 PG_EXPORTS bool getDefaultMarkerStopsPlayback(MarkerLevelOfDetail levelOfDetail);
 
@@ -245,6 +282,9 @@ PG_EXPORTS std::wstring speechAnnotationFilePathAbs(const std::wstring& wavFileA
 // segPredBefore=predicate to determine whether to include segment into the result set; called before actual samples are loaded
 PG_EXPORTS bool loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir,
 	MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, bool removeSilenceAnnot, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments, ErrMsgList* errMsg);
+
+PG_EXPORTS bool loadAudioAnnotation(const boost::filesystem::path& annotDirOrPathAbs, std::vector<std::unique_ptr<AudioFileAnnotation>>& audioAnnots, ErrMsgList* errMsg);
+PG_EXPORTS bool loadAudioAnnotation(const boost::filesystem::path& annotFilePathAbs, AudioFileAnnotation& annot, ErrMsgList* errMsg);
 
 // Collects the segments associated with the set of markers.
 PG_EXPORTS void collectAnnotatedSegments(const std::vector<TimePointMarker>& markers, std::vector<std::pair<const TimePointMarker*, const TimePointMarker*>>& segments);

@@ -204,7 +204,7 @@ bool readAllSamplesFormatAware(const boost::filesystem::path& filePath, std::vec
 		return readAllSamplesWav(filePath, result, sampleRate, errMsg);
 #endif
 	if (errMsg != nullptr)
-		errMsg->utf8Msg = std::string("Unknown audio file extension %1%") + filePath.extension().string();
+		errMsg->utf8Msg = std::string("Unknown audio file extension: ") + filePath.extension().string();
 	return false;
 }
 

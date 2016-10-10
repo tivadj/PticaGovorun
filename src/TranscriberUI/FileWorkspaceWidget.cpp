@@ -32,8 +32,8 @@ namespace PticaGovorun
 		QVariant strVar = item->data(0, Qt::UserRole);
 		if (strVar.isNull())
 			return;
-		QString annotFilePath = strVar.toString();
-		model_->openAnnotFile(annotFilePath.toStdWString());
+		boost::filesystem::path annotFilePath = toBfs(strVar.toString());
+		model_->openAnnotFile(annotFilePath);
 	}
 
 	void FileWorkspaceWidget::fileWorkspaceModel_annotDirChanged(const std::wstring& oldWorkingDir)
