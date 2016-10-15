@@ -19,6 +19,7 @@
 #include "SphinxIf.h"
 #endif
 
+#include "G729If.h"
 
 #if HAS_MATLAB
 #include "matrix.h" // mxArray, mxCreateLogicalArray
@@ -1765,7 +1766,8 @@ namespace PticaGovorun
 
 		// default Sphinx sampling rate
 		// by now, stick to this, otherwise nfft points should also be changed
-		float sphinxSampleRate = 16000;
+		//float sphinxSampleRate = 16000;
+		float sphinxSampleRate = 8000;
 
 		// convert to sample frequency required by Sphinx
 		double convertRatio = sphinxSampleRate / audioSampleRate_;
@@ -1797,7 +1799,8 @@ namespace PticaGovorun
 		int frameShift = sphinxSampleRate / vadArgs.FrameRate;
 
 		std::vector<SegmentSpeechActivity> activity;
-		if (!detectVoiceActivitySphinx(curSeg, sphinxSampleRate, vadArgs, activity, &errMsg))
+		//if (!detectVoiceActivitySphinx(curSeg, sphinxSampleRate, vadArgs, activity, &errMsg))
+		if (!detectVoiceActivityG729(curSeg, sphinxSampleRate, activity, &errMsg))
 		{
 			pushErrorMsg(&errMsg, [](ErrMsgList& newErr)
 			{

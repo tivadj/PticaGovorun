@@ -67,6 +67,7 @@
     <Import Project="..\build-config\PocketSphinx.props" />
     <Import Project="..\build-config\FLAC.props" />
     <Import Project="..\build-config\GSL.props" />
+    <Import Project="..\build-config\G729AnnexB.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -82,6 +83,7 @@
     <Import Project="..\build-config\PocketSphinx.props" />
     <Import Project="..\build-config\FLAC.props" />
     <Import Project="..\build-config\GSL.props" />
+    <Import Project="..\build-config\G729AnnexB.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -97,6 +99,7 @@
     <Import Project="..\build-config\PocketSphinx.props" />
     <Import Project="..\build-config\FLAC.props" />
     <Import Project="..\build-config\GSL.props" />
+    <Import Project="..\build-config\G729AnnexB.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -112,6 +115,7 @@
     <Import Project="..\build-config\PocketSphinx.props" />
     <Import Project="..\build-config\FLAC.props" />
     <Import Project="..\build-config\GSL.props" />
+    <Import Project="..\build-config\G729AnnexB.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -141,7 +145,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies Condition="'$(MSBuild_PG_HAS_JULIUS)' == 'True'">LibJulius_$(PlatformShortName).lib;LibSent_$(PlatformShortName).lib;Julius_$(PlatformShortName).lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(MSBuild_PG_HAS_JULIUS)' == 'True'">LibJulius_$(PlatformShortName).lib;LibSent_$(PlatformShortName).lib;Julius_$(PlatformShortName).lib;ws2_32.lib;C:\devb\cplex\codecs\g729Solution\x64\Debug\g729.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -155,7 +159,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies Condition="'$(MSBuild_PG_HAS_JULIUS)' == 'True'">LibJulius_$(PlatformShortName).lib;LibSent_$(PlatformShortName).lib;Julius_$(PlatformShortName).lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(MSBuild_PG_HAS_JULIUS)' == 'True'">LibJulius_$(PlatformShortName).lib;LibSent_$(PlatformShortName).lib;Julius_$(PlatformShortName).lib;ws2_32.lib;C:\devb\cplex\codecs\g729Solution\x64\Debug\g729.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -173,7 +177,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies Condition="'$(MSBuild_PG_HAS_JULIUS)' == 'True'">LibJulius_$(PlatformShortName).lib;LibSent_$(PlatformShortName).lib;Julius_$(PlatformShortName).lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(MSBuild_PG_HAS_JULIUS)' == 'True'">LibJulius_$(PlatformShortName).lib;LibSent_$(PlatformShortName).lib;Julius_$(PlatformShortName).lib;ws2_32.lib;C:\devb\cplex\codecs\g729Solution\x64\Debug\g729.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -191,7 +195,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies Condition="'$(MSBuild_PG_HAS_JULIUS)' == 'True'">LibJulius_$(PlatformShortName).lib;LibSent_$(PlatformShortName).lib;Julius_$(PlatformShortName).lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(MSBuild_PG_HAS_JULIUS)' == 'True'">LibJulius_$(PlatformShortName).lib;LibSent_$(PlatformShortName).lib;Julius_$(PlatformShortName).lib;ws2_32.lib;C:\devb\cplex\codecs\g729Solution\x64\Debug\g729.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -204,10 +208,12 @@
     <ClInclude Include="CoreUtils.h" />
     <ClInclude Include="FileHelpers.h" />
     <ClInclude Include="FlacUtils.h" />
+    <ClInclude Include="G729If.h" />
     <ClInclude Include="InteropPython.h" />
     <ClInclude Include="JuliusToolNativeWrapper.h" />
     <ClInclude Include="LangStat.h" />
     <ClInclude Include="SpeechDataValidation.h" />
+    <ClInclude Include="SphinxIf.h" />
     <ClInclude Include="SphinxModel.h" />
     <ClInclude Include="TextProcessing.h" />
     <ClInclude Include="PhoneAlignment.h" />
@@ -243,12 +249,14 @@
     </ClCompile>
     <ClCompile Include="FileHelpers.cpp" />
     <ClCompile Include="FlacUtils.cpp" />
+    <ClCompile Include="G729If.cpp" />
     <ClCompile Include="InteropPython.cpp" />
     <ClCompile Include="JuliusToolNativeWrapper.cpp" />
     <ClCompile Include="LangStat.cpp" />
     <ClCompile Include="PhoneticSerializationXml.cpp" />
     <ClCompile Include="PhoneticStress.cpp" />
     <ClCompile Include="SpeechDataValidation.cpp" />
+    <ClCompile Include="SphinxIf.cpp" />
     <ClCompile Include="SphinxModel.cpp" />
     <ClCompile Include="TextProcessing.cpp" />
     <ClCompile Include="PhoneAlignment.cpp" />
@@ -256,6 +264,7 @@
     <ClCompile Include="SpeechAnnotation.cpp" />
     <ClCompile Include="SpeechProcessing.cpp" />
     <ClCompile Include="TextProcessingSerializationXml.cpp" />
+    <ClCompile Include="VoiceActivity.cpp" />
     <ClCompile Include="WavUtils.cpp" />
     <ClCompile Include="XmlAudioMarkup.cpp" />
   </ItemGroup>

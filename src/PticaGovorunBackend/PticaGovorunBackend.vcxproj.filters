@@ -90,7 +90,7 @@
     <ClInclude Include="FileHelpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VoiceActivity.h">
+    <ClInclude Include="G729If.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SphinxIf.h">
@@ -165,6 +165,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FileHelpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G729If.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VoiceActivity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SphinxIf.cpp">

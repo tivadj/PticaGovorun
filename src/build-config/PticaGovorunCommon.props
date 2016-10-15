@@ -44,6 +44,7 @@
       <PreprocessorDefinitions>PG_HAS_SAMPLERATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions>PG_HAS_SPHINX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions>PG_SPHINX_VAD_HACKING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PG_G729ANNEXB_VAD_HACKING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
       <!-- NOTE: Use MSBuild_PG_HAS_JULIUS to define C++ PG_HAS_JULIUS definition.
            MSBuild_PG_HAS_JULIUS also links Julius libs into PticaGovorunBackend project.

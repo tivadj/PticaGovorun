@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build-config", "build-confi
 	ProjectSection(SolutionItems) = preProject
 		boost.props = boost.props
 		FLAC.props = FLAC.props
+		G729AnnexB.props = G729AnnexB.props
 		GSL.props = GSL.props
 		gtest.props = gtest.props
 		LibSampleRate.props = LibSampleRate.props
