@@ -547,13 +547,57 @@ void SpeechTranscriptionPaintWidget::drawWordSeparatorsAndNames(QPainter& painte
 	}
 }
 
+void SpeechTranscriptionPaintWidget::drawVoiceActivity(QPainter& painter, ptrdiff_t firstSampleIndOffset, gsl::span<const PticaGovorun::SegmentSpeechActivity>& speechPresence, float laneOffsetDocX, int separatorTopY, int separatorBotY)
+{
+	if (speechPresence.empty())
+		return;
+
+	int sepHeightMax = separatorBotY - separatorTopY;
+
+	QColor separColor(0, 0, 232); // blue
+	painter.setPen(separColor);
+
+	auto segHorizBarY = [=](const auto& act)
+	{
+		int horizBarY = act.IsSpeech ? separatorBotY - sepHeightMax : separatorBotY;
+		return horizBarY;
+	};
+
+	const PticaGovorun::SegmentSpeechActivity* prevAct = nullptr;
+	for (const PticaGovorun::SegmentSpeechActivity& act : speechPresence)
+	{
+		// align to the start of the segment
+		ptrdiff_t leftSampleInd = firstSampleIndOffset + act.StartSampleInd;
+		ptrdiff_t rightSampleInd = firstSampleIndOffset + act.EndSampleInd;
+
+		float begSampleDocX = transcriberModel_->sampleIndToDocPosX(leftSampleInd);
+		float endSampleDocX = transcriberModel_->sampleIndToDocPosX(rightSampleInd);
+
+		// map to the current viewport
+		int x1 = begSampleDocX - laneOffsetDocX;
+		int x2 = endSampleDocX - laneOffsetDocX;
+
+		int horizBarY = segHorizBarY(act);
+		painter.drawLine(x1, horizBarY, x2, horizBarY); // horizontal line to show segment's spread
+
+		if (prevAct != nullptr)
+		{
+			int prevHorizBarY = segHorizBarY(*prevAct);
+
+			// vertical line to delimit from the previous segment
+			painter.drawLine(x1, prevHorizBarY, x1, horizBarY);
+		}
+		prevAct = &act;
+	}
+}
+
 void SpeechTranscriptionPaintWidget::drawDiagramSegment(QPainter& painter, const QRect& viewportRect, const PticaGovorun::DiagramSegment& diagItem, float laneOffsetDocX)
 {
 	using namespace PticaGovorun;
 
 	// extend the segment with silence
-	long paddedSegBegSample = diagItem.SampleIndBegin;
-	long paddedSegEndSample = diagItem.SampleIndEnd;
+	ptrdiff_t paddedSegBegSample = diagItem.SampleIndBegin;
+	ptrdiff_t paddedSegEndSample = diagItem.SampleIndEnd;
 	if (diagItem.RecogAlignedPhonemeSeqPadded)
 	{
 		paddedSegBegSample -= transcriberModel_->silencePadAudioFramesCount();
@@ -609,6 +653,15 @@ void SpeechTranscriptionPaintWidget::drawDiagramSegment(QPainter& painter, const
 		int blockTopY = viewportRect.top() + canvasHeight*0.3;
 		int blockBotY = viewportRect.top() + canvasHeight*0.7;
 		drawWordSeparatorsAndNames(painter, paddedSegBegSample, diagItem.WordBoundaries, laneOffsetDocX, blockTopY, blockBotY);
+	}
+
+	{
+		// draw VAD (Voice Activity)
+		float canvasHeight = viewportRect.height();
+		int blockTopY = viewportRect.top() + canvasHeight*0.3;
+		int blockBotY = viewportRect.top() + canvasHeight*0.7;
+		gsl::span<const SegmentSpeechActivity> acts = diagItem.VoiceActivity;
+		drawVoiceActivity(painter, paddedSegBegSample, acts, laneOffsetDocX, blockTopY, blockBotY);
 	}
 	
 	{

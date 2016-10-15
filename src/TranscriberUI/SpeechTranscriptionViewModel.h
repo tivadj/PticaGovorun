@@ -7,6 +7,7 @@
 
 #include <QPoint>
 #include <QSize>
+#include <qevent.h>
 #if PG_HAS_PORTAUDIO
 #include <portaudio.h>
 #endif
@@ -20,6 +21,7 @@
 #include "VisualNotificationService.h"
 #include "JuliusRecognizerProvider.h"
 #include "AppHelpers.h"
+#include "SphinxIf.h" // Sphinx impl of VAD
 
 namespace PticaGovorun
 {
@@ -38,8 +40,8 @@ enum class SegmentStartFrameToPlayChoice
 // Visual representation of the segment of samples.
 struct DiagramSegment
 {
-	long SampleIndBegin = -1;
-	long SampleIndEnd = -1;
+	ptrdiff_t SampleIndBegin = -1;
+	ptrdiff_t SampleIndEnd = -1;
 
 	PticaGovorun::PhoneAlignmentInfo TranscripTextPhones; // splits transcripted text into phones and align them onto audio
 
@@ -57,6 +59,9 @@ struct DiagramSegment
 
 	// Recognized words for the segment of speech.
 	std::vector<PticaGovorun::AlignedWord> WordBoundaries;
+
+	// VAD (Voice Activity Detection)
+	std::vector<SegmentSpeechActivity> VoiceActivity;
 };
 
 // The position of a sample inside the viewport.
@@ -355,6 +360,9 @@ public:	// recongizer
 #if PG_HAS_SPHINX
 	void recognizeCurrentSegmentSphinxRequest();
 #endif
+	/// Poerforms VAD (Voice Activity Detection) (speech/silence) on the current segment.
+	void uiToolVoiceActivityControlPanel(QKeyEvent* ke);
+	void detectVoiceActivitySphinxRequest();
 	void dumpSilence();
 	void dumpSilence(long i1, long i2);
 	void analyzeUnlabeledSpeech();

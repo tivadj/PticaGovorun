@@ -6,7 +6,7 @@
     <SphinxBaseDir>C:\devb\PticaGovorunProj\srcrep\ThirdParty\CmuSphinx-5prealpha\sphinxbase-5prealpha-win32\sphinxbase\</SphinxBaseDir>
     <PocketSphinxDir>C:\devb\PticaGovorunProj\srcrep\ThirdParty\CmuSphinx-5prealpha\pocketsphinx-5prealpha-win32\pocketsphinx\</PocketSphinxDir>
   </PropertyGroup>
-  
+
   <PropertyGroup>
     <IncludePath>$(SphinxBaseDir)include\;$(IncludePath)</IncludePath>
     <IncludePath>$(SphinxBaseDir)src\libsphinxbase\fe\;$(IncludePath)</IncludePath>
@@ -15,6 +15,9 @@
     <IncludePath>$(PocketSphinxDir)include;$(IncludePath)</IncludePath>
     <IncludePath>$(PocketSphinxDir)src\libpocketsphinx;$(IncludePath)</IncludePath>
     <LibraryPath>$(PocketSphinxDir)bin\$(Configuration)\$(PlatformShortName)\;$(LibraryPath)</LibraryPath>
+
+    <!-- Sphinx hacking-->
+    <IncludePath>$(SphinxBaseDir)\..\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   
   <ItemDefinitionGroup>

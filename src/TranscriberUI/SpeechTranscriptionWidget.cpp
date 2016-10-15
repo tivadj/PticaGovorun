@@ -378,7 +378,7 @@ namespace PticaGovorun
 			ui->lineEditMarkerText->setFocus();
 		else if (ke->key() == Qt::Key_Plus)
 			transcriberModel_->increaseLanesCountRequest();
-		else if (ke->key() == Qt::Key_Minus)
+		else if (ke->key() == Qt::Key_Minus && ke->nativeVirtualKey() == 0x6D) // NumPad_Minus
 			transcriberModel_->decreaseLanesCountRequest();
 		else if (ke->key() == Qt::Key_Insert)
 			transcriberModel_->insertNewMarkerAtCursorRequest();
@@ -466,6 +466,16 @@ namespace PticaGovorun
 #else
 			transcriberModel_->nextNotification(QString("Info: Sphinx dependency was not compiled in (define PG_HAS_SPHINX)."));
 #endif
+		}
+		else if (ke->key() == Qt::Key_V && ke->modifiers().testFlag(Qt::ControlModifier))
+		{
+			transcriberModel_->detectVoiceActivitySphinxRequest();
+		}
+		else if (ke->key() == Qt::Key_Equal || 
+			(ke->key() == Qt::Key_Minus && ke->nativeVirtualKey() == 0xBD) || // MainKeyboard_Minus
+			ke->key() == Qt::Key_0)
+		{
+			transcriberModel_->uiToolVoiceActivityControlPanel(ke);
 		}
 
 		// experimental

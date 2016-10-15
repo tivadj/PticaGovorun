@@ -209,6 +209,7 @@
     <ClCompile Include="RecognizeSpeechSphinxTester.cpp" />
     <ClCompile Include="ResampleAudioTester.cpp" />
     <ClCompile Include="SliceTester.cpp" />
+    <ClCompile Include="SphinxIfRunner.cpp" />
     <ClCompile Include="StressedSyllableRunner.cpp" />
     <ClCompile Include="UkrainianPhoneticSplitterRunner.cpp" />
   </ItemGroup>

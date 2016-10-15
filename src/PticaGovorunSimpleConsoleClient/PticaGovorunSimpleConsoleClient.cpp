@@ -26,6 +26,7 @@ namespace UkrainianPhoneticSplitterNS { void run(); }
 namespace RunBuildLanguageModelNS { void runMain(int argc, wchar_t* argv[]); }
 namespace PrepareSphinxTrainDataNS { void run(); }
 namespace DslDictionaryConvertRunnerNS { void run(); }
+namespace SphinxIfRunnerNS { void run(); }
 
 int mainCore(int argc, char* argv[])
 {
@@ -53,10 +54,11 @@ int mainCore(int argc, char* argv[])
 	//RunPrepareTrainModelSphinxNS::run();
 	//PdfReaderRunnerNS::run();
 	//RunTextParserNS::run();
-	UkrainianPhoneticSplitterNS::run();
+	//UkrainianPhoneticSplitterNS::run();
 	//RunBuildLanguageModelNS::runMain(argc, argv);
 	//RecognizeSpeechInBatchTester::runMain(argc, argv);
 	//DslDictionaryConvertRunnerNS::run();
+	SphinxIfRunnerNS::run();
 	return 0;
 }
 

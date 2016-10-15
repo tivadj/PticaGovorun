@@ -1,5 +1,6 @@
-#include <sstream>
+﻿#include <sstream>
 #include <ctime>
+#include <array>
 #include <memory>
 
 #include <QStandardPaths>
@@ -15,6 +16,7 @@
 #include <pocketsphinx.h>
 #include <pocketsphinx_internal.h> // ps_decoder_s
 #include <fe_internal.h> // fe_s
+#include "SphinxIf.h"
 #endif
 
 
@@ -533,18 +535,19 @@ namespace PticaGovorun
 		std::tie(frameLeft, frameRight) = getSampleRangeToPlay(cursor_.first, SegmentStartFrameToPlayChoice::SegmentBegin, nullptr);
 
 		long len = frameRight - frameLeft;
+		gsl::span<short> curSeg = audioSamples_;
+		curSeg = curSeg.subspan(frameLeft, len);
 	
-		audioSegmentBuffer_.resize(len);
-		std::copy_n(&audioSamples_[frameLeft], len, audioSegmentBuffer_.data());
-		bool writeOp;
-		std::string msg;
-		tie(writeOp, msg) = PticaGovorun::writeAllSamplesWav(&audioSamples_[frameLeft], len, "currentRange.wav", audioSampleRate_);
-		if (!writeOp)
+		//auto outFilePath = boost::filesystem::absolute("currentRange.wav");
+		auto outFilePath = boost::filesystem::absolute(u8"忠犬ハチ公");
+		ErrMsgList errMsg;
+		if (!writeAllSamplesWav(curSeg, audioSampleRate_, outFilePath, &errMsg))
 		{
-			nextNotification(QString::fromStdString(msg));
+			nextNotification(combineErrorMessages(errMsg));
 			return;
 		}
-		nextNotification(QString("Wrote %1 frames to file").arg(len));
+		auto msg = str(boost::format("Wrote %1% samples to file: %2%") % len % outFilePath.string());
+		nextNotification(utf8ToQString(msg));
 #else
 		nextNotification(QString("LibSndFile is not compiled in. Define WITH_LIBSNDFILE"));
 #endif
@@ -1696,8 +1699,132 @@ namespace PticaGovorun
 		// redraw current segment
 		emit audioSamplesChanged();
 	}
-
 #endif
+
+	// Sphinx voice activity detection parameters
+	float WindowLength = 0.025625;
+	float FrameRate = 100; // frames per second
+	float PreSpeech = 20;
+	float PostSpeech = 50;
+	float StartSpeech = 10;
+	float VadThreashold = 2;
+
+	void SpeechTranscriptionViewModel::uiToolVoiceActivityControlPanel(QKeyEvent* ke)
+	{
+		struct FieldDescr
+		{
+			const char* Name;
+			float* FieldPtr;
+			float MinValue;
+			float Delta;
+		};
+		static int fieldInd = 0;
+		static std::array<FieldDescr, 4> fieldDescrs = { 
+			FieldDescr {"PreSpeech", &PreSpeech, 0, 1},
+			FieldDescr {"PostSpeech", &PostSpeech, 0, 1 },
+			FieldDescr {"StartSpeech", &StartSpeech, 0, 1 },
+			FieldDescr {"VadThreashold", &VadThreashold, 0, 0.1f}
+		};
+
+		if (ke->key() == Qt::Key_Equal || ke->key() == Qt::Key_Minus)
+		{
+			const auto& descr = fieldDescrs[fieldInd];
+			auto change = descr.Delta;
+
+			if (ke->key() == Qt::Key_Minus)
+				change = -change;
+
+			auto newValue = *descr.FieldPtr + change;
+			if (newValue < descr.MinValue)
+				return;
+			
+			*descr.FieldPtr = newValue;
+			nextNotification(QString("%1: %2, d: %3").arg(descr.Name).arg(*descr.FieldPtr).arg(change));
+
+			diagramSegments_.clear();
+			detectVoiceActivitySphinxRequest();
+		}
+		else if (ke->key() == Qt::Key_0)
+		{
+			if (++fieldInd >= fieldDescrs.size())
+				fieldInd = 0;
+			const auto& descr = fieldDescrs[fieldInd];
+			nextNotification(QString("Field %1: %2").arg(descr.Name).arg(*descr.FieldPtr));
+		}
+	}
+
+	void SpeechTranscriptionViewModel::detectVoiceActivitySphinxRequest()
+	{
+		long curSegBeg;
+		long curSegEnd;
+		std::tie(curSegBeg, curSegEnd) = getSampleRangeToPlay(currentSampleInd(), SegmentStartFrameToPlayChoice::SegmentBegin);
+		auto len = curSegEnd - curSegBeg;
+
+		gsl::span<short> curSeg = audioSamples_;
+		curSeg = curSeg.subspan(curSegBeg, len);
+
+		// default Sphinx sampling rate
+		// by now, stick to this, otherwise nfft points should also be changed
+		float sphinxSampleRate = 16000;
+
+		// convert to sample frequency required by Sphinx
+		double convertRatio = sphinxSampleRate / audioSampleRate_;
+		std::vector<short> resampledWave;
+		ErrMsgList errMsg;
+		if (!resampleFrames(curSeg, audioSampleRate_, sphinxSampleRate, resampledWave, &errMsg))
+		{
+			nextNotification(combineErrorMessages(errMsg));
+			return;
+		}
+
+		curSeg = resampledWave;
+
+		SphinxVadParams vadArgs;
+		vadArgs.WindowLength = WindowLength;
+		vadArgs.FrameRate = FrameRate;
+		vadArgs.PreSpeech = PreSpeech;
+		vadArgs.PostSpeech = PostSpeech;
+		vadArgs.StartSpeech = StartSpeech;
+		vadArgs.VadThreashold = VadThreashold;
+		//vadArgs.WindowLength = 0.025625;
+		//vadArgs.FrameRate = 100;
+		//vadArgs.PreSpeech = 20;
+		//vadArgs.PostSpeech = 50;
+		//vadArgs.StartSpeech = 10;
+		//vadArgs.VadThreashold = 2.0f;
+
+		int frameSize = sphinxSampleRate * vadArgs.WindowLength;
+		int frameShift = sphinxSampleRate / vadArgs.FrameRate;
+
+		std::vector<SegmentSpeechActivity> activity;
+		if (!detectVoiceActivitySphinx(curSeg, sphinxSampleRate, vadArgs, activity, &errMsg))
+		{
+			pushErrorMsg(&errMsg, [](ErrMsgList& newErr)
+			{
+				newErr.utf8Msg = "Voice Activity Detection failed";
+			});
+			nextNotification(combineErrorMessages(errMsg));
+			return;
+		}
+
+		// fix sample indices to correspond to the signal before resampling
+		for (auto& act : activity)
+		{
+			act.StartSampleInd /= convertRatio;
+			act.EndSampleInd /= convertRatio;
+		}
+
+		//
+		DiagramSegment diagSeg;
+		diagSeg.SampleIndBegin = curSegBeg;
+		diagSeg.SampleIndEnd = curSegEnd;
+		diagSeg.RecogAlignedPhonemeSeqPadded = false;
+		diagSeg.VoiceActivity = std::move(activity);
+		diagramSegments_.push_back(diagSeg);
+
+		// redraw current segment
+		emit audioSamplesChanged();
+	}
 
 	void SpeechTranscriptionViewModel::dumpSilence(long i1, long i2)
 	{

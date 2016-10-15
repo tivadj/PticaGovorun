@@ -55,6 +55,9 @@ private:
 	// Draw recognized words boundaries.
 	void drawWordSeparatorsAndNames(QPainter& painter, long firstWordSampleIndOffset, const std::vector<PticaGovorun::AlignedWord>& wordBounds, float laneOffsetDocX, int separatorTopY, int separatorBotY);
 
+	/// Draw VAD (Voice Activity Detection).
+	void drawVoiceActivity(QPainter& painter, ptrdiff_t firstSampleIndOffset, gsl::span<const PticaGovorun::SegmentSpeechActivity>& speechPresence, float laneOffsetDocX, int separatorTopY, int separatorBotY);
+
 	// Draws visual elements associated with the segment of samples.
 	void drawDiagramSegment(QPainter& painter, const QRect& viewportRect, const PticaGovorun::DiagramSegment& diagItem, float laneOffsetDocX);
 
