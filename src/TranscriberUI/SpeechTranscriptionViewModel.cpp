@@ -1086,18 +1086,24 @@ namespace PticaGovorun
 		}
 	}
 
-	void SpeechTranscriptionViewModel::insertNewMarkerAtCursorRequest()
+	void SpeechTranscriptionViewModel::insertNewMarkerAtCursorRequest(bool isShortSilMarker)
 	{
-		long curFrameInd = currentSampleInd();
-		if (curFrameInd == PticaGovorun::NullSampleInd)
+		long curSampleInd = currentSampleInd();
+		if (curSampleInd == PticaGovorun::NullSampleInd)
 			return;
+
+		if (isShortSilMarker)
+			templateMarkerLevelOfDetail_ = MarkerLevelOfDetail::Phone;
 
 		PticaGovorun::TimePointMarker newMarker;
 		newMarker.Id = PticaGovorun::NullSampleInd;
-		newMarker.SampleInd = curFrameInd;
+		newMarker.SampleInd = curSampleInd;
 		newMarker.IsManual = true;
 		newMarker.LevelOfDetail = templateMarkerLevelOfDetail_;
 		newMarker.StopsPlayback = getDefaultMarkerStopsPlayback(templateMarkerLevelOfDetail_);
+		// marker defines silence region inside current speech segment
+		if (isShortSilMarker)
+			newMarker.TranscripText = toQString(fillerSingleSpace());
 
 		insertNewMarker(newMarker, true, false);
 	}

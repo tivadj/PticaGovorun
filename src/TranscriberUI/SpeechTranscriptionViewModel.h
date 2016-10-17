@@ -321,7 +321,7 @@ public:
 	template <typename MarkerPred>
 	void transformMarkersIf(const std::vector<PticaGovorun::TimePointMarker>& markers, std::vector<MarkerRefToOrigin>& markersOfInterest, MarkerPred canSelectMarker);
 
-	void insertNewMarkerAtCursorRequest();
+	void insertNewMarkerAtCursorRequest(bool isShortSilMarker);
 
 	void insertNewMarker(const PticaGovorun::TimePointMarker& marker, bool updateCursor, bool updateViewportOffset);
 

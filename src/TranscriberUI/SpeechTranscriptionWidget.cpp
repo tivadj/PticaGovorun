@@ -381,7 +381,10 @@ namespace PticaGovorun
 		else if (ke->key() == Qt::Key_Minus && ke->nativeVirtualKey() == 0x6D) // NumPad_Minus
 			transcriberModel_->decreaseLanesCountRequest();
 		else if (ke->key() == Qt::Key_Insert)
-			transcriberModel_->insertNewMarkerAtCursorRequest();
+		{
+			bool isShortSilMarker = ke->modifiers().testFlag(Qt::ControlModifier);
+			transcriberModel_->insertNewMarkerAtCursorRequest(isShortSilMarker);
+		}
 		else if (ke->key() == Qt::Key_Delete)
 			transcriberModel_->deleteRequest(ke->modifiers().testFlag(Qt::ControlModifier));
 		else if (ke->key() == Qt::Key_T && ke->modifiers().testFlag(Qt::ControlModifier))
