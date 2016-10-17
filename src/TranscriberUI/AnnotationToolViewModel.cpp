@@ -96,7 +96,7 @@ namespace PticaGovorun
 			if (transcrModel != nullptr)
 			{
 				auto recentAudioFilePath = boost::filesystem::relative(transcrModel->annotFilePath(), projDir);
-				audioFileRelPath = projDir / recentAudioFilePath;
+				audioFileRelPath = recentAudioFilePath;
 			}
 
 			settings.setValue(RecentAnnotFileRelPath,toQStringBfs(audioFileRelPath));
