@@ -69,10 +69,16 @@ namespace PticaGovorun
 	{
 		// prohibit accidental overwriting of word from one dictionary with a value from other dictionary
 		auto wordDerivedFromDict = editedWordSourceDictionary_;
-		if ((wordDerivedFromDict == "persian" || wordDerivedFromDict == "broken") && wordDerivedFromDict != dictId)
+
+		bool mayOverwriteWord = wordDerivedFromDict != dictId;
+		if (mayOverwriteWord)
 		{
-			qDebug() << "The word already exist in the dictionary. Edit the existing word instead.";
-			return;
+			bool hasWord = speechData_->findPhoneticWord(dictId, word.toStdWString()) != nullptr;
+			if (hasWord)
+			{
+				qDebug() << "The word already exist in the dictionary. Edit the existing word instead.";
+				return;
+			}
 		}
 
 		QString errMsg;
