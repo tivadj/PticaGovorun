@@ -145,7 +145,7 @@ namespace PticaGovorun
 		void langModelRecoverUsageOfUnusedWords(const std::vector<PhoneticWord> vocabWords, UkrainianPhoneticSplitter& phoneticSplitter, bool includeBrokenWords, std::map<int, ptrdiff_t>& wordPartIdToRecoveredUsage);
 
 		//
-		void loadAudioAnnotation(const wchar_t* wavRootDir, const wchar_t* annotRootDir, const wchar_t* wavDirToAnalyze, bool includeBrownBear, bool removeSilenceAnnot);
+		void loadAudioAnnotation(const wchar_t* wavRootDir, const wchar_t* annotRootDir, const wchar_t* wavDirToAnalyze, bool includeBrownBear, bool removeSilenceAnnot, bool padSilStart, bool padSilEnd);
 		std::tuple<bool, const char*> partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly,
 			std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds);
 
@@ -161,8 +161,9 @@ namespace PticaGovorun
 		bool writeFileIdAndTranscription(const std::vector<details::AssignedPhaseAudioSegment>& segRefs, ResourceUsagePhase targetPhase,
 			const QString& fileIdsFilePath,
 			std::function<auto (boost::wstring_view)->boost::wstring_view> pronCodeDisplay,
-			const QString& transcriptionFilePath);
-		void buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segRefs, float targetSampleRate, bool padSilence, float minSilDurMs);
+			const QString& transcriptionFilePath,
+			bool padSilStart, bool padSilEnd);
+		void buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segRefs, float targetSampleRate, bool padSilStart, bool padSilEnd, float minSilDurMs, bool cutSilVad);
 
 		void generateDataStat(const std::vector<details::AssignedPhaseAudioSegment>& phaseAssignedSegs);
 		

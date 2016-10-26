@@ -15,6 +15,7 @@
 #include "LangStat.h"
 #include "assertImpl.h"
 #include "AppHelpers.h"
+#include "G729If.h"
 
 namespace PticaGovorun
 {
@@ -715,18 +716,20 @@ namespace PticaGovorun
 		const char* ConfigRandSeed = "randSeed";
 		const char* ConfigSwapTrainTestData = "swapTrainTestData";
 		const char* ConfigIncludeBrownBear = "includeBrownBear";
-		const char* ConfigOutputWav = "outputWav";
 		const char* ConfigGramDim = "gramDim";
 		const char* ConfigOutputCorpus = "textWorld.outputCorpus";
-		const char* ConfigPadSilence = "padSilence";
 		const char* ConfigRemoveSilenceAnnot = "removeSilenceAnnot";
-		const char* ConfigMinSilDurMs = "minSilDurMs";
 		const char* ConfigTrainCasesRatio = "trainCasesRatio";
 		const char* ConfigUseBrokenPronsInTrainOnly = "useBrokenPronsInTrainOnly";
 		const char* ConfigAllowSoftHardConsonant = "allowSoftHardConsonant";
 		const char* ConfigAllowVowelStress = "allowVowelStress";
 		const char* ConfigMinWordPartUsage = "minWordPartUsage";
 		const char* ConfigMaxUnigramsCount = "maxUnigramsCount";
+		const char* ConfigAudOutputWav     = "aud.outputWav";
+		const char* ConfigAudCutSilenceVad = "aud.cutSilVad";
+		const char* ConfigAudPadSilStart   = "aud.padSilStart";
+		const char* ConfigAudPadSilEnd     = "aud.padSilEnd";
+		const char* ConfigAudMinSilDurMs   = "aud.minSilDurMs";
 
 		QString speechProjDirPath = AppHelpers::configParamQString(ConfigSpeechModelDir, "ERROR_path_does_not_exist");
 		speechProjDir_ = QDir(speechProjDirPath);
@@ -740,7 +743,6 @@ namespace PticaGovorun
 		int randSeed = AppHelpers::configParamInt(ConfigRandSeed, 1932);
 		bool swapTrainTestData = AppHelpers::configParamBool(ConfigSwapTrainTestData, false); // swaps train/test portions of data, so that opposite data can be tested when random generator's seed is fixed
 		bool includeBrownBear = AppHelpers::configParamBool(ConfigIncludeBrownBear, false);
-		bool outputWav = AppHelpers::configParamBool(ConfigOutputWav, true);
 #if !(defined(PG_HAS_LIBSNDFILE) && defined(PG_HAS_SAMPLERATE))
 		if (outputWav)
 		{
@@ -752,9 +754,12 @@ namespace PticaGovorun
 		bool outputPhoneticDictAndLangModelAndTranscript = true;
 		int gramDim = AppHelpers::configParamInt(ConfigGramDim, 2); // 1=unigram, 2=bigram
 		bool outputCorpus = AppHelpers::configParamBool(ConfigOutputCorpus, false);
-		bool padSilence = AppHelpers::configParamBool(ConfigPadSilence, true); // pad the audio segment with the silence segment
 		bool removeSilenceAnnot = AppHelpers::configParamBool(ConfigRemoveSilenceAnnot, true); // remove silence (<sil>, [sp], _s) from audio annotation
-		int minSilDurMs = AppHelpers::configParamInt(ConfigMinSilDurMs, 300); // minimal duration (milliseconds) of flanked silence
+		bool outputWav = AppHelpers::configParamBool(ConfigAudOutputWav, true);
+		bool cutSilVad = AppHelpers::configParamBool(ConfigAudCutSilenceVad, true); // cut silence automatically detected by VAD
+		bool padSilStart = AppHelpers::configParamBool(ConfigAudPadSilStart, true); // pad the audio segment with the silence segment
+		bool padSilEnd = AppHelpers::configParamBool(ConfigAudPadSilEnd, true);
+		int minSilDurMs = AppHelpers::configParamInt(ConfigAudMinSilDurMs, 300); // minimal duration (milliseconds) of flanked silence
 		bool allowSoftHardConsonant = true;
 		bool allowVowelStress = true;
 		PalatalSupport palatalSupport = PalatalSupport::AsHard;
@@ -800,7 +805,7 @@ namespace PticaGovorun
 		std::wstring speechAnnotRootDir = speechProjDir_.filePath("SpeechAnnot").toStdWString();
 		std::wstring wavDirToAnalyze = speechProjDir_.filePath("SpeechAudio").toStdWString();
 
-		loadAudioAnnotation(speechWavRootDir.c_str(), speechAnnotRootDir.c_str(), wavDirToAnalyze.c_str(), includeBrownBear, removeSilenceAnnot);
+		loadAudioAnnotation(speechWavRootDir.c_str(), speechAnnotRootDir.c_str(), wavDirToAnalyze.c_str(), includeBrownBear, removeSilenceAnnot, padSilStart, padSilEnd);
 		std::wcout << "Found annotated segments: " << segments_.size() << std::endl; // debug
 		if (segments_.empty())
 		{
@@ -994,8 +999,8 @@ namespace PticaGovorun
 			fixWavSegmentOutputPathes(audioSrcRootDir, audioOutDirPath, ResourceUsagePhase::Train, outDirWavTrain, phaseAssignedSegs);
 			fixWavSegmentOutputPathes(audioSrcRootDir, audioOutDirPath, ResourceUsagePhase::Test, outDirWavTest, phaseAssignedSegs);
 
-			writeFileIdAndTranscription(phaseAssignedSegs, ResourceUsagePhase::Train, filePath(dataPartNameTrain + ".fileids"), pronCodeDisplayTrain, filePath(dataPartNameTrain + ".transcription"));
-			writeFileIdAndTranscription(phaseAssignedSegs, ResourceUsagePhase::Test, filePath(dataPartNameTest + ".fileids"), pronCodeDisplayTest, filePath(dataPartNameTest + ".transcription"));
+			writeFileIdAndTranscription(phaseAssignedSegs, ResourceUsagePhase::Train, filePath(dataPartNameTrain + ".fileids"), pronCodeDisplayTrain, filePath(dataPartNameTrain + ".transcription"), padSilStart, padSilEnd);
+			writeFileIdAndTranscription(phaseAssignedSegs, ResourceUsagePhase::Test, filePath(dataPartNameTest + ".fileids"), pronCodeDisplayTest, filePath(dataPartNameTest + ".transcription"), padSilStart, padSilEnd);
 		}
 
 		// write wavs
@@ -1008,7 +1013,7 @@ namespace PticaGovorun
 				return;
 			}
 
-			buildWavSegments(phaseAssignedSegs, outSampleRate, padSilence, minSilDurMs);
+			buildWavSegments(phaseAssignedSegs, outSampleRate, padSilStart, padSilEnd, minSilDurMs, cutSilVad);
 			if (!errMsg_.isEmpty())
 				return;
 		}
@@ -1025,16 +1030,17 @@ namespace PticaGovorun
 		speechModelConfig[ConfigRandSeed] = QVariant::fromValue(randSeed);
 		speechModelConfig[ConfigSwapTrainTestData] = QVariant::fromValue(swapTrainTestData);
 		speechModelConfig[ConfigIncludeBrownBear] = QVariant::fromValue(includeBrownBear);
-		speechModelConfig[ConfigOutputWav] = QVariant::fromValue(outputWav);
 		speechModelConfig[ConfigGramDim] = QVariant::fromValue(gramDim);
-		speechModelConfig[ConfigPadSilence] = QVariant::fromValue(padSilence);
-		speechModelConfig[ConfigMinSilDurMs] = QVariant::fromValue(minSilDurMs);
 		speechModelConfig[ConfigTrainCasesRatio] = QVariant::fromValue(trainCasesRatio);
 		speechModelConfig[ConfigUseBrokenPronsInTrainOnly] = QVariant::fromValue(useBrokenPronsInTrainOnly);
 		speechModelConfig[ConfigAllowSoftHardConsonant] = QVariant::fromValue(allowSoftHardConsonant);
 		speechModelConfig[ConfigAllowVowelStress] = QVariant::fromValue(allowVowelStress);
 		speechModelConfig[ConfigMinWordPartUsage] = QVariant::fromValue(minWordPartUsage);
 		speechModelConfig[ConfigMaxUnigramsCount] = QVariant::fromValue(maxUnigramsCount);
+		speechModelConfig[ConfigAudOutputWav] = QVariant::fromValue(outputWav);
+		speechModelConfig[ConfigAudPadSilStart] = QVariant::fromValue(padSilStart);
+		speechModelConfig[ConfigAudPadSilEnd] = QVariant::fromValue(padSilEnd);
+		speechModelConfig[ConfigAudMinSilDurMs] = QVariant::fromValue(minSilDurMs);
 		printDataStat(generationDate, speechModelConfig, filePath("dataStats.txt"));
 	}
 
@@ -1661,7 +1667,7 @@ namespace PticaGovorun
 		return std::make_tuple(true, nullptr);
 	}
 
-	void SphinxTrainDataBuilder::loadAudioAnnotation(const wchar_t* wavRootDir, const wchar_t* annotRootDir, const wchar_t* wavDirToAnalyze, bool includeBrownBear, bool removeSilenceAnnot)
+	void SphinxTrainDataBuilder::loadAudioAnnotation(const wchar_t* wavRootDir, const wchar_t* annotRootDir, const wchar_t* wavDirToAnalyze, bool includeBrownBear, bool removeSilenceAnnot, bool padSilStart, bool padSilEnd)
 	{
 		// load audio segments
 		auto segPredBeforeFun = [includeBrownBear](const AnnotatedSpeechSegment& seg) -> bool
@@ -1685,7 +1691,7 @@ namespace PticaGovorun
 		};
 
 		ErrMsgList errMsg;
-		if (!loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, false, removeSilenceAnnot, segPredBeforeFun, segments_, &errMsg))
+		if (!loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, false, removeSilenceAnnot, padSilStart, padSilEnd, segPredBeforeFun, segments_, &errMsg))
 		{
 			errMsg_ = QString("Can't load audio and annotation. %1").arg(combineErrorMessages(errMsg));
 			return;
@@ -1893,7 +1899,8 @@ namespace PticaGovorun
 	bool SphinxTrainDataBuilder::writeFileIdAndTranscription(const std::vector<details::AssignedPhaseAudioSegment>& segsRefs, ResourceUsagePhase targetPhase,
 		const QString& fileIdsFilePath,
 		std::function<auto (boost::wstring_view)->boost::wstring_view> pronCodeDisplay,
-		const QString& transcriptionFilePath)
+		const QString& transcriptionFilePath,
+		bool padSilStart, bool padSilEnd)
 	{
 		QFile fileFileIds(fileIdsFilePath);
 		if (!fileFileIds.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -1928,8 +1935,11 @@ namespace PticaGovorun
 			bool startsSil = segRef.Seg->TranscriptionStartsWithSilence;
 			bool endsSil = segRef.Seg->TranscriptionEndsWithSilence;
 
+			PG_Assert(!startsSil);
+			PG_Assert(!endsSil);
+
 			// transcription
-			if (targetPhase == ResourceUsagePhase::Train && !startsSil)
+			if (padSilStart && targetPhase == ResourceUsagePhase::Train && !startsSil)
 				txtTranscription << startSilQ << " ";
 			
 			// output TranscriptText mangling a pronCode if necessary (eg clothes(2)->clothes2)
@@ -1951,15 +1961,14 @@ namespace PticaGovorun
 				txtTranscription << toQString(sphinxPronCode) << " ";
 			}
 			
-			
-			if (targetPhase == ResourceUsagePhase::Train && !endsSil)
+			if (padSilEnd  && targetPhase == ResourceUsagePhase::Train && !endsSil)
 				txtTranscription << endSilQ << " ";
 			txtTranscription << "(" << segRef.OutAudioSegPathParts.SegFileNameNoExt << ")" << "\n";
 		}
 		return true;
 	}
 
-	void SphinxTrainDataBuilder::buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segsRefs, float targetSampleRate, bool padSilence, float minSilDurMs)
+	void SphinxTrainDataBuilder::buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segsRefs, float targetSampleRate, bool padSilStart, bool padSilEnd, float minSilDurMs, bool cutSilVad)
 	{
 		// group segmets by source wav file, so wav files are read sequentially
 
@@ -2049,6 +2058,34 @@ namespace PticaGovorun
 				gsl::span<const short> segFramesNoPad = srcAudioSamples;
 				segFramesNoPad = segFramesNoPad.subspan(seg.StartMarker.SampleInd, segLen);;
 
+				// remove silence segments using VAD
+				std::vector<short> samplesCutSil;
+				if (cutSilVad)
+				{
+					static const float G729SampleRate = 8000;
+					std::vector<short> samples8k;
+					if (!resampleFrames(segFramesNoPad, srcAudioSampleRate, G729SampleRate, samples8k, &errMsg))
+						return;
+
+					std::vector<SegmentSpeechActivity> activity;
+					if (!detectVoiceActivityG729(samples8k, G729SampleRate, activity, &errMsg))
+						return;
+
+					float sampleRatio = G729SampleRate / srcAudioSampleRate;
+
+					for (const SegmentSpeechActivity& act : activity)
+					{
+						if (act.IsSpeech)
+						{
+							ptrdiff_t startSampleInd = act.StartSampleInd / sampleRatio;
+							ptrdiff_t endSampleInd   = act.EndSampleInd / sampleRatio;
+
+							auto speech = segFramesNoPad.subspan(startSampleInd, endSampleInd - startSampleInd);
+							std::copy(speech.begin(), speech.end(), std::back_inserter(samplesCutSil));
+						}
+					}
+					segFramesNoPad = samplesCutSil;
+				}
 
 				// determine whether to pad the utterance with silence
 				bool startsSil = seg.AudioStartsWithSilence;
@@ -2070,7 +2107,7 @@ namespace PticaGovorun
 					result = result.subspan(start, len);
 					return result;
 				};
-				if (padSilence) // start silence
+				if (padSilStart) // start silence
 				{
 					auto existentSilSize = !startsSil ? 0 : std::min(minSilLenFrames, seg.StartSilenceFramesCount);
 					
@@ -2082,7 +2119,7 @@ namespace PticaGovorun
 
 				std::copy(segFramesNoPad.begin(), segFramesNoPad.end(), std::back_inserter(segFramesPad));
 
-				if (padSilence) // end silence
+				if (padSilEnd) // end silence
 				{
 					auto existentSilSize = !endsSil ? 0 : std::min(minSilLenFrames, seg.EndSilenceFramesCount);
 

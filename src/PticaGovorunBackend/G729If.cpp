@@ -14,9 +14,6 @@ extern "C" {
 
 namespace PticaGovorun
 {
-	// The implementation of G729 codec with Annex B is extended to expose VAD (Voice Activity Detection) functionality.
-	// The original code is here:
-	// https://github.com/opentelecoms-org/codecs/blob/master/g729/siphon-g729/Tests/CODER.C
 	bool detectVoiceActivityG729(gsl::span<const short> samples, float sampRate,  std::vector<SegmentSpeechActivity>& activity, ErrMsgList* errMsg)
 	{
 #ifndef PG_G729ANNEXB_VAD_HACKING

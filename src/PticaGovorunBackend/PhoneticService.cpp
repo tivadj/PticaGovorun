@@ -371,6 +371,7 @@ namespace PticaGovorun
 		phoneReg.newVowelPhone("SIL", false); // SIL
 		//phoneReg.newVowelPhone("SWL", false); // silence with noise
 		phoneReg.newVowelPhone("INH", false); // inhale
+		phoneReg.newVowelPhone("EXH", false); // exhale
 		//phoneReg.newConsonantPhone("CLK", SoftHardConsonant::Hard); // click sound (such as pressed key)
 		phoneReg.newVowelPhone("EEE", false); // filler; gives a speaker the time to think about her answer
 		phoneReg.newVowelPhone("YYY", false); // filler; gives a speaker the time to think about her answer
@@ -3082,6 +3083,11 @@ namespace PticaGovorun
 	boost::wstring_view fillerGlottal()
 	{
 		return L"[glt]";
+	}
+
+	boost::string_view keywordIgnore()
+	{
+		return "_ignore";
 	}
 
 	// Returns number of made transformations or zero if the map was not changed.

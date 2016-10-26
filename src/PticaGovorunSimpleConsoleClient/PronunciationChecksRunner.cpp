@@ -29,7 +29,9 @@ namespace PronunciationChecksRunnerNS
 		auto segPredBeforeFun = [](const AnnotatedSpeechSegment& seg) -> bool { return true; };
 		ErrMsgList errMsg;
 		bool removeSilenceAnnot = true;
-		bool loadOp = loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, false, removeSilenceAnnot, segPredBeforeFun, segments, &errMsg);
+		bool padSilStart = true;
+		bool padSilEnd = true;
+		bool loadOp = loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, false, removeSilenceAnnot, padSilStart, padSilEnd, segPredBeforeFun, segments, &errMsg);
 
 		//
 

@@ -458,7 +458,7 @@ namespace PticaGovorun
 	}
 
 	bool loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir, 
-		MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, bool removeSilenceAnnot, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments, ErrMsgList* errMsg)
+		MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, bool removeSilenceAnnot, bool padSilStart, bool padSilEnd, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments, ErrMsgList* errMsg)
 	{
 		if (folderOrWavFilePath.isDir())
 		{
@@ -468,7 +468,7 @@ namespace PticaGovorun
 			QFileInfoList items = dir.entryInfoList(QDir::Filter::Files | QDir::Filter::Dirs | QDir::Filter::NoDotAndDotDot);
 			for (const QFileInfo item : items)
 			{
-				if (!loadSpeechAndAnnotation(item, wavRootDir, annotRootDir, targetLevelOfDetail, loadAudio, removeSilenceAnnot, segPredBefore, segments, errMsg))
+				if (!loadSpeechAndAnnotation(item, wavRootDir, annotRootDir, targetLevelOfDetail, loadAudio, removeSilenceAnnot, padSilStart, padSilEnd, segPredBefore, segments, errMsg))
 					return false;
 			}
 			return true;
@@ -501,12 +501,22 @@ namespace PticaGovorun
 
 		const std::vector<TimePointMarker>& syncPoints = speechAnnot.markers();
 
-		// take only markers of requested type
-		std::vector<TimePointMarker> markersOfInterest;
-		std::copy_if(std::begin(syncPoints), std::end(syncPoints), std::back_inserter(markersOfInterest), [=](const TimePointMarker& m)
+		struct TimePointMarkerAndItsInd
 		{
-			return m.LevelOfDetail == targetLevelOfDetail;
-		});
+			const TimePointMarker& marker;
+			size_t markerInd; // index of the marker in the collection of markers in speech annotation
+		};
+		// take only markers of requested type
+		std::vector<TimePointMarkerAndItsInd> markersOfInterest;
+		markersOfInterest.reserve(speechAnnot.markersSize());
+		for (size_t i=0; i<speechAnnot.markersSize(); ++i)
+		{
+			const auto& marker = speechAnnot.marker(i);
+			if (marker.LevelOfDetail == targetLevelOfDetail)
+			{
+				markersOfInterest.push_back({ marker, i });
+			}
+		}
 
 		// determine the segment's bounds
 		// if a text segment is flanked with the silence segment then the text segment is aumented with silence
@@ -517,53 +527,62 @@ namespace PticaGovorun
 			// start/end markers may be different from content marker, if text segment is flanked with silence to the start/end
 			const TimePointMarker* StartMarker = nullptr;
 			const TimePointMarker* EndMarker = nullptr;
+			size_t StartMarkerInd = (size_t)-1;
+			size_t EndMarkerInd = (size_t)-1;
 			bool HasStartSilence = false;
 			bool HasEndSilence = false;
-			long StartSilenceFramesCount = 0;
-			long EndSilenceFramesCount = 0;
+			long StartSilenceSamplesCount = 0;
+			long EndSilenceSamplesCount = 0;
 		};
 		ShortPauseUsage shortPauseUsage = ShortPauseUsage::UseAsSilence;
 		QString fillerSilQ = toQString(fillerSilence());
 		QString fillerSpQ = toQString(fillerShortPause());
+		QString fillerSpaceQ = toQString(fillerSingleSpace());
+		QString keywordIgnoreQ = utf8ToQString(keywordIgnore());
 		std::vector<SegmentBlank> blankSegs;
 		for (int i = 0; i < (int)markersOfInterest.size() - 1; ++i)
 		{
-			const auto& marker = markersOfInterest[i];
+			const auto& markerInfo = markersOfInterest[i];
 
-			if (marker.TranscripText.isEmpty()) // ignore empty segments
+			if (markerInfo.marker.TranscripText.isEmpty()) // ignore empty segments
 				continue;
-			if (!includeInTrainOrTest(marker))
+			if (!includeInTrainOrTest(markerInfo.marker))
 				continue;
-			if (marker.TranscripText == fillerSilQ) // skip silence segments, attach it to neighbour text segments
+			if (markerInfo.marker.TranscripText == fillerSilQ) // skip silence segments, attach it to neighbour text segments
 				continue;
-			if (marker.TranscripText == fillerSpQ) // later [sp] is ignored or used as silence
+			if (markerInfo.marker.TranscripText == fillerSpQ) // later [sp] is ignored or used as silence
 				continue;
+
+			const auto& endMarkerInfo = markersOfInterest[i + 1];
 
 			SegmentBlank blankSeg;
-			blankSeg.ContentMarker = &marker;
-			blankSeg.StartMarker = &marker;
-			blankSeg.EndMarker = &markersOfInterest[i + 1];
-			
-			if (i > 0)
+			blankSeg.ContentMarker = &markerInfo.marker;
+			blankSeg.StartMarker = &markerInfo.marker;
+			blankSeg.StartMarkerInd = markerInfo.markerInd;
+			blankSeg.EndMarker = &endMarkerInfo.marker;
+			blankSeg.EndMarkerInd = endMarkerInfo.markerInd;
+
+			if (padSilStart && i > 0)
 			{
-				const auto& prevMarker = markersOfInterest[i - 1];
-				if (prevMarker.TranscripText == fillerSilQ ||
-					prevMarker.TranscripText == fillerSpQ && shortPauseUsage == ShortPauseUsage::UseAsSilence)
+				const auto& prevMarkerInfo = markersOfInterest[i - 1];
+				if (prevMarkerInfo.marker.TranscripText == fillerSilQ ||
+					prevMarkerInfo.marker.TranscripText == fillerSpQ && shortPauseUsage == ShortPauseUsage::UseAsSilence)
 				{
-					blankSeg.StartMarker = &prevMarker;
+					blankSeg.StartMarker = &prevMarkerInfo.marker;
 					blankSeg.HasStartSilence = true;
-					blankSeg.StartSilenceFramesCount = marker.SampleInd - prevMarker.SampleInd;
+					blankSeg.StartSilenceSamplesCount = markerInfo.marker.SampleInd - prevMarkerInfo.marker.SampleInd;
 				}
 			}
-			if (i + 2 < markersOfInterest.size() && (
-				markersOfInterest[i + 1].TranscripText == fillerSilQ ||
-				markersOfInterest[i + 1].TranscripText == fillerSpQ && shortPauseUsage == ShortPauseUsage::UseAsSilence
+			if (padSilEnd &&
+				i + 2 < markersOfInterest.size() && (
+				markersOfInterest[i + 1].marker.TranscripText == fillerSilQ ||
+				markersOfInterest[i + 1].marker.TranscripText == fillerSpQ && shortPauseUsage == ShortPauseUsage::UseAsSilence
 				))
 			{
-				const auto& nextNextMarker = markersOfInterest[i + 2]; // the end of next silence segment
-				blankSeg.EndMarker = &nextNextMarker;
+				const auto& nextNextMarkerInfo = markersOfInterest[i + 2]; // the end of next silence segment
+				blankSeg.EndMarker = &nextNextMarkerInfo.marker;
 				blankSeg.HasEndSilence = true;
-				blankSeg.EndSilenceFramesCount = nextNextMarker.SampleInd - markersOfInterest[i+1].SampleInd;
+				blankSeg.EndSilenceSamplesCount = nextNextMarkerInfo.marker.SampleInd - markersOfInterest[i+1].marker.SampleInd;
 			}
 			blankSegs.push_back(blankSeg);
 		}
@@ -591,13 +610,12 @@ namespace PticaGovorun
 			seg.AudioFilePath = audioFilePath.toStdWString();
 			seg.AudioStartsWithSilence = blankSeg.HasStartSilence;
 			seg.AudioEndsWithSilence = blankSeg.HasEndSilence;
-			seg.StartSilenceFramesCount = blankSeg.StartSilenceFramesCount;
-			seg.EndSilenceFramesCount = blankSeg.EndSilenceFramesCount;
+			seg.StartSilenceFramesCount = blankSeg.StartSilenceSamplesCount;
+			seg.EndSilenceFramesCount = blankSeg.EndSilenceSamplesCount;
 			seg.SampleRate = sampleRateAnnot;
 			QString txt = blankSeg.ContentMarker->TranscripText;
 
-			bool skipShortPause = true;
-			if (skipShortPause)
+			// modify marker's annotation
 			{
 				std::wstring txtW = txt.toStdWString();
 				words.clear();
@@ -605,9 +623,7 @@ namespace PticaGovorun
 				GrowOnlyPinArena<wchar_t> arena(1024);
 				splitUtteranceIntoPronuncList(txtW, arena, words);
 
-				seg.TranscriptionStartsWithSilence = words.front() == fillerStartSilence();
-				seg.TranscriptionEndsWithSilence = words.front() == fillerEndSilence();
-
+				bool skipShortPause = true;
 				for (size_t i = 0; i < words.size(); ++i)
 				{
 					auto word = words[i];
@@ -619,7 +635,7 @@ namespace PticaGovorun
 							word == fillerSingleSpace())
 							continue;
 					}
-					else
+					else if (skipShortPause)
 					{
 						// [sp] -> <sil>, _s -> <sil>
 						if (word == fillerShortPause() || word == fillerSingleSpace())
@@ -630,6 +646,9 @@ namespace PticaGovorun
 					}
 					wordsNoSp.push_back(word);
 				}
+
+				seg.TranscriptionStartsWithSilence = wordsNoSp.front() == fillerStartSilence();
+				seg.TranscriptionEndsWithSilence = wordsNoSp.back() == fillerEndSilence();
 
 				std::wostringstream buf;
 				join(wordsNoSp.begin(), wordsNoSp.end(), boost::wstring_view(L" "), buf);
@@ -665,10 +684,45 @@ namespace PticaGovorun
 					}
 				}
 
-				long frameStart = blankSeg.StartMarker->SampleInd;
-				long frameEnd = blankSeg.EndMarker->SampleInd;
+				std::vector<short> segSamples;
+				segSamples.reserve(blankSeg.EndMarker->SampleInd - blankSeg.StartMarker->SampleInd);
 
-				seg.Samples = std::vector<short>(&audioSamples[frameStart], &audioSamples[frameEnd]);
+				auto pushSamples = [&segSamples,&audioSamples](ptrdiff_t startSampInd, ptrdiff_t endSampInd)
+				{
+					std::copy(&audioSamples[startSampInd], &audioSamples[endSampInd], std::back_inserter(segSamples));
+				};
+
+				// inter-speech silence's segment consists of two phone markers
+				// the first marker has text='_s', the second marker has text='' (empty string).
+				// these regions of silence may be detected using VAD (Voice Activity Detetion)
+				bool removeInterSpeechSilence = removeSilenceAnnot;
+				for (size_t ind = blankSeg.StartMarkerInd; ind < speechAnnot.markersSize()-1; ++ind)
+				{
+					const auto& m1 = speechAnnot.marker(ind);
+					const auto& m2 = speechAnnot.marker(ind + 1);
+
+					if (removeInterSpeechSilence &&
+						m1.LevelOfDetail == MarkerLevelOfDetail::Phone &&
+						m2.LevelOfDetail == MarkerLevelOfDetail::Phone &&
+						m1.TranscripText == fillerSpaceQ)
+					{
+						// skip inter-speech silence
+						continue;
+					}
+					if (m1.LevelOfDetail == MarkerLevelOfDetail::Phone &&
+						m2.LevelOfDetail == MarkerLevelOfDetail::Phone &&
+						m1.TranscripText == keywordIgnoreQ)
+					{
+						// ignore portion of audio due to clicks, noise etc.
+						continue;
+					}
+
+					pushSamples(m1.SampleInd, m2.SampleInd);
+
+					if (m2.Id == blankSeg.EndMarker->Id) // reached the end of a segment
+						break;
+				}
+				seg.Samples = std::move(segSamples);
 			}
 			segments.push_back(seg);
 		}

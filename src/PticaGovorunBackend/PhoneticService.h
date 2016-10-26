@@ -404,4 +404,7 @@ namespace PticaGovorun
 
 	/// [glt] pseudo word.
 	PG_EXPORTS boost::wstring_view fillerGlottal();
+
+	/// _ignore
+	PG_EXPORTS boost::string_view keywordIgnore();
 }
