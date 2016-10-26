@@ -1064,10 +1064,13 @@ namespace PticaGovorun
 
 	std::pair<long, long> SpeechTranscriptionViewModel::cursorOrdered() const
 	{
-		PG_DbgAssert(cursorKind() == TranscriberCursorKind::Range);
-		long start = std::min(cursor_.first, cursor_.second);
-		long end   = std::max(cursor_.first, cursor_.second);
-		return std::make_pair(start,end);
+		if (cursorKind() == TranscriberCursorKind::Range)
+		{
+			long start = std::min(cursor_.first, cursor_.second);
+			long end = std::max(cursor_.first, cursor_.second);
+			return std::make_pair(start, end);
+		}
+		return cursor_;
 	}
 
 	TranscriberCursorKind SpeechTranscriptionViewModel::cursorKind() const
@@ -1088,24 +1091,39 @@ namespace PticaGovorun
 
 	void SpeechTranscriptionViewModel::insertNewMarkerAtCursorRequest(bool isShortSilMarker)
 	{
-		long curSampleInd = currentSampleInd();
-		if (curSampleInd == PticaGovorun::NullSampleInd)
+		long segLeft;
+		long segRight;
+		std::tie(segLeft, segRight) = cursorOrdered();
+		if (segLeft == NullSampleInd)
 			return;
 
 		if (isShortSilMarker)
 			templateMarkerLevelOfDetail_ = MarkerLevelOfDetail::Phone;
 
-		PticaGovorun::TimePointMarker newMarker;
-		newMarker.Id = PticaGovorun::NullSampleInd;
-		newMarker.SampleInd = curSampleInd;
-		newMarker.IsManual = true;
-		newMarker.LevelOfDetail = templateMarkerLevelOfDetail_;
-		newMarker.StopsPlayback = getDefaultMarkerStopsPlayback(templateMarkerLevelOfDetail_);
-		// marker defines silence region inside current speech segment
-		if (isShortSilMarker)
-			newMarker.TranscripText = toQString(fillerSingleSpace());
-
-		insertNewMarker(newMarker, true, false);
+		auto levelOfDetail = templateMarkerLevelOfDetail_;
+		auto initMarker = [levelOfDetail](auto& newMarker)
+		{
+			newMarker.Id = NullSampleInd;
+			newMarker.IsManual = true;
+			newMarker.LevelOfDetail = levelOfDetail;
+			newMarker.StopsPlayback = getDefaultMarkerStopsPlayback(levelOfDetail);
+		};
+		{
+			TimePointMarker newMarker;
+			initMarker(newMarker);
+			newMarker.SampleInd = segLeft;
+			// marker defines silence region inside current speech segment
+			if (isShortSilMarker)
+				newMarker.TranscripText = toQString(fillerSingleSpace());
+			insertNewMarker(newMarker, false, false);
+		}
+		if (segRight != NullSampleInd)
+		{
+			TimePointMarker newMarker;
+			initMarker(newMarker);
+			newMarker.SampleInd = segRight;
+			insertNewMarker(newMarker, true, false);
+		}
 	}
 
 	void SpeechTranscriptionViewModel::insertNewMarker(const PticaGovorun::TimePointMarker& marker, bool updateCursor, bool updateViewportOffset)
