@@ -217,20 +217,16 @@ namespace PticaGovorun
 	}
 
 	/// Adds a message to a list of error messages.
-	/// The 'topErrMsg' pointer is changed to point to the new message.
-	template <typename ErrorMsgInitializer>
-	void pushErrorMsg(ErrMsgList* topErrMsg, ErrorMsgInitializer newMsgInitFun)
+	/// The <b>topErrMsg</b> pointer is changed to point to the new message.
+	inline void pushErrorMsg(ErrMsgList* topErrMsg, boost::string_view msg)
 	{
-		//static_assert([]() { static_cast<ErrorMsgInitializer*>(nullptr)->operator()(ErrMsgList{}); return true; }(), "failed function signature: fn ErrorMsgInitializer(ErrMsgList&)->void");
 		if (topErrMsg == nullptr)
 			return;
 
 		ErrMsgList newTopMsg;
-		newMsgInitFun(newTopMsg);
-
+		newTopMsg.utf8Msg.assign(msg.data(), msg.size());
 		newTopMsg.next = std::make_unique<ErrMsgList>();
 		*newTopMsg.next = std::move(*topErrMsg);
 		*topErrMsg = std::move(newTopMsg);
 	}
-
 }

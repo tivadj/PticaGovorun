@@ -4,9 +4,10 @@
 #include <map>
 #include <random>
 #include <chrono> // std::chrono::system_clock
+#include <boost/format.hpp>
+#include <boost/algorithm/string/join.hpp>
 #include <QDir>
 #include <QDateTime>
-#include <boost/algorithm/string/join.hpp>
 #include "SpeechProcessing.h"
 #include "PhoneticService.h"
 #include "WavUtils.h"
@@ -789,7 +790,8 @@ namespace PticaGovorun
 		speechData_->setStringArena(stringArena_);
 		speechData_->ensureDataLoaded();
 		QStringList errMsgList;
-		if (!speechData_->validate(&errMsgList))
+		bool skipValidation = includeBrownBear; // for now, do not validate if multiple dictionaries must be merged
+		if (!skipValidation && !speechData_->validate(&errMsgList))
 		{
 			errMsg_ = errMsgList.join('\n');
 			return;
@@ -853,11 +855,11 @@ namespace PticaGovorun
 
 		std::vector<details::AssignedPhaseAudioSegment> phaseAssignedSegs;
 		std::set<PhoneId> trainPhoneIds;
-		const char* errMsg;
-		std::tie(op, errMsg) = partitionTrainTestData(segments_, trainCasesRatio, swapTrainTestData, useBrokenPronsInTrainOnly, phaseAssignedSegs, trainPhoneIds);
-		if (!op)
+		ErrMsgList errMsgL;
+		if (!partitionTrainTestData(segments_, trainCasesRatio, swapTrainTestData, useBrokenPronsInTrainOnly, phaseAssignedSegs, trainPhoneIds, &errMsgL))
 		{
-			errMsg_ = "Can't fix train/test partitioning";
+			pushErrorMsg(&errMsgL, "Can't fix train/test partitioning");
+			errMsg_ = combineErrorMessages(errMsgL);
 			return;
 		}
 
@@ -905,6 +907,7 @@ namespace PticaGovorun
 			//
 			std::wstring stressDict = speechProjDir_.filePath("LM/stressDictUk.xml").toStdWString();
 			std::unordered_map<std::wstring, int> wordToStressedSyllable;
+			const char* errMsg;
 			std::tie(op, errMsg) = loadStressedSyllableDictionaryXml(stressDict, wordToStressedSyllable);
 			if (!op)
 			{
@@ -1049,13 +1052,12 @@ namespace PticaGovorun
 		// load phonetic vocabularies
 		if (includeBrownBear)
 		{
-			bool loadOp;
-			const char* errMsg = nullptr;
-			std::wstring brownBearDictPath = AppHelpers::mapPath("data/PhoneticDict/phoneticBrownBear.xml").toStdWString();
-			std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(brownBearDictPath, phoneReg_, phoneticDictWordsBrownBear_, *stringArena_);
-			if (!loadOp)
+			ErrMsgList errMsg;
+			auto brownBearDictPath = speechData_->speechProjDir() / "PhoneticDict/phoneticBrownBear.xml";
+			if (!loadPhoneticDictionaryXml(brownBearDictPath, phoneReg_, phoneticDictWordsBrownBear_, *stringArena_, &errMsg))
 			{
-				errMsg_ = QString("Can't load phonetic dictionary. %1").arg(errMsg);
+				pushErrorMsg(&errMsg, "Can't load phonetic dictionary");
+				errMsg_ = combineErrorMessages(errMsg);
 				return;
 			}
 		}
@@ -1097,8 +1099,8 @@ namespace PticaGovorun
 		ptrdiff_t unigramTotalUsageCounter = wordsTotalUsage(wordUsage, vocabWords, nullptr);
 		std::wcout << "unigramTotalUsageCounter (based on text corpus): " << unigramTotalUsageCounter << std::endl; // debug
 
-		// [clk], [inh], [eee], [yyy], [glt]
-		auto syntaticProns = { fillerClick(), fillerInhale(), fillerEee(), fillerYyy(), fillerGlottal() };
+		// [inh], [eee], [yyy] etc.
+		auto syntaticProns = { fillerInhale(), fillerExhale(), fillerEee(), fillerYyy() };
 
 		static const float FillerInhaleProb = 0.01;
 		float ReservedSpace = FillerInhaleProb * syntaticProns.size();
@@ -1111,7 +1113,7 @@ namespace PticaGovorun
 		for (boost::wstring_view word : syntaticProns)
 		{
 			WordPart* wordPart = wordUsage.wordPartByValue(toStdWString(word), WordPartSide::WholeWord);
-			PG_Assert(wordPart != nullptr);
+			PG_Assert2(wordPart != nullptr, word.data());
 			WordSeqUsage* usage = wordUsage.getOrAddWordSequence(WordSeqKey{ wordPart->id() });
 			PG_Assert2(usage->UsedCount == 0, "There must be only one source of usage");
 
@@ -1698,7 +1700,7 @@ namespace PticaGovorun
 		}
 	}
 
-	std::tuple<bool, const char*> SphinxTrainDataBuilder::partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly, std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds)
+	bool SphinxTrainDataBuilder::partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly, std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds, ErrMsgList* errMsg)
 	{
 		// partition train-test data
 		std::vector<std::reference_wrapper<const AnnotatedSpeechSegment>> rejectedSegments;
@@ -1752,14 +1754,14 @@ namespace PticaGovorun
 		if (!rejectedSegments.empty()) // TODO: print rejected segment: annot file path, segment IDs
 			std::wcout << "Rejected segments: " << rejectedSegments.size() << std::endl; // info
 
-		return putSentencesWithRarePhonesInTrain(outSegRefs, trainPhoneIds);
+		return putSentencesWithRarePhonesInTrain(outSegRefs, trainPhoneIds, errMsg);
 	}
 
 	// Fix train/test split so that if a (rare) phone exist only in one data set, then this is the Test data set.
 	// This is necessary for the rare phones to end up in the train data set. Otherwise Sphinx emits warning and errors:
 	// WARNING: "accum.c", line 633: The following senones never occur in the input data...
 	// WARNING: "main.c", line 145: No triphones involving DZ1
-	std::tuple<bool, const char*> SphinxTrainDataBuilder::putSentencesWithRarePhonesInTrain(std::vector<details::AssignedPhaseAudioSegment>& segments, std::set<PhoneId>& trainPhoneIds) const
+	bool SphinxTrainDataBuilder::putSentencesWithRarePhonesInTrain(std::vector<details::AssignedPhaseAudioSegment>& segments, std::set<PhoneId>& trainPhoneIds, ErrMsgList* errMsg) const
 	{
 		PhoneAccumulator trainAcc;
 		PhoneAccumulator testAcc;
@@ -1777,7 +1779,10 @@ namespace PticaGovorun
 			{
 				const PronunciationFlavour* pron = expandWellKnownPronCode(pronCode, true);
 				if (pron == nullptr)
-					return std::make_tuple(false, "Can't map pronCode into phonelist");
+				{
+					if (errMsg != nullptr) errMsg->utf8Msg = toUtf8StdString(str(boost::wformat(L"Can't map pronCode %1% into phonelist") % pronCode));
+					return false;
+				}
 				acc.addPhones(pron->Phones);
 			}
 		}
@@ -1833,7 +1838,7 @@ namespace PticaGovorun
 		if (testToTrainMove > 0)
 			std::wcout << L"Moved " << testToTrainMove << L" sentences with rare phones to Train portion" << std::endl; // info
 
-		return std::make_tuple(true, nullptr);
+		return true;
 	}
 
 

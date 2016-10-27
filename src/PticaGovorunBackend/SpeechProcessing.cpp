@@ -671,10 +671,7 @@ namespace PticaGovorun
 					float sampleRateAudio;
 					if (!readAllSamplesFormatAware(audioFilePath.toStdWString(), audioSamples, &sampleRateAudio, errMsg))
 					{
-						pushErrorMsg(errMsg, [&audioFilePath](ErrMsgList& newErr)
-						{
-							newErr.utf8Msg = std::string("Can't read wav file: ") + audioFilePath.toUtf8().toStdString();
-						});
+						pushErrorMsg(errMsg, std::string("Can't read wav file: ") + audioFilePath.toUtf8().toStdString());
 						return false;
 					}
 					if (sampleRateAnnot != sampleRateAudio)

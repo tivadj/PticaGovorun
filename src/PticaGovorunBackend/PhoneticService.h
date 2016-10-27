@@ -251,7 +251,7 @@ namespace PticaGovorun
 		const QTextCodec& textCodec, std::vector<PhoneticWord>& words, std::vector<std::string>& brokenLines,
 		GrowOnlyPinArena<wchar_t>& stringArena);
 
-	PG_EXPORTS std::tuple<bool, const char*> loadPhoneticDictionaryXml(boost::wstring_view filePath, const PhoneRegistry& phoneReg, std::vector<PhoneticWord>& phoneticDict, GrowOnlyPinArena<wchar_t>& stringArena);
+	PG_EXPORTS bool loadPhoneticDictionaryXml(const boost::filesystem::path& filePath, const PhoneRegistry& phoneReg, std::vector<PhoneticWord>& phoneticDict, GrowOnlyPinArena<wchar_t>& stringArena, ErrMsgList* errMsg);
 	PG_EXPORTS std::tuple<bool, const char*> savePhoneticDictionaryXml(const std::vector<PhoneticWord>& phoneticDict, boost::wstring_view filePath, const PhoneRegistry& phoneReg);
 
 
@@ -393,17 +393,14 @@ namespace PticaGovorun
 	// [inh] pseudo word.
 	PG_EXPORTS boost::wstring_view fillerInhale();
 
+	// [exh] pseudo word.
+	PG_EXPORTS boost::wstring_view fillerExhale();
+
 	// [eee] (latin 'e') pseudo word.
 	PG_EXPORTS boost::wstring_view fillerEee();
 
 	// [yyy] (latin 'y') pseudo word.
 	PG_EXPORTS boost::wstring_view fillerYyy();
-
-	/// [clk] pseudo word.
-	PG_EXPORTS boost::wstring_view fillerClick();
-
-	/// [glt] pseudo word.
-	PG_EXPORTS boost::wstring_view fillerGlottal();
 
 	/// _ignore
 	PG_EXPORTS boost::string_view keywordIgnore();

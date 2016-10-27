@@ -45,11 +45,10 @@ namespace PhoneticSpellerTestsNS
 		GrowOnlyPinArena<wchar_t> stringArena(10000);
 		std::vector<PhoneticWord> wordTranscrip;
 		std::vector<std::string> brokenLines;
-		//std::tie(loadOp, errMsg) = loadPhoneticDictionaryPronIdPerLine(shrekkyDic, phoneReg, *pTextCodec, wordTranscrip, brokenLines);
-		std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(knownDict, phoneReg, wordTranscrip, stringArena);
-		if (!loadOp)
+		ErrMsgList errMsgL;
+		if (!loadPhoneticDictionaryXml(knownDict, phoneReg, wordTranscrip, stringArena, &errMsgL))
 		{
-			std::cerr << errMsg << std::endl;
+			std::cerr << str(errMsgL) << std::endl;
 			return;
 		}
 

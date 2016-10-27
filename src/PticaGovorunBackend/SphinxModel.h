@@ -146,11 +146,11 @@ namespace PticaGovorun
 
 		//
 		void loadAudioAnnotation(const wchar_t* wavRootDir, const wchar_t* annotRootDir, const wchar_t* wavDirToAnalyze, bool includeBrownBear, bool removeSilenceAnnot, bool padSilStart, bool padSilEnd);
-		std::tuple<bool, const char*> partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly,
-			std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds);
+		bool partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly,
+			std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds, ErrMsgList* errMsg);
 
 		// Ensures that the test phoneset is a subset of train phoneset.
-		std::tuple<bool, const char*> putSentencesWithRarePhonesInTrain(std::vector<details::AssignedPhaseAudioSegment>& segments, std::set<PhoneId>& trainPhoneIds) const;
+		bool putSentencesWithRarePhonesInTrain(std::vector<details::AssignedPhaseAudioSegment>& segments, std::set<PhoneId>& trainPhoneIds, ErrMsgList* errMsg) const;
 		
 		void fixWavSegmentOutputPathes(const QString& audioSrcRootDir,
 			const QString& wavBaseOutDir,

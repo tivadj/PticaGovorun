@@ -33,33 +33,25 @@ namespace PticaGovorun
 
 	void SpeechData::ensurePhoneticDictionaryLoaded()
 	{
+		ErrMsgList errMsg;
 		if (phoneticDictWellFormed_.empty())
 		{
-			bool loadOp;
-			const char* errMsg;
-			std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(persianDictPath().wstring(), *phoneReg_, phoneticDictWellFormedWords_, *stringArena_);
-			if (!loadOp)
-				qDebug(errMsg);
+			if (!loadPhoneticDictionaryXml(persianDictPath(), *phoneReg_, phoneticDictWellFormedWords_, *stringArena_, &errMsg))
+				qDebug(str(errMsg).c_str());
 			else
 				reshapeAsDict(phoneticDictWellFormedWords_, phoneticDictWellFormed_);
 		}
 		if (phoneticDictBroken_.empty())
 		{
-			bool loadOp;
-			const char* errMsg;
-			std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(brokenDictPath().wstring(), *phoneReg_, phoneticDictBrokenWords_, *stringArena_);
-			if (!loadOp)
-				qDebug(errMsg);
+			if (!loadPhoneticDictionaryXml(brokenDictPath(), *phoneReg_, phoneticDictBrokenWords_, *stringArena_, &errMsg))
+				qDebug(str(errMsg).c_str());
 			else
 				reshapeAsDict(phoneticDictBrokenWords_, phoneticDictBroken_);
 		}
 		if (phoneticDictFiller_.empty())
 		{
-			bool loadOp;
-			const char* errMsg;
-			std::tie(loadOp, errMsg) = loadPhoneticDictionaryXml(fillerDictPath().wstring(), *phoneReg_, phoneticDictFillerWords_, *stringArena_);
-			if (!loadOp)
-				qDebug(errMsg);
+			if (!loadPhoneticDictionaryXml(fillerDictPath(), *phoneReg_, phoneticDictFillerWords_, *stringArena_, &errMsg))
+				qDebug(str(errMsg).c_str());
 			else
 				reshapeAsDict(phoneticDictFillerWords_, phoneticDictFiller_);
 		}

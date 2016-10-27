@@ -78,10 +78,7 @@ namespace PticaGovorun
 		ErrMsgList errMsgL;
 		if (!readAllSamplesFormatAware(audioFilePath, audioSamples_, &audioSampleRate_, &errMsgL))
 		{
-			pushErrorMsg(&errMsgL, [&audioFilePath](ErrMsgList& newMsg)
-			{
-				newMsg.utf8Msg = std::string("Can't load audio file: ") + audioFilePath.string();
-			});
+			pushErrorMsg(&errMsgL, std::string("Can't load audio file: ") + audioFilePath.string());
 			nextNotification(combineErrorMessages(errMsgL));
 			return;
 		}
@@ -1826,10 +1823,7 @@ namespace PticaGovorun
 		//if (!detectVoiceActivitySphinx(curSeg, sphinxSampleRate, vadArgs, activity, &errMsg))
 		if (!detectVoiceActivityG729(curSeg, sphinxSampleRate, activity, &errMsg))
 		{
-			pushErrorMsg(&errMsg, [](ErrMsgList& newErr)
-			{
-				newErr.utf8Msg = "Voice Activity Detection failed";
-			});
+			pushErrorMsg(&errMsg, "Voice Activity Detection failed");
 			nextNotification(combineErrorMessages(errMsg));
 			return;
 		}

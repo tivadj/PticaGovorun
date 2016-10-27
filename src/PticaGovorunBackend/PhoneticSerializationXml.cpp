@@ -1,4 +1,5 @@
 #include <fstream>
+#include <boost/format.hpp>
 #include <QFile>
 #include <QXmlStreamWriter>
 
@@ -74,11 +75,14 @@ namespace PticaGovorun
 		return std::make_tuple(true, nullptr);
 	}
 
-	std::tuple<bool, const char*> loadPhoneticDictionaryXml(boost::wstring_view filePath, const PhoneRegistry& phoneReg, std::vector<PhoneticWord>& phoneticDict, GrowOnlyPinArena<wchar_t>& stringArena)
+	bool loadPhoneticDictionaryXml(const boost::filesystem::path& filePath, const PhoneRegistry& phoneReg, std::vector<PhoneticWord>& phoneticDict, GrowOnlyPinArena<wchar_t>& stringArena, ErrMsgList* errMsg)
 	{
-		QFile file(toQString(filePath));
+		QFile file(toQStringBfs(filePath));
 		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-			return std::make_tuple(false, "Can't open file for reading");
+		{
+			if (errMsg != nullptr) errMsg->utf8Msg = str(boost::format("Can't open file for reading (%1%)") % filePath.string());
+			return false;
+		}
 
 		QXmlStreamReader xml(&file);
 
@@ -114,10 +118,9 @@ namespace PticaGovorun
 				if (attrs.hasAttribute(WordName))
 				{
 					QStringRef nameStr = attrs.value(WordName);
-					QString nameQ = nameStr.toString();
+					boost::wstring_view name = toWStringRef(nameStr, transientStringBuff);
 					
-					if (!registerWord(nameQ, stringArena, arenaWordRef))
-						return std::make_tuple(false, "Can't allocate word string");
+					arenaWordRef = registerWordThrow2(stringArena, name);
 
 					wordPron.Word = arenaWordRef;
 				}
@@ -128,7 +131,10 @@ namespace PticaGovorun
 
 					std::vector<PhoneId> phones;
 					if (!parsePhoneList(phoneReg, phonesQ.toStdString(), phones))
-						return std::make_tuple(false, "Can't parse phone list");
+					{
+						if (errMsg != nullptr) errMsg->utf8Msg = "Can't parse phone list";
+						return false;
+					}
 
 					PronunciationFlavour pron;
 					pron.PronCode = arenaWordRef;
@@ -140,7 +146,10 @@ namespace PticaGovorun
 			else if (xml.isStartElement() && xml.name() == PronunciationTag)
 			{
 				if (singlePronPerWord)
-					return std::make_tuple(true, "Word contains phones inside word tag and as child pron tag");
+				{
+					if (errMsg != nullptr) errMsg->utf8Msg = "Word contains phones inside word tag and as child pron tag";
+					return false;
+				}
 
 				PG_DbgAssert2(!wordPron.Word.empty(), "The word must have been started");
 
@@ -151,12 +160,7 @@ namespace PticaGovorun
 				{
 					QStringRef pronCodeStr = attrs.value(PronunciationCode);
 					boost::wstring_view pronCodeRef = toWStringRef(pronCodeStr, transientStringBuff);
-					
-					boost::wstring_view arenaPronCodeRef;
-					if (!registerWord(pronCodeRef, stringArena, arenaPronCodeRef))
-						return std::make_tuple(true, "Can't allocate word string");
-
-					pron.PronCode = arenaPronCodeRef;
+					pron.PronCode = registerWordThrow2(stringArena, pronCodeRef);
 				}
 				if (attrs.hasAttribute(WordPhones))
 				{
@@ -165,21 +169,27 @@ namespace PticaGovorun
 					
 					std::vector<PhoneId> phones;
 					if (!parsePhoneList(phoneReg, phonesQ.toStdString(), phones))
-						return std::make_tuple(false, "Can't parse phone list");
-
+					{
+						if (errMsg != nullptr) errMsg->utf8Msg = "Can't parse phone list";
+						return false;
+					}
 					pron.Phones = std::move(phones);
 				}
 
 				if (pron.PronCode.empty() || pron.Phones.empty())
-					return std::make_tuple(false, "Invalid spec of pronunciation");
+				{
+					if (errMsg != nullptr) errMsg->utf8Msg = "Invalid spec of pronunciation";
+					return false;
+				}
 				wordPron.Pronunciations.push_back(pron);
 			}
 		}
 		maybeFinishPreviousWord(); // finish the last word
 
 		if (xml.hasError()) {
-			return std::make_tuple(true, "Error in XML stucture");
+			if (errMsg != nullptr) errMsg->utf8Msg = "Error in XML stucture";
+			return false;
 		}
-		return std::make_tuple(true, nullptr);
+		return true;
 	}
 }

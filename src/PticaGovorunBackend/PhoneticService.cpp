@@ -3065,6 +3065,11 @@ namespace PticaGovorun
 		return L"[inh]";
 	}
 
+	boost::wstring_view fillerExhale()
+	{
+		return L"[exh]";
+	}
+
 	boost::wstring_view fillerEee()
 	{
 		return L"[eee]";
