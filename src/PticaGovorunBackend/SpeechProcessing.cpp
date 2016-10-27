@@ -15,6 +15,8 @@
 #include "InteropPython.h" // phoneNameToPhoneId
 #include "assertImpl.h"
 #include "ComponentsInfrastructure.h"
+#include <boost/lexical_cast/try_lexical_convert.hpp>
+#include <boost/format.hpp>
 
 namespace PticaGovorun 
 {
@@ -458,7 +460,8 @@ namespace PticaGovorun
 	}
 
 	bool loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir, 
-		MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, bool removeSilenceAnnot, bool padSilStart, bool padSilEnd, std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments, ErrMsgList* errMsg)
+		MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, bool removeSilenceAnnot, bool padSilStart, bool padSilEnd, float maxNoiseLevelDb,
+		std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments, ErrMsgList* errMsg)
 	{
 		if (folderOrWavFilePath.isDir())
 		{
@@ -468,7 +471,7 @@ namespace PticaGovorun
 			QFileInfoList items = dir.entryInfoList(QDir::Filter::Files | QDir::Filter::Dirs | QDir::Filter::NoDotAndDotDot);
 			for (const QFileInfo item : items)
 			{
-				if (!loadSpeechAndAnnotation(item, wavRootDir, annotRootDir, targetLevelOfDetail, loadAudio, removeSilenceAnnot, padSilStart, padSilEnd, segPredBefore, segments, errMsg))
+				if (!loadSpeechAndAnnotation(item, wavRootDir, annotRootDir, targetLevelOfDetail, loadAudio, removeSilenceAnnot, padSilStart, padSilEnd, maxNoiseLevelDb, segPredBefore, segments, errMsg))
 					return false;
 			}
 			return true;
@@ -491,12 +494,31 @@ namespace PticaGovorun
 		// not all wav files has a markup, hence try to load the markup first
 		QString audioMarkupFilePathAbs = xmlFilePathInfo.absoluteFilePath();
 		SpeechAnnotation speechAnnot;
-		std::tuple<bool, const char*> loadOp = loadAudioMarkupFromXml(audioMarkupFilePathAbs.toStdWString(), speechAnnot);
-		if (!std::get<0>(loadOp))
+		if (!loadAudioMarkupXml(toBfs(audioMarkupFilePathAbs), speechAnnot, errMsg))
 		{
-			if (errMsg != nullptr)
-				errMsg->utf8Msg = std::get<1>(loadOp);
+			pushErrorMsg(errMsg, str(boost::format("Can't load audio annotation from file (%1%)") % toUtf8StdString(audioMarkupFilePathAbs)));
 			return false;
+		}
+
+		// skip audio files with a lot of noise
+		if (maxNoiseLevelDb != 0)
+		{
+			const SpeechAnnotationParameter* param = speechAnnot.getParameter("NoiseLevelDb");
+			if (param != nullptr)
+			{
+				float noiseLevelDb;
+				if (!boost::conversion::try_lexical_convert(param->Value, noiseLevelDb))
+				{
+					pushErrorMsg(errMsg, str(boost::format("Can't convert str->float for parameter NoiseLevelDb in file (%1%)") % toUtf8StdString(audioMarkupFilePathAbs)));
+					return false;
+				}
+
+				if (noiseLevelDb > maxNoiseLevelDb) // current file is too noisy and a user requested to ignore it
+				{
+					std::wcout << L"File is ignored due to noise (" << toString(audioMarkupFilePathAbs) << ")\n";
+					return true;
+				}
+			}
 		}
 
 		const std::vector<TimePointMarker>& syncPoints = speechAnnot.markers();

@@ -282,7 +282,7 @@ PG_EXPORTS std::wstring speechAnnotationFilePathAbs(const std::wstring& wavFileA
 // segPredBefore=predicate to determine whether to include segment into the result set; called before actual samples are loaded
 PG_EXPORTS bool loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir,
 	MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, bool removeSilenceAnnot,
-	bool padSilStart, bool padSilEnd,
+	bool padSilStart, bool padSilEnd, float maxNoiseLevelDb,
 	std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments, ErrMsgList* errMsg);
 
 PG_EXPORTS bool loadAudioAnnotation(const boost::filesystem::path& annotDirOrPathAbs, std::vector<std::unique_ptr<AudioFileAnnotation>>& audioAnnots, ErrMsgList* errMsg);

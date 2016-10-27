@@ -9,6 +9,6 @@
 namespace PticaGovorun {
 
 PG_EXPORTS std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioFilePathAbs, SpeechAnnotation& speechAnnot);
-PG_EXPORTS bool loadAudioMarkupXml(const boost::filesystem::path& audioFilePathAbs, SpeechAnnotation& speechAnnot, ErrMsgList* errMsg = nullptr);
+PG_EXPORTS bool loadAudioMarkupXml(const boost::filesystem::path& audioFilePathAbs, SpeechAnnotation& speechAnnot, ErrMsgList* errMsg);
 PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const SpeechAnnotation& annot, const std::wstring& audioFilePathAbs);
 }

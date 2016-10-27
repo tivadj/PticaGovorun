@@ -12,7 +12,7 @@ namespace PticaGovorun
 	struct PG_EXPORTS SpeechAnnotationParameter
 	{
 		std::string Name;
-		std::wstring Value;
+		std::string Value;
 	};
 
 	// Represents a speaker which voice occur in current recording.
@@ -80,6 +80,10 @@ namespace PticaGovorun
 
 		void addSpeaker(const std::wstring& speakerBriefId, const std::wstring& name);
 		const std::vector<SpeakerFantom>& speakers() const;
+
+		void addParameter(boost::string_view name, boost::string_view value);
+		const SpeechAnnotationParameter* getParameter(boost::string_view name) const;
+		gsl::span<const SpeechAnnotationParameter> parameters() const;
 
 		bool findSpeaker(const std::wstring& speakerBriefId, SpeakerFantom* speaker = nullptr) const;
 		

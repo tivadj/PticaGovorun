@@ -731,6 +731,7 @@ namespace PticaGovorun
 		const char* ConfigAudPadSilStart   = "aud.padSilStart";
 		const char* ConfigAudPadSilEnd     = "aud.padSilEnd";
 		const char* ConfigAudMinSilDurMs   = "aud.minSilDurMs";
+		const char* ConfigAudMaxNoiseLevelDb = "aud.maxNoiseLevelDb";
 
 		QString speechProjDirPath = AppHelpers::configParamQString(ConfigSpeechModelDir, "ERROR_path_does_not_exist");
 		speechProjDir_ = QDir(speechProjDirPath);
@@ -761,6 +762,7 @@ namespace PticaGovorun
 		bool padSilStart = AppHelpers::configParamBool(ConfigAudPadSilStart, true); // pad the audio segment with the silence segment
 		bool padSilEnd = AppHelpers::configParamBool(ConfigAudPadSilEnd, true);
 		int minSilDurMs = AppHelpers::configParamInt(ConfigAudMinSilDurMs, 300); // minimal duration (milliseconds) of flanked silence
+		float maxNoiseLevelDb = (float)AppHelpers::configParamDouble(ConfigAudMaxNoiseLevelDb, 0); // (default 0) files with bigger noise level (dB) are ignored; set value=0 to ignore
 		bool allowSoftHardConsonant = AppHelpers::configParamBool(ConfigAllowSoftHardConsonant, true); // true to use soft consonants (TS1) in addition to nomral consonants (TS)
 		bool allowVowelStress = AppHelpers::configParamBool(ConfigAllowVowelStress, true); // true to use stressed vowels (A1) in addition to unstressed vowels (A)
 		PalatalSupport palatalSupport = PalatalSupport::AsHard;
@@ -807,7 +809,7 @@ namespace PticaGovorun
 		std::wstring speechAnnotRootDir = speechProjDir_.filePath("SpeechAnnot").toStdWString();
 		std::wstring wavDirToAnalyze = speechProjDir_.filePath("SpeechAudio").toStdWString();
 
-		loadAudioAnnotation(speechWavRootDir.c_str(), speechAnnotRootDir.c_str(), wavDirToAnalyze.c_str(), includeBrownBear, removeSilenceAnnot, padSilStart, padSilEnd);
+		loadAudioAnnotation(speechWavRootDir.c_str(), speechAnnotRootDir.c_str(), wavDirToAnalyze.c_str(), includeBrownBear, removeSilenceAnnot, padSilStart, padSilEnd, maxNoiseLevelDb);
 		std::wcout << "Found annotated segments: " << segments_.size() << std::endl; // debug
 		if (segments_.empty())
 		{
@@ -1669,7 +1671,7 @@ namespace PticaGovorun
 		return std::make_tuple(true, nullptr);
 	}
 
-	void SphinxTrainDataBuilder::loadAudioAnnotation(const wchar_t* wavRootDir, const wchar_t* annotRootDir, const wchar_t* wavDirToAnalyze, bool includeBrownBear, bool removeSilenceAnnot, bool padSilStart, bool padSilEnd)
+	void SphinxTrainDataBuilder::loadAudioAnnotation(const wchar_t* wavRootDir, const wchar_t* annotRootDir, const wchar_t* wavDirToAnalyze, bool includeBrownBear, bool removeSilenceAnnot, bool padSilStart, bool padSilEnd, float maxNoiseLevelDb)
 	{
 		// load audio segments
 		auto segPredBeforeFun = [includeBrownBear](const AnnotatedSpeechSegment& seg) -> bool
@@ -1693,7 +1695,7 @@ namespace PticaGovorun
 		};
 
 		ErrMsgList errMsg;
-		if (!loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, false, removeSilenceAnnot, padSilStart, padSilEnd, segPredBeforeFun, segments_, &errMsg))
+		if (!loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, false, removeSilenceAnnot, padSilStart, padSilEnd, maxNoiseLevelDb, segPredBeforeFun, segments_, &errMsg))
 		{
 			errMsg_ = QString("Can't load audio and annotation. %1").arg(combineErrorMessages(errMsg));
 			return;

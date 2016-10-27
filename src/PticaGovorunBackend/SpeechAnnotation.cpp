@@ -122,6 +122,27 @@ namespace PticaGovorun
 		return speakers_;
 	}
 
+	void SpeechAnnotation::addParameter(boost::string_view name, boost::string_view value)
+	{
+		SpeechAnnotationParameter param;
+		param.Name.assign(name.data(), name.size());
+		param.Value.assign(value.data(), value.size());
+		parameters_.push_back(param);
+	}
+
+	const SpeechAnnotationParameter* SpeechAnnotation::getParameter(boost::string_view name) const
+	{
+		auto it = std::find_if(std::begin(parameters_), std::end(parameters_), [name](auto& p) { return p.Name == name; });
+		if (it != parameters_.end())
+			return &*it;
+		return nullptr;
+	}
+
+	gsl::span<const SpeechAnnotationParameter> SpeechAnnotation::parameters() const
+	{
+		return parameters_;
+	}
+
 	bool SpeechAnnotation::findSpeaker(const std::wstring& speakerBriefId, SpeakerFantom* speaker) const
 	{
 		for(const SpeakerFantom& s : speakers_)

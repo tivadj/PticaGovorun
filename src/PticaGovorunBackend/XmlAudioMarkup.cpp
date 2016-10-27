@@ -17,6 +17,9 @@ namespace {
 	static const char* AnnotAudioSampleRate = "audioSampleRate";
 	static const char* AnnotHeaderName = "header";
 	static const char* HeaderSpeakerNodeName = "speaker";
+	static const char* HeaderParameterNodeName = "param";
+	static const char* HeaderParameterNameAttrName = "name";
+	static const char* HeaderParameterValueAttrName = "value";
 	static const char* HeaderSpeakerBriefIdName = "briefId";
 	static const char* HeaderSpeakerNameAttrName = "name";
 	static const char* MarkerName = "syncPoint";
@@ -82,6 +85,15 @@ std::tuple<bool, const char*> loadAudioMarkupFromXml(const std::wstring& audioMa
 					
 					QString speakerName = headChild.attribute(HeaderSpeakerNameAttrName, "");
 					annot.addSpeaker(briefId.toStdWString(), speakerName.toStdWString());
+				}
+				else if (headChildName == HeaderParameterNodeName)
+				{
+					QString paramName = headChild.attribute(HeaderParameterNameAttrName, "");
+					if (paramName.isEmpty())
+						return std::make_tuple(false, "Xml audio markup error: parameter name is empty");
+					
+					QString paramValue = headChild.attribute(HeaderParameterValueAttrName, "");
+					annot.addParameter(toUtf8StdString(paramName), toUtf8StdString(paramValue));
 				}
 			}
 		}
@@ -170,7 +182,7 @@ PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const SpeechAnnota
 	int prec = isInt ? 0 : 4; // set 0 for integers to avoid padding zeros after comma
 	xmlWriter.writeAttribute(AnnotAudioSampleRate, QString::number(annot.audioSampleRate(), 'f', prec));
 
-	if (!annot.speakers().empty())
+	if (!annot.speakers().empty() || !annot.parameters().empty())
 	{
 		xmlWriter.writeStartElement(AnnotHeaderName);
 		for (const SpeakerFantom& speaker : annot.speakers())
@@ -179,6 +191,13 @@ PG_EXPORTS std::tuple<bool, const char*> saveAudioMarkupToXml(const SpeechAnnota
 			xmlWriter.writeAttribute(HeaderSpeakerBriefIdName, QString::fromStdWString(speaker.BriefId));
 			xmlWriter.writeAttribute(HeaderSpeakerNameAttrName, QString::fromStdWString(speaker.Name));
 			xmlWriter.writeEndElement(); // HeaderSpeakerNodeName
+		}
+		for (const auto& param : annot.parameters())
+		{
+			xmlWriter.writeStartElement(HeaderParameterNodeName);
+			xmlWriter.writeAttribute(HeaderParameterNameAttrName, utf8ToQString(param.Name));
+			xmlWriter.writeAttribute(HeaderParameterValueAttrName, utf8ToQString(param.Value));
+			xmlWriter.writeEndElement(); // HeaderParameterNodeName
 		}
 		xmlWriter.writeEndElement(); // AnnotHeaderName
 	}
