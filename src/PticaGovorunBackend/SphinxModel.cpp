@@ -761,8 +761,8 @@ namespace PticaGovorun
 		bool padSilStart = AppHelpers::configParamBool(ConfigAudPadSilStart, true); // pad the audio segment with the silence segment
 		bool padSilEnd = AppHelpers::configParamBool(ConfigAudPadSilEnd, true);
 		int minSilDurMs = AppHelpers::configParamInt(ConfigAudMinSilDurMs, 300); // minimal duration (milliseconds) of flanked silence
-		bool allowSoftHardConsonant = true;
-		bool allowVowelStress = true;
+		bool allowSoftHardConsonant = AppHelpers::configParamBool(ConfigAllowSoftHardConsonant, true); // true to use soft consonants (TS1) in addition to nomral consonants (TS)
+		bool allowVowelStress = AppHelpers::configParamBool(ConfigAllowVowelStress, true); // true to use stressed vowels (A1) in addition to unstressed vowels (A)
 		PalatalSupport palatalSupport = PalatalSupport::AsHard;
 		bool useBrokenPronsInTrainOnly = true;
 		const double trainCasesRatio = AppHelpers::configParamDouble(ConfigTrainCasesRatio, 0.7);
