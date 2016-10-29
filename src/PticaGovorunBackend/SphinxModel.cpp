@@ -2086,6 +2086,11 @@ namespace PticaGovorun
 
 				// remove silence segments using VAD
 				std::vector<short> samplesCutSil;
+				if (!cutSilVad)
+				{
+					if (wavFilePath.find(L"BrownBear") != std::wstring::npos)
+						cutSilVad = true;
+				}
 				if (cutSilVad)
 				{
 					static const float G729SampleRate = 8000;
