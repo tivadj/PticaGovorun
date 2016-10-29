@@ -33,10 +33,8 @@ namespace PticaGovorun
 		SpeechData(const SpeechData&) = delete;
 		~SpeechData();
 
-
-		void ensureDataLoaded();
-		void ensureShrekkyDictLoaded();
-		void ensurePhoneticDictionaryLoaded();
+		bool Load(bool shrekkyDict, ErrMsgList* errMsg);
+		bool loadShrekkyDict(ErrMsgList* errMsg);
 
 		// Saves all phonetic dictionaries.
 		void saveDict();
@@ -66,14 +64,15 @@ namespace PticaGovorun
 		void suggesedWordsUserInput(const QString& browseDictStr, const QString& currentWord, QStringList& result);
 
 	public:
-		bool validate(QStringList* errMsgs = nullptr);
+		bool validate(bool checkStress, QStringList* errMsgs);
 
 		// validate speech annotation
 		void validateUtteranceHasPhoneticExpansion(const QString& text, QStringList& checkMsgs);
 		void validateOneSpeechAnnot(const SpeechAnnotation& annot, QStringList* errMsgs);
 
+		void mergePhoneticDictOnlyNew(const std::vector<PhoneticWord>& extraPhoneticDict);
 	private:
-		bool validatePhoneticDictionary(QStringList* errMsgs = nullptr);
+		bool validatePhoneticDictionary(bool checkStress, QStringList* errMsgs);
 
 		/// For a word with multiple pronunciations checks if none or all pronCodes have marked stress.
 		/// eg. valid=(word=setup, setup(1) setup(2)) or wrong=(word=setup, setup setup(1))

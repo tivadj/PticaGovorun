@@ -31,60 +31,66 @@ namespace PticaGovorun
 		stringArena_ = stringArena;
 	}
 
-	void SpeechData::ensurePhoneticDictionaryLoaded()
+	bool SpeechData::Load(bool shrekkyDict, ErrMsgList* errMsg)
 	{
-		ErrMsgList errMsg;
-		if (phoneticDictWellFormed_.empty())
+		if (!loadPhoneticDictionaryXml(persianDictPath(), *phoneReg_, phoneticDictWellFormedWords_, *stringArena_, errMsg))
 		{
-			if (!loadPhoneticDictionaryXml(persianDictPath(), *phoneReg_, phoneticDictWellFormedWords_, *stringArena_, &errMsg))
-				qDebug(str(errMsg).c_str());
-			else
-				reshapeAsDict(phoneticDictWellFormedWords_, phoneticDictWellFormed_);
+			pushErrorMsg(errMsg, "Can't load WellFormed phonetic dictionary");
+			return false;
 		}
-		if (phoneticDictBroken_.empty())
+		reshapeAsDict(phoneticDictWellFormedWords_, phoneticDictWellFormed_);
+
+		if (!loadPhoneticDictionaryXml(brokenDictPath(), *phoneReg_, phoneticDictBrokenWords_, *stringArena_, errMsg))
 		{
-			if (!loadPhoneticDictionaryXml(brokenDictPath(), *phoneReg_, phoneticDictBrokenWords_, *stringArena_, &errMsg))
-				qDebug(str(errMsg).c_str());
-			else
-				reshapeAsDict(phoneticDictBrokenWords_, phoneticDictBroken_);
+			pushErrorMsg(errMsg, "Can't load Broken phonetic dictionary");
+			return false;
 		}
-		if (phoneticDictFiller_.empty())
+		reshapeAsDict(phoneticDictBrokenWords_, phoneticDictBroken_);
+
+		if (!loadPhoneticDictionaryXml(fillerDictPath(), *phoneReg_, phoneticDictFillerWords_, *stringArena_, errMsg))
 		{
-			if (!loadPhoneticDictionaryXml(fillerDictPath(), *phoneReg_, phoneticDictFillerWords_, *stringArena_, &errMsg))
-				qDebug(str(errMsg).c_str());
-			else
-				reshapeAsDict(phoneticDictFillerWords_, phoneticDictFiller_);
+			pushErrorMsg(errMsg, "Can't load Filler phonetic dictionary");
+			return false;
 		}
+		reshapeAsDict(phoneticDictFillerWords_, phoneticDictFiller_);
+
+		if (shrekkyDict && !loadShrekkyDict(errMsg))
+		{
+			pushErrorMsg(errMsg, "Can't load Shrekky dict");
+			return false;
+		}
+
+		return true;
 	}
 
-	void SpeechData::ensureShrekkyDictLoaded()
+	bool SpeechData::loadShrekkyDict(ErrMsgList* errMsgL)
 	{
 		typedef std::chrono::system_clock Clock;
 
 		std::vector<PhoneticWord> phoneticDictWords;
 		std::vector<std::string> brokenLines;
-		if (phoneticDictShrekky_.empty())
+		
+		QTextCodec* pTextCodec = QTextCodec::codecForName("windows-1251");
+		bool loadOp;
+		const char* errMsg;
+
+		std::chrono::time_point<Clock> now1 = Clock::now();
+
+		phoneticDictWords.reserve(WordsCount);
+		std::tie(loadOp, errMsg) = loadPhoneticDictionaryPronIdPerLine(shrekkyDictPath().wstring(), *phoneReg_, *pTextCodec, phoneticDictWords, brokenLines, *stringArena_);
+
+		std::chrono::time_point<Clock> now2 = Clock::now();
+		auto elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
+		std::wcout << "Loaded shrekky dict in " << elapsedSec << " s";
+
+		if (!loadOp)
 		{
-			QTextCodec* pTextCodec = QTextCodec::codecForName("windows-1251");
-			bool loadOp;
-			const char* errMsg;
-
-			std::chrono::time_point<Clock> now1 = Clock::now();
-
-			phoneticDictWords.reserve(WordsCount);
-			std::tie(loadOp, errMsg) = loadPhoneticDictionaryPronIdPerLine(shrekkyDictPath().wstring(), *phoneReg_, *pTextCodec, phoneticDictWords, brokenLines, *stringArena_);
-
-			std::chrono::time_point<Clock> now2 = Clock::now();
-			auto elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(now2 - now1).count();
-			std::wcout << "Loaded shrekky dict in " << elapsedSec << " s";
-
-			if (!loadOp)
-				std::wcout << errMsg;
-			else
-			{
-				reshapeAsDict(phoneticDictWords, phoneticDictShrekky_);
-			}
+			pushErrorMsg(errMsgL, errMsg);
+			return false;
 		}
+
+		reshapeAsDict(phoneticDictWords, phoneticDictShrekky_);
+		return true;
 	}
 
 	void SpeechData::saveDict()
@@ -104,10 +110,6 @@ namespace PticaGovorun
 		savePhoneticDictionaryXml(words, brokenDictPath().wstring(), *phoneReg_);
 	}
 
-	void SpeechData::ensureDataLoaded()
-	{
-		ensurePhoneticDictionaryLoaded();
-	}
 
 	boost::filesystem::path SpeechData::speechProjDir() const
 	{
@@ -143,8 +145,6 @@ namespace PticaGovorun
 	{
 		validAllPhones = false;
 		int proneCodeExpansionErrs = 0;
-
-		ensurePhoneticDictionaryLoaded();
 
 		std::ostringstream buff;
 		std::vector<PronunciationFlavour> prons;
@@ -319,9 +319,6 @@ namespace PticaGovorun
 
 	void SpeechData::suggesedWordsUserInput(const QString& browseDictStr, const QString& currentWord, QStringList& result)
 	{
-		ensurePhoneticDictionaryLoaded();
-		ensureShrekkyDictLoaded();
-
 		std::map<boost::wstring_view, PhoneticWord>* dict = nullptr;
 		if (browseDictStr.compare("shrekky", Qt::CaseInsensitive) == 0)
 			dict = &phoneticDictShrekky_;
@@ -367,11 +364,9 @@ namespace PticaGovorun
 		}
 	}
 
-	bool SpeechData::validate(QStringList* errMsgs)
+	bool SpeechData::validate(bool checkStress, QStringList* errMsgs)
 	{
-		ensurePhoneticDictionaryLoaded();
-
-		bool phDict = validatePhoneticDictionary(errMsgs);
+		bool phDict = validatePhoneticDictionary(checkStress, errMsgs);
 		bool annot = validateAllSpeechAnnotations(errMsgs);
 
 		bool valid = phDict && annot;
@@ -423,13 +418,13 @@ namespace PticaGovorun
 
 	// phonetic dictionary
 
-	bool SpeechData::validatePhoneticDictionary(QStringList* errMsgs)
+	bool SpeechData::validatePhoneticDictionary(bool checkStress, QStringList* errMsgs)
 	{
 		// stress
 
 		std::vector<const PhoneticWord*> invalidWords;
-		bool d1 = validatePhoneticDictNoneOrAllPronunciationsSpecifyStress(phoneticDictWellFormedWords_, &invalidWords);
-		bool d2 = validatePhoneticDictNoneOrAllPronunciationsSpecifyStress(phoneticDictBrokenWords_, &invalidWords);
+		bool d1 = checkStress ? validatePhoneticDictNoneOrAllPronunciationsSpecifyStress(phoneticDictWellFormedWords_, &invalidWords) : true;
+		bool d2 = checkStress ? validatePhoneticDictNoneOrAllPronunciationsSpecifyStress(phoneticDictBrokenWords_, &invalidWords) : true;
 		if (!invalidWords.empty() && errMsgs != nullptr)
 		{
 			QString msg = "Not all pronCodes specify stress for words: ";
@@ -580,8 +575,6 @@ namespace PticaGovorun
 
 	void SpeechData::validateOneSpeechAnnot(const SpeechAnnotation& annot, QStringList* errMsgs)
 	{
-		ensurePhoneticDictionaryLoaded();
-
 		// validate markers structure
 
 		annot.validateMarkers(*errMsgs);
@@ -616,8 +609,6 @@ namespace PticaGovorun
 
 	void SpeechData::validateUtteranceHasPhoneticExpansion(const QString& text, QStringList& checkMsgs)
 	{
-		ensurePhoneticDictionaryLoaded();
-
 		std::wstring textW = text.toStdWString();
 
 		GrowOnlyPinArena<wchar_t> arena(1024);
@@ -708,6 +699,78 @@ namespace PticaGovorun
 			else
 			{
 				// ok, word is exactly in on dictionary of correct or broken words
+			}
+		}
+	}
+
+	void SpeechData::mergePhoneticDictOnlyNew(const std::vector<PhoneticWord>& extraPhoneticDict)
+	{
+		struct BackRef
+		{
+			size_t WellKnownVectorInd;
+			decltype(phoneticDictWellFormed_)::iterator WellKnownDictIt;
+		};
+		std::map<boost::wstring_view, BackRef> existData;
+
+		auto& wordsVect = phoneticDictWellFormedWords_;
+		auto& wordsDict = phoneticDictWellFormed_;
+
+		// collect references to existent data
+		for (size_t i = 0; i<wordsVect.size(); ++i)
+		{
+			const auto& word = wordsVect[i];
+			boost::wstring_view wordRef = word.Word;
+
+			auto it = wordsDict.find(wordRef);
+			PG_Assert(it != std::end(wordsDict));
+
+			existData[wordRef] = BackRef{ i, it };
+		}
+
+		//
+		std::map<boost::wstring_view, PhoneticWord> basePhoneticDict;
+		for (const PhoneticWord& extraWord : extraPhoneticDict)
+		{
+			boost::wstring_view wordRef = extraWord.Word;
+
+			auto existIt = existData.find(wordRef);
+			if (existIt == std::end(existData))
+			{
+				// new word; add the whole word with all prons
+				wordsVect.push_back(extraWord);
+				wordsDict.insert({ wordRef, extraWord });
+				continue;
+			}
+
+			// existing word; try to integrate new prons into it
+
+			auto mergeWord = [](PhoneticWord& baseWord, const PhoneticWord& extraWord)
+			{
+
+				for (const PronunciationFlavour& extraPron : extraWord.Pronunciations)
+				{
+					auto matchedPronIt = std::find_if(baseWord.Pronunciations.begin(), baseWord.Pronunciations.end(), [&extraPron](PronunciationFlavour& p)
+					{
+						return p.PronCode == extraPron.PronCode;
+					});
+					bool duplicatePron = matchedPronIt != baseWord.Pronunciations.end();
+					if (duplicatePron)
+						continue; // pron with the same code already exist
+					baseWord.Pronunciations.push_back(extraPron);
+				}
+			};
+
+			const BackRef& dataRef = existIt->second;
+
+			{
+				// update base word in vect
+				PhoneticWord& baseWord = wordsVect[dataRef.WellKnownVectorInd];
+				mergeWord(baseWord, extraWord);
+			}
+			{
+				// update base word in dict
+				PhoneticWord& baseWord = dataRef.WellKnownDictIt->second;
+				mergeWord(baseWord, extraWord);
 			}
 		}
 	}

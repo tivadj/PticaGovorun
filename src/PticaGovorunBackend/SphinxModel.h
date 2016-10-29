@@ -98,7 +98,8 @@ namespace PticaGovorun
 		typedef std::chrono::system_clock Clock;
 	public:
 		void run();
-		void loadKnownPhoneticDicts(bool includeBrownBear);
+		void populatePronCodeToObjAndValidatePhoneticDictsHaveNoDuplicates();
+		void validatePhoneticDictsHaveNoDeniedWords(const std::unordered_set<std::wstring>& denyWords);
 	private:
 		QString filePath(const QString& relFilePath) const;
 		bool hasPhoneticExpansion(boost::wstring_view word, bool useBroken) const;
@@ -145,7 +146,7 @@ namespace PticaGovorun
 		void langModelRecoverUsageOfUnusedWords(const std::vector<PhoneticWord> vocabWords, UkrainianPhoneticSplitter& phoneticSplitter, bool includeBrokenWords, std::map<int, ptrdiff_t>& wordPartIdToRecoveredUsage);
 
 		//
-		void loadAudioAnnotation(const wchar_t* wavRootDir, const wchar_t* annotRootDir, const wchar_t* wavDirToAnalyze, bool includeBrownBear, bool removeSilenceAnnot, bool padSilStart, bool padSilEnd, float maxNoiseLevelDb);
+		void loadAudioAnnotation(const wchar_t* wavRootDir, const wchar_t* annotRootDir, const wchar_t* wavDirToAnalyze, bool removeSilenceAnnot, bool padSilStart, bool padSilEnd, float maxNoiseLevelDb);
 		bool partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly,
 			std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds, ErrMsgList* errMsg);
 
@@ -184,11 +185,11 @@ namespace PticaGovorun
 		//std::vector<PhoneticWord> phoneticDictWordsWellFormed_;
 		//std::vector<PhoneticWord> phoneticDictWordsBroken_;
 		//std::vector<PhoneticWord> phoneticDictWordsFiller_;
-		std::vector<PhoneticWord> phoneticDictWordsBrownBear_;
+		//std::vector<PhoneticWord> phoneticDictWordsBrownBear_;
 
-		std::map<boost::wstring_view, PhoneticWord> phoneticDictWellFormed_;
-		std::map<boost::wstring_view, PhoneticWord> phoneticDictBroken_;
-		std::map<boost::wstring_view, PhoneticWord> phoneticDictFiller_;
+		//std::map<boost::wstring_view, PhoneticWord> phoneticDictWellFormed_;
+		//std::map<boost::wstring_view, PhoneticWord> phoneticDictBroken_;
+		//std::map<boost::wstring_view, PhoneticWord> phoneticDictFiller_;
 
 		std::map<boost::wstring_view, PronunciationFlavour> pronCodeToObjWellFormed_;
 		std::map<boost::wstring_view, PronunciationFlavour> pronCodeToObjBroken_;

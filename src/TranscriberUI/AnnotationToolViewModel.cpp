@@ -7,6 +7,7 @@
 #include "assertImpl.h"
 #include "SpeechDataValidation.h"
 #include "FileHelpers.h"
+#include <boost/format.hpp>
 
 namespace PticaGovorun
 {
@@ -149,7 +150,7 @@ namespace PticaGovorun
 			speechData_->validateOneSpeechAnnot(m->speechAnnotation(), &checkMsgs);
 
 		// validate on-disk data
-		bool valid = speechData_->validate(&checkMsgs);
+		bool valid = speechData_->validate(true, &checkMsgs);
 
 		QString msg;
 		if (valid)
@@ -311,7 +312,14 @@ namespace PticaGovorun
 		speechData_ = std::make_shared<SpeechData>(speechProjDir);
 		speechData_->setStringArena(stringArena);
 		speechData_->setPhoneReg(phoneReg_);
-
+		ErrMsgList errMsg;
+		if (!speechData_->Load(true, &errMsg))
+		{
+			auto msg = str(boost::format("Can't load speech project from dir (%1%)") % speechProjDir.string());
+			pushErrorMsg(&errMsg, msg);
+			nextNotification(combineErrorMessages(errMsg));
+			return false;
+		}
 
 		phoneticDictModel_ = std::make_shared<PhoneticDictionaryViewModel>(speechData_, phoneReg_);
 

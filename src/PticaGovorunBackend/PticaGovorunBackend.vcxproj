@@ -196,6 +196,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies Condition="'$(MSBuild_PG_HAS_JULIUS)' == 'True'">LibJulius_$(PlatformShortName).lib;LibSent_$(PlatformShortName).lib;Julius_$(PlatformShortName).lib;ws2_32.lib;C:\devb\cplex\codecs\g729Solution\x64\Debug\g729.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
