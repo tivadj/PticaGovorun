@@ -26,6 +26,7 @@ namespace PticaGovorun
 
 	PG_EXPORTS QString utf8ToQString(boost::string_view text);
 	PG_EXPORTS std::string toUtf8StdString(const QString& text);
+	PG_EXPORTS std::string toUtf8StdString(const QStringRef& text);
 	PG_EXPORTS std::string toStdString(boost::string_view text);
 	PG_EXPORTS QString toQString(boost::wstring_view text);
 	PG_EXPORTS std::wstring toStdWString(boost::wstring_view text);

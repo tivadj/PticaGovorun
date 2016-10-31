@@ -362,15 +362,12 @@ namespace DslDictionaryConvertRunnerNS
 	void DslAndAudioResDictIntoSpeechAnnotConverter::buildPhoneticDictionary()
 	{
 		// load 'word to stressed syllable' dictionary 
-		bool loadPhoneDict;
-		const char* errMsg = nullptr;
-
-		const wchar_t* stressDict = LR"path(C:\devb\PticaGovorunProj\data\stressDictUk.xml)path";
+		boost::filesystem::path stressDictFilePath = "path(C:\devb\PticaGovorunProj\data\stressDictUk.xml)path";
 		std::unordered_map<std::wstring, int> wordToStressedSyllable;
-		std::tie(loadPhoneDict, errMsg) = loadStressedSyllableDictionaryXml(stressDict, wordToStressedSyllable);
-		if (!loadPhoneDict)
+		ErrMsgList errMsg;
+		if (!loadStressedSyllableDictionaryXml(stressDictFilePath, wordToStressedSyllable, &errMsg))
 		{
-			errMsg_ = QString::fromLatin1(errMsg).toStdWString();
+			errMsg_ = combineErrorMessages(errMsg).toStdWString();
 			return;
 		}
 
@@ -537,7 +534,8 @@ namespace DslDictionaryConvertRunnerNS
 
 		std::wstringstream dumpFileName;
 		dumpFileName << L"dict." << timeStampStrW << L".phonetic.xml";
-		savePhoneticDictionaryXml(phoneticDict, dumpFileName.str(), phoneReg);
+		ErrMsgList errMsg;
+		savePhoneticDictionaryXml(phoneticDict, dumpFileName.str(), phoneReg, &errMsg);
 
 		dumpFileName.str(L"");
 		dumpFileName << L"dict." << timeStampStrW << L".markers.xml";

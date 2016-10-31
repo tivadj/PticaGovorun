@@ -521,23 +521,24 @@ namespace PticaGovorun
 	void SpeechTranscriptionViewModel::saveAudioMarkupToXml()
 	{
 		PticaGovorun::saveAudioMarkupToXml(speechAnnot_, annotFilePathAbs_.wstring());
-	
-		nextNotification(formatLogLineWithTime("Saved xml markup."));
 	}
 
 	void SpeechTranscriptionViewModel::saveCurrentRangeAsWavRequest()
 	{
 #if PG_HAS_LIBSNDFILE
-		long frameLeft;
-		long frameRight;
-		std::tie(frameLeft, frameRight) = getSampleRangeToPlay(cursor_.first, SegmentStartFrameToPlayChoice::SegmentBegin, nullptr);
+		long leftSampleInd;
+		long rightSampleInd;
+		std::tie(leftSampleInd, rightSampleInd) = getSampleRangeToPlay(cursor_.first, SegmentStartFrameToPlayChoice::SegmentBegin, nullptr);
 
-		long len = frameRight - frameLeft;
+		long len = rightSampleInd - leftSampleInd;
 		gsl::span<short> curSeg = audioSamples_;
-		curSeg = curSeg.subspan(frameLeft, len);
+		curSeg = curSeg.subspan(leftSampleInd, len);
 	
-		//auto outFilePath = boost::filesystem::absolute("currentRange.wav");
-		auto outFilePath = boost::filesystem::absolute(u8"忠犬ハチ公");
+		auto outFileName = str(boost::format("%s_%04ds-%04ds.wav")
+			% modelShortNameStd()
+			% sampleToTimeSecondsInt(leftSampleInd, audioSampleRate_)
+			% sampleToTimeSecondsInt(rightSampleInd, audioSampleRate_));
+		auto outFilePath = boost::filesystem::absolute(outFileName);
 		ErrMsgList errMsg;
 		if (!writeAllSamplesWav(curSeg, audioSampleRate_, outFilePath, &errMsg))
 		{
@@ -551,9 +552,14 @@ namespace PticaGovorun
 #endif
 	}
 
+	std::string SpeechTranscriptionViewModel::modelShortNameStd() const
+	{
+		return annotFilePathAbs_.stem().string();
+	}
+
 	QString SpeechTranscriptionViewModel::modelShortName() const
 	{
-		return toQStringBfs(annotFilePathAbs_.stem());
+		return utf8ToQString(modelShortNameStd());
 	}
 
 	const boost::filesystem::path& SpeechTranscriptionViewModel::annotFilePath() const

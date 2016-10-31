@@ -229,4 +229,14 @@ namespace PticaGovorun
 		*newTopMsg.next = std::move(*topErrMsg);
 		*topErrMsg = std::move(newTopMsg);
 	}
+
+	/// The functional analogue of <b>PG_DEBUG</b> flag.
+	inline auto pgDebug() -> bool
+	{ 
+#if PG_DEBUG
+		return true;
+#else
+		return false;
+#endif
+	}
 }

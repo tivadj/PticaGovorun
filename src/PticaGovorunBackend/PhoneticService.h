@@ -150,8 +150,13 @@ namespace PticaGovorun
 	// The word 'clothes' may be pronounced as clothes(1)='K L OW1 DH Z' or clothes(2)='K L OW1 Z'
 	struct PhoneticWord
 	{
+		// Important: When any field is modified, update <b>clear</b> too.
 		boost::wstring_view Word;
 		std::vector<PronunciationFlavour> Pronunciations;
+		boost::optional<float> Log10ProbHint;
+		std::string Comment;
+
+		void clear();
 	};
 
 	class PG_EXPORTS UkrainianPhoneticSplitter
@@ -187,7 +192,7 @@ namespace PticaGovorun
 		void bootstrapFromDeclinedWords(const std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWords, const std::wstring& targetWord,
 			const std::unordered_set<std::wstring>& processedWords);
 
-		void gatherWordPartsSequenceUsage(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess);
+		void gatherWordPartsSequenceUsage(const boost::filesystem::path& textFilesDir, long& totalPreSplitWords, int maxFileToProcess);
 
 		const WordsUsageInfo& wordUsage() const;
 		WordsUsageInfo& wordUsage();
@@ -227,7 +232,7 @@ namespace PticaGovorun
 	PG_EXPORTS int vowelCharIndToSyllableIndUk(boost::wstring_view word, int vowelCharInd);
 
 	// Loads stressed vowel definitions from file.
-	PG_EXPORTS std::tuple<bool, const char*> loadStressedSyllableDictionaryXml(boost::wstring_view dictFilePath, std::unordered_map<std::wstring, int>& wordToStressedSyllableInd);
+	PG_EXPORTS bool loadStressedSyllableDictionaryXml(const boost::filesystem::path& dictFilePath, std::unordered_map<std::wstring, int>& wordToStressedSyllableInd, ErrMsgList* errMsg);
 
 #ifdef PG_HAS_JULIUS
 	// Loads dictionary of word -> (phone list) from text file.
@@ -252,7 +257,7 @@ namespace PticaGovorun
 		GrowOnlyPinArena<wchar_t>& stringArena);
 
 	PG_EXPORTS bool loadPhoneticDictionaryXml(const boost::filesystem::path& filePath, const PhoneRegistry& phoneReg, std::vector<PhoneticWord>& phoneticDict, GrowOnlyPinArena<wchar_t>& stringArena, ErrMsgList* errMsg);
-	PG_EXPORTS std::tuple<bool, const char*> savePhoneticDictionaryXml(const std::vector<PhoneticWord>& phoneticDict, boost::wstring_view filePath, const PhoneRegistry& phoneReg);
+	PG_EXPORTS bool savePhoneticDictionaryXml(const std::vector<PhoneticWord>& phoneticDict, const boost::filesystem::path& filePath, const PhoneRegistry& phoneReg, ErrMsgList* errMsg);
 
 
 	PG_EXPORTS void normalizePronunciationVocabulary(std::map<std::wstring, std::vector<Pronunc>>& wordToPhoneList, bool toUpper = true, bool trimNumbers = true);

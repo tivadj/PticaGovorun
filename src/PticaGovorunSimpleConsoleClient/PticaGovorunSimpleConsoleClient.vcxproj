@@ -208,6 +208,7 @@
     <ClCompile Include="PticaGovorunSimpleConsoleClient.cpp" />
     <ClCompile Include="RecognizeSpeechSphinxTester.cpp" />
     <ClCompile Include="ResampleAudioTester.cpp" />
+    <ClCompile Include="SegmentsLoaderRunner.cpp" />
     <ClCompile Include="SliceTester.cpp" />
     <ClCompile Include="SphinxIfRunner.cpp" />
     <ClCompile Include="StressedSyllableRunner.cpp" />

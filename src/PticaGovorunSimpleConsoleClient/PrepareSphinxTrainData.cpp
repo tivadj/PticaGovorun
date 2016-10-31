@@ -8,8 +8,12 @@ namespace PrepareSphinxTrainDataNS
 	void run()
 	{
 		SphinxTrainDataBuilder bld;
-		bld.run();
-		if (!bld.errMsg_.isEmpty())
-			std::wcerr << bld.errMsg_.toStdWString() <<std::endl;
+
+		ErrMsgList errMsg;
+		if (!bld.run(&errMsg))
+		{
+			auto msg = combineErrorMessages(errMsg).toStdWString();
+			std::wcerr << msg << std::endl;
+		}
 	}
 }

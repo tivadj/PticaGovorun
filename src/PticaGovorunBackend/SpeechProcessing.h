@@ -274,6 +274,9 @@ PG_EXPORTS void mergeSamePhoneStates(const std::vector<AlignedPhoneme>& phoneSta
 // framEndIndex=inclusive index
 PG_EXPORTS void frameRangeToSampleRange(size_t framBegIndex, size_t framEndIndex, LastFrameSample endSampleChoice, size_t frameSize, size_t frameShift, long& sampleBeg, long& sampleEnd);
 
+/// Converts sample's index into corresponding second
+PG_EXPORTS int sampleToTimeSecondsInt(ptrdiff_t sampleInd, float sampleRate);
+
 // For given audio (wav) file from audio repository gives absolute path of corresponding annotation (xml) file path.
 PG_EXPORTS std::wstring speechAnnotationFilePathAbs(const std::wstring& wavFileAbs, const std::wstring& wavRootDir, const std::wstring& annotRootDir);
 

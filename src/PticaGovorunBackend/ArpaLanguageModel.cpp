@@ -4,6 +4,7 @@
 #include "PhoneticService.h"
 #include "LangStat.h"
 #include "assertImpl.h"
+#include <boost/format.hpp>
 
 namespace PticaGovorun
 {
@@ -421,11 +422,14 @@ namespace PticaGovorun
 		return bigrams_;
 	}
 
-	void writeArpaLanguageModel(const ArpaLanguageModel& langModel, const wchar_t* lmFilePath)
+	bool writeArpaLanguageModel(const ArpaLanguageModel& langModel, const boost::filesystem::path& lmFilePath, ErrMsgList* errMsg)
 	{
-		QFile lmFile(QString::fromStdWString(lmFilePath));
+		QFile lmFile(toQStringBfs(lmFilePath));
 		if (!lmFile.open(QIODevice::WriteOnly | QIODevice::Text))
-			return;
+		{
+			pushErrorMsg(errMsg, str(boost::format("Can't open file for writing (%1%)") % lmFilePath.string()));
+			return false;
+		}
 		QTextStream dumpFileStream(&lmFile);
 		dumpFileStream.setCodec("UTF-8");
 		dumpFileStream << R"out(\data\)out" << "\n";
@@ -473,6 +477,7 @@ namespace PticaGovorun
 
 		dumpFileStream << "\n"; // blank line
 		dumpFileStream << R"out(\end\)out" << "\n";
+		return true;
 	}
 
 	ptrdiff_t wordsTotalUsage(const WordsUsageInfo& wordUsage, const std::vector<PhoneticWord>& words, const std::map<int, ptrdiff_t>* wordPartIdToUsage)

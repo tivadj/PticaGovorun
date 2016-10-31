@@ -37,7 +37,7 @@ namespace PticaGovorun
 		bool loadShrekkyDict(ErrMsgList* errMsg);
 
 		// Saves all phonetic dictionaries.
-		void saveDict();
+		bool saveDict(ErrMsgList* errMsg);
 
 		//
 

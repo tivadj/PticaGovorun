@@ -117,10 +117,15 @@ namespace PticaGovorun
 		return QString::fromUtf8(text.data(), text.size());
 	}
 
-	std::string toUtf8StdString(const QString& text)
+	std::string toUtf8StdString(const QStringRef& text)
 	{
 		QByteArray bytes = text.toUtf8();
 		return std::string(bytes.data(), bytes.size());
+	}
+
+	std::string toUtf8StdString(const QString& text)
+	{
+		return toUtf8StdString(QStringRef(&text));
 	}
 
 	std::string toStdString(boost::string_view text)

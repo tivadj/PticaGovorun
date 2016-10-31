@@ -97,99 +97,88 @@ namespace PticaGovorun
 	{
 		typedef std::chrono::system_clock Clock;
 	public:
-		void run();
-		void populatePronCodeToObjAndValidatePhoneticDictsHaveNoDuplicates();
-		void validatePhoneticDictsHaveNoDeniedWords(const std::unordered_set<std::wstring>& denyWords);
+		bool run(ErrMsgList* errMsg);
+		bool populatePronCodeToObjAndValidatePhoneticDictsHaveNoDuplicates(ErrMsgList* errMsg);
+		bool validatePhoneticDictsHaveNoDeniedWords(const std::unordered_set<std::wstring>& denyWords, ErrMsgList* errMsg);
 	private:
-		QString filePath(const QString& relFilePath) const;
+		boost::filesystem::path outFilePath(const boost::filesystem::path& relFilePath) const;
 		bool hasPhoneticExpansion(boost::wstring_view word, bool useBroken) const;
 		bool isBrokenUtterance(boost::wstring_view text) const;
 		const PronunciationFlavour* expandWellKnownPronCode(boost::wstring_view pronCode, bool useBrokenDict) const;
 		const PhoneticWord* findWellKnownWord(boost::wstring_view word, bool useBrokenDict) const;
 
-		void chooseSeedUnigramsNew(const UkrainianPhoneticSplitter& phoneticSplitter, int minWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit,
+		bool chooseSeedUnigramsNew(const UkrainianPhoneticSplitter& phoneticSplitter, int minWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit,
 			const PhoneRegistry& phoneReg,
 			std::function<auto (boost::wstring_view word) -> const PhoneticWord*> findWellFormedWord,
 			const std::set<PhoneId>& trainPhoneIds,
 			WordPhoneticTranscriber& phoneticTranscriber,
 			ResourceUsagePhase phase,
-			std::vector<PhoneticWord>& result);
+			std::vector<PhoneticWord>& result, ErrMsgList* errMsg);
 
-		void buildPhaseSpecificParts(ResourceUsagePhase phase, int maxWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit, 
+		bool buildPhaseSpecificParts(ResourceUsagePhase phase, int maxWordPartUsage, int maxUnigramsCount, bool allowPhoneticWordSplit,
 			const std::set<PhoneId>& trainPhoneIds, int gramDim,
 			std::function<auto (boost::wstring_view)->boost::wstring_view> pronCodeDisplay,
 			WordPhoneticTranscriber& phoneticTranscriber,
-			int* dictWordsCount = nullptr, int* phonesCount = nullptr);
+			int* dictWordsCount = nullptr, int* phonesCount = nullptr, ErrMsgList* errMsg = nullptr);
 
 		//
 		void loadDeclinationDictionary(std::unordered_map<std::wstring, std::unique_ptr<WordDeclensionGroup>>& declinedWordDict);
-		void phoneticSplitterBootstrapOnDeclinedWords(UkrainianPhoneticSplitter& phoneticSplitter);
+		bool phoneticSplitterBootstrapOnDeclinedWords(UkrainianPhoneticSplitter& phoneticSplitter, ErrMsgList* errMsg);
 		void phoneticSplitterCollectWordUsageInText(UkrainianPhoneticSplitter& phoneticSplitter, int maxFilesToProcess);
 		void phoneticSplitterRegisterWordsFromPhoneticDictionary(UkrainianPhoneticSplitter& phoneticSplitter);
-		void phoneticSplitterLoad(UkrainianPhoneticSplitter& phoneticSplitter, int maxFilesToProcess);
+		bool phoneticSplitterLoad(UkrainianPhoneticSplitter& phoneticSplitter, int maxFilesToProcess, ErrMsgList* errMsg);
 
 		// phonetic dict
-		std::tuple<bool, const char*> buildPhoneticDictionary(const std::vector<const WordPart*>& seedUnigrams, 
-			std::function<auto (boost::wstring_view pronCode) -> const PronunciationFlavour*> expandWellKnownPronCode,
-			std::vector<PhoneticWord>& phoneticDictWords);
-
 		void buildPhoneticDictionaryNew(const std::vector<PhoneticWord>& seedUnigrams, 
 			std::vector<PhoneticWord>& phoneticDictWords);
 
-		std::tuple<bool, const char*> createPhoneticDictionaryFromUsedWords(wv::slice<const WordPart*> seedWordParts, const UkrainianPhoneticSplitter& phoneticSplitter,
-			std::function<auto (boost::wstring_view, PronunciationFlavour&) -> bool> expandPronCodeFun,
-			std::vector<PhoneticWord>& phoneticDictWords);
+		void buildLangModelSeedWords(const std::vector<PhoneticWord>& seedUnigrams,
+			std::vector<PhoneticWord>& result);
 
-		bool writePhoneList(const std::vector<std::string>& phoneList, const QString& phoneListFile) const;
+		bool createPhoneticDictionaryFromUsedWords(gsl::span<const WordPart*> seedWordParts, const UkrainianPhoneticSplitter& phoneticSplitter,
+			std::function<auto (boost::wstring_view, PronunciationFlavour&) -> bool> expandPronCodeFun,
+			std::vector<PhoneticWord>& phoneticDictWords, ErrMsgList* errMsg);
+
+		bool writePhoneList(const std::vector<std::string>& phoneList, const boost::filesystem::path& phoneListFile, ErrMsgList* errMsg) const;
 
 		// language model
-		void langModelRecoverUsageOfUnusedWords(const std::vector<PhoneticWord> vocabWords, UkrainianPhoneticSplitter& phoneticSplitter, bool includeBrokenWords, std::map<int, ptrdiff_t>& wordPartIdToRecoveredUsage);
+		bool langModelRecoverUsageOfUnusedWords(const std::vector<PhoneticWord>& vocabWords, UkrainianPhoneticSplitter& phoneticSplitter, bool includeBrokenWords, std::map<int, ptrdiff_t>& wordPartIdToRecoveredUsage, ErrMsgList* errMsg);
 
 		//
-		void loadAudioAnnotation(const wchar_t* wavRootDir, const wchar_t* annotRootDir, const wchar_t* wavDirToAnalyze, bool removeSilenceAnnot, bool padSilStart, bool padSilEnd, float maxNoiseLevelDb);
+		bool loadAudioAnnotation(const boost::filesystem::path& wavRootDir, const boost::filesystem::path& annotRootDir, const boost::filesystem::path& wavDirToAnalyze,
+			bool removeSilenceAnnot, bool padSilStart, bool padSilEnd, float maxNoiseLevelDb, ErrMsgList* errMsg);
 		bool partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly,
 			std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds, ErrMsgList* errMsg);
 
 		// Ensures that the test phoneset is a subset of train phoneset.
 		bool putSentencesWithRarePhonesInTrain(std::vector<details::AssignedPhaseAudioSegment>& segments, std::set<PhoneId>& trainPhoneIds, ErrMsgList* errMsg) const;
 		
-		void fixWavSegmentOutputPathes(const QString& audioSrcRootDir,
-			const QString& wavBaseOutDir,
+		void fixWavSegmentOutputPathes(const boost::filesystem::path& audioSrcRootDir,
+			const boost::filesystem::path& wavBaseOutDir,
 			ResourceUsagePhase targetPhase,
-			const QString& wavDirForRelPathes,
+			const boost::filesystem::path& wavDirForRelPathes,
 			std::vector<details::AssignedPhaseAudioSegment>& outSegRefs);
 
 		bool writeFileIdAndTranscription(const std::vector<details::AssignedPhaseAudioSegment>& segRefs, ResourceUsagePhase targetPhase,
-			const QString& fileIdsFilePath,
+			const boost::filesystem::path& fileIdsFilePath,
 			std::function<auto (boost::wstring_view)->boost::wstring_view> pronCodeDisplay,
-			const QString& transcriptionFilePath,
-			bool padSilStart, bool padSilEnd);
-		void buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segRefs, float targetSampleRate, bool padSilStart, bool padSilEnd, float minSilDurMs, bool cutSilVad);
+			const boost::filesystem::path& transcriptionFilePath,
+			bool padSilStart, bool padSilEnd, ErrMsgList* errMsg);
+		bool buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segRefs, float targetSampleRate, bool padSilStart, bool padSilEnd, float minSilDurMs, bool cutSilVad, ErrMsgList* errMsg);
 
 		void generateDataStat(const std::vector<details::AssignedPhaseAudioSegment>& phaseAssignedSegs);
 		
 		// Prints data statistics (speech segments, dictionaries).
-		void printDataStat(QDateTime genDate, const std::map<std::string,QVariant> speechModelConfig, const QString& statFilePath);
+		bool printDataStat(QDateTime genDate, const std::map<std::string,QVariant> speechModelConfig, const boost::filesystem::path& statFilePath, ErrMsgList* errMsg);
 
-	public:
-		QString errMsg_;
 	private:
 		std::mt19937 gen_;
-		QString dbName_;
-		QDir outDir_;
-		QDir speechProjDir_;
+		std::string dbName_;
+		boost::filesystem::path outDirPath_;
+		boost::filesystem::path speechProjDirPath_;
 		std::shared_ptr<GrowOnlyPinArena<wchar_t>> stringArena_;
 		PhoneRegistry phoneReg_;
 		std::shared_ptr<SpeechData> speechData_;
-
-		//std::vector<PhoneticWord> phoneticDictWordsWellFormed_;
-		//std::vector<PhoneticWord> phoneticDictWordsBroken_;
-		//std::vector<PhoneticWord> phoneticDictWordsFiller_;
-		//std::vector<PhoneticWord> phoneticDictWordsBrownBear_;
-
-		//std::map<boost::wstring_view, PhoneticWord> phoneticDictWellFormed_;
-		//std::map<boost::wstring_view, PhoneticWord> phoneticDictBroken_;
-		//std::map<boost::wstring_view, PhoneticWord> phoneticDictFiller_;
 
 		std::map<boost::wstring_view, PronunciationFlavour> pronCodeToObjWellFormed_;
 		std::map<boost::wstring_view, PronunciationFlavour> pronCodeToObjBroken_;
@@ -219,7 +208,7 @@ namespace PticaGovorun
 
 	/// Writes phonetic dictionary to file.
 	/// Each line has one pronunciation.
-	bool writePhoneticDictSphinx(const std::vector<PhoneticWord>& phoneticDictWords, const PhoneRegistry& phoneReg, const QString& filePath, std::function<auto (boost::wstring_view)->boost::wstring_view> pronCodeDisplay = nullptr, QString* errMsg = nullptr);
+	bool writePhoneticDictSphinx(const std::vector<PhoneticWord>& phoneticDictWords, const PhoneRegistry& phoneReg, const boost::filesystem::path& filePath, std::function<auto (boost::wstring_view)->boost::wstring_view> pronCodeDisplay, ErrMsgList* errMsg);
 
 	PG_EXPORTS bool readSphinxFileFileId(boost::wstring_view fileIdPath, std::vector<std::wstring>& fileIds);
 
@@ -242,8 +231,8 @@ namespace PticaGovorun
 
 	PG_EXPORTS bool loadSphinxAudio(boost::wstring_view audioDir, const std::vector<std::wstring>& audioRelPathesNoExt, boost::wstring_view audioFileSuffix, std::vector<AudioData>& audioDataList, std::wstring* errMsg);
 
-	bool loadWordList(boost::wstring_view filePath, std::unordered_set<std::wstring>& words);
-	bool writeWordList(const std::vector<boost::wstring_view>& words, boost::filesystem::path filePath, QString* errMsg);
+	bool loadWordList(const boost::filesystem::path& filePath, std::unordered_set<std::wstring>& words, ErrMsgList* errMsg);
+	bool writeWordList(const std::vector<boost::wstring_view>& words, boost::filesystem::path filePath, ErrMsgList* errMsg);
 
 	// Consistency rule for created speech model.
 	// Broken pronunciations are allowed in training (but not in test) dataset.

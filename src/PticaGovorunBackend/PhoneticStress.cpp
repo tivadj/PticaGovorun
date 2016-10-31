@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QXmlStreamReader>
 #include <QString>
+#include <boost/format.hpp>
 #include "assertImpl.h"
 
 namespace PticaGovorun
@@ -83,66 +84,90 @@ namespace PticaGovorun
 		const char* SressDictWordSyllable = "stressedSyllable";
 	}
 
-	std::tuple<bool, const char*> loadStressedSyllableDictionaryXml(boost::wstring_view dictFilePath, std::unordered_map<std::wstring, int>& wordToStressedSyllableInd)
+	bool loadStressedSyllableDictionaryXml(const boost::filesystem::path& dictFilePath, std::unordered_map<std::wstring, int>& wordToStressedSyllableInd, ErrMsgList* errMsg)
 	{
-		QFile file(QString::fromWCharArray(dictFilePath.begin(), dictFilePath.size()));
-		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-			return std::make_tuple(false, "Can't open file");
-
-		QXmlStreamReader xmlReader(&file);
-		std::wstring wordName;
-		while (!xmlReader.atEnd())
+		auto readStream = [&]()
 		{
-			xmlReader.readNext();
-			if (xmlReader.isStartElement() && xmlReader.name() == SressDictWordTag)
+			QFile file(toQStringBfs(dictFilePath));
+			if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 			{
-				wordName.clear();
-				int wordStressedSyllableInd = -1;
-
-				const QXmlStreamAttributes& attrs = xmlReader.attributes();
-				if (attrs.hasAttribute(SressDictWordName))
-				{
-					QStringRef nameStr = attrs.value(SressDictWordName);
-					QString nameQ = QString::fromRawData(nameStr.constData(), nameStr.size());
-					wordName = nameQ.toStdWString();
-				}
-				if (attrs.hasAttribute(SressDictWordSyllable))
-				{
-					QStringRef stressStr = attrs.value(SressDictWordSyllable);
-					int sepInd = stressStr.indexOf(' ');
-					if (sepInd != -1)
-						stressStr = stressStr.left(sepInd);
-
-					bool convOp = false;
-					wordStressedSyllableInd = stressStr.toInt(&convOp);
-					if (!convOp)
-						return std::make_tuple(false, "Can't parse stressed syllable definition");
-					
-					wordStressedSyllableInd -= 1; // dict has 1-based index
-				}
-
-				if (wordName.empty() || wordStressedSyllableInd == -1)
-					return std::make_tuple(false, "The word stress definition is incomplete");
-
-				auto checkSyllableInd = [](const std::wstring& word, int syllabInd)
-				{
-					if (syllabInd < 0)
-						return false;
-
-					int vowelsCount = vowelsCountUk(word);
-					if (syllabInd >= vowelsCount)
-						return false;
-					return true;
-				};
-				if (!checkSyllableInd(wordName, wordStressedSyllableInd))
-					std::make_tuple(false, "Syllable index is out of range");
-
-				wordToStressedSyllableInd[wordName] = wordStressedSyllableInd;
+				//pushErrorMsg(errMsg, str(boost::format("Can't open file for reading (%1%)") % dictFilePath.string()));
+				pushErrorMsg(errMsg, "Can't open file");
+				return false;
 			}
-		}
-		if (xmlReader.hasError())
-			return std::make_tuple(false, "Error reading XML stressed syllables definitions");
+			QXmlStreamReader xmlReader(&file);
+			std::wstring wordName;
+			while (!xmlReader.atEnd())
+			{
+				xmlReader.readNext();
+				if (xmlReader.isStartElement() && xmlReader.name() == SressDictWordTag)
+				{
+					wordName.clear();
+					int wordStressedSyllableInd = -1;
 
-		return std::make_tuple(true, nullptr);
+					const QXmlStreamAttributes& attrs = xmlReader.attributes();
+					if (attrs.hasAttribute(SressDictWordName))
+					{
+						QStringRef nameStr = attrs.value(SressDictWordName);
+						QString nameQ = QString::fromRawData(nameStr.constData(), nameStr.size());
+						wordName = nameQ.toStdWString();
+					}
+					if (attrs.hasAttribute(SressDictWordSyllable))
+					{
+						QStringRef stressStr = attrs.value(SressDictWordSyllable);
+						int sepInd = stressStr.indexOf(' ');
+						if (sepInd != -1)
+							stressStr = stressStr.left(sepInd);
+
+						bool convOp = false;
+						wordStressedSyllableInd = stressStr.toInt(&convOp);
+						if (!convOp)
+						{
+							pushErrorMsg(errMsg, str(boost::format("Can't parse stressed syllable definition for word %1%") % toUtf8StdString(wordName)));
+							return false;
+						}
+
+						wordStressedSyllableInd -= 1; // dict has 1-based index
+					}
+
+					if (wordName.empty() || wordStressedSyllableInd == -1)
+					{
+						pushErrorMsg(errMsg, str(boost::format("The stress definition is incomplete for word %1%") % toUtf8StdString(wordName)));
+						return false;
+					}
+
+					auto checkSyllableInd = [](const std::wstring& word, int syllabInd)
+					{
+						if (syllabInd < 0)
+							return false;
+
+						int vowelsCount = vowelsCountUk(word);
+						if (syllabInd >= vowelsCount)
+							return false;
+						return true;
+					};
+					if (!checkSyllableInd(wordName, wordStressedSyllableInd))
+					{
+						pushErrorMsg(errMsg, "Syllable index is out of range");
+						return false;
+					}
+
+					wordToStressedSyllableInd[wordName] = wordStressedSyllableInd;
+				}
+
+			}
+			if (xmlReader.hasError())
+			{
+				pushErrorMsg(errMsg, std::string("XmlReader error: ") + toUtf8StdString(xmlReader.errorString()));
+				return false;
+			}
+			return true;
+		};
+		if (!readStream())
+		{
+			pushErrorMsg(errMsg, str(boost::format("Can't read stressed syllables data from xml file (%1%)") % dictFilePath.string()));
+			return false;
+		}
+		return true;
 	}
 }

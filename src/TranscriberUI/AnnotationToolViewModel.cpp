@@ -110,7 +110,15 @@ namespace PticaGovorun
 		for (auto _ : audioTranscriptionModels_)
 			_->saveAudioMarkupToXml();
 		if (speechData_ != nullptr)
-			speechData_->saveDict();
+		{
+			ErrMsgList errMsg;
+			if (!speechData_->saveDict(&errMsg))
+			{
+				nextNotification(combineErrorMessages(errMsg));
+				return;
+			}
+		}
+		nextNotification(formatLogLineWithTime("Speech project is saved."));
 	}
 
 	std::shared_ptr<SpeechTranscriptionViewModel> AnnotationToolViewModel::activeTranscriptionModel()

@@ -186,6 +186,7 @@ public:
 	void saveCurrentRangeAsWavRequest();
 
 	QString modelShortName() const;
+	std::string modelShortNameStd() const;
 	const boost::filesystem::path& annotFilePath() const;
 	void setAnnotFilePath(const boost::filesystem::path& filePath);
 

@@ -336,6 +336,11 @@ namespace PticaGovorun
 		}
 	}
 
+	int sampleToTimeSecondsInt(ptrdiff_t sampleInd, float sampleRate)
+	{
+		return static_cast<int>(std::trunc(sampleInd / sampleRate));
+	}
+
 	std::wstring speechAnnotationFilePathAbs(const std::wstring& wavFileAbs, const std::wstring& wavRootDir, const std::wstring& annotRootDir)
 	{
 		QString wavFileAbsQ = QString::fromStdWString(wavFileAbs);
@@ -708,7 +713,7 @@ namespace PticaGovorun
 
 				auto pushSamples = [&segSamples,&audioSamples](ptrdiff_t startSampInd, ptrdiff_t endSampInd)
 				{
-					std::copy(&audioSamples[startSampInd], &audioSamples[endSampInd], std::back_inserter(segSamples));
+					std::copy(audioSamples.begin()+startSampInd, audioSamples.begin()+endSampInd, std::back_inserter(segSamples));
 				};
 
 				// inter-speech silence's segment consists of two phone markers

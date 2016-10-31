@@ -44,6 +44,6 @@ namespace UkrainianPhoneticSplitterNS
 		s.corpusFilePath_ = L"TmpCorpus.txt";
 		s.outputCorpusNormaliz_ = true;
 		s.corpusNormalizFilePath_ = L"TmpCorpusNormaliz.txt";
-		s.gatherWordPartsSequenceUsage(dirPath.toStdWString().c_str(), totalPreSplitWords, -1);
+		s.gatherWordPartsSequenceUsage(toBfs(dirPath), totalPreSplitWords, -1);
 	}
 }

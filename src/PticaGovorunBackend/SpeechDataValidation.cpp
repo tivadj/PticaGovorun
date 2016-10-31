@@ -93,7 +93,7 @@ namespace PticaGovorun
 		return true;
 	}
 
-	void SpeechData::saveDict()
+	bool SpeechData::saveDict(ErrMsgList* errMsg)
 	{
 		auto selectSecondFun = [](const std::pair<boost::wstring_view, PhoneticWord>& pair)
 		{
@@ -102,12 +102,21 @@ namespace PticaGovorun
 
 		std::vector<PhoneticWord> words(phoneticDictWellFormed_.size());
 		std::transform(std::begin(phoneticDictWellFormed_), std::end(phoneticDictWellFormed_), std::begin(words), selectSecondFun);
-		savePhoneticDictionaryXml(words, persianDictPath().wstring(), *phoneReg_);
+		if (!savePhoneticDictionaryXml(words, persianDictPath(), *phoneReg_, errMsg))
+		{
+			pushErrorMsg(errMsg, "Can't save WellFormed phonetic dict");
+			return false;
+		}
 
 		//
 		words.resize(phoneticDictBroken_.size());
 		std::transform(std::begin(phoneticDictBroken_), std::end(phoneticDictBroken_), std::begin(words), selectSecondFun);
-		savePhoneticDictionaryXml(words, brokenDictPath().wstring(), *phoneReg_);
+		if (!savePhoneticDictionaryXml(words, brokenDictPath(), *phoneReg_, errMsg))
+		{
+			pushErrorMsg(errMsg, "Can't save Broken phonetic dict");
+			return false;
+		}
+		return true;
 	}
 
 

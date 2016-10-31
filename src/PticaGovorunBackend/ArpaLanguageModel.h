@@ -66,7 +66,7 @@ namespace PticaGovorun
 		void checkUnigramTotalProbOne() const;
 	};
 
-	PG_EXPORTS void writeArpaLanguageModel(const ArpaLanguageModel& langModel, const wchar_t* lmFilePath);
+	PG_EXPORTS bool writeArpaLanguageModel(const ArpaLanguageModel& langModel, const boost::filesystem::path& lmFilePath, ErrMsgList* errMsg);
 
 	/// Calculates the total usage of a list of words.
 	ptrdiff_t wordsTotalUsage(const WordsUsageInfo& wordUsage, const std::vector<PhoneticWord>& words, const std::map<int, ptrdiff_t>* wordPartIdToUsage);

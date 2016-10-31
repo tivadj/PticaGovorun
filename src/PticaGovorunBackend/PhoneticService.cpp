@@ -72,6 +72,14 @@ namespace PticaGovorun
 		Phones.push_back(phone);
 	}
 
+	void PhoneticWord::clear()
+	{
+		Word = boost::wstring_view();
+		Pronunciations.clear();
+		Log10ProbHint = boost::none;
+		Comment.clear();
+	}
+
 	bool operator == (const Pronunc& a, const Pronunc& b)
 	{
 		bool eqSize = a.Phones.size() == b.Phones.size();
@@ -110,12 +118,13 @@ namespace PticaGovorun
 	{
 		PhoneId result;
 		result.Id = validPhoneId;
-#if PG_DEBUG
-		static std::string phoneStr;
-		bool toStrOp = phoneToStr(*this, validPhoneId, phoneStr);
-		PG_Assert2(toStrOp, "Invalid PhoneId:int");
-		result.fillStr(phoneStr);
-#endif
+		if (pgDebug())
+		{
+			static std::string phoneStr;
+			bool toStrOp = phoneToStr(*this, validPhoneId, phoneStr);
+			PG_Assert2(toStrOp, "Invalid PhoneId:int");
+			result.fillStr(phoneStr);
+		}
 		return result;
 	}
 
@@ -123,14 +132,15 @@ namespace PticaGovorun
 	{
 		BasicPhoneIdT result;
 		result.Id = basicPhoneId;
-#ifdef PG_DEBUG
-		int basicPhoneStrInd = basicPhoneId - 1;
+		if (pgDebug())
+		{
+			int basicPhoneStrInd = basicPhoneId - 1;
 
-		PG_Assert(basicPhoneStrInd >= 0 && basicPhoneStrInd < basicPhones_.size());
-		const BasicPhone& basicPhone = basicPhones_[basicPhoneStrInd];
+			PG_Assert(basicPhoneStrInd >= 0 && basicPhoneStrInd < basicPhones_.size());
+			const BasicPhone& basicPhone = basicPhones_[basicPhoneStrInd];
 
-		result.fillStr(basicPhone.Name);
-#endif
+			result.fillStr(basicPhone.Name);
+		}
 		return result;
 	}
 
@@ -3525,7 +3535,7 @@ namespace PticaGovorun
 		std::wstring errorStdWString() const { return xml_.errorString().toStdWString(); }
 	};
 
-	void UkrainianPhoneticSplitter::gatherWordPartsSequenceUsage(const wchar_t* textFilesDir, long& totalPreSplitWords, int maxFileToProcess)
+	void UkrainianPhoneticSplitter::gatherWordPartsSequenceUsage(const boost::filesystem::path& textFilesDir, long& totalPreSplitWords, int maxFileToProcess)
 	{
 		QFile corpusFile;
 		QTextStream corpusStream;
@@ -3557,7 +3567,7 @@ namespace PticaGovorun
 		std::vector<const WordPart*> wordParts;
 		wordParts.reserve(1024*1024);
 
-		QString textFilesDirQ = QString::fromStdWString(textFilesDir);
+		QString textFilesDirQ = toQStringBfs(textFilesDir);
 		QDirIterator it(textFilesDirQ, QStringList() << "*.fb2", QDir::Files, QDirIterator::Subdirectories);
 		int processedFiles = 0;
 		while (it.hasNext())

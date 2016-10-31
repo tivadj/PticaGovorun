@@ -12,17 +12,22 @@ namespace
 	const char* WordTag = "word";
 	const char* WordName = "name";
 	const char* WordPhones = "phones";
+	const char* WordLog10ProbHint = "log10ProbHint";
+	const char* WordComment = "comment";
 	const char* PronunciationTag = "pron";
 	const char* PronunciationCode = "code";
 }
 
 namespace PticaGovorun
 {
-	std::tuple<bool, const char*> savePhoneticDictionaryXml(const std::vector<PhoneticWord>& phoneticDict, boost::wstring_view filePath, const PhoneRegistry& phoneReg)
+	bool savePhoneticDictionaryXml(const std::vector<PhoneticWord>& phoneticDict, const boost::filesystem::path& filePath, const PhoneRegistry& phoneReg, ErrMsgList* errMsg)
 	{
-		QFile file(toQString(filePath));
+		QFile file(toQStringBfs(filePath));
 		if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-			return std::make_tuple(false, "Can't open file for writing");
+		{
+			pushErrorMsg(errMsg, str(boost::format("Can't open file for writing (%1%)") % filePath.string()));
+			return false;
+		}
 
 		QXmlStreamWriter xmlWriter(&file);
 		xmlWriter.setCodec("utf-8");
@@ -68,11 +73,21 @@ namespace PticaGovorun
 					xmlWriter.writeEndElement(); // PronunciationTag
 				}
 			}
+
+			if (wordPron.Log10ProbHint != boost::none)
+			{
+				// do not generate trailing zeros: 3.14 should not become 3.1400
+				QString probStr;
+				QTextStream(&probStr) << wordPron.Log10ProbHint.value();
+				xmlWriter.writeAttribute(WordLog10ProbHint, probStr);
+			}
+			if (!wordPron.Comment.empty())
+				xmlWriter.writeAttribute(WordComment, utf8ToQString(wordPron.Comment));
 			xmlWriter.writeEndElement(); // WordTag
 		}
 		xmlWriter.writeEndElement(); // XmlDocTag
 
-		return std::make_tuple(true, nullptr);
+		return true;
 	}
 
 	bool loadPhoneticDictionaryXml(const boost::filesystem::path& filePath, const PhoneRegistry& phoneReg, std::vector<PhoneticWord>& phoneticDict, GrowOnlyPinArena<wchar_t>& stringArena, ErrMsgList* errMsg)
@@ -80,7 +95,7 @@ namespace PticaGovorun
 		QFile file(toQStringBfs(filePath));
 		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 		{
-			if (errMsg != nullptr) errMsg->utf8Msg = str(boost::format("Can't open file for reading (%1%)") % filePath.string());
+			pushErrorMsg(errMsg, str(boost::format("Can't open file for reading (%1%)") % filePath.string()));
 			return false;
 		}
 
@@ -100,8 +115,7 @@ namespace PticaGovorun
 
 			phoneticDict.push_back(wordPron);
 
-			wordPron.Word.clear();
-			wordPron.Pronunciations.clear();
+			wordPron.clear();
 			singlePronPerWord = false;
 		};
 
@@ -123,6 +137,34 @@ namespace PticaGovorun
 					arenaWordRef = registerWordThrow2(stringArena, name);
 
 					wordPron.Word = arenaWordRef;
+				}
+				if (attrs.hasAttribute(WordLog10ProbHint))
+				{
+					QStringRef logProbStr = attrs.value(WordLog10ProbHint);
+					
+					bool ok = false;
+					float value = logProbStr.toFloat(&ok);
+					if (!ok)
+					{
+						pushErrorMsg(errMsg, str(boost::format("Can't parse float, word=%1%, log10ProbHint=%2%, file=(%3%)") 
+							% toUtf8StdString(wordPron.Word) 
+							% toUtf8StdString(logProbStr)
+							% filePath.string()));
+						return false;
+					}
+					if (value > 0)
+					{
+						pushErrorMsg(errMsg, str(boost::format("Out of range probability, word=%1%, log10ProbValue=%2%, file=(%3%)") 
+							% toUtf8StdString(wordPron.Word) 
+							% value
+							% filePath.string()));
+						return false;
+					}
+					wordPron.Log10ProbHint = value;
+				}
+				if (attrs.hasAttribute(WordComment))
+				{
+					wordPron.Comment = toUtf8StdString(attrs.value(WordComment));
 				}
 				if (attrs.hasAttribute(WordPhones))
 				{

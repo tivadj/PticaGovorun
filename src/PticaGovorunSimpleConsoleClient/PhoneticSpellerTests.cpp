@@ -15,15 +15,13 @@ namespace PhoneticSpellerTestsNS
 		phoneReg.setPalatalSupport(PalatalSupport::AsPalatal);
 		initPhoneRegistryUk(phoneReg, true, true);
 
-		bool loadOp;
-		const char* errMsg;
+		ErrMsgList errMsg;
 
-		const wchar_t* stressDict = LR"path(C:\devb\PticaGovorunProj\data\stressDictUk.xml)path";
+		boost::filesystem::path stressDictFilePath = "path(C:\devb\PticaGovorunProj\data\stressDictUk.xml)path";
 		std::unordered_map<std::wstring, int> wordToStressedSyllable;
-		std::tie(loadOp, errMsg) = loadStressedSyllableDictionaryXml(stressDict, wordToStressedSyllable);
-		if (!loadOp)
+		if (!loadStressedSyllableDictionaryXml(stressDictFilePath, wordToStressedSyllable, &errMsg))
 		{
-			std::cerr << errMsg << std::endl;
+			std::cerr << str(errMsg) << std::endl;
 			return;
 		}
 
@@ -89,7 +87,7 @@ namespace PhoneticSpellerTestsNS
 				phoneticTranscriber.transcribe(phoneReg, pronNameStr);
 				if (phoneticTranscriber.hasError())
 				{
-					dumpFileStream << "ERROR: can't spell word='" << QString::fromWCharArray(pronName.cbegin(), pronNameStr.size()) << "'" << errMsg << " ";
+					dumpFileStream << "ERROR: can't spell word='" << QString::fromWCharArray(pronName.cbegin(), pronNameStr.size()) << "'" << combineErrorMessages(errMsg) << " ";
 					dumpFileStream << QString::fromStdWString(phoneticTranscriber.errorString()) << "\n";
 					continue;
 				}
