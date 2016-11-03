@@ -13,6 +13,9 @@ namespace PticaGovorun
 		bool IsSpeech = false; // false=silence
 		ptrdiff_t StartSampleInd = -1;
 		ptrdiff_t EndSampleInd = -1;
+
+		SegmentSpeechActivity() = default;
+		SegmentSpeechActivity(bool isSpeech, ptrdiff_t startSampleInd, ptrdiff_t endSampleInd);
 	};
 
 	void convertVadMaskToSegments(gsl::span<int> framesVadMask, int frameSize, int frameShift, std::vector<SegmentSpeechActivity>& activity);

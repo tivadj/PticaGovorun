@@ -34,6 +34,12 @@ namespace PticaGovorun
 		};
 	}
 
+	enum class VadImplKind
+	{
+		G729, // G729 Annex B
+		PGImpl // this project custom dirty hacky temporary implementation
+	};
+
 	// Gets the string which can be used as a version of a trained speech model.
 	// Returns the name of the directory where the sphinx model resides.
 	PG_EXPORTS std::wstring sphinxModelVersionStr(boost::wstring_view modelDir);
@@ -146,7 +152,7 @@ namespace PticaGovorun
 
 		//
 		bool loadAudioAnnotation(const boost::filesystem::path& wavRootDir, const boost::filesystem::path& annotRootDir, const boost::filesystem::path& wavDirToAnalyze,
-			bool removeSilenceAnnot, bool padSilStart, bool padSilEnd, float maxNoiseLevelDb, ErrMsgList* errMsg);
+			bool removeSilenceAnnot, bool removeInterSpeechSilence, bool padSilStart, bool padSilEnd, float maxNoiseLevelDb, ErrMsgList* errMsg);
 		bool partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly,
 			std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds, ErrMsgList* errMsg);
 
@@ -164,7 +170,7 @@ namespace PticaGovorun
 			std::function<auto (boost::wstring_view)->boost::wstring_view> pronCodeDisplay,
 			const boost::filesystem::path& transcriptionFilePath,
 			bool padSilStart, bool padSilEnd, ErrMsgList* errMsg);
-		bool buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segRefs, float targetSampleRate, bool padSilStart, bool padSilEnd, float minSilDurMs, bool cutSilVad, ErrMsgList* errMsg);
+		bool buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segRefs, float targetSampleRate, bool padSilStart, bool padSilEnd, float minSilDurMs, boost::optional<VadImplKind> vadKind, ErrMsgList* errMsg);
 
 		void generateDataStat(const std::vector<details::AssignedPhaseAudioSegment>& phaseAssignedSegs);
 		

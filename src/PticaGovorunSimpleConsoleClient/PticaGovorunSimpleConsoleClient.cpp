@@ -28,6 +28,7 @@ namespace PrepareSphinxTrainDataNS { void run(); }
 namespace DslDictionaryConvertRunnerNS { void run(); }
 namespace SphinxIfRunnerNS { void run(); }
 namespace SegmentsLoaderRunnerNS { void run(); }
+namespace VadRunnerNS { void run(); }
 
 int mainCore(int argc, char* argv[])
 {
@@ -60,7 +61,8 @@ int mainCore(int argc, char* argv[])
 	//RecognizeSpeechInBatchTester::runMain(argc, argv);
 	//DslDictionaryConvertRunnerNS::run();
 	//SphinxIfRunnerNS::run();
-	SegmentsLoaderRunnerNS::run();
+	//SegmentsLoaderRunnerNS::run();
+	VadRunnerNS::run();
 	return 0;
 }
 

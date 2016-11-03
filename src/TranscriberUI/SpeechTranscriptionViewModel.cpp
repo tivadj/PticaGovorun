@@ -1827,7 +1827,8 @@ namespace PticaGovorun
 
 		std::vector<SegmentSpeechActivity> activity;
 		//if (!detectVoiceActivitySphinx(curSeg, sphinxSampleRate, vadArgs, activity, &errMsg))
-		if (!detectVoiceActivityG729(curSeg, sphinxSampleRate, activity, &errMsg))
+		//if (!detectVoiceActivityG729(curSeg, sphinxSampleRate, activity, &errMsg))
+		if (!pgDetectVoiceActivity(curSeg, sphinxSampleRate, activity, &errMsg))
 		{
 			pushErrorMsg(&errMsg, "Voice Activity Detection failed");
 			nextNotification(combineErrorMessages(errMsg));

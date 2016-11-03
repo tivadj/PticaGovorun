@@ -213,6 +213,7 @@
     <ClCompile Include="SphinxIfRunner.cpp" />
     <ClCompile Include="StressedSyllableRunner.cpp" />
     <ClCompile Include="UkrainianPhoneticSplitterRunner.cpp" />
+    <ClCompile Include="VadRunner.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

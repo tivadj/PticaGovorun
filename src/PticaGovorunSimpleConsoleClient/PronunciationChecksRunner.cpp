@@ -31,7 +31,8 @@ namespace PronunciationChecksRunnerNS
 		bool removeSilenceAnnot = true;
 		bool padSilStart = true;
 		bool padSilEnd = true;
-		bool loadOp = loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, false, removeSilenceAnnot, padSilStart, padSilEnd, 0, segPredBeforeFun, segments, &errMsg);
+		bool removeInterSpeechSilence = true;
+		bool loadOp = loadSpeechAndAnnotation(QFileInfo(QString::fromWCharArray(wavDirToAnalyze)), wavRootDir, annotRootDir, MarkerLevelOfDetail::Word, false, removeSilenceAnnot, removeInterSpeechSilence, padSilStart, padSilEnd, 0, segPredBeforeFun, segments, &errMsg);
 
 		//
 

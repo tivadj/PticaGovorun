@@ -465,7 +465,9 @@ namespace PticaGovorun
 	}
 
 	bool loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir, 
-		MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, bool removeSilenceAnnot, bool padSilStart, bool padSilEnd, float maxNoiseLevelDb,
+		MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, bool removeSilenceAnnot,
+		bool removeInterSpeechSilence,
+		bool padSilStart, bool padSilEnd, float maxNoiseLevelDb,
 		std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments, ErrMsgList* errMsg)
 	{
 		if (folderOrWavFilePath.isDir())
@@ -476,7 +478,7 @@ namespace PticaGovorun
 			QFileInfoList items = dir.entryInfoList(QDir::Filter::Files | QDir::Filter::Dirs | QDir::Filter::NoDotAndDotDot);
 			for (const QFileInfo item : items)
 			{
-				if (!loadSpeechAndAnnotation(item, wavRootDir, annotRootDir, targetLevelOfDetail, loadAudio, removeSilenceAnnot, padSilStart, padSilEnd, maxNoiseLevelDb, segPredBefore, segments, errMsg))
+				if (!loadSpeechAndAnnotation(item, wavRootDir, annotRootDir, targetLevelOfDetail, loadAudio, removeSilenceAnnot, removeInterSpeechSilence, padSilStart, padSilEnd, maxNoiseLevelDb, segPredBefore, segments, errMsg))
 					return false;
 			}
 			return true;
@@ -719,7 +721,6 @@ namespace PticaGovorun
 				// inter-speech silence's segment consists of two phone markers
 				// the first marker has text='_s', the second marker has text='' (empty string).
 				// these regions of silence may be detected using VAD (Voice Activity Detetion)
-				bool removeInterSpeechSilence = removeSilenceAnnot;
 				for (size_t ind = blankSeg.StartMarkerInd; ind < speechAnnot.markersSize()-1; ++ind)
 				{
 					const auto& m1 = speechAnnot.marker(ind);
@@ -1422,5 +1423,45 @@ void computeMfccVelocityAccel(const wv::slice<short> samples, int frameSize, int
 	}
 }
 
+	bool pgDetectVoiceActivity(gsl::span<const short> samples, float sampRate, std::vector<SegmentSpeechActivity>& activity, ErrMsgList* errMsg)
+	{
+		static const float wlen = 0.025625f;
+		static const float frate = 100;
+		static int frameSize = static_cast<int>(wlen * sampRate);
+		int frameShift = static_cast<int>(sampRate / frate);
+		frameSize = 105;
+		//frameSize = 400;
+		frameShift = frameSize;
+		//frameShift = 160;
+
+		std::vector<int> vadMask;
+		for (ptrdiff_t frameStartSampleInd = 0; ; frameStartSampleInd += frameShift)
+		{
+			if (frameStartSampleInd + frameSize > samples.size())
+				break;
+
+			gsl::span<const short> frameSamples = samples.subspan(frameStartSampleInd, frameSize);
+
+			auto calcPower = [](gsl::span<const short> samps)
+			{
+				double result = 0;
+				for (ptrdiff_t i = 0; i<samps.size(); i+=1)
+				{
+					short vShort = samps[i];
+					double v = vShort / 32768.0;
+					result += v*v;
+				}
+				result /= samps.size();
+				result = std::log10(result) / (-7);
+				return result;
+			};
+
+			auto feat = calcPower(frameSamples);
+			bool isSil = feat > 0.6634; // greater, because we divided by -7
+			vadMask.push_back(!isSil);
+		}
+		convertVadMaskToSegments(vadMask, frameSize, frameShift, activity);
+		return true;
+	}
 }
 

@@ -21,6 +21,22 @@
 
 namespace PticaGovorun
 {
+	bool parseVadKindStr(boost::string_view vadKindStr, boost::optional<VadImplKind>& varKind, ErrMsgList* errMsg)
+	{
+		if (vadKindStr == "G729")
+			varKind = VadImplKind::G729;
+		else if (vadKindStr == "PGImpl")
+			varKind = VadImplKind::PGImpl;
+		else if (vadKindStr == "none")
+			varKind = boost::none;
+		else
+		{
+			pushErrorMsg(errMsg, str(boost::format("Unknown VAD kind (%1%)") % vadKindStr));
+			return false;
+		}
+		return true;
+	}
+
 	std::wstring sphinxModelVersionStr(boost::wstring_view modelDir)
 	{
 		QDir modelDirQ(toQString(modelDir));
@@ -661,7 +677,8 @@ namespace PticaGovorun
 		const char* ConfigMinWordPartUsage = "minWordPartUsage";
 		const char* ConfigMaxUnigramsCount = "maxUnigramsCount";
 		const char* ConfigAudOutputWav = "aud.outputWav";
-		const char* ConfigAudCutSilenceVad = "aud.cutSilVad";
+		const char* ConfigAudVad = "aud.Vad";
+		const char* ConfigAudRemoveInterSpeechSilence = "aud.removeInterSpeechSilence";
 		const char* ConfigAudPadSilStart = "aud.padSilStart";
 		const char* ConfigAudPadSilEnd = "aud.padSilEnd";
 		const char* ConfigAudMinSilDurMs = "aud.minSilDurMs";
@@ -692,7 +709,11 @@ namespace PticaGovorun
 		bool outputCorpus = AppHelpers::configParamBool(ConfigOutputCorpus, false);
 		bool removeSilenceAnnot = AppHelpers::configParamBool(ConfigRemoveSilenceAnnot, true); // remove silence (<sil>, [sp], _s) from audio annotation
 		bool outputWav = AppHelpers::configParamBool(ConfigAudOutputWav, true);
-		bool cutSilVad = AppHelpers::configParamBool(ConfigAudCutSilenceVad, true); // cut silence automatically detected by VAD
+		std::string vadKindStr = toUtf8StdString(AppHelpers::configParamQString(ConfigAudVad, "none")); // (def=none, G729, PGImpl) cut silence automatically detected by VAD
+		boost::optional<VadImplKind> vadKind;
+		if (!parseVadKindStr(vadKindStr, vadKind, errMsg))
+			return false;
+		bool removeInterSpeechSilence = AppHelpers::configParamBool(ConfigAudRemoveInterSpeechSilence, true); // whether to remove (_s,'') segments (based on phone level markers) in the middle of a speech segment
 		bool padSilStart = AppHelpers::configParamBool(ConfigAudPadSilStart, true); // pad the audio segment with the silence segment
 		bool padSilEnd = AppHelpers::configParamBool(ConfigAudPadSilEnd, true);
 		int minSilDurMs = AppHelpers::configParamInt(ConfigAudMinSilDurMs, 300); // minimal duration (milliseconds) of flanked silence
@@ -785,7 +806,7 @@ namespace PticaGovorun
 		auto speechAnnotRootDir = speechData_->speechProjDir() / "SpeechAnnot";
 		auto wavDirToAnalyze = speechData_->speechProjDir() / "SpeechAudio";
 
-		if (!loadAudioAnnotation(speechWavRootDir, speechAnnotRootDir, wavDirToAnalyze, removeSilenceAnnot, padSilStart, padSilEnd, maxNoiseLevelDb, errMsg))
+		if (!loadAudioAnnotation(speechWavRootDir, speechAnnotRootDir, wavDirToAnalyze, removeSilenceAnnot, removeInterSpeechSilence, padSilStart, padSilEnd, maxNoiseLevelDb, errMsg))
 			return false;
 
 		std::wcout << "Found annotated segments: " << segments_.size() << std::endl; // debug
@@ -955,7 +976,7 @@ namespace PticaGovorun
 				pushErrorMsg(errMsg, "Can't create wav train/test subfolder");
 				return false;
 			}
-			if (!buildWavSegments(phaseAssignedSegs, outSampleRate, padSilStart, padSilEnd, minSilDurMs, cutSilVad, errMsg))
+			if (!buildWavSegments(phaseAssignedSegs, outSampleRate, padSilStart, padSilEnd, minSilDurMs, vadKind, errMsg))
 				return false;
 		}
 
@@ -980,6 +1001,7 @@ namespace PticaGovorun
 		speechModelConfig[ConfigMaxUnigramsCount] = QVariant::fromValue(maxUnigramsCount);
 		speechModelConfig[ConfigRemoveSilenceAnnot] = QVariant::fromValue(removeSilenceAnnot);
 		speechModelConfig[ConfigAudOutputWav] = QVariant::fromValue(outputWav);
+		speechModelConfig[ConfigAudVad] = QVariant::fromValue(utf8ToQString(vadKindStr));
 		speechModelConfig[ConfigAudPadSilStart] = QVariant::fromValue(padSilStart);
 		speechModelConfig[ConfigAudPadSilEnd] = QVariant::fromValue(padSilEnd);
 		speechModelConfig[ConfigAudMinSilDurMs] = QVariant::fromValue(minSilDurMs);
@@ -1633,7 +1655,7 @@ namespace PticaGovorun
 	}
 
 	bool SphinxTrainDataBuilder::loadAudioAnnotation(const boost::filesystem::path& wavRootDir, const boost::filesystem::path& annotRootDir, const boost::filesystem::path& wavDirToAnalyze,
-		bool removeSilenceAnnot, bool padSilStart, bool padSilEnd, float maxNoiseLevelDb, ErrMsgList* errMsg)
+		bool removeSilenceAnnot, bool removeInterSpeechSilence, bool padSilStart, bool padSilEnd, float maxNoiseLevelDb, ErrMsgList* errMsg)
 	{
 		// load audio segments
 		auto segPredBeforeFun = [](const AnnotatedSpeechSegment& seg) -> bool
@@ -1654,7 +1676,7 @@ namespace PticaGovorun
 		};
 
 		bool loadAudio = true;
-		if (!loadSpeechAndAnnotation(QFileInfo(toQStringBfs(wavDirToAnalyze)), wavRootDir.wstring(), annotRootDir.wstring(), MarkerLevelOfDetail::Word, loadAudio, removeSilenceAnnot, padSilStart, padSilEnd, maxNoiseLevelDb, segPredBeforeFun, segments_, errMsg))
+		if (!loadSpeechAndAnnotation(QFileInfo(toQStringBfs(wavDirToAnalyze)), wavRootDir.wstring(), annotRootDir.wstring(), MarkerLevelOfDetail::Word, loadAudio, removeSilenceAnnot, removeInterSpeechSilence, padSilStart, padSilEnd, maxNoiseLevelDb, segPredBeforeFun, segments_, errMsg))
 		{
 			pushErrorMsg(errMsg, "Can't load audio and annotation.");
 			return false;
@@ -1935,7 +1957,7 @@ namespace PticaGovorun
 		return true;
 	}
 
-	bool SphinxTrainDataBuilder::buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segsRefs, float targetSampleRate, bool padSilStart, bool padSilEnd, float minSilDurMs, bool cutSilVad, ErrMsgList* errMsg)
+	bool SphinxTrainDataBuilder::buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segsRefs, float targetSampleRate, bool padSilStart, bool padSilEnd, float minSilDurMs, boost::optional<VadImplKind> vadKind, ErrMsgList* errMsg)
 	{
 		// group segmets by source wav file, so wav files are read sequentially
 
@@ -1974,27 +1996,57 @@ namespace PticaGovorun
 				return false;
 			}
 
+			SpeechAnnotation speechAnnot;
+			PG_Assert(!segs.empty())
+			auto audioMarkupFilePathAbs = boost::filesystem::path(segs.front()->Seg->AnnotFilePath);
+			if (!loadAudioMarkupXml(audioMarkupFilePathAbs, speechAnnot, errMsg))
+				return false;
+
+			// check whether there is annotation file's scope VAD behaviour
+			boost::optional<VadImplKind> activeVad = vadKind; // root config scope
+			{
+				boost::optional<VadImplKind> annotVadKind;
+				auto param = speechAnnot.getParameter("VAD");
+				if (param != nullptr)
+				{
+					std::wcout << "VAD: " << utf8s2ws(param->Value) << "\n";
+
+					if (!parseVadKindStr(param->Value, annotVadKind, errMsg))
+						return false;
+				}
+
+				if (annotVadKind != boost::none)
+					activeVad = annotVadKind; // overwrite
+			}
+
 			// prepare silence segments to pad speech segments not flanked with silence
 			curFileAllSil.clear();
+			if (padSilStart || padSilEnd)
 			{
-				PG_Assert(!segs.empty())
-				auto audioMarkupFilePathAbs = boost::filesystem::path(segs.front()->Seg->AnnotFilePath);
-				SpeechAnnotation speechAnnot;
-				if (!loadAudioMarkupXml(audioMarkupFilePathAbs, speechAnnot, errMsg))
-					return false;
-
-				QString silQ = toQString(fillerSilence());
-				for (size_t i = 0; i<speechAnnot.markersSize(); ++i)
+				auto silenceFilePathParam = speechAnnot.getParameter("importSilenceFile");
+				if (silenceFilePathParam != nullptr)
 				{
-					const TimePointMarker& marker = speechAnnot.marker(i);
-					const TimePointMarker& next = speechAnnot.marker(i+1);
-					if (marker.TranscripText == silQ)
+					boost::filesystem::path silenceFilePath = audioMarkupFilePathAbs.parent_path() / silenceFilePathParam->Value;
+					std::wcout << "importSilenceFile: " << silenceFilePath.wstring() << "\n"; // debug
+
+					if (!readAllSamplesFormatAware(silenceFilePath, curFileAllSil, &srcAudioSampleRate, errMsg))
+						return false;
+				}
+				else
+				{
+					QString silQ = toQString(fillerSilence());
+					for (size_t i = 0; i<speechAnnot.markersSize(); ++i)
 					{
-						gsl::span<const short> silSamples = srcAudioSamples;
-						int len = next.SampleInd - marker.SampleInd;
-						silSamples = silSamples.subspan(marker.SampleInd + static_cast<ptrdiff_t>(len * 0.3),
-							static_cast<ptrdiff_t>(len * 0.4));
-						std::copy(silSamples.begin(), silSamples.end(), std::back_inserter(curFileAllSil));
+						const TimePointMarker& marker = speechAnnot.marker(i);
+						const TimePointMarker& next = speechAnnot.marker(i+1);
+						if (marker.TranscripText == silQ)
+						{
+							gsl::span<const short> silSamples = srcAudioSamples;
+							int len = next.SampleInd - marker.SampleInd;
+							silSamples = silSamples.subspan(marker.SampleInd + static_cast<ptrdiff_t>(len * 0.3),
+								static_cast<ptrdiff_t>(len * 0.4));
+							std::copy(silSamples.begin(), silSamples.end(), std::back_inserter(curFileAllSil));
+						}
 					}
 				}
 			}
@@ -2020,25 +2072,37 @@ namespace PticaGovorun
 				//segFramesNoPad = segFramesNoPad.subspan(seg.StartMarker.SampleInd, segLen);;
 				gsl::span<const short> segFramesNoPad = seg.Samples;
 
+
 				// remove silence segments using VAD
 				std::vector<short> samplesCutSil;
-				if (!cutSilVad)
+				if (activeVad != boost::none)
 				{
-					if (wavFilePath.find(L"BrownBear") != std::wstring::npos)
-						cutSilVad = true;
-				}
-				if (cutSilVad)
-				{
-					static const float G729SampleRate = 8000;
-					std::vector<short> samples8k;
-					if (!resampleFrames(segFramesNoPad, srcAudioSampleRate, G729SampleRate, samples8k, errMsg))
-						return false;
-
 					std::vector<SegmentSpeechActivity> activity;
-					if (!detectVoiceActivityG729(samples8k, G729SampleRate, activity, errMsg))
-						return false;
+					float sampleRatio = -1; // used when resampling is required
 
-					float sampleRatio = G729SampleRate / srcAudioSampleRate;
+					switch (activeVad.value())
+					{
+					case VadImplKind::G729:
+					{
+						static const float G729SampleRate = 8000;
+						std::vector<short> samples8k;
+						if (!resampleFrames(segFramesNoPad, srcAudioSampleRate, G729SampleRate, samples8k, errMsg))
+							return false;
+
+						if (!detectVoiceActivityG729(samples8k, G729SampleRate, activity, errMsg))
+							return false;
+						sampleRatio = G729SampleRate / srcAudioSampleRate;
+						break;
+					}
+					case VadImplKind::PGImpl:
+					{
+						if (!pgDetectVoiceActivity(segFramesNoPad, srcAudioSampleRate, activity, errMsg))
+							return false;
+						sampleRatio = 1; // there was no resampling
+						break;
+					}
+					}
+					PG_DbgAssert(sampleRatio != -1);
 
 					for (const SegmentSpeechActivity& act : activity)
 					{

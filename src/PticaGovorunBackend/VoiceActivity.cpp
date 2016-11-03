@@ -2,6 +2,13 @@
 
 namespace PticaGovorun
 {
+	SegmentSpeechActivity::SegmentSpeechActivity(bool isSpeech, ptrdiff_t startSampleInd, ptrdiff_t endSampleInd)
+		: IsSpeech(isSpeech),
+		StartSampleInd(startSampleInd),
+		EndSampleInd(endSampleInd)
+	{
+	}
+
 	void convertVadMaskToSegments(gsl::span<int> framesVadMask, int frameSize, int frameShift, std::vector<SegmentSpeechActivity>& activity)
 	{
 		if (framesVadMask.empty())

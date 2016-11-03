@@ -5,6 +5,7 @@
 #include <functional>
 #include <tuple>
 #include <memory>
+#include <gsl/span>
 
 #include <QObject>
 #include <QFileInfo>
@@ -18,7 +19,7 @@
 #include "PticaGovorunCore.h"
 #include "ClnUtils.h"
 #include "ComponentsInfrastructure.h"
-#include <gsl/span>
+#include "VoiceActivity.h"
 
 namespace PticaGovorun {
 
@@ -283,8 +284,10 @@ PG_EXPORTS std::wstring speechAnnotationFilePathAbs(const std::wstring& wavFileA
 // Loads annotated speech for training.
 // targetLevelOfDetail=type of marker (segment) to query annotation.
 // segPredBefore=predicate to determine whether to include segment into the result set; called before actual samples are loaded
+/// @removeInterSpeechSilence true to remove (_s,'') segments inside speech
 PG_EXPORTS bool loadSpeechAndAnnotation(const QFileInfo& folderOrWavFilePath, const std::wstring& wavRootDir, const std::wstring& annotRootDir,
 	MarkerLevelOfDetail targetLevelOfDetail, bool loadAudio, bool removeSilenceAnnot,
+	bool removeInterSpeechSilence,
 	bool padSilStart, bool padSilEnd, float maxNoiseLevelDb,
 	std::function<auto(const AnnotatedSpeechSegment& seg)->bool> segPredBefore, std::vector<AnnotatedSpeechSegment>& segments, ErrMsgList* errMsg);
 
@@ -351,4 +354,7 @@ PG_EXPORTS int slidingWindowsCount(long framesCount, int windowSize, int windowS
 PG_EXPORTS void slidingWindows(long startFrameInd, long framesCount, int windowSize, int windowShift, wv::slice<TwoFrameInds> windowBounds);
 
 PG_EXPORTS void computeMfccVelocityAccel(const wv::slice<short> samples, int frameSize, int frameShift, int framesCount, int mfcc_dim, int mfccVecLen, const TriangularFilterBank& filterBank, wv::slice<float> mfccFeatures);
+
+PG_EXPORTS bool pgDetectVoiceActivity(gsl::span<const short> samples, float sampRate, std::vector<SegmentSpeechActivity>& activity, ErrMsgList* errMsg);
+
 }
