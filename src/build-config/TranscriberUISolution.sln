@@ -46,15 +46,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Performance3.psess = Performance3.psess
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libjulius", "..\..\ThirdParty\julius4\msvc\libjulius\libjulius.vcxproj", "{4F9DC42E-E874-4885-819E-5C901F4E6079}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libjulius", "..\..\..\ThirdParty\julius4\msvc\libjulius\libjulius.vcxproj", "{4F9DC42E-E874-4885-819E-5C901F4E6079}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "julius", "..\..\ThirdParty\julius4\msvc\julius\julius.vcxproj", "{C8E5508A-BEF2-4010-B99F-09C14CF5B89D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "julius", "..\..\..\ThirdParty\julius4\msvc\julius\julius.vcxproj", "{C8E5508A-BEF2-4010-B99F-09C14CF5B89D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4F9DC42E-E874-4885-819E-5C901F4E6079} = {4F9DC42E-E874-4885-819E-5C901F4E6079}
 		{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F} = {0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsent", "..\..\ThirdParty\julius4\msvc\libsent\libsent.vcxproj", "{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsent", "..\..\..\ThirdParty\julius4\msvc\libsent\libsent.vcxproj", "{0867DE93-30F0-4D6E-AB7D-7E4545E5F24F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PticaGovorunInteropMatlab", "..\PticaGovorunInteropMatlab\PticaGovorunInteropMatlab.vcxproj", "{C8C6FCA2-D8A8-4EC3-A4DE-81473C514AF8}"
 EndProject

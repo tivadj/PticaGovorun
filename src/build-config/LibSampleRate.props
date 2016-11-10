@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
 
   <PropertyGroup Label="UserMacros">
-    <LibSampleRateDir>C:\devb\PticaGovorunProj\srcrep\ThirdParty\libsamplerate-0.1.8\</LibSampleRateDir>
+    <LibSampleRateDir>C:\devb\PticaGovorunProj\ThirdParty\libsamplerate-0.1.8\</LibSampleRateDir>
     <LibSampleRateBinDir>$(LibSampleRateDir)$(PlatformShortName)\$(Configuration)\</LibSampleRateBinDir>
   </PropertyGroup>
   

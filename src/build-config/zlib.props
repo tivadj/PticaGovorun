@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
 
   <PropertyGroup Label="UserMacros">
-    <ZlibDir>C:\devb\PticaGovorunProj\srcrep\ThirdParty\zlib-1.2.7\</ZlibDir>
+    <ZlibDir>C:\devb\PticaGovorunProj\ThirdParty\zlib-1.2.7\</ZlibDir>
     <ZlibBinDir>$(ZlibDir)contrib\vstudio\vc10\$(Platform)\$(Configuration)\</ZlibBinDir>
     <ZlibFilename>zlibwapi_$(PlatformShortName)</ZlibFilename>
   </PropertyGroup>

@@ -3,8 +3,8 @@
   <ImportGroup Label="PropertySheets" />
 
   <PropertyGroup Label="UserMacros">
-    <SphinxBaseDir>C:\devb\PticaGovorunProj\srcrep\ThirdParty\CmuSphinx-5prealpha\sphinxbase-5prealpha-win32\sphinxbase\</SphinxBaseDir>
-    <PocketSphinxDir>C:\devb\PticaGovorunProj\srcrep\ThirdParty\CmuSphinx-5prealpha\pocketsphinx-5prealpha-win32\pocketsphinx\</PocketSphinxDir>
+    <SphinxBaseDir>C:\devb\PticaGovorunProj\ThirdParty\CmuSphinx-5prealpha\sphinxbase-5prealpha-win32\sphinxbase\</SphinxBaseDir>
+    <PocketSphinxDir>C:\devb\PticaGovorunProj\ThirdParty\CmuSphinx-5prealpha\pocketsphinx-5prealpha-win32\pocketsphinx\</PocketSphinxDir>
   </PropertyGroup>
 
   <PropertyGroup>
