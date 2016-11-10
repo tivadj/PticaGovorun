@@ -552,6 +552,7 @@ namespace PticaGovorun
 		struct SegmentBlank
 		{
 			const TimePointMarker* ContentMarker = nullptr; // the marker with text
+			boost::wstring_view SpeakerBriefId;
 
 			// start/end markers may be different from content marker, if text segment is flanked with silence to the start/end
 			const TimePointMarker* StartMarker = nullptr;
@@ -586,6 +587,7 @@ namespace PticaGovorun
 
 			SegmentBlank blankSeg;
 			blankSeg.ContentMarker = &markerInfo.marker;
+			blankSeg.SpeakerBriefId = markerInfo.marker.SpeakerBriefId;
 			blankSeg.StartMarker = &markerInfo.marker;
 			blankSeg.StartMarkerInd = markerInfo.markerInd;
 			blankSeg.EndMarker = &endMarkerInfo.marker;
@@ -635,6 +637,7 @@ namespace PticaGovorun
 			seg.StartMarker = *blankSeg.StartMarker;
 			seg.EndMarker = *blankSeg.EndMarker;
 			seg.ContentMarker = *blankSeg.ContentMarker;
+			seg.SpeakerBriefId = toUtf8StdString(blankSeg.ContentMarker->SpeakerBriefId);
 			seg.AnnotFilePath = annotFilePath.toStdWString();
 			seg.AudioFilePath = audioFilePath.toStdWString();
 			seg.AudioStartsWithSilence = blankSeg.HasStartSilence;

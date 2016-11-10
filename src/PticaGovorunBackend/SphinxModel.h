@@ -1,9 +1,11 @@
+#pragma once
 #include <string>
 #include <vector>
 #include <chrono> // std::chrono::system_clock
 #include <set>
 #include <map>
 #include <random> // std::mt19937
+#include <gsl/span>
 #include <QString>
 #include <QVariant>
 #include <QDir>
@@ -16,23 +18,20 @@
 
 namespace PticaGovorun
 {
-	namespace details
+	// Component of audio file path, used in Sphinx .fieldIds and .transcription files.
+	struct AudioFileRelativePathComponents
 	{
-		// Component of audio file path, used in Sphinx .fieldIds and .transcription files.
-		struct AudioFileRelativePathComponents
-		{
-			QString SegFileNameNoExt; // file name of the output audio segment without extension
-			QString AudioSegFilePathNoExt; // abs file path to the output audio segment
-			QString WavOutRelFilePathNoExt; // wavBaseOutDir concat this=wavOutFilePath
-		};
+		QString SegFileNameNoExt; // file name of the output audio segment without extension
+		QString AudioSegFilePathNoExt; // abs file path to the output audio segment
+		QString WavOutRelFilePathNoExt; // wavBaseOutDir concat this=wavOutFilePath
+	};
 
-		struct AssignedPhaseAudioSegment
-		{
-			const AnnotatedSpeechSegment* Seg;
-			ResourceUsagePhase Phase;
-			AudioFileRelativePathComponents OutAudioSegPathParts;
-		};
-	}
+	struct AssignedPhaseAudioSegment
+	{
+		const AnnotatedSpeechSegment* Seg;
+		ResourceUsagePhase Phase;
+		AudioFileRelativePathComponents OutAudioSegPathParts;
+	};
 
 	enum class VadImplKind
 	{
@@ -154,25 +153,26 @@ namespace PticaGovorun
 		bool loadAudioAnnotation(const boost::filesystem::path& wavRootDir, const boost::filesystem::path& annotRootDir, const boost::filesystem::path& wavDirToAnalyze,
 			bool removeSilenceAnnot, bool removeInterSpeechSilence, bool padSilStart, bool padSilEnd, float maxNoiseLevelDb, ErrMsgList* errMsg);
 		bool partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly,
-			std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds, ErrMsgList* errMsg);
+			std::vector<AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds, ErrMsgList* errMsg);
 
 		// Ensures that the test phoneset is a subset of train phoneset.
-		bool putSentencesWithRarePhonesInTrain(std::vector<details::AssignedPhaseAudioSegment>& segments, std::set<PhoneId>& trainPhoneIds, ErrMsgList* errMsg) const;
+		bool putSentencesWithRarePhonesInTrain(std::vector<AssignedPhaseAudioSegment>& segments, std::set<PhoneId>& trainPhoneIds, ErrMsgList* errMsg) const;
 		
 		void fixWavSegmentOutputPathes(const boost::filesystem::path& audioSrcRootDir,
 			const boost::filesystem::path& wavBaseOutDir,
 			ResourceUsagePhase targetPhase,
 			const boost::filesystem::path& wavDirForRelPathes,
-			std::vector<details::AssignedPhaseAudioSegment>& outSegRefs);
+			std::vector<AssignedPhaseAudioSegment>& outSegRefs);
 
-		bool writeFileIdAndTranscription(const std::vector<details::AssignedPhaseAudioSegment>& segRefs, ResourceUsagePhase targetPhase,
+		bool writeFileIdAndTranscription(const std::vector<AssignedPhaseAudioSegment>& segRefs, ResourceUsagePhase targetPhase,
 			const boost::filesystem::path& fileIdsFilePath,
 			std::function<auto (boost::wstring_view)->boost::wstring_view> pronCodeDisplay,
 			const boost::filesystem::path& transcriptionFilePath,
 			bool padSilStart, bool padSilEnd, ErrMsgList* errMsg);
-		bool buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segRefs, float targetSampleRate, bool padSilStart, bool padSilEnd, float minSilDurMs, boost::optional<VadImplKind> vadKind, ErrMsgList* errMsg);
 
-		void generateDataStat(const std::vector<details::AssignedPhaseAudioSegment>& phaseAssignedSegs);
+		bool buildWavSegments(const std::vector<AssignedPhaseAudioSegment>& segRefs, float targetSampleRate, bool padSilStart, bool padSilEnd, float minSilDurMs, boost::optional<VadImplKind> vadKind, ErrMsgList* errMsg);
+
+		void generateDataStat(const std::vector<AssignedPhaseAudioSegment>& phaseAssignedSegs);
 		
 		// Prints data statistics (speech segments, dictionaries).
 		bool printDataStat(QDateTime genDate, const std::map<std::string,QVariant> speechModelConfig, const boost::filesystem::path& statFilePath, ErrMsgList* errMsg);

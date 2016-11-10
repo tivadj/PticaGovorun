@@ -18,6 +18,7 @@
 #include "AppHelpers.h"
 #include "G729If.h"
 #include "XmlAudioMarkup.h"
+#include "KaldiModel.h"
 
 namespace PticaGovorun
 {
@@ -817,7 +818,7 @@ namespace PticaGovorun
 		}
 
 		//
-		std::vector<details::AssignedPhaseAudioSegment> phaseAssignedSegs;
+		std::vector<AssignedPhaseAudioSegment> phaseAssignedSegs;
 		std::set<PhoneId> trainPhoneIds;
 		if (!partitionTrainTestData(segments_, trainCasesRatio, swapTrainTestData, useBrokenPronsInTrainOnly, phaseAssignedSegs, trainPhoneIds, errMsg))
 		{
@@ -965,6 +966,15 @@ namespace PticaGovorun
 				return false;
 			if (!writeFileIdAndTranscription(phaseAssignedSegs, ResourceUsagePhase::Test, outFilePath(dataPartNameTest + ".fileids"), pronCodeDisplayTest, outFilePath(dataPartNameTest + ".transcription"), padSilStart, padSilEnd, errMsg))
 				return false;
+
+			// required for Kaldi model
+			static const bool outKaldiModel = true;
+			if (outKaldiModel)
+			{
+				KaldiModelBuilder kaldiModel(outDirPath_ / "Kaldi", pronCodeDisplayTrain, pronCodeDisplayTest);
+				if (!kaldiModel.generate(phaseAssignedSegs, errMsg))
+					return false;
+			}
 		}
 
 		// write wavs
@@ -1684,7 +1694,7 @@ namespace PticaGovorun
 		return true;
 	}
 
-	bool SphinxTrainDataBuilder::partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly, std::vector<details::AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds, ErrMsgList* errMsg)
+	bool SphinxTrainDataBuilder::partitionTrainTestData(const std::vector<AnnotatedSpeechSegment>& segments, double trainCasesRatio, bool swapTrainTestData, bool useBrokenPronsInTrainOnly, std::vector<AssignedPhaseAudioSegment>& outSegRefs, std::set<PhoneId>& trainPhoneIds, ErrMsgList* errMsg)
 	{
 		// partition train-test data
 		std::vector<std::reference_wrapper<const AnnotatedSpeechSegment>> rejectedSegments;
@@ -1709,7 +1719,7 @@ namespace PticaGovorun
 				continue;
 			}
 
-			auto segRef = details::AssignedPhaseAudioSegment();
+			auto segRef = AssignedPhaseAudioSegment();
 			segRef.Seg = &seg;
 
 			if (isAlwaysTest)
@@ -1745,7 +1755,7 @@ namespace PticaGovorun
 	// This is necessary for the rare phones to end up in the train data set. Otherwise Sphinx emits warning and errors:
 	// WARNING: "accum.c", line 633: The following senones never occur in the input data...
 	// WARNING: "main.c", line 145: No triphones involving DZ1
-	bool SphinxTrainDataBuilder::putSentencesWithRarePhonesInTrain(std::vector<details::AssignedPhaseAudioSegment>& segments, std::set<PhoneId>& trainPhoneIds, ErrMsgList* errMsg) const
+	bool SphinxTrainDataBuilder::putSentencesWithRarePhonesInTrain(std::vector<AssignedPhaseAudioSegment>& segments, std::set<PhoneId>& trainPhoneIds, ErrMsgList* errMsg) const
 	{
 		PhoneAccumulator trainAcc;
 		PhoneAccumulator testAcc;
@@ -1841,7 +1851,7 @@ namespace PticaGovorun
 	// SegFileNameNoExt  =                                                       22229_00273-00032
 	// WavOutRelFilePathNoExt=                         persian_train\ncru1-slovo\22229_00273-00032
 	// WavOutFilePathNExt=C:\PG\SphinxTrain\out123\wav\persian_train\ncru1-slovo\22229_00273-00032
-	details::AudioFileRelativePathComponents audioFilePathComponents(
+	AudioFileRelativePathComponents audioFilePathComponents(
 		const QString& audioSrcRootDirPath,
 		const QString& wavSrcFilePathAbs, const AnnotatedSpeechSegment& seg,
 		const QString& wavBaseOutDirPath,
@@ -1861,7 +1871,7 @@ namespace PticaGovorun
 		QString wavOutRelFilePathNoExt = QFileInfo(wavOutRelFilePath).dir().filePath(segFileNameNoExt);
 		QString wavOutFilePath = wavBaseOutDir.filePath(wavOutRelFilePathNoExt);
 
-		details::AudioFileRelativePathComponents result;
+		AudioFileRelativePathComponents result;
 		result.SegFileNameNoExt = segFileNameNoExt;
 		result.WavOutRelFilePathNoExt = wavOutRelFilePathNoExt;
 		result.AudioSegFilePathNoExt = wavOutFilePath;
@@ -1873,9 +1883,9 @@ namespace PticaGovorun
 		const boost::filesystem::path& wavBaseOutDirPath,
 		ResourceUsagePhase targetPhase,
 		const boost::filesystem::path& wavDirPathForRelPathes,
-		std::vector<details::AssignedPhaseAudioSegment>& outSegRefs)
+		std::vector<AssignedPhaseAudioSegment>& outSegRefs)
 	{
-		for (details::AssignedPhaseAudioSegment& segRef : outSegRefs)
+		for (AssignedPhaseAudioSegment& segRef : outSegRefs)
 		{
 			const AnnotatedSpeechSegment& seg = *segRef.Seg;
 			if (segRef.Phase != targetPhase)
@@ -1885,7 +1895,7 @@ namespace PticaGovorun
 		}
 	}
 
-	bool SphinxTrainDataBuilder::writeFileIdAndTranscription(const std::vector<details::AssignedPhaseAudioSegment>& segsRefs, ResourceUsagePhase targetPhase,
+	bool SphinxTrainDataBuilder::writeFileIdAndTranscription(const std::vector<AssignedPhaseAudioSegment>& segsRefs, ResourceUsagePhase targetPhase,
 		const const boost::filesystem::path& fileIdsFilePath,
 		std::function<auto (boost::wstring_view)->boost::wstring_view> pronCodeDisplay,
 		const const boost::filesystem::path& transcriptionFilePath,
@@ -1912,7 +1922,7 @@ namespace PticaGovorun
 
 		std::vector<boost::wstring_view> pronCodes;
 		GrowOnlyPinArena<wchar_t> arena(1024);
-		for (const details::AssignedPhaseAudioSegment& segRef : segsRefs)
+		for (const AssignedPhaseAudioSegment& segRef : segsRefs)
 		{
 			if (segRef.Phase != targetPhase)
 				continue;
@@ -1957,14 +1967,14 @@ namespace PticaGovorun
 		return true;
 	}
 
-	bool SphinxTrainDataBuilder::buildWavSegments(const std::vector<details::AssignedPhaseAudioSegment>& segsRefs, float targetSampleRate, bool padSilStart, bool padSilEnd, float minSilDurMs, boost::optional<VadImplKind> vadKind, ErrMsgList* errMsg)
+	bool SphinxTrainDataBuilder::buildWavSegments(const std::vector<AssignedPhaseAudioSegment>& segsRefs, float targetSampleRate, bool padSilStart, bool padSilEnd, float minSilDurMs, boost::optional<VadImplKind> vadKind, ErrMsgList* errMsg)
 	{
 		// group segmets by source wav file, so wav files are read sequentially
 
-		typedef std::vector<const details::AssignedPhaseAudioSegment*> VecPerFile;
+		typedef std::vector<const AssignedPhaseAudioSegment*> VecPerFile;
 		std::map<std::wstring, VecPerFile> srcFilePathToSegs;
 
-		for (const details::AssignedPhaseAudioSegment& segRef : segsRefs)
+		for (const AssignedPhaseAudioSegment& segRef : segsRefs)
 		{
 			auto it = srcFilePathToSegs.find(segRef.Seg->AudioFilePath);
 			if (it != srcFilePathToSegs.end())
@@ -2056,7 +2066,7 @@ namespace PticaGovorun
 			std::vector<wchar_t> pronCodeBuff;
 
 			// generate each audio segments
-			for (const details::AssignedPhaseAudioSegment* segRef : segs)
+			for (const AssignedPhaseAudioSegment* segRef : segs)
 			{
 				const AnnotatedSpeechSegment& seg =  *segRef->Seg;
 
@@ -2200,7 +2210,7 @@ namespace PticaGovorun
 		return true;
 	}
 
-	void SphinxTrainDataBuilder::generateDataStat(const std::vector<details::AssignedPhaseAudioSegment>& phaseAssignedSegs)
+	void SphinxTrainDataBuilder::generateDataStat(const std::vector<AssignedPhaseAudioSegment>& phaseAssignedSegs)
 	{
 		std::vector<boost::wstring_view> words;
 		GrowOnlyPinArena<wchar_t> arena(1024);

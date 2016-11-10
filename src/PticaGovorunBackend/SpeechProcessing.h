@@ -193,6 +193,8 @@ struct AnnotatedSpeechSegment
 
 	SpeechLanguage Language = SpeechLanguage::NotSet;
 
+	std::string SpeakerBriefId;
+
 	std::wstring AudioFilePath; // absolute path to audio file
 	std::wstring AnnotFilePath; // absolute path to xml file
 

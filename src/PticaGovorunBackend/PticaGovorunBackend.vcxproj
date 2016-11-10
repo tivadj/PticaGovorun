@@ -212,6 +212,7 @@
     <ClInclude Include="G729If.h" />
     <ClInclude Include="InteropPython.h" />
     <ClInclude Include="JuliusToolNativeWrapper.h" />
+    <ClInclude Include="KaldiModel.h" />
     <ClInclude Include="LangStat.h" />
     <ClInclude Include="SpeechDataValidation.h" />
     <ClInclude Include="SphinxIf.h" />
@@ -253,6 +254,7 @@
     <ClCompile Include="G729If.cpp" />
     <ClCompile Include="InteropPython.cpp" />
     <ClCompile Include="JuliusToolNativeWrapper.cpp" />
+    <ClCompile Include="KaldiModel.cpp" />
     <ClCompile Include="LangStat.cpp" />
     <ClCompile Include="PhoneticSerializationXml.cpp" />
     <ClCompile Include="PhoneticStress.cpp" />
